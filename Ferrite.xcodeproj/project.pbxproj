@@ -29,10 +29,8 @@
 		0CA148E7288903F000DE2211 /* ToastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148CF288903F000DE2211 /* ToastViewModel.swift */; };
 		0CA148E8288903F000DE2211 /* RealDebridWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D0288903F000DE2211 /* RealDebridWrapper.swift */; };
 		0CA148E9288903F000DE2211 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D1288903F000DE2211 /* MainView.swift */; };
-		0CA148EA288903F000DE2211 /* URLSharingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D2288903F000DE2211 /* URLSharingView.swift */; };
 		0CA148EB288903F000DE2211 /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D3288903F000DE2211 /* SearchResultsView.swift */; };
 		0CA148EC288903F000DE2211 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D4288903F000DE2211 /* ContentView.swift */; };
-		0CA148ED288903F000DE2211 /* SearchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D5288903F000DE2211 /* SearchingView.swift */; };
 		0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 0CAF1C7A286F5C8600296F86 /* SwiftSoup */; };
 /* End PBXBuildFile section */
 
@@ -56,10 +54,8 @@
 		0CA148CF288903F000DE2211 /* ToastViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToastViewModel.swift; sourceTree = "<group>"; };
 		0CA148D0288903F000DE2211 /* RealDebridWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealDebridWrapper.swift; sourceTree = "<group>"; };
 		0CA148D1288903F000DE2211 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
-		0CA148D2288903F000DE2211 /* URLSharingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLSharingView.swift; sourceTree = "<group>"; };
 		0CA148D3288903F000DE2211 /* SearchResultsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
 		0CA148D4288903F000DE2211 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		0CA148D5288903F000DE2211 /* SearchingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchingView.swift; sourceTree = "<group>"; };
 		0CAF1C68286F5C0E00296F86 /* Ferrite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ferrite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -81,27 +77,13 @@
 		0CA148BA288903F000DE2211 /* Ferrite */ = {
 			isa = PBXGroup;
 			children = (
-				0CA148BB288903F000DE2211 /* SettingsView.swift */,
-				0CA148BC288903F000DE2211 /* LoginWebView.swift */,
-				0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */,
-				0CA148BE288903F000DE2211 /* CardView.swift */,
-				0CA148C0288903F000DE2211 /* CommonViews */,
-				0CA148C2288903F000DE2211 /* Assets.xcassets */,
-				0CA148C3288903F000DE2211 /* ScrapingViewModel.swift */,
-				0CA148C4288903F000DE2211 /* RealDebridModels.swift */,
+				0CA148F12889066000DE2211 /* API */,
+				0CA148EF2889061600DE2211 /* Models */,
+				0CA148EE2889061200DE2211 /* Views */,
+				0CA148C8288903F000DE2211 /* Extensions */,
 				0CA148C5288903F000DE2211 /* Preview Content */,
 				0CA148C7288903F000DE2211 /* FerriteApp.swift */,
-				0CA148C8288903F000DE2211 /* Extensions */,
-				0CA148CC288903F000DE2211 /* Keychain.swift */,
-				0CA148CD288903F000DE2211 /* DebridManager.swift */,
-				0CA148CE288903F000DE2211 /* WebView.swift */,
-				0CA148CF288903F000DE2211 /* ToastViewModel.swift */,
-				0CA148D0288903F000DE2211 /* RealDebridWrapper.swift */,
-				0CA148D1288903F000DE2211 /* MainView.swift */,
-				0CA148D2288903F000DE2211 /* URLSharingView.swift */,
-				0CA148D3288903F000DE2211 /* SearchResultsView.swift */,
-				0CA148D4288903F000DE2211 /* ContentView.swift */,
-				0CA148D5288903F000DE2211 /* SearchingView.swift */,
+				0CA148C2288903F000DE2211 /* Assets.xcassets */,
 			);
 			path = Ferrite;
 			sourceTree = "<group>";
@@ -130,6 +112,50 @@
 				0CA148CB288903F000DE2211 /* Task.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0CA148EE2889061200DE2211 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0CA148F02889062700DE2211 /* RepresentableViews */,
+				0CA148C0288903F000DE2211 /* CommonViews */,
+				0CA148D3288903F000DE2211 /* SearchResultsView.swift */,
+				0CA148D4288903F000DE2211 /* ContentView.swift */,
+				0CA148D1288903F000DE2211 /* MainView.swift */,
+				0CA148BB288903F000DE2211 /* SettingsView.swift */,
+				0CA148BE288903F000DE2211 /* CardView.swift */,
+				0CA148BC288903F000DE2211 /* LoginWebView.swift */,
+				0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0CA148EF2889061600DE2211 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0CA148CD288903F000DE2211 /* DebridManager.swift */,
+				0CA148C3288903F000DE2211 /* ScrapingViewModel.swift */,
+				0CA148CF288903F000DE2211 /* ToastViewModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0CA148F02889062700DE2211 /* RepresentableViews */ = {
+			isa = PBXGroup;
+			children = (
+				0CA148CE288903F000DE2211 /* WebView.swift */,
+			);
+			path = RepresentableViews;
+			sourceTree = "<group>";
+		};
+		0CA148F12889066000DE2211 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				0CA148CC288903F000DE2211 /* Keychain.swift */,
+				0CA148D0288903F000DE2211 /* RealDebridWrapper.swift */,
+				0CA148C4288903F000DE2211 /* RealDebridModels.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 		0CAF1C5F286F5C0D00296F86 = {
@@ -233,7 +259,6 @@
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
-				0CA148ED288903F000DE2211 /* SearchingView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
 				0CA148E4288903F000DE2211 /* Keychain.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
@@ -247,7 +272,6 @@
 				0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */,
 				0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */,
 				0CA148D9288903F000DE2211 /* CardView.swift in Sources */,
-				0CA148EA288903F000DE2211 /* URLSharingView.swift in Sources */,
 				0CA148EB288903F000DE2211 /* SearchResultsView.swift in Sources */,
 				0CA148D7288903F000DE2211 /* LoginWebView.swift in Sources */,
 				0CA148E0288903F000DE2211 /* FerriteApp.swift in Sources */,
