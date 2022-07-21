@@ -59,14 +59,19 @@ class ScrapingViewModel: ObservableObject {
     @Published var showWebView: Bool = false
 
     // Fetches the HTML body for the source website
+    @MainActor
     public func fetchWebsiteHtml(source: TorrentSource) async -> String? {
         guard let encodedQuery = searchText.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
-            print("Could not process search query, invalid characters")
+            toastModel?.toastDescription = "Could not process search query, invalid characters present."
+            print("Could not process search query, invalid characters present")
+
             return nil
         }
 
         guard let url = URL(string: source.url + encodedQuery) else {
-            print("Source doesn't contain a valid URL")
+            toastModel?.toastDescription = "Source doesn't contain a valid URL, contact the source dev!"
+            print("Source doesn't contain a valid URL, contact the source dev!")
+
             return nil
         }
 
@@ -75,7 +80,9 @@ class ScrapingViewModel: ObservableObject {
             let html = String(data: data, encoding: .ascii)
             return html
         } catch {
+            toastModel?.toastDescription = "Error in fetching HTML \(error)"
             print("Error in fetching HTML \(error)")
+
             return nil
         }
     }
@@ -129,6 +136,7 @@ class ScrapingViewModel: ObservableObject {
 
             searchResults = tempResults
         } catch {
+            toastModel?.toastDescription = "Error while scraping: \(error)"
             print("Error while scraping: \(error)")
         }
     }
