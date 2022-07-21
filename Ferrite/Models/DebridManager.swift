@@ -35,12 +35,18 @@ public class DebridManager: ObservableObject {
             }
         }
 
-        guard let debridHashes = await realDebrid.instantAvailability(magnetHashes: hashes) else {
-            return
-        }
+        do {
+            let debridHashes = try await realDebrid.instantAvailability(magnetHashes: hashes)
 
-        Task { @MainActor in
-            realDebridHashes = debridHashes
+            Task { @MainActor in
+                realDebridHashes = debridHashes
+            }
+        } catch {
+            Task { @MainActor in
+                toastModel?.toastDescription = "RealDebrid hash error: \(error)"
+            }
+
+            print(error)
         }
     }
 
@@ -64,12 +70,7 @@ public class DebridManager: ObservableObject {
     public func fetchRdDownload(searchResult: SearchResult) async {
         do {
             let realDebridId = try await realDebrid.addMagnet(magnetLink: searchResult.magnetLink)
-            let httpResponse = try await realDebrid.selectFiles(debridID: realDebridId)
-
-            if httpResponse?.statusCode != 204 {
-                // Throw error here
-                return
-            }
+            try await realDebrid.selectFiles(debridID: realDebridId)
 
             let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId)
             let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)

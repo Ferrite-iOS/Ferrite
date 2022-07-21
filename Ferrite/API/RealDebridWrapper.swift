@@ -14,12 +14,8 @@ public enum RealDebridError: Error {
     case InvalidResponse
     case InvalidToken
     case EmptyData
+    case FailedRequest(description: String)
     case AuthQuery(description: String)
-    case InstantAvailabilityQuery(description: String)
-    case AddMagnetQuery(description: String)
-    case SelectFilesQuery(description: String)
-    case TorrentInfoQuery(description: String)
-    case UnrestrictLinkQuery(description: String)
 }
 
 public class RealDebrid: ObservableObject {
@@ -57,11 +53,11 @@ public class RealDebrid: ObservableObject {
                 do {
                     try await getDeviceCredentials(deviceCode: rawResponse.deviceCode)
                 } catch {
-                    print("Authentication error: \(error)")
+                    print("Authentication error in \(#function): \(error)")
                     authTask?.cancel()
 
                     Task { @MainActor in
-                        parentManager?.toastModel?.toastDescription = "Authentication error: \(error)"
+                        parentManager?.toastModel?.toastDescription = "Authentication error in \(#function): \(error)"
                     }
                 }
             }
@@ -113,9 +109,8 @@ public class RealDebrid: ObservableObject {
                 }
             }
         }
-
+        
         if case let .failure(error) = await authTask?.result {
-            print(error)
             throw error
         }
     }
@@ -198,45 +193,45 @@ public class RealDebrid: ObservableObject {
         }
     }
 
-    // Checks if the magnet is streamable on RD
-    // Currently does not work for batch links
-    public func instantAvailability(magnetHashes: [String]) async -> [String]? {
-        var availableHashes: [String] = []
-
-        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnetHashes.joined(separator: "/"))")!)
-
+    // Wrapper request function which matches the responses and returns data
+    @discardableResult public func performRequest(request: inout URLRequest, requestName: String) async throws -> Data {
         guard let token = await fetchToken() else {
-            return nil
+            throw RealDebridError.InvalidToken
         }
 
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-        do {
-            // Assume that RealDebrid can be called here
-            let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
 
-            // Unauthorized, auto-logout of RD, wrap this into a request function
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 401 {
-                try await deleteTokens()
-            }
+        guard let response = response as? HTTPURLResponse else {
+            throw RealDebridError.FailedRequest(description: "No HTTP response given")
+        }
 
-            // Does not account for torrent packs at the moment
-            if let rawResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                for (key, value) in rawResponse {
-                    if value as? [String: Any] != nil {
-                        availableHashes.append(key)
-                    }
+        if response.statusCode >= 200, response.statusCode <= 299 {
+            return data
+        } else if response.statusCode == 401 {
+            try await deleteTokens()
+            throw RealDebridError.FailedRequest(description: "The request \(requestName) failed because you were unauthorized. Please relogin to RealDebrid in Settings.")
+        } else {
+            throw RealDebridError.FailedRequest(description: "The request \(requestName) failed with status code \(response.statusCode).")
+        }
+    }
+
+    // Checks if the magnet is streamable on RD
+    // Currently does not work for batch links
+    public func instantAvailability(magnetHashes: [String]) async throws -> [String] {
+        var availableHashes: [String] = []
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnetHashes.joined(separator: "/"))")!)
+
+        let data = try await performRequest(request: &request, requestName: #function)
+
+        // Does not account for torrent packs at the moment
+        if let rawResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            for (key, value) in rawResponse {
+                if value as? [String: Any] != nil {
+                    availableHashes.append(key)
                 }
             }
-        } catch {
-            // Assume that RealDebrid cannot be used here
-            print("RealDebrid request error: \(error)")
-
-            Task { @MainActor in
-                parentManager?.toastModel?.toastDescription = "RealDebrid InstantAvailability error: \(error)"
-            }
-
-            return nil
         }
 
         return availableHashes
@@ -245,14 +240,7 @@ public class RealDebrid: ObservableObject {
     // Adds a magnet link to the user's RD account
     public func addMagnet(magnetLink: String) async throws -> String {
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/addMagnet")!)
-
-        guard let token = await fetchToken() else {
-            throw RealDebridError.InvalidToken
-        }
-
         request.httpMethod = "POST"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         var bodyComponents = URLComponents()
@@ -260,28 +248,16 @@ public class RealDebrid: ObservableObject {
 
         request.httpBody = bodyComponents.query?.data(using: .utf8)
 
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let rawResponse = try jsonDecoder.decode(AddMagnetResponse.self, from: data)
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode(AddMagnetResponse.self, from: data)
 
-            return rawResponse.id
-        } catch {
-            print("Magnet link query error! \(error)")
-            throw RealDebridError.AddMagnetQuery(description: error.localizedDescription)
-        }
+        return rawResponse.id
     }
 
     // Queues the magnet link for downloading
-    public func selectFiles(debridID: String) async throws -> HTTPURLResponse? {
+    public func selectFiles(debridID: String) async throws {
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/selectFiles/\(debridID)")!)
-
-        guard let token = await fetchToken() else {
-            throw RealDebridError.InvalidToken
-        }
-
         request.httpMethod = "POST"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         var bodyComponents = URLComponents()
@@ -289,52 +265,27 @@ public class RealDebrid: ObservableObject {
 
         request.httpBody = bodyComponents.query?.data(using: .utf8)
 
-        do {
-            let (_, response) = try await URLSession.shared.data(for: request)
-            
-            return response as? HTTPURLResponse
-        } catch {
-            print("Magnet file query error! \(error)")
-            throw RealDebridError.SelectFilesQuery(description: error.localizedDescription)
-        }
+        try await performRequest(request: &request, requestName: #function)
     }
 
     // Fetches the info of a torrent
     public func torrentInfo(debridID: String) async throws -> String {
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/info/\(debridID)")!)
 
-        guard let token = await fetchToken() else {
-            throw RealDebridError.InvalidToken
-        }
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode(TorrentInfoResponse.self, from: data)
 
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let rawResponse = try jsonDecoder.decode(TorrentInfoResponse.self, from: data)
-
-            if let torrentLink = rawResponse.links[safe: 0] {
-                return torrentLink
-            } else {
-                throw RealDebridError.EmptyData
-            }
-        } catch {
-            print("Torrent info query error: \(error)")
-            throw RealDebridError.TorrentInfoQuery(description: error.localizedDescription)
+        if let torrentLink = rawResponse.links[safe: 0] {
+            return torrentLink
+        } else {
+            throw RealDebridError.EmptyData
         }
     }
 
     // Downloads link from selectFiles for playback
     public func unrestrictLink(debridDownloadLink: String) async throws -> String {
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/unrestrict/link")!)
-
-        guard let token = await fetchToken() else {
-            throw RealDebridError.InvalidToken
-        }
-
         request.httpMethod = "POST"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         var bodyComponents = URLComponents()
@@ -342,14 +293,9 @@ public class RealDebrid: ObservableObject {
 
         request.httpBody = bodyComponents.query?.data(using: .utf8)
 
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let rawResponse = try jsonDecoder.decode(UnrestrictLinkResponse.self, from: data)
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode(UnrestrictLinkResponse.self, from: data)
 
-            return rawResponse.download
-        } catch {
-            print("Unrestrict link error: \(error)")
-            throw RealDebridError.UnrestrictLinkQuery(description: error.localizedDescription)
-        }
+        return rawResponse.download
     }
 }
