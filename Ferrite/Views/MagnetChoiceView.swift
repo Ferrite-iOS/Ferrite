@@ -23,7 +23,7 @@ struct MagnetChoiceView: View {
     var body: some View {
         NavView {
             Form {
-                if realDebridEnabled {
+                if realDebridEnabled, debridManager.realDebridHashes.contains(selectedResult?.magnetHash ?? "") {
                     Section("Real Debrid options") {
                         Button("Play on Outplayer") {
                             guard let downloadUrl = URL(string: "outplayer://\(debridManager.realDebridDownloadUrl)") else {
@@ -93,6 +93,16 @@ struct MagnetChoiceView: View {
 
 struct MagnetChoiceView_Previews: PreviewProvider {
     static var previews: some View {
-        MagnetChoiceView(selectedResult: .constant(SearchResult(title: "", magnetLink: "", magnetHash: nil)))
+        MagnetChoiceView(
+            selectedResult:
+                .constant(
+                    SearchResult(
+                        title: "",
+                        source: "",
+                        size: "",
+                        magnetLink: "",
+                        magnetHash: nil)
+                )
+        )
     }
 }

@@ -11,6 +11,8 @@ import SwiftSoup
 
 public struct SearchResult: Hashable, Codable {
     let title: String
+    let source: String
+    let size: String
     let magnetLink: String
     let magnetHash: String?
 }
@@ -21,6 +23,7 @@ public struct TorrentSource: Hashable, Codable {
     let rowQuery: String
     let linkQuery: String
     let titleQuery: String
+    let sizeQuery: String
 }
 
 class ScrapingViewModel: ObservableObject {
@@ -40,11 +43,12 @@ class ScrapingViewModel: ObservableObject {
         //),
         TorrentSource(
             name: "AnimeTosho",
-            url: "https://mirror.animetosho.org/search?q=",
+            url: "https://animetosho.org/search?q=",
             rowQuery: "#content .home_list_entry",
             linkQuery: ".links > a:nth-child(4)",
-            titleQuery: ".link"
-        )
+            titleQuery: ".link",
+            sizeQuery: ".size"
+       )
     ]
 
     @Published var searchResults: [SearchResult] = []
@@ -102,10 +106,15 @@ class ScrapingViewModel: ObservableObject {
                 let magnetHash = fetchMagnetHash(magnetLink: href)
 
                 let title = try row.select(source.titleQuery).first()
-                let text = try title?.text()
+                let titleText = try title?.text()
+
+                let size = try row.select(source.sizeQuery).first()
+                let sizeText = try size?.text()
 
                 let result = SearchResult(
-                    title: text ?? "No title provided",
+                    title: titleText ?? "No title provided",
+                    source: source.name,
+                    size: sizeText ?? "?B",
                     magnetLink: href,
                     magnetHash: magnetHash
                 )

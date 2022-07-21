@@ -19,12 +19,13 @@ struct SearchResultsView: View {
     @State var selectedResult: SearchResult?
 
     @State private var showExternalSheet = false
+    @State private var resultUsesRd = false
 
     var body: some View {
         List {
             ForEach(scrapingModel.searchResults, id: \.self) { result in
                 VStack(alignment: .leading) {
-                    Button(result.title) {
+                    Button {
                         selectedResult = result
 
                         if debridManager.realDebridHashes.contains(result.magnetHash ?? ""), realDebridEnabled {
@@ -35,20 +36,40 @@ struct SearchResultsView: View {
                         } else {
                             showExternalSheet.toggle()
                         }
+                    } label: {
+                        Text(result.title)
+                            .font(.callout)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .sheet(isPresented: $showExternalSheet) {
                         MagnetChoiceView(selectedResult: $selectedResult)
                     }
                     .tint(colorScheme == .light ? .black : .white)
-                    .font(.callout)
                     .padding(.bottom, 5)
 
                     HStack {
-                        if realDebridEnabled {
-                            Text("Real Debrid available: \(debridManager.realDebridHashes.contains(result.magnetHash ?? "") ? "Yes" : "No")")
-                        }
+                        Text(result.source)
 
                         Spacer()
+
+                        Text(result.size)
+
+                        if realDebridEnabled {
+                            Text("RD")
+                                .fontWeight(.bold)
+                                .padding(2)
+                                .background {
+                                    if debridManager.realDebridHashes.contains(result.magnetHash ?? "") {
+                                        Color.green
+                                            .cornerRadius(4)
+                                            .opacity(0.5)
+                                    } else {
+                                        Color.red
+                                            .cornerRadius(4)
+                                            .opacity(0.5)
+                                    }
+                                }
+                        }
                     }
                     .font(.caption)
                 }
