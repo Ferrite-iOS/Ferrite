@@ -42,11 +42,15 @@ struct MainView: View {
                             Text("Error: \(toastModel.toastDescription ?? "This shouldn't be showing up... Contact the dev!")")
                         }
                     }
+                    .groupBoxStyle(ErrorGroupBoxStyle())
+
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .frame(height: 60)
                 }
             }
-            .transition(AnyTransition.move(edge: .bottom))
-            .animation(.easeInOut(duration: 0.3), value: true)
-            .padding()
+            .font(.caption)
+            .animation(.easeInOut(duration: 0.3), value: toastModel.showToast)
         }
     }
 }

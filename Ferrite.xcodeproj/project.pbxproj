@@ -32,6 +32,7 @@
 		0CA148EB288903F000DE2211 /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D3288903F000DE2211 /* SearchResultsView.swift */; };
 		0CA148EC288903F000DE2211 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148D4288903F000DE2211 /* ContentView.swift */; };
 		0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 0CAF1C7A286F5C8600296F86 /* SwiftSoup */; };
+		0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		0CA148D3288903F000DE2211 /* SearchResultsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
 		0CA148D4288903F000DE2211 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0CAF1C68286F5C0E00296F86 /* Ferrite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ferrite.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				0CA148C1288903F000DE2211 /* NavView.swift */,
+				0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */,
 				0CA148E3288903F000DE2211 /* Task.swift in Sources */,
 				0CA148E7288903F000DE2211 /* ToastViewModel.swift in Sources */,
+				0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */,
 				0CA148E6288903F000DE2211 /* WebView.swift in Sources */,
 				0CA148E2288903F000DE2211 /* Data.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,
