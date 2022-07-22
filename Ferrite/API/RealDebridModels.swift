@@ -48,19 +48,29 @@ public struct TokenResponse: Codable {
     }
 }
 
-// MARK: - instantAvailability endpoint: Currently not used due to JSON complexity
-/*
-public struct InstantAvailabilityValue: Decodable {
-    let rd: [[String: InstantAvailabilityFile]]
+// MARK: - instantAvailability endpoint
+
+// Thanks Skitty!
+struct InstantAvailabilityResponse: Codable {
+    var data: InstantAvailabilityData?
+
+    init(from decoder: Decoder) throws {
+        let container =  try decoder.singleValueContainer()
+
+        if let data = try? container.decode(InstantAvailabilityData.self) {
+            self.data = data
+        }
+    }
 }
 
-struct InstantAvailabilityFile: Codable {
-    let filename: String
-    let filesize: Int
+struct InstantAvailabilityData: Codable {
+    var rd: [[String: InstantAvailabilityInfo]]
 }
 
-public typealias InstantAvailabilityResponse = [String: InstantAvailabilityValue]
- */
+struct InstantAvailabilityInfo: Codable {
+    var filename: String
+    var filesize: Int
+}
 
 // MARK: - addMagnet endpoint
 public struct AddMagnetResponse: Codable {

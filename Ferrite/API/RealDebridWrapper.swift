@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 public enum RealDebridError: Error {
     case InvalidUrl
@@ -226,11 +225,16 @@ public class RealDebrid: ObservableObject {
         let data = try await performRequest(request: &request, requestName: #function)
 
         // Does not account for torrent packs at the moment
-        if let rawResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-            for (key, value) in rawResponse {
-                if value as? [String: Any] != nil {
-                    availableHashes.append(key)
-                }
+        let rawResponseDict = try jsonDecoder.decode([String: InstantAvailabilityResponse].self, from: data)
+
+        for (hash, response) in rawResponseDict {
+            guard let data = response.data else {
+                continue
+            }
+
+            // Do not include if a hash is a batch
+            if !(data.rd.count > 1), !(data.rd[safe: 0]?.keys.count ?? 0 > 1) {
+                availableHashes.append(hash)
             }
         }
 
