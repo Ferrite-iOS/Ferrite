@@ -13,36 +13,42 @@ struct SearchResultsView: View {
 
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var navigationModel: NavigationViewModel
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
-    @State var selectedResult: SearchResult?
-
-    @State private var showExternalSheet = false
-    @State private var resultUsesRd = false
 
     var body: some View {
         List {
             ForEach(scrapingModel.searchResults, id: \.self) { result in
                 VStack(alignment: .leading) {
                     Button {
-                        selectedResult = result
+                        scrapingModel.selectedSearchResult = result
 
-                        if debridManager.realDebridHashes.contains(result.magnetHash ?? ""), realDebridEnabled {
+                        switch debridManager.matchSearchResult(result: result) {
+                        case .full:
                             Task {
                                 await debridManager.fetchRdDownload(searchResult: result)
-                                showExternalSheet.toggle()
+                                navigationModel.currentChoiceSheet = .magnet
                             }
-                        } else {
-                            showExternalSheet.toggle()
+                        case .partial:
+                            if debridManager.setSelectedRdResult(result: result) {
+                                navigationModel.currentChoiceSheet = .batch
+                            }
+                        case .none:
+                            navigationModel.currentChoiceSheet = .magnet
                         }
                     } label: {
                         Text(result.title)
                             .font(.callout)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .sheet(isPresented: $showExternalSheet) {
-                        MagnetChoiceView(selectedResult: $selectedResult)
+                    .sheet(item: $navigationModel.currentChoiceSheet) { item in
+                        switch item {
+                        case .magnet:
+                            MagnetChoiceView()
+                        case .batch:
+                            BatchChoiceView()
+                        }
                     }
                     .tint(colorScheme == .light ? .black : .white)
                     .padding(.bottom, 5)
@@ -59,11 +65,16 @@ struct SearchResultsView: View {
                                 .fontWeight(.bold)
                                 .padding(2)
                                 .background {
-                                    if debridManager.realDebridHashes.contains(result.magnetHash ?? "") {
+                                    switch debridManager.matchSearchResult(result: result) {
+                                    case .full:
                                         Color.green
                                             .cornerRadius(4)
                                             .opacity(0.5)
-                                    } else {
+                                    case .partial:
+                                        Color.orange
+                                            .cornerRadius(4)
+                                            .opacity(0.5)
+                                    case .none:
                                         Color.red
                                             .cornerRadius(4)
                                             .opacity(0.5)

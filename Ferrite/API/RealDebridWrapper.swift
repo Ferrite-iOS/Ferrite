@@ -218,8 +218,8 @@ public class RealDebrid: ObservableObject {
 
     // Checks if the magnet is streamable on RD
     // Currently does not work for batch links
-    public func instantAvailability(magnetHashes: [String]) async throws -> [String] {
-        var availableHashes: [String] = []
+    public func instantAvailability(magnetHashes: [String]) async throws -> [RealDebridIA] {
+        var availableHashes: [RealDebridIA] = []
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnetHashes.joined(separator: "/"))")!)
 
         let data = try await performRequest(request: &request, requestName: #function)
@@ -232,9 +232,47 @@ public class RealDebrid: ObservableObject {
                 continue
             }
 
-            // Do not include if a hash is a batch
-            if !(data.rd.count > 1), !(data.rd[safe: 0]?.keys.count ?? 0 > 1) {
-                availableHashes.append(hash)
+            if data.rd.isEmpty {
+                continue
+            }
+
+            // Is this a batch
+            if data.rd.count > 1 || data.rd[0].count > 1 {
+                // Batch array
+                let batches = data.rd.map { fileDict in
+                    let batchFiles: [RealDebridIABatchFile] = fileDict.map { (key, value) in
+                        // Force unwrapped ID. Is safe because ID is guaranteed on a successful response
+                        return RealDebridIABatchFile(id: Int(key)!, fileName: value.filename)
+                    }.sorted(by: { $0.id < $1.id })
+
+                    return RealDebridIABatch(files: batchFiles)
+                }
+
+                // RD files array
+                // Possibly sort this in the future, but not sure how at the moment
+                var files: [RealDebridIAFile] = []
+
+                for index in batches.indices {
+                    let batchFiles = batches[index].files
+
+                    for batchFileIndex in batchFiles.indices {
+                        let batchFile = batchFiles[batchFileIndex]
+
+                        if !files.contains(where: { $0.name == batchFile.fileName }) {
+                            files.append(
+                                RealDebridIAFile(
+                                    name: batchFile.fileName,
+                                    batchIndex: index,
+                                    batchFileIndex: batchFileIndex
+                                )
+                            )
+                        }
+                    }
+                }
+
+                availableHashes.append(RealDebridIA(hash: hash, files: files, batches: batches))
+            } else {
+                availableHashes.append(RealDebridIA(hash: hash))
             }
         }
 
@@ -259,13 +297,19 @@ public class RealDebrid: ObservableObject {
     }
 
     // Queues the magnet link for downloading
-    public func selectFiles(debridID: String) async throws {
+    public func selectFiles(debridID: String, fileIds: [Int]) async throws {
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/selectFiles/\(debridID)")!)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         var bodyComponents = URLComponents()
-        bodyComponents.queryItems = [URLQueryItem(name: "files", value: "all")]
+
+        if fileIds.isEmpty {
+            bodyComponents.queryItems = [URLQueryItem(name: "files", value: "all")]
+        } else {
+            let joinedIds = fileIds.map(String.init).joined(separator: ",")
+            bodyComponents.queryItems = [URLQueryItem(name: "files", value: joinedIds)]
+        }
 
         request.httpBody = bodyComponents.query?.data(using: .utf8)
 
@@ -273,13 +317,14 @@ public class RealDebrid: ObservableObject {
     }
 
     // Fetches the info of a torrent
-    public func torrentInfo(debridID: String) async throws -> String {
+    public func torrentInfo(debridID: String, selectedIndex: Int?) async throws -> String {
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/info/\(debridID)")!)
 
         let data = try await performRequest(request: &request, requestName: #function)
         let rawResponse = try jsonDecoder.decode(TorrentInfoResponse.self, from: data)
 
-        if let torrentLink = rawResponse.links[safe: 0] {
+        // Error out if no index is provided
+        if let torrentLink = rawResponse.links[safe: selectedIndex ?? -1] {
             return torrentLink
         } else {
             throw RealDebridError.EmptyData

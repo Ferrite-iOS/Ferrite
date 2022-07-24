@@ -11,11 +11,10 @@ import ActivityView
 struct MagnetChoiceView: View {
     @Environment(\.dismiss) var dismiss
 
+    @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
-    @Binding var selectedResult: SearchResult?
 
     @State private var showActivityView = false
     @State private var activityItem: ActivityItem?
@@ -23,7 +22,7 @@ struct MagnetChoiceView: View {
     var body: some View {
         NavView {
             Form {
-                if realDebridEnabled, debridManager.realDebridHashes.contains(selectedResult?.magnetHash ?? "") {
+                if realDebridEnabled, debridManager.matchSearchResult(result: scrapingModel.selectedSearchResult) != .none {
                     Section("Real Debrid options") {
                         Button("Play on Outplayer") {
                             guard let downloadUrl = URL(string: "outplayer://\(debridManager.realDebridDownloadUrl)") else {
@@ -66,11 +65,11 @@ struct MagnetChoiceView: View {
 
                 Section("Magnet options") {
                     Button("Copy magnet") {
-                        UIPasteboard.general.string = selectedResult?.magnetLink
+                        UIPasteboard.general.string = scrapingModel.selectedSearchResult?.magnetLink
                     }
 
                     Button("Share magnet") {
-                        if let result = selectedResult, let url = URL(string: result.magnetLink) {
+                        if let result = scrapingModel.selectedSearchResult, let url = URL(string: result.magnetLink) {
                             activityItem = ActivityItem(items: url)
                             showActivityView.toggle()
                         }
@@ -83,6 +82,8 @@ struct MagnetChoiceView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
+                        debridManager.realDebridDownloadUrl = ""
+
                         dismiss()
                     }
                 }
@@ -93,16 +94,6 @@ struct MagnetChoiceView: View {
 
 struct MagnetChoiceView_Previews: PreviewProvider {
     static var previews: some View {
-        MagnetChoiceView(
-            selectedResult:
-                .constant(
-                    SearchResult(
-                        title: "",
-                        source: "",
-                        size: "",
-                        magnetLink: "",
-                        magnetHash: nil)
-                )
-        )
+        MagnetChoiceView()
     }
 }

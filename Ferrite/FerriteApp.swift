@@ -12,6 +12,7 @@ struct FerriteApp: App {
     @StateObject var scrapingModel: ScrapingViewModel = .init()
     @StateObject var toastModel: ToastViewModel = .init()
     @StateObject var debridManager: DebridManager = .init()
+    @StateObject var navigationModel: NavigationViewModel = .init()
 
     var body: some Scene {
         WindowGroup {
@@ -23,6 +24,7 @@ struct FerriteApp: App {
                 .environmentObject(debridManager)
                 .environmentObject(scrapingModel)
                 .environmentObject(toastModel)
+                .environmentObject(navigationModel)
         }
     }
 }

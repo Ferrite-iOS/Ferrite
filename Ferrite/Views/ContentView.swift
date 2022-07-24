@@ -11,6 +11,8 @@ struct ContentView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
 
+    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
+
     var body: some View {
         NavView {
             VStack {
@@ -25,7 +27,10 @@ struct ContentView: View {
                         }
 
                         await scrapingModel.scrapeWebsite(source: source, html: html)
-                        await debridManager.populateDebridHashes(scrapingModel.searchResults)
+
+                        if realDebridEnabled {
+                            await debridManager.populateDebridHashes(scrapingModel.searchResults)
+                        }
                     }
                 }
             }

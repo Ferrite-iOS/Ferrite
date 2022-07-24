@@ -51,10 +51,10 @@ public struct TokenResponse: Codable {
 // MARK: - instantAvailability endpoint
 
 // Thanks Skitty!
-struct InstantAvailabilityResponse: Codable {
+public struct InstantAvailabilityResponse: Codable {
     var data: InstantAvailabilityData?
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container =  try decoder.singleValueContainer()
 
         if let data = try? container.decode(InstantAvailabilityData.self) {
@@ -70,6 +70,34 @@ struct InstantAvailabilityData: Codable {
 struct InstantAvailabilityInfo: Codable {
     var filename: String
     var filesize: Int
+}
+
+// MARK: - Instant Availability client side structures
+public struct RealDebridIA: Codable, Hashable {
+   let hash: String
+   var files: [RealDebridIAFile] = []
+   var batches: [RealDebridIABatch] = []
+}
+
+public struct RealDebridIABatch: Codable, Hashable {
+   let files: [RealDebridIABatchFile]
+}
+
+public struct RealDebridIABatchFile: Codable, Hashable {
+   let id: Int
+   let fileName: String
+}
+
+public struct RealDebridIAFile: Codable, Hashable {
+   let name: String
+   let batchIndex: Int
+   let batchFileIndex: Int
+}
+
+public enum RealDebridIAStatus: Codable, Hashable {
+   case full
+   case partial
+   case none
 }
 
 // MARK: - addMagnet endpoint

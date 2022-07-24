@@ -18,9 +18,11 @@ public class DebridManager: ObservableObject {
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
-    @Published var realDebridHashes: [String] = []
+    @Published var realDebridHashes: [RealDebridIA] = []
     @Published var realDebridAuthUrl: String = ""
     @Published var realDebridDownloadUrl: String = ""
+    @Published var selectedRealDebridItem: RealDebridIA?
+    @Published var selectedRealDebridFile: RealDebridIAFile?
 
     init() {
         realDebrid.parentManager = self
@@ -50,6 +52,38 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    public func matchSearchResult(result: SearchResult?) -> RealDebridIAStatus {
+        guard let result = result else {
+            return .none
+        }
+
+        guard let debridMatch = realDebridHashes.first(where: { result.magnetHash == $0.hash }) else {
+            return .none
+        }
+
+        if debridMatch.batches.isEmpty {
+            return .full
+        } else {
+            return .partial
+        }
+    }
+
+    @MainActor
+    public func setSelectedRdResult(result: SearchResult) -> Bool {
+        guard let magnetHash = result.magnetHash else {
+            toastModel?.toastDescription = "Could not find the torrent magnet hash"
+            return false
+        }
+
+        if let realDebridItem = realDebridHashes.first(where: { magnetHash == $0.hash }) {
+            selectedRealDebridItem = realDebridItem
+            return true
+        } else {
+            toastModel?.toastDescription = "Could not find the associated RealDebrid entry for magnet hash \(magnetHash)"
+            return false
+        }
+    }
+
     public func authenticateRd() async {
         do {
             let url = try await realDebrid.getVerificationInfo()
@@ -67,12 +101,23 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    public func fetchRdDownload(searchResult: SearchResult) async {
+    public func fetchRdDownload(searchResult: SearchResult, iaFile: RealDebridIAFile? = nil) async {
         do {
             let realDebridId = try await realDebrid.addMagnet(magnetLink: searchResult.magnetLink)
-            try await realDebrid.selectFiles(debridID: realDebridId)
 
-            let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId)
+            var fileIds: [Int] = []
+
+            if let iaFile = iaFile {
+                guard let iaBatchFromFile = selectedRealDebridItem?.batches[safe: iaFile.batchIndex] else {
+                    return
+                }
+
+                fileIds = iaBatchFromFile.files.map({ $0.id })
+            }
+
+            try await realDebrid.selectFiles(debridID: realDebridId, fileIds: fileIds)
+
+            let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId, selectedIndex: iaFile == nil ? 0 : iaFile?.batchFileIndex)
             let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
 
             Task { @MainActor in

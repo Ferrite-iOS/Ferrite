@@ -54,9 +54,7 @@ class ScrapingViewModel: ObservableObject {
     @Published var searchResults: [SearchResult] = []
     @Published var debridHashes: [String] = []
     @Published var searchText: String = ""
-
-    @Published var realDebridAuthUrl: String = ""
-    @Published var showWebView: Bool = false
+    @Published var selectedSearchResult: SearchResult?
 
     // Fetches the HTML body for the source website
     @MainActor
