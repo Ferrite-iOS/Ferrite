@@ -10,11 +10,11 @@ import SwiftUI
 
 public class DebridManager: ObservableObject {
     // UI Variables
-    var toastModel: ToastViewModel? = nil
+    var toastModel: ToastViewModel?
     @Published var showWebView: Bool = false
 
     // RealDebrid variables
-    let realDebrid: RealDebrid = RealDebrid()
+    let realDebrid: RealDebrid = .init()
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
@@ -112,7 +112,7 @@ public class DebridManager: ObservableObject {
                     return
                 }
 
-                fileIds = iaBatchFromFile.files.map({ $0.id })
+                fileIds = iaBatchFromFile.files.map(\.id)
             }
 
             try await realDebrid.selectFiles(debridID: realDebridId, fileIds: fileIds)

@@ -9,6 +9,7 @@
 import Foundation
 
 // MARK: - device code endpoint
+
 public struct DeviceCodeResponse: Codable {
     let deviceCode, userCode: String
     let interval, expiresIn: Int
@@ -25,6 +26,7 @@ public struct DeviceCodeResponse: Codable {
 }
 
 // MARK: - device credentials endpoint
+
 public struct DeviceCredentialsResponse: Codable {
     let clientID, clientSecret: String?
 
@@ -35,6 +37,7 @@ public struct DeviceCredentialsResponse: Codable {
 }
 
 // MARK: - token endpoint
+
 public struct TokenResponse: Codable {
     let accessToken: String
     let expiresIn: Int
@@ -55,7 +58,7 @@ public struct InstantAvailabilityResponse: Codable {
     var data: InstantAvailabilityData?
 
     public init(from decoder: Decoder) throws {
-        let container =  try decoder.singleValueContainer()
+        let container = try decoder.singleValueContainer()
 
         if let data = try? container.decode(InstantAvailabilityData.self) {
             self.data = data
@@ -73,40 +76,43 @@ struct InstantAvailabilityInfo: Codable {
 }
 
 // MARK: - Instant Availability client side structures
+
 public struct RealDebridIA: Codable, Hashable {
-   let hash: String
-   var files: [RealDebridIAFile] = []
-   var batches: [RealDebridIABatch] = []
+    let hash: String
+    var files: [RealDebridIAFile] = []
+    var batches: [RealDebridIABatch] = []
 }
 
 public struct RealDebridIABatch: Codable, Hashable {
-   let files: [RealDebridIABatchFile]
+    let files: [RealDebridIABatchFile]
 }
 
 public struct RealDebridIABatchFile: Codable, Hashable {
-   let id: Int
-   let fileName: String
+    let id: Int
+    let fileName: String
 }
 
 public struct RealDebridIAFile: Codable, Hashable {
-   let name: String
-   let batchIndex: Int
-   let batchFileIndex: Int
+    let name: String
+    let batchIndex: Int
+    let batchFileIndex: Int
 }
 
 public enum RealDebridIAStatus: Codable, Hashable {
-   case full
-   case partial
-   case none
+    case full
+    case partial
+    case none
 }
 
 // MARK: - addMagnet endpoint
+
 public struct AddMagnetResponse: Codable {
     let id: String
     let uri: String
 }
 
 // MARK: - torrentInfo endpoint
+
 struct TorrentInfoResponse: Codable {
     let id, filename, originalFilename, hash: String
     let bytes, originalBytes: Int
@@ -133,6 +139,7 @@ struct TorrentInfoFile: Codable {
 }
 
 // MARK: - unrestrictLink endpoint
+
 struct UnrestrictLinkResponse: Codable {
     let id, filename, mimeType: String
     let filesize: Int

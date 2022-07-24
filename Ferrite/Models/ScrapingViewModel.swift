@@ -6,8 +6,8 @@
 //
 
 import Base32
-import SwiftUI
 import SwiftSoup
+import SwiftUI
 
 public struct SearchResult: Hashable, Codable {
     let title: String
@@ -30,17 +30,17 @@ class ScrapingViewModel: ObservableObject {
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
     // Link the toast view model for single-directional communication
-    var toastModel: ToastViewModel? = nil
+    var toastModel: ToastViewModel?
 
     // Decopule this in the future
     let sources = [
-        //TorrentSource(
-            //name: "Nyaa",
-            //url: "https://nyaa.si",
-            //rowQuery: ".torrent-list tbody tr",
-            //linkQuery: "td:nth-child(3) > a:nth-child(2))",
-            //titleQuery: "td:nth-child(2) > a:last-child"
-        //),
+        // TorrentSource(
+        // name: "Nyaa",
+        // url: "https://nyaa.si",
+        // rowQuery: ".torrent-list tbody tr",
+        // linkQuery: "td:nth-child(3) > a:nth-child(2))",
+        // titleQuery: "td:nth-child(2) > a:last-child"
+        // ),
         TorrentSource(
             name: "AnimeTosho",
             url: "https://animetosho.org/search?q=",
@@ -48,7 +48,7 @@ class ScrapingViewModel: ObservableObject {
             linkQuery: ".links > a:nth-child(4)",
             titleQuery: ".link",
             sizeQuery: ".size"
-       )
+        )
     ]
 
     @Published var searchResults: [SearchResult] = []
@@ -91,7 +91,7 @@ class ScrapingViewModel: ObservableObject {
     public func scrapeWebsite(source: TorrentSource, html: String) async {
         var tempResults: [SearchResult] = []
         var hashes: [String] = []
-        
+
         do {
             let document = try SwiftSoup.parse(html)
 

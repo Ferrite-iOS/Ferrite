@@ -5,8 +5,8 @@
 //  Created by Brian Dashore on 7/20/22.
 //
 
-import SwiftUI
 import ActivityView
+import SwiftUI
 
 struct MagnetChoiceView: View {
     @Environment(\.dismiss) var dismiss

@@ -18,7 +18,7 @@ public enum RealDebridError: Error {
 }
 
 public class RealDebrid: ObservableObject {
-    var parentManager: DebridManager? = nil
+    var parentManager: DebridManager?
 
     let jsonDecoder = JSONDecoder()
     let keychain = Keychain()
@@ -60,7 +60,7 @@ public class RealDebrid: ObservableObject {
                     }
                 }
             }
-            
+
             return rawResponse.directVerificationURL
         } catch {
             print("Couldn't get the new client creds!")
@@ -108,7 +108,7 @@ public class RealDebrid: ObservableObject {
                 }
             }
         }
-        
+
         if case let .failure(error) = await authTask?.result {
             throw error
         }
@@ -137,7 +137,7 @@ public class RealDebrid: ObservableObject {
         ]
 
         request.httpBody = bodyComponents.query?.data(using: .utf8)
-        
+
         let (data, _) = try await URLSession.shared.data(for: request)
 
         let rawResponse = try jsonDecoder.decode(TokenResponse.self, from: data)
@@ -182,7 +182,7 @@ public class RealDebrid: ObservableObject {
         if let token = Keychain.shared.get("RealDebrid.AccessToken") {
             var request = URLRequest(url: URL(string: "\(baseApiUrl)/disable_access_token")!)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            let _ = try? await URLSession.shared.data(for: request)
+            _ = try? await URLSession.shared.data(for: request)
 
             Keychain.shared.delete("RealDebrid.AccessToken")
         }
@@ -240,9 +240,9 @@ public class RealDebrid: ObservableObject {
             if data.rd.count > 1 || data.rd[0].count > 1 {
                 // Batch array
                 let batches = data.rd.map { fileDict in
-                    let batchFiles: [RealDebridIABatchFile] = fileDict.map { (key, value) in
+                    let batchFiles: [RealDebridIABatchFile] = fileDict.map { key, value in
                         // Force unwrapped ID. Is safe because ID is guaranteed on a successful response
-                        return RealDebridIABatchFile(id: Int(key)!, fileName: value.filename)
+                        RealDebridIABatchFile(id: Int(key)!, fileName: value.filename)
                     }.sorted(by: { $0.id < $1.id })
 
                     return RealDebridIABatch(files: batchFiles)
