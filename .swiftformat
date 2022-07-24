@@ -1,5 +1,5 @@
 # File exclusion
---exclude Ferrite/API/Keychain.swift
+# --exclude Ferrite/API/Keychain.swift
 
 # Formatting options
 --acronyms ID,URL,UUID

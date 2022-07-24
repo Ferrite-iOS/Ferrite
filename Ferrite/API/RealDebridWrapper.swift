@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeychainSwift
 
 public enum RealDebridError: Error {
     case InvalidUrl
@@ -21,7 +22,7 @@ public class RealDebrid: ObservableObject {
     var parentManager: DebridManager?
 
     let jsonDecoder = JSONDecoder()
-    let keychain = Keychain()
+    let keychain = KeychainSwift()
 
     let baseAuthUrl = "https://api.real-debrid.com/oauth/v2"
     let baseApiUrl = "https://api.real-debrid.com/rest/1.0"
@@ -97,7 +98,7 @@ public class RealDebrid: ObservableObject {
 
                 if let clientId = rawResponse?.clientID, let clientSecret = rawResponse?.clientSecret {
                     UserDefaults.standard.set(clientId, forKey: "RealDebrid.ClientId")
-                    Keychain.shared.set(clientSecret, forKey: "RealDebrid.ClientSecret")
+                    keychain.set(clientSecret, forKey: "RealDebrid.ClientSecret")
 
                     try await getTokens(deviceCode: deviceCode)
 
@@ -120,7 +121,7 @@ public class RealDebrid: ObservableObject {
             throw RealDebridError.EmptyData
         }
 
-        guard let clientSecret = Keychain.shared.get("RealDebrid.ClientSecret") else {
+        guard let clientSecret = keychain.get("RealDebrid.ClientSecret") else {
             throw RealDebridError.EmptyData
         }
 
@@ -142,8 +143,8 @@ public class RealDebrid: ObservableObject {
 
         let rawResponse = try jsonDecoder.decode(TokenResponse.self, from: data)
 
-        Keychain.shared.set(rawResponse.accessToken, forKey: "RealDebrid.AccessToken")
-        Keychain.shared.set(rawResponse.refreshToken, forKey: "RealDebrid.RefreshToken")
+        keychain.set(rawResponse.accessToken, forKey: "RealDebrid.AccessToken")
+        keychain.set(rawResponse.refreshToken, forKey: "RealDebrid.RefreshToken")
 
         let accessTimestamp = Date().timeIntervalSince1970 + Double(rawResponse.expiresIn)
         UserDefaults.standard.set(accessTimestamp, forKey: "RealDebrid.AccessTokenStamp")
@@ -159,7 +160,7 @@ public class RealDebrid: ObservableObject {
 
         if Date().timeIntervalSince1970 > accessTokenStamp {
             do {
-                if let refreshToken = Keychain.shared.get("RealDebrid.RefreshToken") {
+                if let refreshToken = keychain.get("RealDebrid.RefreshToken") {
                     print("Refresh token found")
                     try await getTokens(deviceCode: refreshToken)
                 }
@@ -169,22 +170,22 @@ public class RealDebrid: ObservableObject {
             }
         }
 
-        return Keychain.shared.get("RealDebrid.AccessToken")
+        return keychain.get("RealDebrid.AccessToken")
     }
 
     public func deleteTokens() async throws {
-        Keychain.shared.delete("RealDebrid.RefreshToken")
-        Keychain.shared.delete("RealDebrid.ClientSecret")
+        keychain.delete("RealDebrid.RefreshToken")
+        keychain.delete("RealDebrid.ClientSecret")
         UserDefaults.standard.removeObject(forKey: "RealDebrid.ClientId")
         UserDefaults.standard.removeObject(forKey: "RealDebrid.AccessTokenStamp")
 
         // Run the request, doesn't matter if it fails
-        if let token = Keychain.shared.get("RealDebrid.AccessToken") {
+        if let token = keychain.get("RealDebrid.AccessToken") {
             var request = URLRequest(url: URL(string: "\(baseApiUrl)/disable_access_token")!)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             _ = try? await URLSession.shared.data(for: request)
 
-            Keychain.shared.delete("RealDebrid.AccessToken")
+            keychain.delete("RealDebrid.AccessToken")
         }
 
         Task { @MainActor in

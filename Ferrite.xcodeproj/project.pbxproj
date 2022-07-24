@@ -23,7 +23,6 @@
 		0CA148E1288903F000DE2211 /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148C9288903F000DE2211 /* Collection.swift */; };
 		0CA148E2288903F000DE2211 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148CA288903F000DE2211 /* Data.swift */; };
 		0CA148E3288903F000DE2211 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148CB288903F000DE2211 /* Task.swift */; };
-		0CA148E4288903F000DE2211 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148CC288903F000DE2211 /* Keychain.swift */; };
 		0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148CD288903F000DE2211 /* DebridManager.swift */; };
 		0CA148E6288903F000DE2211 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148CE288903F000DE2211 /* WebView.swift */; };
 		0CA148E7288903F000DE2211 /* ToastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148CF288903F000DE2211 /* ToastViewModel.swift */; };
@@ -51,7 +50,6 @@
 		0CA148C9288903F000DE2211 /* Collection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
 		0CA148CA288903F000DE2211 /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		0CA148CB288903F000DE2211 /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
-		0CA148CC288903F000DE2211 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		0CA148CD288903F000DE2211 /* DebridManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebridManager.swift; sourceTree = "<group>"; };
 		0CA148CE288903F000DE2211 /* WebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		0CA148CF288903F000DE2211 /* ToastViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToastViewModel.swift; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 		0CA148F12889066000DE2211 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				0CA148CC288903F000DE2211 /* Keychain.swift */,
 				0CA148D0288903F000DE2211 /* RealDebridWrapper.swift */,
 				0CA148C4288903F000DE2211 /* RealDebridModels.swift */,
 			);
@@ -270,7 +267,6 @@
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
-				0CA148E4288903F000DE2211 /* Keychain.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
 				0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */,
 				0CA148E3288903F000DE2211 /* Task.swift in Sources */,
