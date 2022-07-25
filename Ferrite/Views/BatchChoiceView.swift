@@ -17,8 +17,7 @@ struct BatchChoiceView: View {
     var body: some View {
         NavView {
             List {
-                // To present this sheet, an RD item had to be set, this force unwrap is therefore safe
-                ForEach(debridManager.selectedRealDebridItem!.files, id: \.self) { file in
+                ForEach(debridManager.selectedRealDebridItem?.files ?? [], id: \.self) { file in
                     Button(file.name) {
                         debridManager.selectedRealDebridFile = file
 
