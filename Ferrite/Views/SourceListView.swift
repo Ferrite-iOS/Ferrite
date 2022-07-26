@@ -29,7 +29,7 @@ struct SourceListView: View {
                                 get: { source.enabled },
                                 set: {
                                     source.enabled = $0
-                                    PersistenceController.shared.save(backgroundContext)
+                                    PersistenceController.shared.save()
                                 })) {
                                     Text(source.name ?? "Unknown Source")
                             }

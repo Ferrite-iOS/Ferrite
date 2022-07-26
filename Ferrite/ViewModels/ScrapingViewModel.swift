@@ -27,9 +27,10 @@ class ScrapingViewModel: ObservableObject {
     @Published var debridHashes: [String] = []
     @Published var searchText: String = ""
     @Published var selectedSearchResult: SearchResult?
+    @Published var filteredSource: TorrentSource?
 
     @MainActor
-    public func scanSources(sources: FetchedResults<TorrentSource>) async {
+    public func scanSources(sources: [TorrentSource]) async {
         if sources.isEmpty {
             print("Sources empty")
         }

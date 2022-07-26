@@ -11,6 +11,7 @@
 		0C0D50E2288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */; };
 		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
 		0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourceListView.swift */; };
+		0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */; };
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
 		0C64A4B7288903880079976D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B6288903880079976D /* KeychainSwift */; };
 		0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */ = {isa = PBXBuildFile; productRef = 0C90E32B2888E5D000C0BC89 /* ActivityView */; };
@@ -52,6 +53,7 @@
 		0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSource+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
 		0C0D50E6288DFF850035ECC8 /* SourceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListView.swift; sourceTree = "<group>"; };
+		0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultRDView.swift; sourceTree = "<group>"; };
 		0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSourceUrlView.swift; sourceTree = "<group>"; };
 		0CA05458288EE9E600850554 /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
 		0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListEditorView.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				0CA148C0288903F000DE2211 /* CommonViews */,
 				0CA0545C288F7CB200850554 /* SettingsViews */,
 				0CA148D3288903F000DE2211 /* SearchResultsView.swift */,
+				0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */,
 				0CA148D4288903F000DE2211 /* ContentView.swift */,
 				0CA148D1288903F000DE2211 /* MainView.swift */,
 				0CA148BB288903F000DE2211 /* SettingsView.swift */,
@@ -346,6 +349,7 @@
 				0CA148E6288903F000DE2211 /* WebView.swift in Sources */,
 				0CA148E2288903F000DE2211 /* Data.swift in Sources */,
 				0C0D50E1288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift in Sources */,
+				0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */,
 				0CA05459288EE9E600850554 /* SourceManager.swift in Sources */,
 				0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,

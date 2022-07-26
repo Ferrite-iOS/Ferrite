@@ -18,20 +18,69 @@ struct ContentView: View {
         sortDescriptors: []
     ) var sources: FetchedResults<TorrentSource>
 
+    @State private var selectedSource: TorrentSource? {
+        didSet {
+            scrapingModel.filteredSource = selectedSource
+        }
+    }
+
     var body: some View {
         NavView {
-            VStack {
+            VStack(spacing: 10) {
+                HStack {
+                    Text("Filter")
+                        .foregroundColor(.secondary)
+
+                    Menu {
+                        Button {
+                            selectedSource = nil
+                        } label: {
+                            Text("None")
+
+                            if (selectedSource == nil) {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+
+                        ForEach(sources, id: \.self) { source in
+                            if let name = source.name, source.enabled {
+                                Button {
+                                    selectedSource = source
+                                } label: {
+                                    Text(name)
+
+                                    if selectedSource == source {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        Text(selectedSource?.name ?? "Source")
+                            .padding(.trailing, -3)
+                        Image(systemName: "chevron.down")
+                    }
+                    .foregroundColor(.primary)
+
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+
                 SearchResultsView()
             }
             .searchable(text: $scrapingModel.searchText)
             .onSubmit(of: .search) {
                 Task {
-                    await scrapingModel.scanSources(sources: sources)
+                    await scrapingModel.scanSources(sources: sources.compactMap { $0 })
                     await debridManager.populateDebridHashes(scrapingModel.searchResults)
                 }
             }
             .navigationTitle("Search")
         }
+    }
+
+    func performSearch() {
+        
     }
 }
 
