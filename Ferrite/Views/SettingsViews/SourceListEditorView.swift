@@ -15,8 +15,6 @@ struct SourceListEditorView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @State private var sourceUrl = ""
-    @State private var urlErrorAlertText = ""
-    @State private var showUrlErrorAlert = false
 
     var body: some View {
         NavView {
@@ -28,10 +26,10 @@ struct SourceListEditorView: View {
                         .autocapitalization(.none)
                 }
             }
-            .alert(isPresented: $showUrlErrorAlert) {
+            .alert(isPresented: $sourceManager.showUrlErrorAlert) {
                 Alert(
                     title: Text("Error"),
-                    message: Text(urlErrorAlertText),
+                    message: Text(sourceManager.urlErrorAlertText),
                     dismissButton: .default(Text("OK"))
                 )
             }
@@ -44,44 +42,12 @@ struct SourceListEditorView: View {
                     }
                 }
 
-                // Placing this function in the SourceManager causes the view to break on error. Place it here for now.
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         Task {
-                            let backgroundContext = PersistenceController.shared.backgroundContext
-
-                            if sourceUrl.isEmpty || URL(string: sourceUrl) == nil {
-                                urlErrorAlertText = "The provided source list is invalid. Please check if the URL is formatted properly."
-                                showUrlErrorAlert.toggle()
-
-                                return
+                            if await sourceManager.addSourceList(sourceUrl: sourceUrl) {
+                                dismiss()
                             }
-
-                            let sourceUrlRequest = TorrentSourceUrl.fetchRequest()
-                            sourceUrlRequest.predicate = NSPredicate(format: "urlString == %@", sourceUrl)
-                            sourceUrlRequest.fetchLimit = 1
-
-                            if let existingSourceUrl = try? backgroundContext.fetch(sourceUrlRequest).first {
-                                print("Existing source URL found")
-                                PersistenceController.shared.delete(existingSourceUrl, context: backgroundContext)
-                            }
-
-                            let newSourceUrl = TorrentSourceUrl(context: backgroundContext)
-                            newSourceUrl.urlString = sourceUrl
-
-                            do {
-                                let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: sourceUrl)!))
-                                if let rawResponse = try? JSONDecoder().decode(SourceJson.self, from: data) {
-                                    newSourceUrl.repoName = rawResponse.repoName
-                                }
-
-                                try backgroundContext.save()
-                            } catch {
-                                urlErrorAlertText = error.localizedDescription
-                                showUrlErrorAlert.toggle()
-                            }
-
-                            dismiss()
                         }
                     }
                 }

@@ -12,6 +12,9 @@ public class SourceManager: ObservableObject {
 
     @Published var availableSources: [TorrentSourceJson] = []
 
+    @Published var urlErrorAlertText = ""
+    @Published var showUrlErrorAlert = false
+
     @MainActor
     public func fetchSourcesFromUrl() async {
         let sourceUrlRequest = TorrentSourceUrl.fetchRequest()
@@ -71,6 +74,46 @@ public class SourceManager: ObservableObject {
             Task { @MainActor in
                 toastModel?.toastDescription = error.localizedDescription
             }
+        }
+    }
+
+    @MainActor
+    public func addSourceList(sourceUrl: String) async -> Bool {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        if sourceUrl.isEmpty || URL(string: sourceUrl) == nil {
+            urlErrorAlertText = "The provided source list is invalid. Please check if the URL is formatted properly."
+            showUrlErrorAlert.toggle()
+
+            return false
+        }
+
+        let sourceUrlRequest = TorrentSourceUrl.fetchRequest()
+        sourceUrlRequest.predicate = NSPredicate(format: "urlString == %@", sourceUrl)
+        sourceUrlRequest.fetchLimit = 1
+
+        if let existingSourceUrl = try? backgroundContext.fetch(sourceUrlRequest).first {
+            print("Existing source URL found")
+            PersistenceController.shared.delete(existingSourceUrl, context: backgroundContext)
+        }
+
+        let newSourceUrl = TorrentSourceUrl(context: backgroundContext)
+        newSourceUrl.urlString = sourceUrl
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: sourceUrl)!))
+            if let rawResponse = try? JSONDecoder().decode(SourceJson.self, from: data) {
+                newSourceUrl.repoName = rawResponse.repoName
+            }
+
+            try backgroundContext.save()
+
+            return true
+        } catch {
+            urlErrorAlertText = error.localizedDescription
+            showUrlErrorAlert.toggle()
+
+            return false
         }
     }
 }
