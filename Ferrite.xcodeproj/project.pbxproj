@@ -7,9 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C0D50E1288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50DF288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift */; };
+		0C0D50E2288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */; };
+		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
+		0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourceListView.swift */; };
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
 		0C64A4B7288903880079976D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B6288903880079976D /* KeychainSwift */; };
 		0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */ = {isa = PBXBuildFile; productRef = 0C90E32B2888E5D000C0BC89 /* ActivityView */; };
+		0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */; };
+		0CA05459288EE9E600850554 /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05458288EE9E600850554 /* SourceManager.swift */; };
+		0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */; };
 		0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148BB288903F000DE2211 /* SettingsView.swift */; };
 		0CA148D7288903F000DE2211 /* LoginWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148BC288903F000DE2211 /* LoginWebView.swift */; };
 		0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */; };
@@ -33,10 +40,21 @@
 		0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 0CAF1C7A286F5C8600296F86 /* SwiftSoup */; };
 		0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */; };
 		0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */; };
+		0CBC7702288DE4400054BE44 /* FerriteDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7700288DE4400054BE44 /* FerriteDB.xcdatamodeld */; };
+		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
+		0CE37ABA288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE37AB8288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift */; };
+		0CE37ABB288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE37AB9288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift */; };
 		0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C0D50DF288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSource+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSource+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
+		0C0D50E6288DFF850035ECC8 /* SourceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListView.swift; sourceTree = "<group>"; };
+		0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSourceUrlView.swift; sourceTree = "<group>"; };
+		0CA05458288EE9E600850554 /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
+		0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListEditorView.swift; sourceTree = "<group>"; };
 		0CA148BB288903F000DE2211 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		0CA148BC288903F000DE2211 /* LoginWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginWebView.swift; sourceTree = "<group>"; };
 		0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MagnetChoiceView.swift; sourceTree = "<group>"; };
@@ -60,6 +78,10 @@
 		0CAF1C68286F5C0E00296F86 /* Ferrite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ferrite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchChoiceView.swift; sourceTree = "<group>"; };
 		0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewModel.swift; sourceTree = "<group>"; };
+		0CBC7701288DE4400054BE44 /* FerriteDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FerriteDB.xcdatamodel; sourceTree = "<group>"; };
+		0CBC7704288DE7F40054BE44 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		0CE37AB8288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSourceUrl+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0CE37AB9288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSourceUrl+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,11 +100,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C0D50DE288DF72D0035ECC8 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				0CE37AB8288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift */,
+				0CE37AB9288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift */,
+				0C0D50DF288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift */,
+				0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		0C0D50E3288DFE6E0035ECC8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0CA148C4288903F000DE2211 /* RealDebridModels.swift */,
+				0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0CA0545C288F7CB200850554 /* SettingsViews */ = {
+			isa = PBXGroup;
+			children = (
+				0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */,
+				0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */,
+			);
+			path = SettingsViews;
+			sourceTree = "<group>";
+		};
 		0CA148BA288903F000DE2211 /* Ferrite */ = {
 			isa = PBXGroup;
 			children = (
+				0CBC7703288DE7E90054BE44 /* DataManagement */,
 				0CA148F12889066000DE2211 /* API */,
-				0CA148EF2889061600DE2211 /* Models */,
+				0C0D50E3288DFE6E0035ECC8 /* Models */,
+				0CA148EF2889061600DE2211 /* ViewModels */,
 				0CA148EE2889061200DE2211 /* Views */,
 				0CA148C8288903F000DE2211 /* Extensions */,
 				0CA148C5288903F000DE2211 /* Preview Content */,
@@ -124,6 +177,7 @@
 			children = (
 				0CA148F02889062700DE2211 /* RepresentableViews */,
 				0CA148C0288903F000DE2211 /* CommonViews */,
+				0CA0545C288F7CB200850554 /* SettingsViews */,
 				0CA148D3288903F000DE2211 /* SearchResultsView.swift */,
 				0CA148D4288903F000DE2211 /* ContentView.swift */,
 				0CA148D1288903F000DE2211 /* MainView.swift */,
@@ -132,19 +186,21 @@
 				0CA148BC288903F000DE2211 /* LoginWebView.swift */,
 				0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */,
 				0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */,
+				0C0D50E6288DFF850035ECC8 /* SourceListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		0CA148EF2889061600DE2211 /* Models */ = {
+		0CA148EF2889061600DE2211 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				0CA148CD288903F000DE2211 /* DebridManager.swift */,
 				0CA148C3288903F000DE2211 /* ScrapingViewModel.swift */,
 				0CA148CF288903F000DE2211 /* ToastViewModel.swift */,
 				0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */,
+				0CA05458288EE9E600850554 /* SourceManager.swift */,
 			);
-			path = Models;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		0CA148F02889062700DE2211 /* RepresentableViews */ = {
@@ -159,7 +215,6 @@
 			isa = PBXGroup;
 			children = (
 				0CA148D0288903F000DE2211 /* RealDebridWrapper.swift */,
-				0CA148C4288903F000DE2211 /* RealDebridModels.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -178,6 +233,16 @@
 				0CAF1C68286F5C0E00296F86 /* Ferrite.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		0CBC7703288DE7E90054BE44 /* DataManagement */ = {
+			isa = PBXGroup;
+			children = (
+				0C0D50DE288DF72D0035ECC8 /* Classes */,
+				0CBC7704288DE7F40054BE44 /* PersistenceController.swift */,
+				0CBC7700288DE4400054BE44 /* FerriteDB.xcdatamodeld */,
+			);
+			path = DataManagement;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,9 +327,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CE37ABB288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift in Sources */,
+				0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */,
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
+				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
+				0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
+				0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
@@ -272,16 +342,22 @@
 				0CA148E3288903F000DE2211 /* Task.swift in Sources */,
 				0CA148E7288903F000DE2211 /* ToastViewModel.swift in Sources */,
 				0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */,
+				0CE37ABA288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift in Sources */,
 				0CA148E6288903F000DE2211 /* WebView.swift in Sources */,
 				0CA148E2288903F000DE2211 /* Data.swift in Sources */,
+				0C0D50E1288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift in Sources */,
+				0CA05459288EE9E600850554 /* SourceManager.swift in Sources */,
+				0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,
 				0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */,
 				0CA148E8288903F000DE2211 /* RealDebridWrapper.swift in Sources */,
 				0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */,
 				0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */,
+				0CBC7702288DE4400054BE44 /* FerriteDB.xcdatamodeld in Sources */,
 				0CA148D9288903F000DE2211 /* CardView.swift in Sources */,
 				0CA148EB288903F000DE2211 /* SearchResultsView.swift in Sources */,
 				0CA148D7288903F000DE2211 /* LoginWebView.swift in Sources */,
+				0C0D50E2288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift in Sources */,
 				0CA148E0288903F000DE2211 /* FerriteApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -545,6 +621,19 @@
 			productName = SwiftSoup;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		0CBC7700288DE4400054BE44 /* FerriteDB.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				0CBC7701288DE4400054BE44 /* FerriteDB.xcdatamodel */,
+			);
+			currentVersion = 0CBC7701288DE4400054BE44 /* FerriteDB.xcdatamodel */;
+			path = FerriteDB.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 0CAF1C60286F5C0D00296F86 /* Project object */;
 }

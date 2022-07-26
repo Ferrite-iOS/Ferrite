@@ -13,6 +13,11 @@ struct ContentView: View {
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
+    @FetchRequest(
+        entity: TorrentSource.entity(),
+        sortDescriptors: []
+    ) var sources: FetchedResults<TorrentSource>
+
     var body: some View {
         NavView {
             VStack {
@@ -21,17 +26,8 @@ struct ContentView: View {
             .searchable(text: $scrapingModel.searchText)
             .onSubmit(of: .search) {
                 Task {
-                    for source in scrapingModel.sources {
-                        guard let html = await scrapingModel.fetchWebsiteHtml(source: source) else {
-                            continue
-                        }
-
-                        await scrapingModel.scrapeWebsite(source: source, html: html)
-
-                        if realDebridEnabled {
-                            await debridManager.populateDebridHashes(scrapingModel.searchResults)
-                        }
-                    }
+                    await scrapingModel.scanSources(sources: sources)
+                    await debridManager.populateDebridHashes(scrapingModel.searchResults)
                 }
             }
             .navigationTitle("Search")

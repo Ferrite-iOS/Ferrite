@@ -9,6 +9,7 @@ import SwiftUI
 
 enum Tab {
     case search
+    case sources
     case settings
 }
 
@@ -24,6 +25,13 @@ struct MainView: View {
                     Label("Search", systemImage: "magnifyingglass")
                 }
                 .tag(Tab.search)
+
+            SourceListView()
+                .tabItem {
+                    Label("Sources", systemImage: "doc.text")
+                }
+                .tag(Tab.sources)
+
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")

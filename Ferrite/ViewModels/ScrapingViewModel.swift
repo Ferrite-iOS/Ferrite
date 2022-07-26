@@ -17,44 +17,38 @@ public struct SearchResult: Hashable, Codable {
     let magnetHash: String?
 }
 
-public struct TorrentSource: Hashable, Codable {
-    let name: String
-    let url: String
-    let rowQuery: String
-    let linkQuery: String
-    let titleQuery: String
-    let sizeQuery: String
-}
-
 class ScrapingViewModel: ObservableObject {
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
     // Link the toast view model for single-directional communication
     var toastModel: ToastViewModel?
 
-    // Decopule this in the future
-    let sources = [
-        // TorrentSource(
-        // name: "Nyaa",
-        // url: "https://nyaa.si",
-        // rowQuery: ".torrent-list tbody tr",
-        // linkQuery: "td:nth-child(3) > a:nth-child(2))",
-        // titleQuery: "td:nth-child(2) > a:last-child"
-        // ),
-        TorrentSource(
-            name: "AnimeTosho",
-            url: "https://animetosho.org/search?q=",
-            rowQuery: "#content .home_list_entry",
-            linkQuery: ".links > a:nth-child(4)",
-            titleQuery: ".link",
-            sizeQuery: ".size"
-        )
-    ]
-
     @Published var searchResults: [SearchResult] = []
     @Published var debridHashes: [String] = []
     @Published var searchText: String = ""
     @Published var selectedSearchResult: SearchResult?
+
+    @MainActor
+    public func scanSources(sources: FetchedResults<TorrentSource>) async {
+        if sources.isEmpty {
+            print("Sources empty")
+        }
+
+        var tempResults: [SearchResult] = []
+
+        for source in sources {
+            if source.enabled {
+                guard let html = await fetchWebsiteHtml(source: source) else {
+                    continue
+                }
+
+                let sourceResults = await scrapeWebsite(source: source, html: html)
+                tempResults += sourceResults
+            }
+        }
+
+        searchResults = tempResults
+    }
 
     // Fetches the HTML body for the source website
     @MainActor
@@ -88,7 +82,7 @@ class ScrapingViewModel: ObservableObject {
     // Returns results to UI
     // Results must have a link and title, but other parameters aren't required
     @MainActor
-    public func scrapeWebsite(source: TorrentSource, html: String) async {
+    public func scrapeWebsite(source: TorrentSource, html: String) async -> [SearchResult] {
         var tempResults: [SearchResult] = []
         var hashes: [String] = []
 
@@ -110,15 +104,24 @@ class ScrapingViewModel: ObservableObject {
 
                 let magnetHash = fetchMagnetHash(magnetLink: href)
 
-                let title = try row.select(source.titleQuery).first()
-                let titleText = try title?.text()
+                var title: String?
 
-                let size = try row.select(source.sizeQuery).first()
+                // Some sources may use last-child, but SwiftSoup doesn't support it
+                if let titleQuery = source.titleQuery {
+                    if titleQuery.contains("last-child") {
+                        let newTitleQuery = titleQuery.replacingOccurrences(of: ":last-child", with: "")
+                        title = try row.select(newTitleQuery).last()?.text()
+                    } else {
+                        title = try row.select(titleQuery).first()?.text()
+                    }
+                }
+
+                let size = try row.select(source.sizeQuery ?? "").first()
                 let sizeText = try size?.text()
 
                 let result = SearchResult(
-                    title: titleText ?? "No title provided",
-                    source: source.name,
+                    title: title ?? "No title",
+                    source: source.name ?? "N/A",
                     size: sizeText ?? "?B",
                     magnetLink: href,
                     magnetHash: magnetHash
@@ -132,10 +135,12 @@ class ScrapingViewModel: ObservableObject {
                 tempResults.append(result)
             }
 
-            searchResults = tempResults
+            return tempResults
         } catch {
             toastModel?.toastDescription = "Error while scraping: \(error)"
             print("Error while scraping: \(error)")
+
+            return []
         }
     }
 

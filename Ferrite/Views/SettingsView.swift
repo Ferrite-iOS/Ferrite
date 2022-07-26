@@ -10,6 +10,8 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var debridManager: DebridManager
 
+    let backgroundContext = PersistenceController.shared.backgroundContext
+
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
     @State private var isProcessing = false
@@ -35,6 +37,10 @@ struct SettingsView: View {
                                 .foregroundColor(realDebridEnabled ? .red : .blue)
                         }
                     }
+                }
+
+                Section("Source management") {
+                    NavigationLink("Source lists", destination: SettingsSourceListView())
                 }
             }
             .sheet(isPresented: $debridManager.showWebView) {
