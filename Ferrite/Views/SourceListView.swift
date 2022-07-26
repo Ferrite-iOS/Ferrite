@@ -30,8 +30,9 @@ struct SourceListView: View {
                                 set: {
                                     source.enabled = $0
                                     PersistenceController.shared.save()
-                                })) {
-                                    Text(source.name ?? "Unknown Source")
+                                }
+                            )) {
+                                Text(source.name ?? "Unknown Source")
                             }
                         }
                         .onDelete { offsets in
@@ -52,9 +53,9 @@ struct SourceListView: View {
                             if !sources.contains(where: { availableSource.name == $0.name }) {
                                 HStack {
                                     Text(availableSource.name ?? "Unnamed source")
-                                        
+
                                     Spacer()
-                                        
+
                                     Button("Install") {
                                         sourceManager.installSource(sourceJson: availableSource)
                                     }

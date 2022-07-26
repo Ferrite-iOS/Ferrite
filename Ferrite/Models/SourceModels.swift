@@ -15,7 +15,7 @@ public struct SourceJson: Codable {
     enum CodingKeys: String, CodingKey {
         case repoName = "name"
         case repoAuthor = "author"
-        case sources = "sources"
+        case sources
     }
 }
 

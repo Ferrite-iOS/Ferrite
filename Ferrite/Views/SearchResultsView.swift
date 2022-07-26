@@ -52,7 +52,7 @@ struct SearchResultsView: View {
                         }
                         .tint(.primary)
                         .padding(.bottom, 5)
-                        
+
                         SearchResultRDView(result: result)
                     }
                 }

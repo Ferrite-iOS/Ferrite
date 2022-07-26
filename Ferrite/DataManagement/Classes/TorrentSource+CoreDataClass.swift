@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(TorrentSource)
-public class TorrentSource: NSManagedObject {
-
-}
+public class TorrentSource: NSManagedObject {}

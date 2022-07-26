@@ -146,7 +146,7 @@ public class RealDebrid: ObservableObject {
         keychain.set(rawResponse.accessToken, forKey: "RealDebrid.AccessToken")
         keychain.set(rawResponse.refreshToken, forKey: "RealDebrid.RefreshToken")
 
-        let accessTimestamp = Date().timeIntervalSince1970 + (Double(rawResponse.expiresIn))
+        let accessTimestamp = Date().timeIntervalSince1970 + Double(rawResponse.expiresIn)
         UserDefaults.standard.set(accessTimestamp, forKey: "RealDebrid.AccessTokenStamp")
 
         // Set AppStorage variable

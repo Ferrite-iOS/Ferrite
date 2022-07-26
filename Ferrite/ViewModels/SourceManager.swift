@@ -68,7 +68,7 @@ public class SourceManager: ObservableObject {
         do {
             try backgroundContext.save()
         } catch {
-            Task{ @MainActor in
+            Task { @MainActor in
                 toastModel?.toastDescription = error.localizedDescription
             }
         }

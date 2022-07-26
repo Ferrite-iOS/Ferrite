@@ -37,7 +37,7 @@ struct ContentView: View {
                         } label: {
                             Text("None")
 
-                            if (selectedSource == nil) {
+                            if selectedSource == nil {
                                 Image(systemName: "checkmark")
                             }
                         }
@@ -79,9 +79,7 @@ struct ContentView: View {
         }
     }
 
-    func performSearch() {
-        
-    }
+    func performSearch() {}
 }
 
 struct ContentView_Previews: PreviewProvider {

@@ -6,26 +6,21 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension TorrentSource {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<TorrentSource> {
-        return NSFetchRequest<TorrentSource>(entityName: "TorrentSource")
+public extension TorrentSource {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<TorrentSource> {
+        NSFetchRequest<TorrentSource>(entityName: "TorrentSource")
     }
 
-    @NSManaged public var enabled: Bool
-    @NSManaged public var linkQuery: String
-    @NSManaged public var name: String?
-    @NSManaged public var rowQuery: String
-    @NSManaged public var sizeQuery: String?
-    @NSManaged public var titleQuery: String?
-    @NSManaged public var url: String
-
+    @NSManaged var enabled: Bool
+    @NSManaged var linkQuery: String
+    @NSManaged var name: String?
+    @NSManaged var rowQuery: String
+    @NSManaged var sizeQuery: String?
+    @NSManaged var titleQuery: String?
+    @NSManaged var url: String
 }
 
-extension TorrentSource : Identifiable {
-
-}
+extension TorrentSource: Identifiable {}
