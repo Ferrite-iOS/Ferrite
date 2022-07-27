@@ -74,6 +74,14 @@ struct MagnetChoiceView: View {
                             showActivityView.toggle()
                         }
                     }
+
+                    Button("Open in WebTor") {
+                        if let result = scrapingModel.selectedSearchResult,
+                           let url = URL(string: "https://webtor.io/#/show?magnet=\(result.magnetLink)")
+                        {
+                            UIApplication.shared.open(url)
+                        }
+                    }
                 }
             }
             .activitySheet($activityItem)
