@@ -24,7 +24,7 @@ struct MagnetChoiceView: View {
             Form {
                 if realDebridEnabled, debridManager.matchSearchResult(result: scrapingModel.selectedSearchResult) != .none {
                     Section("Real Debrid options") {
-                        Button("Play on Outplayer") {
+                        ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
                             guard let downloadUrl = URL(string: "outplayer://\(debridManager.realDebridDownloadUrl)") else {
                                 return
                             }
@@ -32,7 +32,7 @@ struct MagnetChoiceView: View {
                             UIApplication.shared.open(downloadUrl)
                         }
 
-                        Button("Play on VLC") {
+                        ListRowButtonView("Play on VLC", systemImage: "arrow.up.forward.app.fill") {
                             guard let downloadUrl = URL(string: "vlc://\(debridManager.realDebridDownloadUrl)") else {
                                 return
                             }
@@ -40,7 +40,7 @@ struct MagnetChoiceView: View {
                             UIApplication.shared.open(downloadUrl)
                         }
 
-                        Button("Play on Infuse") {
+                        ListRowButtonView("Play on Infuse", systemImage: "arrow.up.forward.app.fill") {
                             guard let downloadUrl = URL(string: "infuse://x-callback-url/play?url=\(debridManager.realDebridDownloadUrl)") else {
                                 return
                             }
@@ -48,11 +48,11 @@ struct MagnetChoiceView: View {
                             UIApplication.shared.open(downloadUrl)
                         }
 
-                        Button("Copy download URL") {
+                        ListRowButtonView("Copy download URL", systemImage: "doc.on.doc.fill") {
                             UIPasteboard.general.string = debridManager.realDebridDownloadUrl
                         }
 
-                        Button("Share download URL") {
+                        ListRowButtonView("Share download URL", systemImage: "square.and.arrow.up.fill") {
                             guard let url = URL(string: debridManager.realDebridDownloadUrl) else {
                                 return
                             }
@@ -64,18 +64,18 @@ struct MagnetChoiceView: View {
                 }
 
                 Section("Magnet options") {
-                    Button("Copy magnet") {
+                    ListRowButtonView("Copy magnet", systemImage: "doc.on.doc.fill") {
                         UIPasteboard.general.string = scrapingModel.selectedSearchResult?.magnetLink
                     }
 
-                    Button("Share magnet") {
+                    ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
                         if let result = scrapingModel.selectedSearchResult, let url = URL(string: result.magnetLink) {
                             activityItem = ActivityItem(items: url)
                             showActivityView.toggle()
                         }
                     }
 
-                    Button("Open in WebTor") {
+                    ListRowButtonView("Open in WebTor", systemImage: "arrow.up.forward.app.fill") {
                         if let result = scrapingModel.selectedSearchResult,
                            let url = URL(string: "https://webtor.io/#/show?magnet=\(result.magnetLink)")
                         {

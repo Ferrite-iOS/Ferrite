@@ -42,6 +42,12 @@ struct SettingsView: View {
                 Section("Source management") {
                     NavigationLink("Source lists", destination: SettingsSourceListView())
                 }
+
+                Section {
+                    ListRowLinkView(text: "Report issues", link: "https://github.com/bdashore3/Ferrite/issues")
+
+                    NavigationLink("About", destination: AboutView())
+                }
             }
             .sheet(isPresented: $debridManager.showWebView) {
                 LoginWebView(url: URL(string: debridManager.realDebridAuthUrl)!)
