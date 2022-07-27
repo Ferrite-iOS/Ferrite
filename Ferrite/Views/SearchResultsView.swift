@@ -42,14 +42,6 @@ struct SearchResultsView: View {
                                 .font(.callout)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        .sheet(item: $navigationModel.currentChoiceSheet) { item in
-                            switch item {
-                            case .magnet:
-                                MagnetChoiceView()
-                            case .batch:
-                                BatchChoiceView()
-                            }
-                        }
                         .tint(.primary)
                         .padding(.bottom, 5)
 

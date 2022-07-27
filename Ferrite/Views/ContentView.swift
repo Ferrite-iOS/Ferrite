@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var navigationModel: NavigationViewModel
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
@@ -77,9 +78,18 @@ struct ContentView: View {
             }
             .navigationTitle("Search")
         }
+        .sheet(item: $navigationModel.currentChoiceSheet) { item in
+            Group {
+                switch item {
+                case .magnet:
+                    MagnetChoiceView()
+                case .batch:
+                    BatchChoiceView()
+                }
+            }
+            .tint(.primary)
+        }
     }
-
-    func performSearch() {}
 }
 
 struct ContentView_Previews: PreviewProvider {
