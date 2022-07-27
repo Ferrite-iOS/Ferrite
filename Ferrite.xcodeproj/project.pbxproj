@@ -11,6 +11,9 @@
 		0C0D50E2288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */; };
 		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
 		0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourceListView.swift */; };
+		0C32FB532890D19D002BD219 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB522890D19D002BD219 /* AboutView.swift */; };
+		0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB542890D1BF002BD219 /* UIApplication.swift */; };
+		0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB562890D1F2002BD219 /* ListRowViews.swift */; };
 		0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */; };
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
 		0C64A4B7288903880079976D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B6288903880079976D /* KeychainSwift */; };
@@ -53,6 +56,9 @@
 		0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSource+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
 		0C0D50E6288DFF850035ECC8 /* SourceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListView.swift; sourceTree = "<group>"; };
+		0C32FB522890D19D002BD219 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		0C32FB542890D1BF002BD219 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		0C32FB562890D1F2002BD219 /* ListRowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowViews.swift; sourceTree = "<group>"; };
 		0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultRDView.swift; sourceTree = "<group>"; };
 		0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSourceUrlView.swift; sourceTree = "<group>"; };
 		0CA05458288EE9E600850554 /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
@@ -152,6 +158,7 @@
 			children = (
 				0CA148C1288903F000DE2211 /* NavView.swift */,
 				0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */,
+				0C32FB562890D1F2002BD219 /* ListRowViews.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -170,6 +177,7 @@
 				0CA148C9288903F000DE2211 /* Collection.swift */,
 				0CA148CA288903F000DE2211 /* Data.swift */,
 				0CA148CB288903F000DE2211 /* Task.swift */,
+				0C32FB542890D1BF002BD219 /* UIApplication.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -190,6 +198,7 @@
 				0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */,
 				0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */,
 				0C0D50E6288DFF850035ECC8 /* SourceListView.swift */,
+				0C32FB522890D19D002BD219 /* AboutView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -332,11 +341,13 @@
 			files = (
 				0CE37ABB288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift in Sources */,
 				0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */,
+				0C32FB532890D19D002BD219 /* AboutView.swift in Sources */,
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
 				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
 				0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
+				0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */,
 				0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
@@ -359,6 +370,7 @@
 				0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */,
 				0CBC7702288DE4400054BE44 /* FerriteDB.xcdatamodeld in Sources */,
 				0CA148D9288903F000DE2211 /* CardView.swift in Sources */,
+				0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */,
 				0CA148EB288903F000DE2211 /* SearchResultsView.swift in Sources */,
 				0CA148D7288903F000DE2211 /* LoginWebView.swift in Sources */,
 				0C0D50E2288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift in Sources */,
