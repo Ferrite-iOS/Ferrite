@@ -106,15 +106,8 @@ class ScrapingViewModel: ObservableObject {
                 let magnetHash = fetchMagnetHash(magnetLink: href)
 
                 var title: String?
-
-                // Some sources may use last-child, but SwiftSoup doesn't support it
                 if let titleQuery = source.titleQuery {
-                    if titleQuery.contains("last-child") {
-                        let newTitleQuery = titleQuery.replacingOccurrences(of: ":last-child", with: "")
-                        title = try row.select(newTitleQuery).last()?.text()
-                    } else {
-                        title = try row.select(titleQuery).first()?.text()
-                    }
+                    title = try row.select(titleQuery).first()?.text()
                 }
 
                 let size = try row.select(source.sizeQuery ?? "").first()
