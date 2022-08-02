@@ -20,6 +20,14 @@ struct SearchResultRDView: View {
 
             Spacer()
 
+            if let seeders = result.seeders {
+                Text("S: \(seeders)")
+            }
+
+            if let leechers = result.leechers {
+                Text("L: \(leechers)")
+            }
+
             Text(result.size)
 
             if realDebridEnabled {

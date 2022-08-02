@@ -11,9 +11,9 @@ struct SettingsSourceListView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @FetchRequest(
-        entity: TorrentSourceUrl.entity(),
+        entity: SourceList.entity(),
         sortDescriptors: []
-    ) var sourceUrls: FetchedResults<TorrentSourceUrl>
+    ) var sourceUrls: FetchedResults<SourceList>
 
     @State private var presentSourceSheet = false
 

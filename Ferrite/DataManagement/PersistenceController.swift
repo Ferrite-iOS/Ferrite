@@ -9,7 +9,7 @@ import CoreData
 
 // No iCloud until finalized sources
 struct PersistenceController {
-    static let shared = PersistenceController()
+    static var shared = PersistenceController()
 
     // Coredata storage
     let container: NSPersistentContainer
@@ -40,10 +40,9 @@ struct PersistenceController {
         backgroundContext.automaticallyMergesChangesFromParent = true
         backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         try? backgroundContext.setQueryGenerationFrom(.current)
-
         container.loadPersistentStores { _, error in
             if let error = error {
-                fatalError("Error: \(error.localizedDescription)")
+                fatalError("CoreData init error: \(error)")
             }
         }
     }

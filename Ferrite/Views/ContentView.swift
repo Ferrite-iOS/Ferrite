@@ -15,11 +15,11 @@ struct ContentView: View {
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
     @FetchRequest(
-        entity: TorrentSource.entity(),
+        entity: Source.entity(),
         sortDescriptors: []
-    ) var sources: FetchedResults<TorrentSource>
+    ) var sources: FetchedResults<Source>
 
-    @State private var selectedSource: TorrentSource? {
+    @State private var selectedSource: Source? {
         didSet {
             scrapingModel.filteredSource = selectedSource
         }

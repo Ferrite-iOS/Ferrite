@@ -13,9 +13,9 @@ struct SourceListView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @FetchRequest(
-        entity: TorrentSource.entity(),
+        entity: Source.entity(),
         sortDescriptors: []
-    ) var sources: FetchedResults<TorrentSource>
+    ) var sources: FetchedResults<Source>
 
     @State private var availableSourceLength = 0
 
@@ -32,7 +32,7 @@ struct SourceListView: View {
                                     PersistenceController.shared.save()
                                 }
                             )) {
-                                Text(source.name ?? "Unknown Source")
+                                Text(source.name)
                             }
                         }
                         .onDelete { offsets in
@@ -52,7 +52,7 @@ struct SourceListView: View {
                         ForEach(sourceManager.availableSources, id: \.self) { availableSource in
                             if !sources.contains(where: { availableSource.name == $0.name }) {
                                 HStack {
-                                    Text(availableSource.name ?? "Unnamed source")
+                                    Text(availableSource.name)
 
                                     Spacer()
 

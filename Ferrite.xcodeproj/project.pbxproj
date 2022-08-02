@@ -7,16 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C0D50E1288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50DF288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift */; };
-		0C0D50E2288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */; };
 		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
 		0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourceListView.swift */; };
 		0C32FB532890D19D002BD219 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB522890D19D002BD219 /* AboutView.swift */; };
 		0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB542890D1BF002BD219 /* UIApplication.swift */; };
 		0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB562890D1F2002BD219 /* ListRowViews.swift */; };
+		0C4CFC462897030D00AD9FAD /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = 0C4CFC452897030D00AD9FAD /* Regex */; };
+		0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4CFC4728970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift */; };
+		0C4CFC4E28970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4CFC4828970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift */; };
 		0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */; };
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
 		0C64A4B7288903880079976D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B6288903880079976D /* KeychainSwift */; };
+		0C79DC072899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */; };
+		0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */; };
+		0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F4752895BE680074B7C9 /* FerriteDB.xcdatamodeld */; };
+		0C84F4822895BFED0074B7C9 /* Source+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47A2895BFED0074B7C9 /* Source+CoreDataClass.swift */; };
+		0C84F4832895BFED0074B7C9 /* Source+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47B2895BFED0074B7C9 /* Source+CoreDataProperties.swift */; };
+		0C84F4842895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47C2895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift */; };
+		0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */; };
+		0C84F4862895BFED0074B7C9 /* SourceList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */; };
+		0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */; };
 		0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */ = {isa = PBXBuildFile; productRef = 0C90E32B2888E5D000C0BC89 /* ActivityView */; };
 		0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */; };
 		0CA05459288EE9E600850554 /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05458288EE9E600850554 /* SourceManager.swift */; };
@@ -44,22 +54,28 @@
 		0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 0CAF1C7A286F5C8600296F86 /* SwiftSoup */; };
 		0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */; };
 		0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */; };
-		0CBC7702288DE4400054BE44 /* FerriteDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7700288DE4400054BE44 /* FerriteDB.xcdatamodeld */; };
 		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
-		0CE37ABA288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE37AB8288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift */; };
-		0CE37ABB288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE37AB9288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift */; };
 		0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0C0D50DF288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSource+CoreDataClass.swift"; sourceTree = "<group>"; };
-		0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSource+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
 		0C0D50E6288DFF850035ECC8 /* SourceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListView.swift; sourceTree = "<group>"; };
 		0C32FB522890D19D002BD219 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		0C32FB542890D1BF002BD219 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		0C32FB562890D1F2002BD219 /* ListRowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowViews.swift; sourceTree = "<group>"; };
+		0C4CFC4728970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceComplexQuery+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C4CFC4828970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceComplexQuery+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultRDView.swift; sourceTree = "<group>"; };
+		0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C84F4762895BE680074B7C9 /* FerriteDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FerriteDB.xcdatamodel; sourceTree = "<group>"; };
+		0C84F47A2895BFED0074B7C9 /* Source+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Source+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C84F47B2895BFED0074B7C9 /* Source+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Source+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C84F47C2895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceList+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceList+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSourceUrlView.swift; sourceTree = "<group>"; };
 		0CA05458288EE9E600850554 /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
 		0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListEditorView.swift; sourceTree = "<group>"; };
@@ -86,10 +102,7 @@
 		0CAF1C68286F5C0E00296F86 /* Ferrite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ferrite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchChoiceView.swift; sourceTree = "<group>"; };
 		0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewModel.swift; sourceTree = "<group>"; };
-		0CBC7701288DE4400054BE44 /* FerriteDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FerriteDB.xcdatamodel; sourceTree = "<group>"; };
 		0CBC7704288DE7F40054BE44 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
-		0CE37AB8288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSourceUrl+CoreDataClass.swift"; sourceTree = "<group>"; };
-		0CE37AB9288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TorrentSourceUrl+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -100,6 +113,7 @@
 			files = (
 				0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */,
 				0C64A4B4288903680079976D /* Base32 in Frameworks */,
+				0C4CFC462897030D00AD9FAD /* Regex in Frameworks */,
 				0C64A4B7288903880079976D /* KeychainSwift in Frameworks */,
 				0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */,
 			);
@@ -111,10 +125,16 @@
 		0C0D50DE288DF72D0035ECC8 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				0CE37AB8288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift */,
-				0CE37AB9288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift */,
-				0C0D50DF288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift */,
-				0C0D50E0288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift */,
+				0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */,
+				0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */,
+				0C4CFC4728970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift */,
+				0C4CFC4828970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift */,
+				0C84F47A2895BFED0074B7C9 /* Source+CoreDataClass.swift */,
+				0C84F47B2895BFED0074B7C9 /* Source+CoreDataProperties.swift */,
+				0C84F47C2895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift */,
+				0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */,
+				0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */,
+				0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -252,7 +272,7 @@
 			children = (
 				0C0D50DE288DF72D0035ECC8 /* Classes */,
 				0CBC7704288DE7F40054BE44 /* PersistenceController.swift */,
-				0CBC7700288DE4400054BE44 /* FerriteDB.xcdatamodeld */,
+				0C84F4752895BE680074B7C9 /* FerriteDB.xcdatamodeld */,
 			);
 			path = DataManagement;
 			sourceTree = "<group>";
@@ -278,6 +298,7 @@
 				0C90E32B2888E5D000C0BC89 /* ActivityView */,
 				0C64A4B3288903680079976D /* Base32 */,
 				0C64A4B6288903880079976D /* KeychainSwift */,
+				0C4CFC452897030D00AD9FAD /* Regex */,
 			);
 			productName = Torrenter;
 			productReference = 0CAF1C68286F5C0E00296F86 /* Ferrite.app */;
@@ -312,6 +333,7 @@
 				0C90E32A2888E5D000C0BC89 /* XCRemoteSwiftPackageReference "ActivityView" */,
 				0C64A4B2288903680079976D /* XCRemoteSwiftPackageReference "Base32" */,
 				0C64A4B5288903880079976D /* XCRemoteSwiftPackageReference "keychain-swift" */,
+				0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */,
 			);
 			productRefGroup = 0CAF1C69286F5C0E00296F86 /* Products */;
 			projectDirPath = "";
@@ -339,41 +361,47 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0CE37ABB288E4AE900428C2D /* TorrentSourceUrl+CoreDataProperties.swift in Sources */,
 				0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */,
 				0C32FB532890D19D002BD219 /* AboutView.swift in Sources */,
+				0C84F4832895BFED0074B7C9 /* Source+CoreDataProperties.swift in Sources */,
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
 				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
 				0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */,
+				0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
 				0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */,
 				0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
+				0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
 				0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */,
+				0C84F4862895BFED0074B7C9 /* SourceList+CoreDataClass.swift in Sources */,
 				0CA148E3288903F000DE2211 /* Task.swift in Sources */,
 				0CA148E7288903F000DE2211 /* ToastViewModel.swift in Sources */,
 				0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */,
-				0CE37ABA288E4AE900428C2D /* TorrentSourceUrl+CoreDataClass.swift in Sources */,
+				0C79DC072899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift in Sources */,
 				0CA148E6288903F000DE2211 /* WebView.swift in Sources */,
+				0C4CFC4E28970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift in Sources */,
 				0CA148E2288903F000DE2211 /* Data.swift in Sources */,
-				0C0D50E1288DF7700035ECC8 /* TorrentSource+CoreDataClass.swift in Sources */,
 				0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */,
 				0CA05459288EE9E600850554 /* SourceManager.swift in Sources */,
+				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,
 				0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,
 				0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */,
+				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,
 				0CA148E8288903F000DE2211 /* RealDebridWrapper.swift in Sources */,
 				0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */,
 				0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */,
-				0CBC7702288DE4400054BE44 /* FerriteDB.xcdatamodeld in Sources */,
+				0C84F4842895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift in Sources */,
 				0CA148D9288903F000DE2211 /* CardView.swift in Sources */,
 				0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */,
+				0C84F4822895BFED0074B7C9 /* Source+CoreDataClass.swift in Sources */,
+				0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */,
 				0CA148EB288903F000DE2211 /* SearchResultsView.swift in Sources */,
 				0CA148D7288903F000DE2211 /* LoginWebView.swift in Sources */,
-				0C0D50E2288DF7700035ECC8 /* TorrentSource+CoreDataProperties.swift in Sources */,
 				0CA148E0288903F000DE2211 /* FerriteApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -581,6 +609,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Regex";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		0C64A4B2288903680079976D /* XCRemoteSwiftPackageReference "Base32" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/norio-nomura/Base32";
@@ -616,6 +652,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0C4CFC452897030D00AD9FAD /* Regex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */;
+			productName = Regex;
+		};
 		0C64A4B3288903680079976D /* Base32 */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0C64A4B2288903680079976D /* XCRemoteSwiftPackageReference "Base32" */;
@@ -639,12 +680,12 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
-		0CBC7700288DE4400054BE44 /* FerriteDB.xcdatamodeld */ = {
+		0C84F4752895BE680074B7C9 /* FerriteDB.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				0CBC7701288DE4400054BE44 /* FerriteDB.xcdatamodel */,
+				0C84F4762895BE680074B7C9 /* FerriteDB.xcdatamodel */,
 			);
-			currentVersion = 0CBC7701288DE4400054BE44 /* FerriteDB.xcdatamodel */;
+			currentVersion = 0C84F4762895BE680074B7C9 /* FerriteDB.xcdatamodel */;
 			path = FerriteDB.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

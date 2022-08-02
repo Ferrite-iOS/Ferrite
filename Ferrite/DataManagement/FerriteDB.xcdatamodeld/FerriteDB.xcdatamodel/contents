@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21256.2" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="TorrentSource" representedClassName="TorrentSource" syncable="YES">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21271" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Source" representedClassName="Source" syncable="YES">
+        <attribute name="baseUrl" attributeType="String" defaultValueString=""/>
         <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="linkQuery" attributeType="String"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="rowQuery" attributeType="String"/>
-        <attribute name="sizeQuery" optional="YES" attributeType="String"/>
-        <attribute name="titleQuery" optional="YES" attributeType="String"/>
-        <attribute name="url" attributeType="String"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="version" attributeType="String" defaultValueString=""/>
+        <relationship name="htmlParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceHtmlParser" inverseName="parentSource" inverseEntity="SourceHtmlParser"/>
     </entity>
-    <entity name="TorrentSourceUrl" representedClassName="TorrentSourceUrl" syncable="YES">
+    <entity name="SourceComplexQuery" representedClassName="SourceComplexQuery" isAbstract="YES" syncable="YES">
+        <attribute name="attribute" attributeType="String" defaultValueString=""/>
+        <attribute name="query" attributeType="String" defaultValueString=""/>
+        <attribute name="regex" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="SourceHtmlParser" representedClassName="SourceHtmlParser" syncable="YES">
+        <attribute name="rows" attributeType="String" defaultValueString=""/>
+        <attribute name="searchUrl" attributeType="String" defaultValueString=""/>
+        <relationship name="magnet" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnet" inverseName="parentParser" inverseEntity="SourceMagnet"/>
+        <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="htmlParser" inverseEntity="Source"/>
+        <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceSeedLeech" inverseName="parentParser" inverseEntity="SourceSeedLeech"/>
+        <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentParser" inverseEntity="SourceSize"/>
+        <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentParser" inverseEntity="SourceTitle"/>
+    </entity>
+    <entity name="SourceList" representedClassName="SourceList" syncable="YES">
         <attribute name="repoAuthor" optional="YES" attributeType="String"/>
         <attribute name="repoName" optional="YES" attributeType="String"/>
-        <attribute name="urlString" attributeType="String"/>
+        <attribute name="urlString" attributeType="String" defaultValueString=""/>
+    </entity>
+    <entity name="SourceMagnet" representedClassName="SourceMagnet" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <attribute name="externalLinkQuery" optional="YES" attributeType="String"/>
+        <relationship name="parentParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="magnet" inverseEntity="SourceHtmlParser"/>
+    </entity>
+    <entity name="SourceSeedLeech" representedClassName="SourceSeedLeech" syncable="YES">
+        <attribute name="attribute" attributeType="String" defaultValueString=""/>
+        <attribute name="combined" optional="YES" attributeType="String"/>
+        <attribute name="leecherRegex" optional="YES" attributeType="String"/>
+        <attribute name="leechers" optional="YES" attributeType="String"/>
+        <attribute name="seederRegex" optional="YES" attributeType="String"/>
+        <attribute name="seeders" optional="YES" attributeType="String"/>
+        <relationship name="parentParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="seedLeech" inverseEntity="SourceHtmlParser"/>
+    </entity>
+    <entity name="SourceSize" representedClassName="SourceSize" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <relationship name="parentParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="size" inverseEntity="SourceHtmlParser"/>
+    </entity>
+    <entity name="SourceTitle" representedClassName="SourceTitle" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <relationship name="parentParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="title" inverseEntity="SourceHtmlParser"/>
     </entity>
 </model>
