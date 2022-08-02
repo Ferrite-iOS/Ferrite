@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var sourceManager: SourceManager
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 

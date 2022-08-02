@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21256.2" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="TorrentSource" representedClassName="TorrentSource" syncable="YES">
+        <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="linkQuery" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="rowQuery" attributeType="String"/>
+        <attribute name="sizeQuery" optional="YES" attributeType="String"/>
+        <attribute name="titleQuery" optional="YES" attributeType="String"/>
+        <attribute name="url" attributeType="String"/>
+    </entity>
+    <entity name="TorrentSourceUrl" representedClassName="TorrentSourceUrl" syncable="YES">
+        <attribute name="repoAuthor" optional="YES" attributeType="String"/>
+        <attribute name="repoName" optional="YES" attributeType="String"/>
+        <attribute name="urlString" attributeType="String"/>
+    </entity>
+</model>
