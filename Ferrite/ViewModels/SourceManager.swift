@@ -33,6 +33,7 @@ public class SourceManager: ObservableObject {
 
                 for index in sourceResponse.sources.indices {
                     sourceResponse.sources[index].author = sourceList.author
+                    sourceResponse.sources[index].listId = sourceList.id
                 }
 
                 tempSourceUrls += sourceResponse.sources
@@ -62,10 +63,12 @@ public class SourceManager: ObservableObject {
         }
 
         let newSource = Source(context: backgroundContext)
+        newSource.id = UUID()
         newSource.name = sourceJson.name
         newSource.version = sourceJson.version
         newSource.baseUrl = sourceJson.baseUrl
-        newSource.author = sourceJson.author
+        newSource.author = sourceJson.author ?? "Unknown"
+        newSource.listId = sourceJson.listId
 
         // Adds an RSS parser if present
         if let rssParserJson = sourceJson.rssParser {
@@ -240,6 +243,7 @@ public class SourceManager: ObservableObject {
             }
 
             let newSourceUrl = SourceList(context: backgroundContext)
+            newSourceUrl.id = UUID()
             newSourceUrl.urlString = sourceUrl
             newSourceUrl.name = rawResponse.name
             newSourceUrl.author = rawResponse.author
@@ -248,6 +252,7 @@ public class SourceManager: ObservableObject {
 
             return true
         } catch {
+            print(error)
             urlErrorAlertText = error.localizedDescription
             showUrlErrorAlert.toggle()
 
