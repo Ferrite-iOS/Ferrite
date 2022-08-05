@@ -15,6 +15,7 @@ public extension SourceComplexQuery {
     }
 
     @NSManaged var attribute: String
+    @NSManaged var lookupAttribute: String?
     @NSManaged var query: String
     @NSManaged var regex: String?
 }

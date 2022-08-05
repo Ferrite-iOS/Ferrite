@@ -73,7 +73,10 @@ struct ContentView: View {
             .onSubmit(of: .search) {
                 Task {
                     await scrapingModel.scanSources(sources: sources.compactMap { $0 })
-                    await debridManager.populateDebridHashes(scrapingModel.searchResults)
+
+                    if realDebridEnabled {
+                        await debridManager.populateDebridHashes(scrapingModel.searchResults)
+                    }
                 }
             }
             .navigationTitle("Search")

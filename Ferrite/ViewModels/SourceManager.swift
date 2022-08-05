@@ -18,18 +18,22 @@ public class SourceManager: ObservableObject {
 
     @MainActor
     public func fetchSourcesFromUrl() async {
-        let sourceUrlRequest = SourceList.fetchRequest()
+        let sourceListRequest = SourceList.fetchRequest()
         do {
-            let sourceUrls = try PersistenceController.shared.backgroundContext.fetch(sourceUrlRequest)
+            let sourceLists = try PersistenceController.shared.backgroundContext.fetch(sourceListRequest)
             var tempSourceUrls: [SourceJson] = []
 
-            for sourceUrl in sourceUrls {
-                guard let url = URL(string: sourceUrl.urlString) else {
+            for sourceList in sourceLists {
+                guard let url = URL(string: sourceList.urlString) else {
                     return
                 }
 
                 let (data, _) = try await URLSession.shared.data(for: URLRequest(url: url))
-                let sourceResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
+                var sourceResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
+
+                for index in sourceResponse.sources.indices {
+                    sourceResponse.sources[index].author = sourceList.author
+                }
 
                 tempSourceUrls += sourceResponse.sources
             }
@@ -61,55 +65,23 @@ public class SourceManager: ObservableObject {
         newSource.name = sourceJson.name
         newSource.version = sourceJson.version
         newSource.baseUrl = sourceJson.baseUrl
+        newSource.author = sourceJson.author
+
+        // Adds an RSS parser if present
+        if let rssParserJson = sourceJson.rssParser {
+            addRssParser(newSource: newSource, rssParserJson: rssParserJson)
+        }
 
         // Adds an HTML parser if present
         if let htmlParserJson = sourceJson.htmlParser {
-            let newSourceHtmlParser = SourceHtmlParser(context: backgroundContext)
-            newSourceHtmlParser.searchUrl = htmlParserJson.searchUrl
-            newSourceHtmlParser.rows = htmlParserJson.rows
+            addHtmlParser(newSource: newSource, htmlParserJson: htmlParserJson)
+        }
 
-            // Adds a title complex query if present
-            if let titleJson = htmlParserJson.title {
-                let newSourceTitle = SourceTitle(context: backgroundContext)
-                newSourceTitle.query = titleJson.query
-                newSourceTitle.attribute = titleJson.attribute
-                newSourceTitle.regex = titleJson.regex
-
-                newSourceHtmlParser.title = newSourceTitle
-            }
-
-            // Adds a size complex query if present
-            if let sizeJson = htmlParserJson.size {
-                let newSourceSize = SourceSize(context: backgroundContext)
-                newSourceSize.query = sizeJson.query
-                newSourceSize.attribute = sizeJson.attribute
-                newSourceSize.regex = sizeJson.regex
-
-                newSourceHtmlParser.size = newSourceSize
-            }
-
-            if let seedLeechJson = htmlParserJson.sl {
-                let newSourceSeedLeech = SourceSeedLeech(context: backgroundContext)
-                newSourceSeedLeech.seeders = seedLeechJson.seeders
-                newSourceSeedLeech.leechers = seedLeechJson.leechers
-                newSourceSeedLeech.combined = seedLeechJson.combined
-                newSourceSeedLeech.attribute = seedLeechJson.attribute
-                newSourceSeedLeech.seederRegex = seedLeechJson.seederRegex
-                newSourceSeedLeech.leecherRegex = seedLeechJson.leecherRegex
-
-                newSourceHtmlParser.seedLeech = newSourceSeedLeech
-            }
-
-            // Adds a magnet complex query and its unique properties
-            let newSourceMagnet = SourceMagnet(context: backgroundContext)
-            newSourceMagnet.externalLinkQuery = htmlParserJson.magnet.externalLinkQuery
-            newSourceMagnet.query = htmlParserJson.magnet.query
-            newSourceMagnet.attribute = htmlParserJson.magnet.attribute
-            newSourceMagnet.regex = htmlParserJson.magnet.regex
-
-            newSourceHtmlParser.magnet = newSourceMagnet
-
-            newSource.htmlParser = newSourceHtmlParser
+        // Add an API condition as well
+        if newSource.rssParser != nil {
+            newSource.preferredParser = Int16(SourcePreferredParser.rss.rawValue)
+        } else {
+            newSource.preferredParser = Int16(SourcePreferredParser.scraping.rawValue)
         }
 
         newSource.enabled = true
@@ -123,6 +95,125 @@ public class SourceManager: ObservableObject {
         }
     }
 
+    func addRssParser(newSource: Source, rssParserJson: SourceRssParserJson) {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        let newSourceRssParser = SourceRssParser(context: backgroundContext)
+        newSourceRssParser.rssUrl = rssParserJson.rssUrl
+        newSourceRssParser.searchUrl = rssParserJson.searchUrl
+        newSourceRssParser.items = rssParserJson.items
+
+        if let magnetLinkJson = rssParserJson.magnetLink {
+            let newSourceMagnetLink = SourceMagnetLink(context: backgroundContext)
+            newSourceMagnetLink.query = magnetLinkJson.query
+            newSourceMagnetLink.attribute = magnetLinkJson.attribute ?? "text"
+            newSourceMagnetLink.lookupAttribute = magnetLinkJson.lookupAttribute
+
+            newSourceRssParser.magnetLink = newSourceMagnetLink
+        }
+
+        if let magnetHashJson = rssParserJson.magnetHash {
+            let newSourceMagnetHash = SourceMagnetHash(context: backgroundContext)
+            newSourceMagnetHash.query = magnetHashJson.query
+            newSourceMagnetHash.attribute = magnetHashJson.attribute ?? "text"
+            newSourceMagnetHash.lookupAttribute = magnetHashJson.lookupAttribute
+
+            newSourceRssParser.magnetHash = newSourceMagnetHash
+        }
+
+        if let titleJson = rssParserJson.title {
+            let newSourceTitle = SourceTitle(context: backgroundContext)
+            newSourceTitle.query = titleJson.query
+            newSourceTitle.attribute = titleJson.attribute ?? "text"
+            newSourceTitle.lookupAttribute = newSourceTitle.lookupAttribute
+
+            newSourceRssParser.title = newSourceTitle
+        }
+
+        if let sizeJson = rssParserJson.size {
+            let newSourceSize = SourceSize(context: backgroundContext)
+            newSourceSize.query = sizeJson.query
+            newSourceSize.attribute = sizeJson.attribute ?? "text"
+            newSourceSize.lookupAttribute = sizeJson.lookupAttribute
+
+            newSourceRssParser.size = newSourceSize
+        }
+
+        if let seedLeechJson = rssParserJson.sl {
+            let newSourceSeedLeech = SourceSeedLeech(context: backgroundContext)
+            newSourceSeedLeech.seeders = seedLeechJson.seeders
+            newSourceSeedLeech.leechers = seedLeechJson.leechers
+            newSourceSeedLeech.combined = seedLeechJson.combined
+            newSourceSeedLeech.attribute = seedLeechJson.attribute ?? "text"
+            newSourceSeedLeech.lookupAttribute = seedLeechJson.lookupAttribute
+            newSourceSeedLeech.seederRegex = seedLeechJson.seederRegex
+            newSourceSeedLeech.leecherRegex = seedLeechJson.leecherRegex
+
+            newSourceRssParser.seedLeech = newSourceSeedLeech
+        }
+
+        if let trackerJson = rssParserJson.trackers {
+            for urlString in trackerJson {
+                let newSourceTracker = SourceTracker(context: backgroundContext)
+                newSourceTracker.urlString = urlString
+                newSourceTracker.parentRssParser = newSourceRssParser
+            }
+        }
+
+        newSource.rssParser = newSourceRssParser
+    }
+
+    func addHtmlParser(newSource: Source, htmlParserJson: SourceHtmlParserJson) {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        let newSourceHtmlParser = SourceHtmlParser(context: backgroundContext)
+        newSourceHtmlParser.searchUrl = htmlParserJson.searchUrl
+        newSourceHtmlParser.rows = htmlParserJson.rows
+
+        // Adds a title complex query if present
+        if let titleJson = htmlParserJson.title {
+            let newSourceTitle = SourceTitle(context: backgroundContext)
+            newSourceTitle.query = titleJson.query
+            newSourceTitle.attribute = titleJson.attribute ?? "text"
+            newSourceTitle.regex = titleJson.regex
+
+            newSourceHtmlParser.title = newSourceTitle
+        }
+
+        // Adds a size complex query if present
+        if let sizeJson = htmlParserJson.size {
+            let newSourceSize = SourceSize(context: backgroundContext)
+            newSourceSize.query = sizeJson.query
+            newSourceSize.attribute = sizeJson.attribute ?? "text"
+            newSourceSize.regex = sizeJson.regex
+
+            newSourceHtmlParser.size = newSourceSize
+        }
+
+        if let seedLeechJson = htmlParserJson.sl {
+            let newSourceSeedLeech = SourceSeedLeech(context: backgroundContext)
+            newSourceSeedLeech.seeders = seedLeechJson.seeders
+            newSourceSeedLeech.leechers = seedLeechJson.leechers
+            newSourceSeedLeech.combined = seedLeechJson.combined
+            newSourceSeedLeech.attribute = seedLeechJson.attribute ?? "text"
+            newSourceSeedLeech.seederRegex = seedLeechJson.seederRegex
+            newSourceSeedLeech.leecherRegex = seedLeechJson.leecherRegex
+
+            newSourceHtmlParser.seedLeech = newSourceSeedLeech
+        }
+
+        // Adds a magnet complex query and its unique properties
+        let newSourceMagnet = SourceMagnetLink(context: backgroundContext)
+        newSourceMagnet.externalLinkQuery = htmlParserJson.magnet.externalLinkQuery
+        newSourceMagnet.query = htmlParserJson.magnet.query
+        newSourceMagnet.attribute = htmlParserJson.magnet.attribute
+        newSourceMagnet.regex = htmlParserJson.magnet.regex
+
+        newSourceHtmlParser.magnetLink = newSourceMagnet
+
+        newSource.htmlParser = newSourceHtmlParser
+    }
+
     @MainActor
     public func addSourceList(sourceUrl: String) async -> Bool {
         let backgroundContext = PersistenceController.shared.backgroundContext
@@ -134,23 +225,24 @@ public class SourceManager: ObservableObject {
             return false
         }
 
-        let sourceUrlRequest = SourceList.fetchRequest()
-        sourceUrlRequest.predicate = NSPredicate(format: "urlString == %@", sourceUrl)
-        sourceUrlRequest.fetchLimit = 1
-
-        if let existingSourceUrl = try? backgroundContext.fetch(sourceUrlRequest).first {
-            print("Existing source URL found")
-            PersistenceController.shared.delete(existingSourceUrl, context: backgroundContext)
-        }
-
-        let newSourceUrl = SourceList(context: backgroundContext)
-        newSourceUrl.urlString = sourceUrl
-
         do {
             let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: sourceUrl)!))
-            if let rawResponse = try? JSONDecoder().decode(SourceListJson.self, from: data) {
-                newSourceUrl.repoName = rawResponse.repoName
+            let rawResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
+
+            let sourceListRequest = SourceList.fetchRequest()
+            sourceListRequest.predicate = NSPredicate(format: "urlString == %@ OR author == %@", sourceUrl, rawResponse.author)
+            sourceListRequest.fetchLimit = 1
+
+            if (try? backgroundContext.fetch(sourceListRequest).first) != nil {
+                urlErrorAlertText = "A source with the same URL or author exists. Please remove it and try again."
+                showUrlErrorAlert.toggle()
+                return false
             }
+
+            let newSourceUrl = SourceList(context: backgroundContext)
+            newSourceUrl.urlString = sourceUrl
+            newSourceUrl.name = rawResponse.name
+            newSourceUrl.author = rawResponse.author
 
             try backgroundContext.save()
 
