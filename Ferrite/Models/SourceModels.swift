@@ -15,7 +15,7 @@ public struct SourceListJson: Codable {
 
 public struct SourceJson: Codable, Hashable {
     let name: String
-    let version: String
+    let version: Int16
     let baseUrl: String
     var author: String?
     let rssParser: SourceRssParserJson?

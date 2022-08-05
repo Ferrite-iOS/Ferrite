@@ -6,7 +6,7 @@
         <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String" defaultValueString=""/>
         <attribute name="preferredParser" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="version" attributeType="String" defaultValueString=""/>
+        <attribute name="version" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="htmlParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceHtmlParser" inverseName="parentSource" inverseEntity="SourceHtmlParser"/>
         <relationship name="rssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="parentSource" inverseEntity="SourceRssParser"/>
     </entity>

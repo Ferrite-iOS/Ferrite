@@ -21,7 +21,7 @@ extension Source {
     @NSManaged public var name: String
     @NSManaged public var author: String?
     @NSManaged public var preferredParser: Int16
-    @NSManaged public var version: String
+    @NSManaged public var version: Int16
     @NSManaged public var htmlParser: SourceHtmlParser?
     @NSManaged public var rssParser: SourceRssParser?
 
