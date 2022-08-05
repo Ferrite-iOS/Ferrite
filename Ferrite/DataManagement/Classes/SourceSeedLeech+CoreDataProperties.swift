@@ -20,6 +20,7 @@ public extension SourceSeedLeech {
     @NSManaged var seederRegex: String?
     @NSManaged var seeders: String?
     @NSManaged var attribute: String
+    @NSManaged var lookupAttribute: String?
     @NSManaged var parentParser: SourceHtmlParser?
 }
 

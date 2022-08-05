@@ -20,7 +20,7 @@ struct SettingsSourceListView: View {
     var body: some View {
         List {
             ForEach(sourceUrls, id: \.self) { sourceUrl in
-                Text(sourceUrl.repoName ?? "Unknown repo")
+                Text(sourceUrl.name)
             }
             .onDelete { offsets in
                 for index in offsets {

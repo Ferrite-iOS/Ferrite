@@ -18,6 +18,9 @@
 		0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */; };
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
 		0C64A4B7288903880079976D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B6288903880079976D /* KeychainSwift */; };
+		0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C733286289C4C820058D1FE /* SourceSettingsView.swift */; };
+		0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */; };
+		0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */; };
 		0C79DC072899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */; };
 		0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */; };
 		0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F4752895BE680074B7C9 /* FerriteDB.xcdatamodeld */; };
@@ -55,6 +58,8 @@
 		0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */; };
 		0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */; };
 		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
+		0CF501F2289AE06A0099C785 /* SourceTracker+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF501F0289AE06A0099C785 /* SourceTracker+CoreDataClass.swift */; };
+		0CF501F3289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF501F1289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift */; };
 		0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +72,9 @@
 		0C4CFC4728970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceComplexQuery+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C4CFC4828970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceComplexQuery+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C57D4CB289032ED008534E8 /* SearchResultRDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultRDView.swift; sourceTree = "<group>"; };
+		0C733286289C4C820058D1FE /* SourceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceSettingsView.swift; sourceTree = "<group>"; };
+		0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceRssParser+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceRssParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C84F4762895BE680074B7C9 /* FerriteDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FerriteDB.xcdatamodel; sourceTree = "<group>"; };
@@ -103,6 +111,8 @@
 		0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchChoiceView.swift; sourceTree = "<group>"; };
 		0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewModel.swift; sourceTree = "<group>"; };
 		0CBC7704288DE7F40054BE44 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		0CF501F0289AE06A0099C785 /* SourceTracker+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceTracker+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0CF501F1289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceTracker+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,6 +135,10 @@
 		0C0D50DE288DF72D0035ECC8 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */,
+				0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */,
+				0CF501F0289AE06A0099C785 /* SourceTracker+CoreDataClass.swift */,
+				0CF501F1289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift */,
 				0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */,
 				0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */,
 				0C4CFC4728970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift */,
@@ -218,6 +232,7 @@
 				0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */,
 				0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */,
 				0C0D50E6288DFF850035ECC8 /* SourceListView.swift */,
+				0C733286289C4C820058D1FE /* SourceSettingsView.swift */,
 				0C32FB522890D19D002BD219 /* AboutView.swift */,
 			);
 			path = Views;
@@ -365,15 +380,18 @@
 				0C32FB532890D19D002BD219 /* AboutView.swift in Sources */,
 				0C84F4832895BFED0074B7C9 /* Source+CoreDataProperties.swift in Sources */,
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
+				0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */,
 				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
 				0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */,
 				0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
+				0CF501F2289AE06A0099C785 /* SourceTracker+CoreDataClass.swift in Sources */,
 				0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */,
 				0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
+				0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */,
 				0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
 				0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */,
@@ -388,7 +406,9 @@
 				0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */,
 				0CA05459288EE9E600850554 /* SourceManager.swift in Sources */,
 				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,
+				0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */,
 				0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */,
+				0CF501F3289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,
 				0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */,
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,

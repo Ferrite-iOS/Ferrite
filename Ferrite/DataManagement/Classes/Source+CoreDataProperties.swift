@@ -2,23 +2,31 @@
 //  Source+CoreDataProperties.swift
 //  Ferrite
 //
-//  Created by Brian Dashore on 7/30/22.
+//  Created by Brian Dashore on 8/3/22.
 //
 //
 
-import CoreData
 import Foundation
+import CoreData
 
-public extension Source {
-    @nonobjc class func fetchRequest() -> NSFetchRequest<Source> {
-        NSFetchRequest<Source>(entityName: "Source")
+
+extension Source {
+
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Source> {
+        return NSFetchRequest<Source>(entityName: "Source")
     }
 
-    @NSManaged var name: String
-    @NSManaged var enabled: Bool
-    @NSManaged var version: String
-    @NSManaged var baseUrl: String
-    @NSManaged var htmlParser: SourceHtmlParser?
+    @NSManaged public var baseUrl: String
+    @NSManaged public var enabled: Bool
+    @NSManaged public var name: String
+    @NSManaged public var author: String?
+    @NSManaged public var preferredParser: Int16
+    @NSManaged public var version: String
+    @NSManaged public var htmlParser: SourceHtmlParser?
+    @NSManaged public var rssParser: SourceRssParser?
+
 }
 
-extension Source: Identifiable {}
+extension Source : Identifiable {
+
+}

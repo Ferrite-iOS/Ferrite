@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SourceListView: View {
     @EnvironmentObject var sourceManager: SourceManager
+    @EnvironmentObject var navModel: NavigationViewModel
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
@@ -32,15 +33,36 @@ struct SourceListView: View {
                                     PersistenceController.shared.save()
                                 }
                             )) {
-                                Text(source.name)
-                            }
-                        }
-                        .onDelete { offsets in
-                            for index in offsets {
-                                if let source = sources[safe: index] {
-                                    PersistenceController.shared.delete(source, context: backgroundContext)
+                                VStack(alignment: .leading, spacing: 5) {
+                                    HStack {
+                                        Text(source.name)
+                                        Text("v\(source.version)")
+                                            .foregroundColor(.secondary)
+                                    }
+
+                                    Text("by \(source.author ?? "Unknown")")
+                                        .foregroundColor(.secondary)
                                 }
                             }
+                            .contextMenu {
+                                Button {
+                                    navModel.selectedSource = source
+                                    navModel.showSourceSettings.toggle()
+                                } label: {
+                                    Text("Settings")
+                                    Image(systemName: "gear")
+                                }
+
+                                Button {
+                                    PersistenceController.shared.delete(source, context: backgroundContext)
+                                } label: {
+                                    Text("Remove")
+                                    Image(systemName: "trash")
+                                }
+                            }
+                        }
+                        .sheet(isPresented: $navModel.showSourceSettings) {
+                            SourceSettingsView()
                         }
                     }
                 }
@@ -52,7 +74,16 @@ struct SourceListView: View {
                         ForEach(sourceManager.availableSources, id: \.self) { availableSource in
                             if !sources.contains(where: { availableSource.name == $0.name }) {
                                 HStack {
-                                    Text(availableSource.name)
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        HStack {
+                                            Text(availableSource.name)
+                                            Text("v\(availableSource.version)")
+                                                .foregroundColor(.secondary)
+                                        }
+                                        
+                                        Text("by \(availableSource.author ?? "Unknown")")
+                                            .foregroundColor(.secondary)
+                                    }
 
                                     Spacer()
 

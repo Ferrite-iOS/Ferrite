@@ -14,8 +14,8 @@ public extension SourceList {
         NSFetchRequest<SourceList>(entityName: "SourceList")
     }
 
-    @NSManaged var repoAuthor: String?
-    @NSManaged var repoName: String?
+    @NSManaged var author: String
+    @NSManaged var name: String
     @NSManaged var urlString: String
 }
 
