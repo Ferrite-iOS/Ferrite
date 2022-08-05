@@ -20,7 +20,12 @@ struct SettingsSourceListView: View {
     var body: some View {
         List {
             ForEach(sourceUrls, id: \.self) { sourceUrl in
-                Text(sourceUrl.name)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(sourceUrl.name)
+                    Text("ID: \(sourceUrl.id)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
             }
             .onDelete { offsets in
                 for index in offsets {

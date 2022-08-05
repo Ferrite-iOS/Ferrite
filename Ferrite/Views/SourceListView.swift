@@ -40,7 +40,7 @@ struct SourceListView: View {
                                             .foregroundColor(.secondary)
                                     }
 
-                                    Text("by \(source.author ?? "Unknown")")
+                                    Text("by \(source.author)")
                                         .foregroundColor(.secondary)
                                 }
                             }

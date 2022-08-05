@@ -10,10 +10,37 @@ import SwiftUI
 struct SourceSettingsView: View {
     @Environment(\.dismiss) var dismiss
 
+    @EnvironmentObject var navModel: NavigationViewModel
+
     var body: some View {
         NavView {
             Form {
-                SourceSettingsMethodView()
+                if let selectedSource = navModel.selectedSource {
+                    Section("Info") {
+                        VStack(alignment: .leading, spacing: 5) {
+                            HStack {
+                                Text(selectedSource.name)
+
+                                Text("v\(selectedSource.version)")
+                            }
+
+                            Text("by \(selectedSource.author)")
+                                .foregroundColor(.secondary)
+
+                            if let listId = selectedSource.listId {
+                                Text("List ID: \(listId)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("No list ID found. This source should be removed.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+
+                    SourceSettingsMethodView(selectedSource: selectedSource)
+                }
             }
             .navigationTitle("Source settings")
             .toolbar {
@@ -28,28 +55,28 @@ struct SourceSettingsView: View {
 }
 
 struct SourceSettingsMethodView: View {
-    @EnvironmentObject var navModel: NavigationViewModel
+    @ObservedObject var selectedSource: Source
 
     @State private var selectedTempParser: SourcePreferredParser = .none
 
     var body: some View {
         Picker("Fetch method", selection: $selectedTempParser) {
-            if navModel.selectedSource?.htmlParser != nil {
+            if selectedSource.htmlParser != nil {
                 Text("Web scraping")
                     .tag(SourcePreferredParser.scraping)
             }
 
-            if navModel.selectedSource?.rssParser != nil {
+            if selectedSource.rssParser != nil {
                 Text("RSS")
                     .tag(SourcePreferredParser.rss)
             }
         }
         .pickerStyle(.inline)
         .onAppear {
-            selectedTempParser = SourcePreferredParser(rawValue: navModel.selectedSource?.preferredParser ?? 0) ?? .none
+            selectedTempParser = SourcePreferredParser(rawValue: selectedSource.preferredParser) ?? .none
         }
         .onChange(of: selectedTempParser) { newMethod in
-            navModel.selectedSource?.preferredParser = newMethod.rawValue
+            selectedSource.preferredParser = selectedTempParser.rawValue
             PersistenceController.shared.save()
         }
     }

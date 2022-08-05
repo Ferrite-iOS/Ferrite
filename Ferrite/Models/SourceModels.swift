@@ -18,6 +18,7 @@ public struct SourceJson: Codable, Hashable {
     let version: Int16
     let baseUrl: String
     var author: String?
+    var listId: UUID?
     let rssParser: SourceRssParserJson?
     let htmlParser: SourceHtmlParserJson?
 }
