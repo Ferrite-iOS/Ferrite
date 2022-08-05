@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
-		0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourceListView.swift */; };
+		0C0D50E7288DFF850035ECC8 /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourcesView.swift */; };
 		0C32FB532890D19D002BD219 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB522890D19D002BD219 /* AboutView.swift */; };
 		0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB542890D1BF002BD219 /* UIApplication.swift */; };
 		0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB562890D1F2002BD219 /* ListRowViews.swift */; };
@@ -31,13 +31,12 @@
 		0C84F4862895BFED0074B7C9 /* SourceList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */; };
 		0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */; };
 		0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */ = {isa = PBXBuildFile; productRef = 0C90E32B2888E5D000C0BC89 /* ActivityView */; };
-		0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */; };
+		0CA05457288EE58200850554 /* SettingsSourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05456288EE58200850554 /* SettingsSourceListView.swift */; };
 		0CA05459288EE9E600850554 /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05458288EE9E600850554 /* SourceManager.swift */; };
 		0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */; };
 		0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148BB288903F000DE2211 /* SettingsView.swift */; };
 		0CA148D7288903F000DE2211 /* LoginWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148BC288903F000DE2211 /* LoginWebView.swift */; };
 		0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */; };
-		0CA148D9288903F000DE2211 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148BE288903F000DE2211 /* CardView.swift */; };
 		0CA148DB288903F000DE2211 /* NavView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148C1288903F000DE2211 /* NavView.swift */; };
 		0CA148DC288903F000DE2211 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CA148C2288903F000DE2211 /* Assets.xcassets */; };
 		0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA148C3288903F000DE2211 /* ScrapingViewModel.swift */; };
@@ -65,7 +64,7 @@
 
 /* Begin PBXFileReference section */
 		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
-		0C0D50E6288DFF850035ECC8 /* SourceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListView.swift; sourceTree = "<group>"; };
+		0C0D50E6288DFF850035ECC8 /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
 		0C32FB522890D19D002BD219 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		0C32FB542890D1BF002BD219 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		0C32FB562890D1F2002BD219 /* ListRowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowViews.swift; sourceTree = "<group>"; };
@@ -84,13 +83,12 @@
 		0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceList+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceList+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSourceUrlView.swift; sourceTree = "<group>"; };
+		0CA05456288EE58200850554 /* SettingsSourceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSourceListView.swift; sourceTree = "<group>"; };
 		0CA05458288EE9E600850554 /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
 		0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListEditorView.swift; sourceTree = "<group>"; };
 		0CA148BB288903F000DE2211 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		0CA148BC288903F000DE2211 /* LoginWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginWebView.swift; sourceTree = "<group>"; };
 		0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MagnetChoiceView.swift; sourceTree = "<group>"; };
-		0CA148BE288903F000DE2211 /* CardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		0CA148C1288903F000DE2211 /* NavView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavView.swift; sourceTree = "<group>"; };
 		0CA148C2288903F000DE2211 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0CA148C3288903F000DE2211 /* ScrapingViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrapingViewModel.swift; sourceTree = "<group>"; };
@@ -165,7 +163,7 @@
 		0CA0545C288F7CB200850554 /* SettingsViews */ = {
 			isa = PBXGroup;
 			children = (
-				0CA05456288EE58200850554 /* SettingsSourceUrlView.swift */,
+				0CA05456288EE58200850554 /* SettingsSourceListView.swift */,
 				0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */,
 			);
 			path = SettingsViews;
@@ -227,11 +225,10 @@
 				0CA148D4288903F000DE2211 /* ContentView.swift */,
 				0CA148D1288903F000DE2211 /* MainView.swift */,
 				0CA148BB288903F000DE2211 /* SettingsView.swift */,
-				0CA148BE288903F000DE2211 /* CardView.swift */,
 				0CA148BC288903F000DE2211 /* LoginWebView.swift */,
 				0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */,
 				0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */,
-				0C0D50E6288DFF850035ECC8 /* SourceListView.swift */,
+				0C0D50E6288DFF850035ECC8 /* SourcesView.swift */,
 				0C733286289C4C820058D1FE /* SourceSettingsView.swift */,
 				0C32FB522890D19D002BD219 /* AboutView.swift */,
 			);
@@ -388,7 +385,7 @@
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
 				0CF501F2289AE06A0099C785 /* SourceTracker+CoreDataClass.swift in Sources */,
 				0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */,
-				0C0D50E7288DFF850035ECC8 /* SourceListView.swift in Sources */,
+				0C0D50E7288DFF850035ECC8 /* SourcesView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
 				0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */,
@@ -407,7 +404,7 @@
 				0CA05459288EE9E600850554 /* SourceManager.swift in Sources */,
 				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,
 				0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */,
-				0CA05457288EE58200850554 /* SettingsSourceUrlView.swift in Sources */,
+				0CA05457288EE58200850554 /* SettingsSourceListView.swift in Sources */,
 				0CF501F3289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,
 				0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */,
@@ -416,7 +413,6 @@
 				0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */,
 				0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */,
 				0C84F4842895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift in Sources */,
-				0CA148D9288903F000DE2211 /* CardView.swift in Sources */,
 				0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */,
 				0C84F4822895BFED0074B7C9 /* Source+CoreDataClass.swift in Sources */,
 				0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */,

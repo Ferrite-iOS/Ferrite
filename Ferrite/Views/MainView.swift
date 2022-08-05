@@ -26,7 +26,7 @@ struct MainView: View {
                 }
                 .tag(Tab.search)
 
-            SourceListView()
+            SourcesView()
                 .tabItem {
                     Label("Sources", systemImage: "doc.text")
                 }
