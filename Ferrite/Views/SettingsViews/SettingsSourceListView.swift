@@ -13,23 +13,23 @@ struct SettingsSourceListView: View {
     @FetchRequest(
         entity: SourceList.entity(),
         sortDescriptors: []
-    ) var sourceUrls: FetchedResults<SourceList>
+    ) var sourceLists: FetchedResults<SourceList>
 
     @State private var presentSourceSheet = false
 
     var body: some View {
         List {
-            ForEach(sourceUrls, id: \.self) { sourceUrl in
+            ForEach(sourceLists, id: \.self) { sourceList in
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(sourceUrl.name)
-                    Text("ID: \(sourceUrl.id)")
+                    Text(sourceList.name)
+                    Text("ID: \(sourceList.id)")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
             }
             .onDelete { offsets in
                 for index in offsets {
-                    if let sourceUrl = sourceUrls[safe: index] {
+                    if let sourceUrl = sourceLists[safe: index] {
                         PersistenceController.shared.delete(sourceUrl, context: backgroundContext)
                     }
                 }

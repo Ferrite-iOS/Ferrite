@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SourceListView: View {
+struct SourcesView: View {
     @EnvironmentObject var sourceManager: SourceManager
     @EnvironmentObject var navModel: NavigationViewModel
 
@@ -104,8 +104,8 @@ struct SourceListView: View {
     }
 }
 
-struct SourceListView_Previews: PreviewProvider {
+struct SourcesView_Previews: PreviewProvider {
     static var previews: some View {
-        SourceListView()
+        SourcesView()
     }
 }
