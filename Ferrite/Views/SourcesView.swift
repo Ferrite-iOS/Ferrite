@@ -18,48 +18,39 @@ struct SourcesView: View {
         sortDescriptors: []
     ) var sources: FetchedResults<Source>
 
-    @State private var availableSourceLength = 0
+    private var updatedSources: [SourceJson] {
+        var tempSources: [SourceJson] = []
+
+        for source in sources {
+            guard let availableSource = sourceManager.availableSources.first(where: {
+                source.listId == $0.listId && source.name == $0.name && source.author == $0.author
+            }) else {
+                continue
+            }
+
+            if availableSource.version > source.version {
+                tempSources.append(availableSource)
+            }
+        }
+
+        return tempSources
+    }
 
     var body: some View {
         NavView {
             List {
+                if !updatedSources.isEmpty {
+                    Section("Updates") {
+                        ForEach(updatedSources, id: \.self) { source in
+                            SourceUpdateButtonView(updatedSource: source)
+                        }
+                    }
+                }
+
                 if !sources.isEmpty {
                     Section("Installed") {
                         ForEach(sources, id: \.self) { source in
-                            Toggle(isOn: Binding<Bool>(
-                                get: { source.enabled },
-                                set: {
-                                    source.enabled = $0
-                                    PersistenceController.shared.save()
-                                }
-                            )) {
-                                VStack(alignment: .leading, spacing: 5) {
-                                    HStack {
-                                        Text(source.name)
-                                        Text("v\(source.version)")
-                                            .foregroundColor(.secondary)
-                                    }
-
-                                    Text("by \(source.author)")
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .contextMenu {
-                                Button {
-                                    navModel.selectedSource = source
-                                    navModel.showSourceSettings.toggle()
-                                } label: {
-                                    Text("Settings")
-                                    Image(systemName: "gear")
-                                }
-
-                                Button {
-                                    PersistenceController.shared.delete(source, context: backgroundContext)
-                                } label: {
-                                    Text("Remove")
-                                    Image(systemName: "trash")
-                                }
-                            }
+                            InstalledSourceView(installedSource: source)
                         }
                         .sheet(isPresented: $navModel.showSourceSettings) {
                             SourceSettingsView()
@@ -67,30 +58,25 @@ struct SourcesView: View {
                     }
                 }
 
-                if sourceManager.availableSources.contains(where: { avail in
-                    !sources.contains(where: { avail.name == $0.name })
+                if sourceManager.availableSources.contains(where: { availableSource in
+                    !sources.contains(
+                        where: {
+                            availableSource.name == $0.name &&
+                            availableSource.listId == $0.listId &&
+                            availableSource.author == $0.author
+                        }
+                    )
                 }) {
                     Section("Catalog") {
                         ForEach(sourceManager.availableSources, id: \.self) { availableSource in
-                            if !sources.contains(where: { availableSource.name == $0.name }) {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        HStack {
-                                            Text(availableSource.name)
-                                            Text("v\(availableSource.version)")
-                                                .foregroundColor(.secondary)
-                                        }
-                                        
-                                        Text("by \(availableSource.author ?? "Unknown")")
-                                            .foregroundColor(.secondary)
-                                    }
-
-                                    Spacer()
-
-                                    Button("Install") {
-                                        sourceManager.installSource(sourceJson: availableSource)
-                                    }
+                            if !sources.contains(
+                                where: {
+                                    availableSource.name == $0.name &&
+                                    availableSource.listId == $0.listId &&
+                                    availableSource.author == $0.author
                                 }
+                            ) {
+                                SourceCatalogButtonView(availableSource: availableSource)
                             }
                         }
                     }

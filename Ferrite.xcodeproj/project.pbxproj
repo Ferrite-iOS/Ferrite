@@ -21,6 +21,9 @@
 		0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C733286289C4C820058D1FE /* SourceSettingsView.swift */; };
 		0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */; };
 		0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */; };
+		0C794B67289DACB600DD1CC8 /* SourceUpdateButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B66289DACB600DD1CC8 /* SourceUpdateButtonView.swift */; };
+		0C794B69289DACC800DD1CC8 /* InstalledSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B68289DACC800DD1CC8 /* InstalledSourceView.swift */; };
+		0C794B6B289DACF100DD1CC8 /* SourceCatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B6A289DACF100DD1CC8 /* SourceCatalogView.swift */; };
 		0C79DC072899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */; };
 		0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */; };
 		0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F4752895BE680074B7C9 /* FerriteDB.xcdatamodeld */; };
@@ -74,6 +77,9 @@
 		0C733286289C4C820058D1FE /* SourceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceSettingsView.swift; sourceTree = "<group>"; };
 		0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceRssParser+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceRssParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C794B66289DACB600DD1CC8 /* SourceUpdateButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceUpdateButtonView.swift; sourceTree = "<group>"; };
+		0C794B68289DACC800DD1CC8 /* InstalledSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstalledSourceView.swift; sourceTree = "<group>"; };
+		0C794B6A289DACF100DD1CC8 /* SourceCatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceCatalogView.swift; sourceTree = "<group>"; };
 		0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C84F4762895BE680074B7C9 /* FerriteDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FerriteDB.xcdatamodel; sourceTree = "<group>"; };
@@ -160,6 +166,17 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		0C794B65289DAC9F00DD1CC8 /* SourceViews */ = {
+			isa = PBXGroup;
+			children = (
+				0C733286289C4C820058D1FE /* SourceSettingsView.swift */,
+				0C794B66289DACB600DD1CC8 /* SourceUpdateButtonView.swift */,
+				0C794B68289DACC800DD1CC8 /* InstalledSourceView.swift */,
+				0C794B6A289DACF100DD1CC8 /* SourceCatalogView.swift */,
+			);
+			path = SourceViews;
+			sourceTree = "<group>";
+		};
 		0CA0545C288F7CB200850554 /* SettingsViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -217,6 +234,7 @@
 		0CA148EE2889061200DE2211 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0C794B65289DAC9F00DD1CC8 /* SourceViews */,
 				0CA148F02889062700DE2211 /* RepresentableViews */,
 				0CA148C0288903F000DE2211 /* CommonViews */,
 				0CA0545C288F7CB200850554 /* SettingsViews */,
@@ -229,7 +247,6 @@
 				0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */,
 				0CA148BD288903F000DE2211 /* MagnetChoiceView.swift */,
 				0C0D50E6288DFF850035ECC8 /* SourcesView.swift */,
-				0C733286289C4C820058D1FE /* SourceSettingsView.swift */,
 				0C32FB522890D19D002BD219 /* AboutView.swift */,
 			);
 			path = Views;
@@ -381,6 +398,7 @@
 				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
 				0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */,
 				0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */,
+				0C794B6B289DACF100DD1CC8 /* SourceCatalogView.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
 				0CF501F2289AE06A0099C785 /* SourceTracker+CoreDataClass.swift in Sources */,
@@ -389,6 +407,7 @@
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
 				0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */,
+				0C794B69289DACC800DD1CC8 /* InstalledSourceView.swift in Sources */,
 				0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
 				0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */,
@@ -397,6 +416,7 @@
 				0CA148E7288903F000DE2211 /* ToastViewModel.swift in Sources */,
 				0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */,
 				0C79DC072899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift in Sources */,
+				0C794B67289DACB600DD1CC8 /* SourceUpdateButtonView.swift in Sources */,
 				0CA148E6288903F000DE2211 /* WebView.swift in Sources */,
 				0C4CFC4E28970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift in Sources */,
 				0CA148E2288903F000DE2211 /* Data.swift in Sources */,

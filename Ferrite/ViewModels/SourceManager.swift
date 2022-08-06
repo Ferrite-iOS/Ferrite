@@ -45,21 +45,23 @@ public class SourceManager: ObservableObject {
         }
     }
 
-    public func installSource(sourceJson: SourceJson) {
+    public func installSource(sourceJson: SourceJson, doUpsert: Bool = false) {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        // If a source exists, don't add the new one
+        // If a source exists, don't add the new one unless upserting
         let existingSourceRequest = Source.fetchRequest()
         existingSourceRequest.predicate = NSPredicate(format: "name == %@", sourceJson.name)
         existingSourceRequest.fetchLimit = 1
 
-        let existingSource = try? backgroundContext.fetch(existingSourceRequest).first
-        if existingSource != nil {
-            Task { @MainActor in
-                toastModel?.toastDescription = "Could not install source with name \(sourceJson.name) because it is already installed."
+        if let existingSource = try? backgroundContext.fetch(existingSourceRequest).first {
+            if doUpsert {
+                PersistenceController.shared.delete(existingSource, context: backgroundContext)
+            } else {
+                Task { @MainActor in
+                    toastModel?.toastDescription = "Could not install source with name \(sourceJson.name) because it is already installed."
+                }
+                return
             }
-
-            return
         }
 
         let newSource = Source(context: backgroundContext)
@@ -218,7 +220,7 @@ public class SourceManager: ObservableObject {
     }
 
     @MainActor
-    public func addSourceList(sourceUrl: String) async -> Bool {
+    public func addSourceList(sourceUrl: String, existingSourceList: SourceList?) async -> Bool {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         if sourceUrl.isEmpty || URL(string: sourceUrl) == nil {
@@ -232,21 +234,30 @@ public class SourceManager: ObservableObject {
             let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: sourceUrl)!))
             let rawResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
 
-            let sourceListRequest = SourceList.fetchRequest()
-            sourceListRequest.predicate = NSPredicate(format: "urlString == %@ OR author == %@", sourceUrl, rawResponse.author)
-            sourceListRequest.fetchLimit = 1
+            if let existingSourceList = existingSourceList {
+                existingSourceList.urlString = sourceUrl
+                existingSourceList.name = rawResponse.name
+                existingSourceList.author = rawResponse.author
+            } else {
+                let sourceListRequest = SourceList.fetchRequest()
+                let urlPredicate = NSPredicate(format: "urlString == %@", sourceUrl)
+                let infoPredicate = NSPredicate(format: "author == %@ AND name == %@", rawResponse.author, rawResponse.name)
+                sourceListRequest.predicate = NSCompoundPredicate.init(type: .or, subpredicates: [urlPredicate, infoPredicate])
+                sourceListRequest.fetchLimit = 1
 
-            if (try? backgroundContext.fetch(sourceListRequest).first) != nil {
-                urlErrorAlertText = "A source with the same URL or author exists. Please remove it and try again."
-                showUrlErrorAlert.toggle()
-                return false
+                if (try? backgroundContext.fetch(sourceListRequest).first) != nil {
+                    urlErrorAlertText = "An existing source with this information was found. Please try editing the source list instead."
+                    showUrlErrorAlert.toggle()
+
+                    return false
+                }
+
+                let newSourceUrl = SourceList(context: backgroundContext)
+                newSourceUrl.id = UUID()
+                newSourceUrl.urlString = sourceUrl
+                newSourceUrl.name = rawResponse.name
+                newSourceUrl.author = rawResponse.author
             }
-
-            let newSourceUrl = SourceList(context: backgroundContext)
-            newSourceUrl.id = UUID()
-            newSourceUrl.urlString = sourceUrl
-            newSourceUrl.name = rawResponse.name
-            newSourceUrl.author = rawResponse.author
 
             try backgroundContext.save()
 

@@ -1,5 +1,5 @@
 //
-//  ErrorViewModel.swift
+//  ToastViewModel.swift
 //  Ferrite
 //
 //  Created by Brian Dashore on 7/19/22.

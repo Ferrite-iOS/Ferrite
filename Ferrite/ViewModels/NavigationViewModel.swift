@@ -23,4 +23,7 @@ class NavigationViewModel: ObservableObject {
     // Used between SourceListView and SourceSettingsView
     @Published var showSourceSettings: Bool = false
     @Published var selectedSource: Source?
+
+    @Published var showSourceListEditor: Bool = false
+    @Published var selectedSourceList: SourceList?
 }
