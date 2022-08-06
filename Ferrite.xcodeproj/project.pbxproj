@@ -24,6 +24,7 @@
 		0C794B67289DACB600DD1CC8 /* SourceUpdateButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B66289DACB600DD1CC8 /* SourceUpdateButtonView.swift */; };
 		0C794B69289DACC800DD1CC8 /* InstalledSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B68289DACC800DD1CC8 /* InstalledSourceView.swift */; };
 		0C794B6B289DACF100DD1CC8 /* SourceCatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B6A289DACF100DD1CC8 /* SourceCatalogView.swift */; };
+		0C794B6D289EFA2E00DD1CC8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C794B6C289EFA2E00DD1CC8 /* LaunchScreen.storyboard */; };
 		0C79DC072899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */; };
 		0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */; };
 		0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F4752895BE680074B7C9 /* FerriteDB.xcdatamodeld */; };
@@ -80,6 +81,7 @@
 		0C794B66289DACB600DD1CC8 /* SourceUpdateButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceUpdateButtonView.swift; sourceTree = "<group>"; };
 		0C794B68289DACC800DD1CC8 /* InstalledSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstalledSourceView.swift; sourceTree = "<group>"; };
 		0C794B6A289DACF100DD1CC8 /* SourceCatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceCatalogView.swift; sourceTree = "<group>"; };
+		0C794B6C289EFA2E00DD1CC8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C84F4762895BE680074B7C9 /* FerriteDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FerriteDB.xcdatamodel; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				0CA148C8288903F000DE2211 /* Extensions */,
 				0CA148C5288903F000DE2211 /* Preview Content */,
 				0CA148C7288903F000DE2211 /* FerriteApp.swift */,
+				0C794B6C289EFA2E00DD1CC8 /* LaunchScreen.storyboard */,
 				0CA148C2288903F000DE2211 /* Assets.xcassets */,
 			);
 			path = Ferrite;
@@ -378,6 +381,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C794B6D289EFA2E00DD1CC8 /* LaunchScreen.storyboard in Resources */,
 				0CA148DF288903F000DE2211 /* Preview Assets.xcassets in Resources */,
 				0CA148DC288903F000DE2211 /* Assets.xcassets in Resources */,
 			);
@@ -574,7 +578,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -605,7 +610,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
