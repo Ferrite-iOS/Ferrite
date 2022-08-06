@@ -6,28 +6,26 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension SourceRssParser {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<SourceRssParser> {
-        return NSFetchRequest<SourceRssParser>(entityName: "SourceRssParser")
+public extension SourceRssParser {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<SourceRssParser> {
+        NSFetchRequest<SourceRssParser>(entityName: "SourceRssParser")
     }
 
-    @NSManaged public var items: String
-    @NSManaged public var searchUrl: String
-    @NSManaged public var rssUrl: String?
-    @NSManaged public var parentSource: Source?
-    @NSManaged public var trackers: NSSet?
-    @NSManaged public var magnetLink: SourceMagnetLink?
-    @NSManaged public var size: SourceSize?
-    @NSManaged public var title: SourceTitle?
-    @NSManaged public var seedLeech: SourceSeedLeech?
-    @NSManaged public var magnetHash: SourceMagnetHash?
+    @NSManaged var items: String
+    @NSManaged var searchUrl: String
+    @NSManaged var rssUrl: String?
+    @NSManaged var parentSource: Source?
+    @NSManaged var trackers: NSSet?
+    @NSManaged var magnetLink: SourceMagnetLink?
+    @NSManaged var size: SourceSize?
+    @NSManaged var title: SourceTitle?
+    @NSManaged var seedLeech: SourceSeedLeech?
+    @NSManaged var magnetHash: SourceMagnetHash?
 
-    var trackerArray: [SourceTracker] {
+    internal var trackerArray: [SourceTracker] {
         let trackerSet = trackers as? Set<SourceTracker> ?? []
 
         return trackerSet.map { $0 }
@@ -35,22 +33,19 @@ extension SourceRssParser {
 }
 
 // MARK: Generated accessors for trackers
-extension SourceRssParser {
 
+public extension SourceRssParser {
     @objc(addTrackersObject:)
-    @NSManaged public func addToTrackers(_ value: SourceTracker)
+    @NSManaged func addToTrackers(_ value: SourceTracker)
 
     @objc(removeTrackersObject:)
-    @NSManaged public func removeFromTrackers(_ value: SourceTracker)
+    @NSManaged func removeFromTrackers(_ value: SourceTracker)
 
     @objc(addTrackers:)
-    @NSManaged public func addToTrackers(_ values: NSSet)
+    @NSManaged func addToTrackers(_ values: NSSet)
 
     @objc(removeTrackers:)
-    @NSManaged public func removeFromTrackers(_ values: NSSet)
-
+    @NSManaged func removeFromTrackers(_ values: NSSet)
 }
 
-extension SourceRssParser : Identifiable {
-
-}
+extension SourceRssParser: Identifiable {}

@@ -6,29 +6,24 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension Source {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Source> {
-        return NSFetchRequest<Source>(entityName: "Source")
+public extension Source {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<Source> {
+        NSFetchRequest<Source>(entityName: "Source")
     }
 
-    @NSManaged public var id: UUID
-    @NSManaged public var baseUrl: String
-    @NSManaged public var enabled: Bool
-    @NSManaged public var name: String
-    @NSManaged public var author: String
-    @NSManaged public var listId: UUID?
-    @NSManaged public var preferredParser: Int16
-    @NSManaged public var version: Int16
-    @NSManaged public var htmlParser: SourceHtmlParser?
-    @NSManaged public var rssParser: SourceRssParser?
-
+    @NSManaged var id: UUID
+    @NSManaged var baseUrl: String
+    @NSManaged var enabled: Bool
+    @NSManaged var name: String
+    @NSManaged var author: String
+    @NSManaged var listId: UUID?
+    @NSManaged var preferredParser: Int16
+    @NSManaged var version: Int16
+    @NSManaged var htmlParser: SourceHtmlParser?
+    @NSManaged var rssParser: SourceRssParser?
 }
 
-extension Source : Identifiable {
-
-}
+extension Source: Identifiable {}

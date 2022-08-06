@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(SourceTracker)
-public class SourceTracker: NSManagedObject {
-
-}
+public class SourceTracker: NSManagedObject {}

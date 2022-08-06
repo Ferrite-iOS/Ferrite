@@ -20,7 +20,7 @@ struct SourceUpdateButtonView: View {
                     Text("v\(updatedSource.version)")
                         .foregroundColor(.secondary)
                 }
-                
+
                 Text("by \(updatedSource.author ?? "Unknown")")
                     .foregroundColor(.secondary)
             }

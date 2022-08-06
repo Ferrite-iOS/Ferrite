@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(SourceRssParser)
-public class SourceRssParser: NSManagedObject {
-
-}
+public class SourceRssParser: NSManagedObject {}

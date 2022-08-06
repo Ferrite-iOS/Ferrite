@@ -62,8 +62,8 @@ struct SourcesView: View {
                     !sources.contains(
                         where: {
                             availableSource.name == $0.name &&
-                            availableSource.listId == $0.listId &&
-                            availableSource.author == $0.author
+                                availableSource.listId == $0.listId &&
+                                availableSource.author == $0.author
                         }
                     )
                 }) {
@@ -72,8 +72,8 @@ struct SourcesView: View {
                             if !sources.contains(
                                 where: {
                                     availableSource.name == $0.name &&
-                                    availableSource.listId == $0.listId &&
-                                    availableSource.author == $0.author
+                                        availableSource.listId == $0.listId &&
+                                        availableSource.author == $0.author
                                 }
                             ) {
                                 SourceCatalogButtonView(availableSource: availableSource)

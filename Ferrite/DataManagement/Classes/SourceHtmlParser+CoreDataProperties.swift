@@ -6,45 +6,39 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension SourceHtmlParser {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<SourceHtmlParser> {
-        return NSFetchRequest<SourceHtmlParser>(entityName: "SourceHtmlParser")
+public extension SourceHtmlParser {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<SourceHtmlParser> {
+        NSFetchRequest<SourceHtmlParser>(entityName: "SourceHtmlParser")
     }
 
-    @NSManaged public var rows: String
-    @NSManaged public var searchUrl: String
-    @NSManaged public var magnetLink: SourceMagnetLink?
-    @NSManaged public var parentSource: Source?
-    @NSManaged public var seedLeech: SourceSeedLeech?
-    @NSManaged public var size: SourceSize?
-    @NSManaged public var title: SourceTitle?
-    @NSManaged public var magnetHash: SourceMagnetHash?
-    @NSManaged public var trackers: NSSet?
-
+    @NSManaged var rows: String
+    @NSManaged var searchUrl: String
+    @NSManaged var magnetLink: SourceMagnetLink?
+    @NSManaged var parentSource: Source?
+    @NSManaged var seedLeech: SourceSeedLeech?
+    @NSManaged var size: SourceSize?
+    @NSManaged var title: SourceTitle?
+    @NSManaged var magnetHash: SourceMagnetHash?
+    @NSManaged var trackers: NSSet?
 }
 
 // MARK: Generated accessors for trackers
-extension SourceHtmlParser {
 
+public extension SourceHtmlParser {
     @objc(addTrackersObject:)
-    @NSManaged public func addToTrackers(_ value: SourceTracker)
+    @NSManaged func addToTrackers(_ value: SourceTracker)
 
     @objc(removeTrackersObject:)
-    @NSManaged public func removeFromTrackers(_ value: SourceTracker)
+    @NSManaged func removeFromTrackers(_ value: SourceTracker)
 
     @objc(addTrackers:)
-    @NSManaged public func addToTrackers(_ values: NSSet)
+    @NSManaged func addToTrackers(_ values: NSSet)
 
     @objc(removeTrackers:)
-    @NSManaged public func removeFromTrackers(_ values: NSSet)
-
+    @NSManaged func removeFromTrackers(_ values: NSSet)
 }
 
-extension SourceHtmlParser : Identifiable {
-
-}
+extension SourceHtmlParser: Identifiable {}

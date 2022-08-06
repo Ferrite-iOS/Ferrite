@@ -6,22 +6,17 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension SourceTracker {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<SourceTracker> {
-        return NSFetchRequest<SourceTracker>(entityName: "SourceTracker")
+public extension SourceTracker {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<SourceTracker> {
+        NSFetchRequest<SourceTracker>(entityName: "SourceTracker")
     }
 
-    @NSManaged public var urlString: String
-    @NSManaged public var parentRssParser: SourceRssParser?
-    @NSManaged public var parentHtmlParser: SourceHtmlParser?
-
+    @NSManaged var urlString: String
+    @NSManaged var parentRssParser: SourceRssParser?
+    @NSManaged var parentHtmlParser: SourceHtmlParser?
 }
 
-extension SourceTracker : Identifiable {
-
-}
+extension SourceTracker: Identifiable {}
