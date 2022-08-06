@@ -22,20 +22,23 @@ struct SourceSettingsView: View {
                                 Text(selectedSource.name)
 
                                 Text("v\(selectedSource.version)")
+                                    .foregroundColor(.secondary)
                             }
 
                             Text("by \(selectedSource.author)")
                                 .foregroundColor(.secondary)
 
-                            if let listId = selectedSource.listId {
-                                Text("List ID: \(listId)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            } else {
-                                Text("No list ID found. This source should be removed.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                            Group {
+                                Text("ID: \(selectedSource.id)")
+
+                                if let listId = selectedSource.listId {
+                                    Text("List ID: \(listId)")
+                                } else {
+                                    Text("No list ID found. This source should be removed.")
+                                }
                             }
+                            .foregroundColor(.secondary)
+                            .font(.caption)
                         }
                     }
 

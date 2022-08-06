@@ -10,6 +10,7 @@ import SwiftUI
 struct SourceListEditorView: View {
     @Environment(\.dismiss) var dismiss
 
+    @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var sourceManager: SourceManager
 
     let backgroundContext = PersistenceController.shared.backgroundContext
@@ -25,6 +26,9 @@ struct SourceListEditorView: View {
                         .keyboardType(.URL)
                         .autocapitalization(.none)
                 }
+            }
+            .onAppear {
+                sourceUrl = navModel.selectedSourceList?.urlString ?? ""
             }
             .alert(isPresented: $sourceManager.showUrlErrorAlert) {
                 Alert(
@@ -45,12 +49,18 @@ struct SourceListEditorView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         Task {
-                            if await sourceManager.addSourceList(sourceUrl: sourceUrl) {
+                            if await sourceManager.addSourceList(
+                                sourceUrl: sourceUrl,
+                                existingSourceList: navModel.selectedSourceList
+                            ) {
                                 dismiss()
                             }
                         }
                     }
                 }
+            }
+            .onDisappear {
+                navModel.selectedSourceList = nil
             }
         }
     }
