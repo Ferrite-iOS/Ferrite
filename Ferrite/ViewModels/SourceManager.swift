@@ -242,7 +242,7 @@ public class SourceManager: ObservableObject {
                 let sourceListRequest = SourceList.fetchRequest()
                 let urlPredicate = NSPredicate(format: "urlString == %@", sourceUrl)
                 let infoPredicate = NSPredicate(format: "author == %@ AND name == %@", rawResponse.author, rawResponse.name)
-                sourceListRequest.predicate = NSCompoundPredicate.init(type: .or, subpredicates: [urlPredicate, infoPredicate])
+                sourceListRequest.predicate = NSCompoundPredicate(type: .or, subpredicates: [urlPredicate, infoPredicate])
                 sourceListRequest.fetchLimit = 1
 
                 if (try? backgroundContext.fetch(sourceListRequest).first) != nil {

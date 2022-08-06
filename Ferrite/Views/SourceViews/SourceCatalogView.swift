@@ -20,7 +20,7 @@ struct SourceCatalogButtonView: View {
                     Text("v\(availableSource.version)")
                         .foregroundColor(.secondary)
                 }
-                
+
                 Text("by \(availableSource.author ?? "Unknown")")
                     .foregroundColor(.secondary)
             }

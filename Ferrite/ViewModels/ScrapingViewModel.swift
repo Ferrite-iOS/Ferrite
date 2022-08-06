@@ -496,7 +496,7 @@ class ScrapingViewModel: ObservableObject {
     }
 
     public func generateMagnetLink(magnetHash: String, title: String?, trackers: [SourceTracker]) -> String {
-        var magnetLinkArray: [String] = ["magnet:?xt=urn:btih:"]
+        var magnetLinkArray = ["magnet:?xt=urn:btih:"]
 
         magnetLinkArray.append(magnetHash)
 
@@ -506,7 +506,7 @@ class ScrapingViewModel: ObservableObject {
 
         for tracker in trackers {
             if URL(string: tracker.urlString) != nil,
-                let encodedUrlString = tracker.urlString.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+               let encodedUrlString = tracker.urlString.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
             {
                 magnetLinkArray.append("&tr=\(encodedUrlString)")
             }

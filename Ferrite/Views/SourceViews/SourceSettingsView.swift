@@ -78,7 +78,7 @@ struct SourceSettingsMethodView: View {
         .onAppear {
             selectedTempParser = SourcePreferredParser(rawValue: selectedSource.preferredParser) ?? .none
         }
-        .onChange(of: selectedTempParser) { newMethod in
+        .onChange(of: selectedTempParser) { _ in
             selectedSource.preferredParser = selectedTempParser.rawValue
             PersistenceController.shared.save()
         }
