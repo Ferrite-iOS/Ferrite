@@ -16,9 +16,15 @@ However, the main problem is that these websites tend to suck in terms of UI or 
 
 I also wanted to support the use of RealDebrid since there aren't any (free) options on iOS that have support for this service.
 
+## What iOS versions are supported?
+
+iOS 15 and up. This is because SwiftUI is very flexible with these versions. I have no intention of backporting Ferrite to iOS 14, so please update if you want to use it.
+
+However, if you want an immersive browser for your websites with iOS 14 support, please look at my sister app Asobi.
+
 ## Planned features
 
-None yet!
+- Website API support in sources: This allows for website APIs to be used in Ferrite sources which is quicker than scraping or RSS parsing
 
 ## Downloads
 
