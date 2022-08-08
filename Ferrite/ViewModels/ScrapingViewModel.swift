@@ -27,14 +27,21 @@ class ScrapingViewModel: ObservableObject {
     var toastModel: ToastViewModel?
     let byteCountFormatter: ByteCountFormatter = .init()
 
+    @Published var runningSearchTask: Task<Void, Error>?
     @Published var searchResults: [SearchResult] = []
     @Published var searchText: String = ""
     @Published var selectedSearchResult: SearchResult?
     @Published var filteredSource: Source?
+    @Published var currentSourceName: String?
 
     @MainActor
     public func scanSources(sources: [Source]) async {
         if sources.isEmpty {
+            Task { @MainActor in
+                toastModel?.toastType = .info
+                toastModel?.toastDescription = "There are no sources to search!"
+            }
+
             print("Sources empty")
             return
         }
@@ -43,6 +50,8 @@ class ScrapingViewModel: ObservableObject {
 
         for source in sources {
             if source.enabled {
+                currentSourceName = source.name
+
                 // Default to HTML scraping
                 let preferredParser = SourcePreferredParser(rawValue: source.preferredParser) ?? .none
 
@@ -97,6 +106,11 @@ class ScrapingViewModel: ObservableObject {
             }
         }
 
+        // If the task is cancelled, return
+        if let searchTask = runningSearchTask, searchTask.isCancelled {
+            return
+        }
+
         searchResults = tempResults
     }
 
@@ -115,7 +129,15 @@ class ScrapingViewModel: ObservableObject {
             let html = String(data: data, encoding: .ascii)
             return html
         } catch {
-            toastModel?.toastDescription = "Error in fetching data \(error)"
+            let error = error as NSError
+
+            switch error.code {
+            case -999:
+                toastModel?.toastType = .info
+                toastModel?.toastDescription = "Search cancelled"
+            default:
+                toastModel?.toastDescription = "Error in fetching data \(error)"
+            }
             print("Error in fetching data \(error)")
 
             return nil
