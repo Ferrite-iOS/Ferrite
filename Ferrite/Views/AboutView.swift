@@ -12,10 +12,10 @@ struct AboutView: View {
 
     var body: some View {
         VStack {
-             Image("AppImage")
-                 .resizable()
-                 .frame(width: 100, height: 100)
-                 .cornerRadius(25)
+            Image("AppImage")
+                .resizable()
+                .frame(width: 100, height: 100)
+                .cornerRadius(25)
 
             Text("Ferrite is a free and open source application developed by Brian Dashore under the GNU-GPLv3 license.")
                 .padding()
