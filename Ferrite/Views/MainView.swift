@@ -7,36 +7,29 @@
 
 import SwiftUI
 
-enum Tab {
-    case search
-    case sources
-    case settings
-}
-
 struct MainView: View {
+    @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var toastModel: ToastViewModel
 
-    @State private var tabSelection: Tab = .search
-
     var body: some View {
-        TabView(selection: $tabSelection) {
+        TabView(selection: $navModel.selectedTab) {
             ContentView()
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
                 }
-                .tag(Tab.search)
+                .tag(ViewTab.search)
 
             SourcesView()
                 .tabItem {
                     Label("Sources", systemImage: "doc.text")
                 }
-                .tag(Tab.sources)
+                .tag(ViewTab.sources)
 
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
-                .tag(Tab.settings)
+                .tag(ViewTab.settings)
         }
         .overlay {
             VStack {

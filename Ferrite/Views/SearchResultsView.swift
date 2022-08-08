@@ -9,10 +9,11 @@ import SwiftUI
 
 struct SearchResultsView: View {
     @Environment(\.isSearching) var isSearching
+    @Environment(\.dismissSearch) var dismissSearch
 
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
-    @EnvironmentObject var navigationModel: NavigationViewModel
+    @EnvironmentObject var navModel: NavigationViewModel
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
@@ -28,14 +29,14 @@ struct SearchResultsView: View {
                             case .full:
                                 Task {
                                     await debridManager.fetchRdDownload(searchResult: result)
-                                    navigationModel.currentChoiceSheet = .magnet
+                                    navModel.currentChoiceSheet = .magnet
                                 }
                             case .partial:
                                 if debridManager.setSelectedRdResult(result: result) {
-                                    navigationModel.currentChoiceSheet = .batch
+                                    navModel.currentChoiceSheet = .batch
                                 }
                             case .none:
-                                navigationModel.currentChoiceSheet = .magnet
+                                navModel.currentChoiceSheet = .magnet
                             }
                         } label: {
                             Text(result.title)
@@ -50,7 +51,23 @@ struct SearchResultsView: View {
                 }
             }
         }
+        .overlay {
+            if scrapingModel.searchResults.isEmpty, navModel.showSearchProgress {
+                VStack(spacing: 5) {
+                    ProgressView()
+                    Text("Loading \(scrapingModel.currentSourceName ?? "")")
+                }
+            }
+        }
+        .onChange(of: navModel.selectedTab) { tab in
+            // Cancel the search if tab is switched
+            if tab != .search, isSearching {
+                scrapingModel.runningSearchTask?.cancel()
+                dismissSearch()
+            }
+        }
         .onChange(of: isSearching) { changed in
+            // Clear the results array on cancel
             if !changed {
                 scrapingModel.searchResults = []
             }

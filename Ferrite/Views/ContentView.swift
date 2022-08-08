@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
-    @EnvironmentObject var navigationModel: NavigationViewModel
+    @EnvironmentObject var navModel: NavigationViewModel
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
@@ -71,17 +71,21 @@ struct ContentView: View {
             }
             .searchable(text: $scrapingModel.searchText)
             .onSubmit(of: .search) {
-                Task {
+                scrapingModel.runningSearchTask = Task {
+                    navModel.showSearchProgress = true
+
                     await scrapingModel.scanSources(sources: sources.compactMap { $0 })
 
                     if realDebridEnabled {
                         await debridManager.populateDebridHashes(scrapingModel.searchResults)
                     }
+
+                    navModel.showSearchProgress = false
                 }
             }
             .navigationTitle("Search")
         }
-        .sheet(item: $navigationModel.currentChoiceSheet) { item in
+        .sheet(item: $navModel.currentChoiceSheet) { item in
             Group {
                 switch item {
                 case .magnet:
