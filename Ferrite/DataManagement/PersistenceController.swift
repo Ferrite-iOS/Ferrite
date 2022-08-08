@@ -36,15 +36,16 @@ struct PersistenceController {
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         try? container.viewContext.setQueryGenerationFrom(.current)
 
-        backgroundContext = container.newBackgroundContext()
-        backgroundContext.automaticallyMergesChangesFromParent = true
-        backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        try? backgroundContext.setQueryGenerationFrom(.current)
         container.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("CoreData init error: \(error)")
             }
         }
+
+        backgroundContext = container.newBackgroundContext()
+        backgroundContext.automaticallyMergesChangesFromParent = true
+        backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        try? backgroundContext.setQueryGenerationFrom(.current)
     }
 
     func save(_ context: NSManagedObjectContext? = nil) {
