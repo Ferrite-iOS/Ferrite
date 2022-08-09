@@ -17,6 +17,8 @@ struct MagnetChoiceView: View {
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
     @State private var showActivityView = false
+    @State private var showLinkCopyAlert = false
+    @State private var showMagnetCopyAlert = false
     @State private var activityItem: ActivityItem?
 
     var body: some View {
@@ -50,6 +52,14 @@ struct MagnetChoiceView: View {
 
                         ListRowButtonView("Copy download URL", systemImage: "doc.on.doc.fill") {
                             UIPasteboard.general.string = debridManager.realDebridDownloadUrl
+                            showLinkCopyAlert.toggle()
+                        }
+                        .alert(isPresented: $showLinkCopyAlert) {
+                            Alert(
+                                title: Text("Copied"),
+                                message: Text("Download link copied successfully"),
+                                dismissButton: .cancel(Text("OK"))
+                            )
                         }
 
                         ListRowButtonView("Share download URL", systemImage: "square.and.arrow.up.fill") {
@@ -66,6 +76,14 @@ struct MagnetChoiceView: View {
                 Section("Magnet options") {
                     ListRowButtonView("Copy magnet", systemImage: "doc.on.doc.fill") {
                         UIPasteboard.general.string = scrapingModel.selectedSearchResult?.magnetLink
+                        showMagnetCopyAlert.toggle()
+                    }
+                    .alert(isPresented: $showMagnetCopyAlert) {
+                        Alert(
+                            title: Text("Copied"),
+                            message: Text("Magnet link copied successfully"),
+                            dismissButton: .cancel(Text("OK"))
+                        )
                     }
 
                     ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
