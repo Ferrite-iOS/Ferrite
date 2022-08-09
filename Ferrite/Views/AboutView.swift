@@ -24,6 +24,8 @@ struct AboutView: View {
                 ListRowTextView(leftText: "Version", rightText: UIApplication.shared.appVersion)
                 ListRowTextView(leftText: "Build number", rightText: UIApplication.shared.appBuild)
                 ListRowTextView(leftText: "Build type", rightText: UIApplication.shared.buildType)
+                ListRowLinkView(text: "Donate!", link: "https://ko-fi.com/kingbri")
+                ListRowLinkView(text: "Discord server", link: "https://discord.gg/sYQxnuD7Fj")
                 ListRowLinkView(text: "GitHub repository", link: "https://github.com/bdashore3/Ferrite")
             }
             .listStyle(.insetGrouped)
