@@ -45,7 +45,7 @@ If you have issues with the app:
 - Describe the issue in detail
 - If you have a feature request, please indicate it as so. Planned features are in a different section of the README, so be sure to read those before submitting.
   If you want to make custom icons for the app:
-- Please join [the discord](https://discord.gg/pswt7by) for more info
+- Please join [the discord](https://discord.gg/sYQxnuD7Fj) for more info
 
 ## Developers and Permissions
 
@@ -57,7 +57,4 @@ Developer Website: [kingbri.dev](https://kingbri.dev)
 
 Developer Discord: kingbri#6666
 
-Join the support discord here (get the king-updates role to access the channel): [The Kingdom](https://discord.gg/pswt7by)
-
-
-
+Join the support discord here: [Ferrite Discord](https://discord.gg/sYQxnuD7Fj)
