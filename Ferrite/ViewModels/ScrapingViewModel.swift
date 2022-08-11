@@ -149,6 +149,7 @@ class ScrapingViewModel: ObservableObject {
             default:
                 toastModel?.toastDescription = "Error in fetching data \(error)"
             }
+
             print("Error in fetching data \(error)")
 
             return nil
