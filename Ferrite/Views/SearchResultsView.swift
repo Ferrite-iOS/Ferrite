@@ -61,7 +61,7 @@ struct SearchResultsView: View {
         }
         .onChange(of: navModel.selectedTab) { tab in
             // Cancel the search if tab is switched
-            if tab != .search, isSearching {
+            if tab != .search, isSearching, navModel.showSearchProgress {
                 scrapingModel.runningSearchTask?.cancel()
                 dismissSearch()
             }
