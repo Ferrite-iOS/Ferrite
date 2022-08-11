@@ -12,6 +12,8 @@ struct SourceSettingsView: View {
 
     @EnvironmentObject var navModel: NavigationViewModel
 
+    @State private var tempBaseUrl: String = ""
+
     var body: some View {
         NavView {
             Form {
@@ -42,6 +44,31 @@ struct SourceSettingsView: View {
                         }
                     }
 
+                    if selectedSource.dynamicBaseUrl {
+                        Section(
+                            header: Text("Base URL"),
+                            footer: Text("Enter the base URL of your server.")
+                        ) {
+                            TextField("https://...", text: $tempBaseUrl)
+                                .onAppear {
+                                    tempBaseUrl = selectedSource.baseUrl ?? ""
+                                }
+                                .onSubmit {
+                                    if tempBaseUrl.last == "/" {
+                                        selectedSource.baseUrl = String(tempBaseUrl.dropLast())
+                                    } else {
+                                        selectedSource.baseUrl = tempBaseUrl
+                                    }
+
+                                    PersistenceController.shared.save()
+                                }
+                        }
+                    }
+
+                    if let sourceApi = selectedSource.api {
+                        SourceSettingsApiView(selectedSourceApi: sourceApi)
+                    }
+
                     SourceSettingsMethodView(selectedSource: selectedSource)
                 }
             }
@@ -50,6 +77,68 @@ struct SourceSettingsView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SourceSettingsApiView: View {
+    @ObservedObject var selectedSourceApi: SourceApi
+
+    @State private var tempClientId: String = ""
+    @State private var tempClientSecret: String = ""
+    @State private var showPassword = false
+
+    @FocusState var inFocus: Field?
+
+    enum Field {
+        case secure, plain
+    }
+
+    var body: some View {
+        Section(
+            header: Text("API credentials"),
+            footer: Text("Grab the required API credentials from the website. A client secret can be an API token.")
+        ) {
+            if selectedSourceApi.dynamicClientId {
+                TextField("Client ID", text: $tempClientId)
+                    .onAppear {
+                        tempClientId = selectedSourceApi.clientId ?? ""
+                    }
+                    .onSubmit {
+                        selectedSourceApi.clientId = tempClientId
+                        PersistenceController.shared.save()
+                    }
+            }
+
+            if selectedSourceApi.clientSecret != nil {
+                HStack {
+                    Group {
+                        if showPassword {
+                            TextField("Token", text: $tempClientSecret)
+                                .focused($inFocus, equals: .plain)
+                        } else {
+                            SecureField("Token", text: $tempClientSecret)
+                                .focused($inFocus, equals: .secure)
+                        }
+                    }
+                    .onAppear {
+                        tempClientSecret = selectedSourceApi.clientSecret ?? ""
+                    }
+                    .onSubmit {
+                        selectedSourceApi.clientSecret = tempClientSecret
+                        PersistenceController.shared.save()
+                    }
+
+                    Spacer()
+
+                    Button {
+                        showPassword.toggle()
+                        inFocus = showPassword ? .plain : .secure
+                    } label: {
+                        Image(systemName: showPassword ? "eye.slash" : "eye")
                     }
                 }
             }

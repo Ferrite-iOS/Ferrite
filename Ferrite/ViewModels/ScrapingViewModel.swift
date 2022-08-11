@@ -52,6 +52,15 @@ class ScrapingViewModel: ObservableObject {
             if source.enabled {
                 currentSourceName = source.name
 
+                guard let baseUrl = source.baseUrl else {
+                    Task { @MainActor in
+                        toastModel?.toastDescription = "The base URL could not be found for source \(source.name)"
+                    }
+
+                    print("The base URL could not be found for source \(source.name)")
+                    continue
+                }
+
                 // Default to HTML scraping
                 let preferredParser = SourcePreferredParser(rawValue: source.preferredParser) ?? .none
 
@@ -65,13 +74,13 @@ class ScrapingViewModel: ObservableObject {
                             continue
                         }
 
-                        let urlString = source.baseUrl + htmlParser.searchUrl.replacingOccurrences(of: "{query}", with: encodedQuery)
+                        let urlString = baseUrl + htmlParser.searchUrl.replacingOccurrences(of: "{query}", with: encodedQuery)
 
                         guard let html = await fetchWebsiteData(urlString: urlString) else {
                             continue
                         }
 
-                        let sourceResults = await scrapeHtml(source: source, html: html)
+                        let sourceResults = await scrapeHtml(source: source, baseUrl: baseUrl, html: html)
                         tempResults += sourceResults
                     }
                 case .rss:
@@ -83,14 +92,16 @@ class ScrapingViewModel: ObservableObject {
                             continue
                         }
 
-                        let replacedSearchUrl = rssParser.searchUrl.replacingOccurrences(of: "{query}", with: encodedQuery)
+                        let replacedSearchUrl = rssParser.searchUrl
+                            .replacingOccurrences(of: "{apiKey}", with: source.api?.clientSecret ?? "")
+                            .replacingOccurrences(of: "{query}", with: encodedQuery)
 
                         // If there is an RSS base URL, use that instead
                         var urlString: String
                         if let rssUrl = rssParser.rssUrl {
                             urlString = rssUrl + replacedSearchUrl
                         } else {
-                            urlString = source.baseUrl + replacedSearchUrl
+                            urlString = baseUrl + replacedSearchUrl
                         }
 
                         guard let rss = await fetchWebsiteData(urlString: urlString) else {
@@ -261,7 +272,9 @@ class ScrapingViewModel: ObservableObject {
                 leechers: leechers
             )
 
-            tempResults.append(result)
+            if !tempResults.contains(result) {
+                tempResults.append(result)
+            }
         }
 
         return tempResults
@@ -269,7 +282,7 @@ class ScrapingViewModel: ObservableObject {
 
     // HTML scraper
     @MainActor
-    public func scrapeHtml(source: Source, html: String) async -> [SearchResult] {
+    public func scrapeHtml(source: Source, baseUrl: String, html: String) async -> [SearchResult] {
         guard let htmlParser = source.htmlParser else {
             return []
         }
@@ -304,7 +317,7 @@ class ScrapingViewModel: ObservableObject {
                         continue
                     }
 
-                    guard let magnetHtml = await fetchWebsiteData(urlString: source.baseUrl + externalMagnetLink) else {
+                    guard let magnetHtml = await fetchWebsiteData(urlString: baseUrl + externalMagnetLink) else {
                         continue
                     }
 
@@ -411,7 +424,9 @@ class ScrapingViewModel: ObservableObject {
                     leechers: leechers
                 )
 
-                tempResults.append(result)
+                if !tempResults.contains(result) {
+                    tempResults.append(result)
+                }
             } catch {
                 toastModel?.toastDescription = "Scraping error: \(error)"
                 print("Scraping error: \(error)")

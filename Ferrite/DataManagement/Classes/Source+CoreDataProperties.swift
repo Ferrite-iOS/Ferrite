@@ -15,7 +15,8 @@ public extension Source {
     }
 
     @NSManaged var id: UUID
-    @NSManaged var baseUrl: String
+    @NSManaged var baseUrl: String?
+    @NSManaged var dynamicBaseUrl: Bool
     @NSManaged var enabled: Bool
     @NSManaged var name: String
     @NSManaged var author: String
@@ -24,6 +25,7 @@ public extension Source {
     @NSManaged var version: Int16
     @NSManaged var htmlParser: SourceHtmlParser?
     @NSManaged var rssParser: SourceRssParser?
+    @NSManaged var api: SourceApi?
 }
 
 extension Source: Identifiable {}
