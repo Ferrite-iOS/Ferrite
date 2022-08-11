@@ -14,7 +14,7 @@ struct FerriteApp: App {
     @StateObject var scrapingModel: ScrapingViewModel = .init()
     @StateObject var toastModel: ToastViewModel = .init()
     @StateObject var debridManager: DebridManager = .init()
-    @StateObject var navigationModel: NavigationViewModel = .init()
+    @StateObject var navModel: NavigationViewModel = .init()
     @StateObject var sourceManager: SourceManager = .init()
 
     var body: some Scene {
@@ -24,11 +24,12 @@ struct FerriteApp: App {
                     scrapingModel.toastModel = toastModel
                     debridManager.toastModel = toastModel
                     sourceManager.toastModel = toastModel
+                    navModel.toastModel = toastModel
                 }
                 .environmentObject(debridManager)
                 .environmentObject(scrapingModel)
                 .environmentObject(toastModel)
-                .environmentObject(navigationModel)
+                .environmentObject(navModel)
                 .environmentObject(sourceManager)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }

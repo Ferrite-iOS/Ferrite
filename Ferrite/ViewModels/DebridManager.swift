@@ -124,9 +124,12 @@ public class DebridManager: ObservableObject {
             let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId, selectedIndex: iaFile == nil ? 0 : iaFile?.batchFileIndex)
             let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
 
-            Task { @MainActor in
+            let downloadUrlTask = Task { @MainActor in
                 realDebridDownloadUrl = downloadLink
             }
+
+            // Prevent a race condition when setting the published variable
+            await downloadUrlTask.value
         } catch {
             Task { @MainActor in
                 toastModel?.toastDescription = "RealDebrid download error: \(error)"

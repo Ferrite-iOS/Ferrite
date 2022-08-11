@@ -12,7 +12,7 @@ struct BatchChoiceView: View {
 
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var scrapingModel: ScrapingViewModel
-    @EnvironmentObject var navigationModel: NavigationViewModel
+    @EnvironmentObject var navModel: NavigationViewModel
 
     var body: some View {
         NavView {
@@ -27,7 +27,7 @@ struct BatchChoiceView: View {
 
                                 // The download may complete before this sheet dismisses
                                 try? await Task.sleep(seconds: 1)
-                                navigationModel.currentChoiceSheet = .magnet
+                                navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
 
                                 debridManager.selectedRealDebridFile = nil
                                 debridManager.selectedRealDebridItem = nil
