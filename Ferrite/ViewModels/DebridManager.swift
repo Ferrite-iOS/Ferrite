@@ -45,10 +45,14 @@ public class DebridManager: ObservableObject {
             }
         } catch {
             Task { @MainActor in
-                toastModel?.toastDescription = "RealDebrid hash error: \(error)"
+                let error = error as NSError
+
+                if error.code != -999 {
+                    toastModel?.toastDescription = "RealDebrid hash error: \(error)"
+                }
             }
 
-            print(error)
+            print("RealDebrid hash error: \(error)")
         }
     }
 
