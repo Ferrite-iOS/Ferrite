@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21271" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21277" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Source" representedClassName="Source" syncable="YES">
         <attribute name="author" attributeType="String" defaultValueString=""/>
-        <attribute name="baseUrl" attributeType="String" defaultValueString=""/>
+        <attribute name="baseUrl" optional="YES" attributeType="String"/>
+        <attribute name="dynamicBaseUrl" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="listId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String" defaultValueString=""/>
         <attribute name="preferredParser" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="version" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="api" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceApi" inverseName="parentSource" inverseEntity="SourceApi"/>
         <relationship name="htmlParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceHtmlParser" inverseName="parentSource" inverseEntity="SourceHtmlParser"/>
-        <relationship name="rssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="parentSource" inverseEntity="SourceRssParser"/>
+        <relationship name="rssParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceRssParser" inverseName="parentSource" inverseEntity="SourceRssParser"/>
+    </entity>
+    <entity name="SourceApi" representedClassName="SourceApi" syncable="YES" codeGenerationType="class">
+        <attribute name="clientId" optional="YES" attributeType="String"/>
+        <attribute name="clientSecret" optional="YES" attributeType="String"/>
+        <attribute name="dynamicClientId" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="api" inverseEntity="Source"/>
     </entity>
     <entity name="SourceComplexQuery" representedClassName="SourceComplexQuery" isAbstract="YES" syncable="YES">
         <attribute name="attribute" attributeType="String" defaultValueString="text"/>

@@ -48,6 +48,18 @@ public class SourceManager: ObservableObject {
     public func installSource(sourceJson: SourceJson, doUpsert: Bool = false) {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
+        // If there's no base URL and it isn't dynamic, return before any transactions occur
+        let dynamicBaseUrl = sourceJson.dynamicBaseUrl ?? false
+
+        if (!dynamicBaseUrl && sourceJson.baseUrl == nil) || (dynamicBaseUrl && sourceJson.baseUrl != nil) {
+            Task { @MainActor in
+                toastModel?.toastDescription = "Not adding this source because base URL parameters are malformed. Please contact the source dev."
+            }
+
+            print("Not adding this source because base URL parameters are malformed")
+            return
+        }
+
         // If a source exists, don't add the new one unless upserting
         let existingSourceRequest = Source.fetchRequest()
         existingSourceRequest.predicate = NSPredicate(format: "name == %@", sourceJson.name)
@@ -68,9 +80,14 @@ public class SourceManager: ObservableObject {
         newSource.id = UUID()
         newSource.name = sourceJson.name
         newSource.version = sourceJson.version
+        newSource.dynamicBaseUrl = dynamicBaseUrl
         newSource.baseUrl = sourceJson.baseUrl
         newSource.author = sourceJson.author ?? "Unknown"
         newSource.listId = sourceJson.listId
+
+        if let sourceApiJson = sourceJson.api {
+            addSourceApi(newSource: newSource, apiJson: sourceApiJson)
+        }
 
         // Adds an RSS parser if present
         if let rssParserJson = sourceJson.rssParser {
@@ -98,6 +115,25 @@ public class SourceManager: ObservableObject {
                 toastModel?.toastDescription = error.localizedDescription
             }
         }
+    }
+
+    func addSourceApi(newSource: Source, apiJson: SourceApiJson) {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        let newSourceApi = SourceApi(context: backgroundContext)
+        newSourceApi.clientId = apiJson.clientId
+
+        if let clientId = apiJson.clientId {
+            newSourceApi.clientId = clientId
+        }
+
+        newSourceApi.dynamicClientId = apiJson.dynamicClientId ?? false
+
+        if apiJson.usesSecret {
+            newSourceApi.clientSecret = ""
+        }
+
+        newSource.api = newSourceApi
     }
 
     func addRssParser(newSource: Source, rssParserJson: SourceRssParserJson) {

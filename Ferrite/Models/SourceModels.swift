@@ -16,9 +16,11 @@ public struct SourceListJson: Codable {
 public struct SourceJson: Codable, Hashable {
     let name: String
     let version: Int16
-    let baseUrl: String
+    let baseUrl: String?
+    var dynamicBaseUrl: Bool?
     var author: String?
     var listId: UUID?
+    let api: SourceApiJson?
     let rssParser: SourceRssParserJson?
     let htmlParser: SourceHtmlParserJson?
 }
@@ -28,6 +30,12 @@ public enum SourcePreferredParser: Int16, CaseIterable {
     case scraping = 1
     case rss = 2
     case siteApi = 3
+}
+
+public struct SourceApiJson: Codable, Hashable {
+    let clientId: String?
+    var dynamicClientId: Bool?
+    let usesSecret: Bool
 }
 
 public struct SourceRssParserJson: Codable, Hashable {
