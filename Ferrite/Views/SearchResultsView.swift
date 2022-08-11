@@ -29,14 +29,14 @@ struct SearchResultsView: View {
                             case .full:
                                 Task {
                                     await debridManager.fetchRdDownload(searchResult: result)
-                                    navModel.currentChoiceSheet = .magnet
+                                    navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
                                 }
                             case .partial:
                                 if debridManager.setSelectedRdResult(result: result) {
                                     navModel.currentChoiceSheet = .batch
                                 }
                             case .none:
-                                navModel.currentChoiceSheet = .magnet
+                                navModel.runMagnetAction(action: nil, searchResult: result)
                             }
                         } label: {
                             Text(result.title)

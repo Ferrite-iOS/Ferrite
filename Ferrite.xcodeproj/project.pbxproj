@@ -36,6 +36,8 @@
 		0C84F4862895BFED0074B7C9 /* SourceList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */; };
 		0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */; };
 		0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */ = {isa = PBXBuildFile; productRef = 0C90E32B2888E5D000C0BC89 /* ActivityView */; };
+		0C95D8D828A55B03005E22B3 /* DefaultActionsPickerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C95D8D728A55B03005E22B3 /* DefaultActionsPickerViews.swift */; };
+		0C95D8DA28A55BB6005E22B3 /* SettingsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C95D8D928A55BB6005E22B3 /* SettingsModels.swift */; };
 		0CA05457288EE58200850554 /* SettingsSourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05456288EE58200850554 /* SettingsSourceListView.swift */; };
 		0CA05459288EE9E600850554 /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05458288EE9E600850554 /* SourceManager.swift */; };
 		0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */; };
@@ -93,6 +95,8 @@
 		0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceList+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceList+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C95D8D728A55B03005E22B3 /* DefaultActionsPickerViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultActionsPickerViews.swift; sourceTree = "<group>"; };
+		0C95D8D928A55BB6005E22B3 /* SettingsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModels.swift; sourceTree = "<group>"; };
 		0CA05456288EE58200850554 /* SettingsSourceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSourceListView.swift; sourceTree = "<group>"; };
 		0CA05458288EE9E600850554 /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
 		0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceListEditorView.swift; sourceTree = "<group>"; };
@@ -167,6 +171,7 @@
 			children = (
 				0CA148C4288903F000DE2211 /* RealDebridModels.swift */,
 				0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */,
+				0C95D8D928A55BB6005E22B3 /* SettingsModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -187,6 +192,7 @@
 			children = (
 				0CA05456288EE58200850554 /* SettingsSourceListView.swift */,
 				0CA0545A288EEA4E00850554 /* SourceListEditorView.swift */,
+				0C95D8D728A55B03005E22B3 /* DefaultActionsPickerViews.swift */,
 			);
 			path = SettingsViews;
 			sourceTree = "<group>";
@@ -415,6 +421,7 @@
 				0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */,
 				0C0D50E7288DFF850035ECC8 /* SourcesView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
+				0C95D8D828A55B03005E22B3 /* DefaultActionsPickerViews.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
 				0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */,
 				0C794B69289DACC800DD1CC8 /* InstalledSourceView.swift in Sources */,
@@ -422,6 +429,7 @@
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
 				0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */,
 				0C84F4862895BFED0074B7C9 /* SourceList+CoreDataClass.swift in Sources */,
+				0C95D8DA28A55BB6005E22B3 /* SettingsModels.swift in Sources */,
 				0CA148E3288903F000DE2211 /* Task.swift in Sources */,
 				0CA148E7288903F000DE2211 /* ToastViewModel.swift in Sources */,
 				0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */,

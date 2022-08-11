@@ -5,6 +5,7 @@
 //  Created by Brian Dashore on 7/1/22.
 //
 
+import ActivityView
 import SwiftUI
 
 struct ContentView: View {
@@ -96,6 +97,7 @@ struct ContentView: View {
             }
             .tint(.primary)
         }
+        .activitySheet($navModel.currentActivityItem)
     }
 }
 

@@ -14,6 +14,8 @@ struct SettingsView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
+    @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
+    @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none
 
     @State private var isProcessing = false
 
@@ -42,6 +44,56 @@ struct SettingsView: View {
 
                 Section("Source management") {
                     NavigationLink("Source lists", destination: SettingsSourceListView())
+                }
+
+                Section("Default actions") {
+                    if realDebridEnabled {
+                        NavigationLink(
+                            destination: DebridActionPickerView(),
+                            label: {
+                                HStack {
+                                    Text("Default debrid action")
+                                    Spacer()
+                                    Group {
+                                        switch defaultDebridAction {
+                                        case .none:
+                                            Text("User choice")
+                                        case .outplayer:
+                                            Text("Outplayer")
+                                        case .vlc:
+                                            Text("VLC")
+                                        case .infuse:
+                                            Text("Infuse")
+                                        case .shareDownload:
+                                            Text("Share")
+                                        }
+                                    }
+                                    .foregroundColor(.gray)
+                                }
+                            }
+                        )
+                    }
+
+                    NavigationLink(
+                        destination: MagnetActionPickerView(),
+                        label: {
+                            HStack {
+                                Text("Default magnet action")
+                                Spacer()
+                                Group {
+                                    switch defaultMagnetAction {
+                                    case .none:
+                                        Text("User choice")
+                                    case .webtor:
+                                        Text("Webtor")
+                                    case .shareMagnet:
+                                        Text("Share")
+                                    }
+                                }
+                                .foregroundColor(.gray)
+                            }
+                        }
+                    )
                 }
 
                 Section {
