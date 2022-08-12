@@ -51,7 +51,7 @@ public class SourceManager: ObservableObject {
         // If there's no base URL and it isn't dynamic, return before any transactions occur
         let dynamicBaseUrl = sourceJson.dynamicBaseUrl ?? false
 
-        if (!dynamicBaseUrl && sourceJson.baseUrl == nil) || (dynamicBaseUrl && sourceJson.baseUrl != nil) {
+        if !dynamicBaseUrl, sourceJson.baseUrl == nil {
             Task { @MainActor in
                 toastModel?.toastDescription = "Not adding this source because base URL parameters are malformed. Please contact the source dev."
             }

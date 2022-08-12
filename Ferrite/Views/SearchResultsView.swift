@@ -52,24 +52,37 @@ struct SearchResultsView: View {
             }
         }
         .overlay {
-            if scrapingModel.searchResults.isEmpty, navModel.showSearchProgress {
-                VStack(spacing: 5) {
-                    ProgressView()
-                    Text("Loading \(scrapingModel.currentSourceName ?? "")")
+            if scrapingModel.searchResults.isEmpty {
+                if navModel.showSearchProgress {
+                    VStack(spacing: 5) {
+                        ProgressView()
+                        Text("Loading \(scrapingModel.currentSourceName ?? "")")
+                    }
+                } else if isSearching, scrapingModel.runningSearchTask != nil {
+                    Text("No results found")
                 }
             }
         }
         .onChange(of: navModel.selectedTab) { tab in
-            // Cancel the search if tab is switched
-            if tab != .search, isSearching, navModel.showSearchProgress {
+            // Cancel the search if tab is switched while search is in progress
+            if tab != .search, navModel.showSearchProgress {
                 scrapingModel.runningSearchTask?.cancel()
+                scrapingModel.runningSearchTask = nil
                 dismissSearch()
             }
         }
+        .onChange(of: scrapingModel.searchResults) { _ in
+            // Cleans up any leftover search results in the event of an abrupt cancellation
+            if !isSearching {
+                scrapingModel.searchResults = []
+            }
+        }
         .onChange(of: isSearching) { changed in
-            // Clear the results array on cancel
+            // Clear the results array and cleans up search tasks on cancel
             if !changed {
                 scrapingModel.searchResults = []
+                scrapingModel.runningSearchTask?.cancel()
+                scrapingModel.runningSearchTask = nil
             }
         }
     }

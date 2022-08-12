@@ -77,7 +77,7 @@ struct ContentView: View {
 
                     await scrapingModel.scanSources(sources: sources.compactMap { $0 })
 
-                    if realDebridEnabled {
+                    if realDebridEnabled, !scrapingModel.searchResults.isEmpty {
                         await debridManager.populateDebridHashes(scrapingModel.searchResults)
                     }
 

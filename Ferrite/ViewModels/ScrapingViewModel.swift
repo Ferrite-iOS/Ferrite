@@ -159,11 +159,11 @@ class ScrapingViewModel: ObservableObject {
     // RSS feed scraper
     @MainActor
     public func scrapeRss(source: Source, rss: String) -> [SearchResult] {
-        guard let rssParser = source.rssParser else {
-            return []
-        }
-
         var tempResults: [SearchResult] = []
+
+        guard let rssParser = source.rssParser else {
+            return tempResults
+        }
 
         var items = Elements()
 
@@ -174,7 +174,7 @@ class ScrapingViewModel: ObservableObject {
             toastModel?.toastDescription = "RSS scraping error, couldn't fetch items: \(error)"
             print("RSS scraping error, couldn't fetch items: \(error)")
 
-            return []
+            return tempResults
         }
 
         for item in items {
@@ -284,8 +284,10 @@ class ScrapingViewModel: ObservableObject {
     // HTML scraper
     @MainActor
     public func scrapeHtml(source: Source, baseUrl: String, html: String) async -> [SearchResult] {
+        var tempResults: [SearchResult] = []
+
         guard let htmlParser = source.htmlParser else {
-            return []
+            return tempResults
         }
 
         var rows = Elements()
@@ -297,10 +299,8 @@ class ScrapingViewModel: ObservableObject {
             toastModel?.toastDescription = "Scraping error, couldn't fetch rows: \(error)"
             print("Scraping error, couldn't fetch rows: \(error)")
 
-            return []
+            return tempResults
         }
-
-        var tempResults: [SearchResult] = []
 
         // If there's an error, continue instead of returning with nothing
         for row in rows {
