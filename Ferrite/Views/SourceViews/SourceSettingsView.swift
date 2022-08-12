@@ -12,8 +12,6 @@ struct SourceSettingsView: View {
 
     @EnvironmentObject var navModel: NavigationViewModel
 
-    @State private var tempBaseUrl: String = ""
-
     var body: some View {
         NavView {
             Form {
@@ -45,24 +43,7 @@ struct SourceSettingsView: View {
                     }
 
                     if selectedSource.dynamicBaseUrl {
-                        Section(
-                            header: Text("Base URL"),
-                            footer: Text("Enter the base URL of your server.")
-                        ) {
-                            TextField("https://...", text: $tempBaseUrl)
-                                .onAppear {
-                                    tempBaseUrl = selectedSource.baseUrl ?? ""
-                                }
-                                .onSubmit {
-                                    if tempBaseUrl.last == "/" {
-                                        selectedSource.baseUrl = String(tempBaseUrl.dropLast())
-                                    } else {
-                                        selectedSource.baseUrl = tempBaseUrl
-                                    }
-
-                                    PersistenceController.shared.save()
-                                }
-                        }
+                        SourceSettingsBaseUrlView(selectedSource: selectedSource)
                     }
 
                     if let sourceApi = selectedSource.api {
@@ -71,6 +52,9 @@ struct SourceSettingsView: View {
 
                     SourceSettingsMethodView(selectedSource: selectedSource)
                 }
+            }
+            .onDisappear {
+                PersistenceController.shared.save()
             }
             .navigationTitle("Source settings")
             .toolbar {
@@ -84,14 +68,44 @@ struct SourceSettingsView: View {
     }
 }
 
+struct SourceSettingsBaseUrlView: View {
+    @ObservedObject var selectedSource: Source
+
+    @FocusState var baseUrlFocused: Bool
+
+    @State private var tempBaseUrl: String = ""
+    var body: some View {
+        Section(
+            header: Text("Base URL"),
+            footer: Text("Enter the base URL of your server.")
+        ) {
+            TextField("https://...", text: $tempBaseUrl)
+                .keyboardType(.URL)
+                .focused($baseUrlFocused)
+                .onChange(of: baseUrlFocused) { isFocused in
+                    if !isFocused {
+                        if tempBaseUrl.last == "/" {
+                            selectedSource.baseUrl = String(tempBaseUrl.dropLast())
+                        } else {
+                            selectedSource.baseUrl = tempBaseUrl
+                        }
+                    }
+                }
+                .onAppear {
+                    tempBaseUrl = selectedSource.baseUrl ?? ""
+                }
+        }
+    }
+}
+
 struct SourceSettingsApiView: View {
     @ObservedObject var selectedSourceApi: SourceApi
 
+    @FocusState var clientIdFieldFocused: Bool
+    @FocusState var tokenFieldFocused: Bool
+
     @State private var tempClientId: String = ""
     @State private var tempClientSecret: String = ""
-    @State private var showPassword = false
-
-    @FocusState var inFocus: Field?
 
     enum Field {
         case secure, plain
@@ -104,43 +118,30 @@ struct SourceSettingsApiView: View {
         ) {
             if selectedSourceApi.dynamicClientId {
                 TextField("Client ID", text: $tempClientId)
+                    .textInputAutocapitalization(.never)
+                    .focused($clientIdFieldFocused)
+                    .onChange(of: clientIdFieldFocused) { isFocused in
+                        if !isFocused {
+                            selectedSourceApi.clientId = tempClientId
+                        }
+                    }
                     .onAppear {
                         tempClientId = selectedSourceApi.clientId ?? ""
-                    }
-                    .onSubmit {
-                        selectedSourceApi.clientId = tempClientId
-                        PersistenceController.shared.save()
                     }
             }
 
             if selectedSourceApi.clientSecret != nil {
-                HStack {
-                    Group {
-                        if showPassword {
-                            TextField("Token", text: $tempClientSecret)
-                                .focused($inFocus, equals: .plain)
-                        } else {
-                            SecureField("Token", text: $tempClientSecret)
-                                .focused($inFocus, equals: .secure)
+                TextField("Token", text: $tempClientSecret)
+                    .textInputAutocapitalization(.never)
+                    .focused($tokenFieldFocused)
+                    .onChange(of: clientIdFieldFocused) { isFocused in
+                        if !isFocused {
+                            selectedSourceApi.clientSecret = tempClientSecret
                         }
                     }
                     .onAppear {
                         tempClientSecret = selectedSourceApi.clientSecret ?? ""
                     }
-                    .onSubmit {
-                        selectedSourceApi.clientSecret = tempClientSecret
-                        PersistenceController.shared.save()
-                    }
-
-                    Spacer()
-
-                    Button {
-                        showPassword.toggle()
-                        inFocus = showPassword ? .plain : .secure
-                    } label: {
-                        Image(systemName: showPassword ? "eye.slash" : "eye")
-                    }
-                }
             }
         }
     }
@@ -169,7 +170,6 @@ struct SourceSettingsMethodView: View {
         }
         .onChange(of: selectedTempParser) { _ in
             selectedSource.preferredParser = selectedTempParser.rawValue
-            PersistenceController.shared.save()
         }
     }
 }
