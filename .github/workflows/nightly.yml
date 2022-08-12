@@ -2,11 +2,11 @@ name: Build and upload nightly ipa
 
 on:
   push:
-    branches: [none]
+    branches: [default]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v2
       - name: Setup Xcode
