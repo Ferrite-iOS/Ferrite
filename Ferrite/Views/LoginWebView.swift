@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct LoginWebView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode
     var url: URL
+
     var body: some View {
         NavView {
             WebView(url: url)
@@ -18,7 +19,7 @@ struct LoginWebView: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
-                            dismiss()
+                            presentationMode.wrappedValue.dismiss()
                         }
                     }
                 }
