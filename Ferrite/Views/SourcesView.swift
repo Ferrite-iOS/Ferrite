@@ -36,11 +36,13 @@ struct SourcesView: View {
         return tempSources
     }
 
+    @State private var viewTask: Task<Void, Never>? = nil
+
     var body: some View {
         NavView {
             List {
                 if !updatedSources.isEmpty {
-                    Section("Updates") {
+                    Section(header: "Updates") {
                         ForEach(updatedSources, id: \.self) { source in
                             SourceUpdateButtonView(updatedSource: source)
                         }
@@ -48,12 +50,9 @@ struct SourcesView: View {
                 }
 
                 if !sources.isEmpty {
-                    Section("Installed") {
+                    Section(header: "Installed") {
                         ForEach(sources, id: \.self) { source in
                             InstalledSourceView(installedSource: source)
-                        }
-                        .sheet(isPresented: $navModel.showSourceSettings) {
-                            SourceSettingsView()
                         }
                     }
                 }
@@ -67,7 +66,7 @@ struct SourcesView: View {
                         }
                     )
                 }) {
-                    Section("Catalog") {
+                    Section(header: "Catalog") {
                         ForEach(sourceManager.availableSources, id: \.self) { availableSource in
                             if !sources.contains(
                                 where: {
@@ -82,8 +81,18 @@ struct SourcesView: View {
                     }
                 }
             }
-            .task {
-                await sourceManager.fetchSourcesFromUrl()
+            .listStyle(.insetGrouped)
+            .sheet(isPresented: $navModel.showSourceSettings) {
+                SourceSettingsView()
+                    .environmentObject(navModel)
+            }
+            .onAppear {
+                viewTask = Task {
+                    await sourceManager.fetchSourcesFromUrl()
+                }
+            }
+            .onDisappear {
+                viewTask?.cancel()
             }
             .navigationTitle("Sources")
         }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BatchChoiceView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode
 
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var scrapingModel: ScrapingViewModel
@@ -34,10 +34,11 @@ struct BatchChoiceView: View {
                             }
                         }
 
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("Select a file")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -45,7 +46,7 @@ struct BatchChoiceView: View {
                     Button("Done") {
                         debridManager.selectedRealDebridItem = nil
 
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }

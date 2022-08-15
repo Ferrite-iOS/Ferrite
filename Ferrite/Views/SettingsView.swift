@@ -22,7 +22,7 @@ struct SettingsView: View {
     var body: some View {
         NavView {
             Form {
-                Section("Debrid services") {
+                Section(header: "Debrid services") {
                     HStack {
                         Text("Real Debrid")
                         Spacer()
@@ -42,11 +42,11 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("Source management") {
+                Section(header: "Source management") {
                     NavigationLink("Source lists", destination: SettingsSourceListView())
                 }
 
-                Section("Default actions") {
+                Section(header: "Default actions") {
                     if realDebridEnabled {
                         NavigationLink(
                             destination: DebridActionPickerView(),

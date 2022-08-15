@@ -5,11 +5,11 @@
 //  Created by Brian Dashore on 7/20/22.
 //
 
-import ActivityView
 import SwiftUI
+import SwiftUIX
 
 struct MagnetChoiceView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode
 
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
@@ -20,13 +20,13 @@ struct MagnetChoiceView: View {
     @State private var showActivityView = false
     @State private var showLinkCopyAlert = false
     @State private var showMagnetCopyAlert = false
-    @State private var activityItem: ActivityItem?
+    @State private var activityItems: [Any] = []
 
     var body: some View {
         NavView {
             Form {
                 if realDebridEnabled, debridManager.matchSearchResult(result: scrapingModel.selectedSearchResult) != .none {
-                    Section("Real Debrid options") {
+                    Section(header: "Real Debrid options") {
                         ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
                             navModel.runDebridAction(action: .outplayer, urlString: debridManager.realDebridDownloadUrl)
                         }
@@ -52,16 +52,15 @@ struct MagnetChoiceView: View {
                         }
 
                         ListRowButtonView("Share download URL", systemImage: "square.and.arrow.up.fill") {
-                            guard let url = URL(string: debridManager.realDebridDownloadUrl) else {
-                                return
+                            if let url = URL(string: debridManager.realDebridDownloadUrl) {
+                                activityItems = [url]
+                                navModel.showActivityView.toggle()
                             }
-
-                            activityItem = ActivityItem(items: url)
                         }
                     }
                 }
 
-                Section("Magnet options") {
+                Section(header: "Magnet options") {
                     ListRowButtonView("Copy magnet", systemImage: "doc.on.doc.fill") {
                         UIPasteboard.general.string = scrapingModel.selectedSearchResult?.magnetLink
                         showMagnetCopyAlert.toggle()
@@ -76,7 +75,8 @@ struct MagnetChoiceView: View {
 
                     ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
                         if let result = scrapingModel.selectedSearchResult, let url = URL(string: result.magnetLink) {
-                            activityItem = ActivityItem(items: url)
+                            activityItems = [url]
+                            navModel.showActivityView.toggle()
                         }
                     }
 
@@ -87,7 +87,14 @@ struct MagnetChoiceView: View {
                     }
                 }
             }
-            .activitySheet($activityItem)
+            .sheet(isPresented: $navModel.showActivityView) {
+                if #available(iOS 16, *) {
+                    AppActivityView(activityItems: activityItems)
+                        .presentationDetents([.medium])
+                } else {
+                    AppActivityView(activityItems: activityItems)
+                }
+            }
             .navigationTitle("Link actions")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -95,7 +102,7 @@ struct MagnetChoiceView: View {
                     Button("Done") {
                         debridManager.realDebridDownloadUrl = ""
 
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
