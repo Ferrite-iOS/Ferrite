@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct SearchResultsView: View {
-    @Environment(\.isSearching) var isSearching
-    @Environment(\.dismissSearch) var dismissSearch
-
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
@@ -43,7 +40,7 @@ struct SearchResultsView: View {
                                 .font(.callout)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        .tint(.primary)
+                        .dynamicAccentColor(.primary)
                         .padding(.bottom, 5)
 
                         SearchResultRDView(result: result)
@@ -51,6 +48,7 @@ struct SearchResultsView: View {
                 }
             }
         }
+        .listStyle(.insetGrouped)
         .overlay {
             if scrapingModel.searchResults.isEmpty {
                 if navModel.showSearchProgress {
@@ -58,7 +56,7 @@ struct SearchResultsView: View {
                         ProgressView()
                         Text("Loading \(scrapingModel.currentSourceName ?? "")")
                     }
-                } else if isSearching, scrapingModel.runningSearchTask != nil {
+                } else if navModel.isSearching, scrapingModel.runningSearchTask != nil {
                     Text("No results found")
                 }
             }
@@ -66,23 +64,17 @@ struct SearchResultsView: View {
         .onChange(of: navModel.selectedTab) { tab in
             // Cancel the search if tab is switched while search is in progress
             if tab != .search, navModel.showSearchProgress {
+                scrapingModel.searchResults = []
                 scrapingModel.runningSearchTask?.cancel()
                 scrapingModel.runningSearchTask = nil
-                dismissSearch()
+                navModel.isSearching = false
+                scrapingModel.searchText = ""
             }
         }
         .onChange(of: scrapingModel.searchResults) { _ in
             // Cleans up any leftover search results in the event of an abrupt cancellation
-            if !isSearching {
+            if !navModel.isSearching {
                 scrapingModel.searchResults = []
-            }
-        }
-        .onChange(of: isSearching) { changed in
-            // Clear the results array and cleans up search tasks on cancel
-            if !changed {
-                scrapingModel.searchResults = []
-                scrapingModel.runningSearchTask?.cancel()
-                scrapingModel.runningSearchTask = nil
             }
         }
     }

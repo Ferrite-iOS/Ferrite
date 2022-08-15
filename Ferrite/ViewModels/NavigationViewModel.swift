@@ -5,7 +5,6 @@
 //  Created by Brian Dashore on 7/24/22.
 //
 
-import ActivityView
 import SwiftUI
 
 enum ViewTab {
@@ -28,8 +27,14 @@ class NavigationViewModel: ObservableObject {
         case batch
     }
 
+    @Published var isEditingSearch: Bool = false
+    @Published var isSearching: Bool = false
+
+    @Published var hideNavigationBar = false
+
     @Published var currentChoiceSheet: ChoiceSheetType?
-    @Published var currentActivityItem: ActivityItem?
+    @Published var activityItems: [Any] = []
+    @Published var showActivityView: Bool = false
 
     @Published var selectedTab: ViewTab = .search
     @Published var showSearchProgress: Bool = false
@@ -70,7 +75,8 @@ class NavigationViewModel: ObservableObject {
             }
         case .shareDownload:
             if let downloadUrl = URL(string: urlString), currentChoiceSheet == nil {
-                currentActivityItem = ActivityItem(items: downloadUrl)
+                activityItems = [downloadUrl]
+                showActivityView.toggle()
             } else {
                 toastModel?.toastDescription = "Could not create object for sharing"
             }
@@ -91,7 +97,8 @@ class NavigationViewModel: ObservableObject {
             }
         case .shareMagnet:
             if let magnetUrl = URL(string: searchResult.magnetLink), currentChoiceSheet == nil {
-                currentActivityItem = ActivityItem(items: magnetUrl)
+                activityItems = [magnetUrl]
+                showActivityView.toggle()
             } else {
                 toastModel?.toastDescription = "Could not create object for sharing"
             }

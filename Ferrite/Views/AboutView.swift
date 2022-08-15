@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct AboutView: View {
-    @Environment(\.dismiss) var dismiss
-
     var body: some View {
         VStack {
             Image("AppImage")

@@ -20,6 +20,7 @@
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
 		0C64A4B7288903880079976D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B6288903880079976D /* KeychainSwift */; };
 		0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C733286289C4C820058D1FE /* SourceSettingsView.swift */; };
+		0C7376F028A97D1400D60918 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = 0C7376EF28A97D1400D60918 /* SwiftUIX */; };
 		0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */; };
 		0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */; };
 		0C794B67289DACB600DD1CC8 /* SourceUpdateButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B66289DACB600DD1CC8 /* SourceUpdateButtonView.swift */; };
@@ -28,6 +29,8 @@
 		0C794B6D289EFA2E00DD1CC8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C794B6C289EFA2E00DD1CC8 /* LaunchScreen.storyboard */; };
 		0C79DC072899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */; };
 		0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */; };
+		0C7D11FC28AA01E900ED92DB /* DynamicAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7D11FB28AA01E900ED92DB /* DynamicAccentColor.swift */; };
+		0C7D11FE28AA03FE00ED92DB /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7D11FD28AA03FE00ED92DB /* View.swift */; };
 		0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F4752895BE680074B7C9 /* FerriteDB.xcdatamodeld */; };
 		0C84F4822895BFED0074B7C9 /* Source+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47A2895BFED0074B7C9 /* Source+CoreDataClass.swift */; };
 		0C84F4832895BFED0074B7C9 /* Source+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47B2895BFED0074B7C9 /* Source+CoreDataProperties.swift */; };
@@ -35,7 +38,6 @@
 		0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */; };
 		0C84F4862895BFED0074B7C9 /* SourceList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47E2895BFED0074B7C9 /* SourceList+CoreDataClass.swift */; };
 		0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47F2895BFED0074B7C9 /* SourceList+CoreDataProperties.swift */; };
-		0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */ = {isa = PBXBuildFile; productRef = 0C90E32B2888E5D000C0BC89 /* ActivityView */; };
 		0C95D8D828A55B03005E22B3 /* DefaultActionsPickerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C95D8D728A55B03005E22B3 /* DefaultActionsPickerViews.swift */; };
 		0C95D8DA28A55BB6005E22B3 /* SettingsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C95D8D928A55BB6005E22B3 /* SettingsModels.swift */; };
 		0CA05457288EE58200850554 /* SettingsSourceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05456288EE58200850554 /* SettingsSourceListView.swift */; };
@@ -88,6 +90,8 @@
 		0C794B6C289EFA2E00DD1CC8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceSeedLeech+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C7D11FB28AA01E900ED92DB /* DynamicAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicAccentColor.swift; sourceTree = "<group>"; };
+		0C7D11FD28AA03FE00ED92DB /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		0C84F4762895BE680074B7C9 /* FerriteDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FerriteDB.xcdatamodel; sourceTree = "<group>"; };
 		0C84F47A2895BFED0074B7C9 /* Source+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Source+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C84F47B2895BFED0074B7C9 /* Source+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Source+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -134,9 +138,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C90E32C2888E5D000C0BC89 /* ActivityView in Frameworks */,
 				0C64A4B4288903680079976D /* Base32 in Frameworks */,
 				0C4CFC462897030D00AD9FAD /* Regex in Frameworks */,
+				0C7376F028A97D1400D60918 /* SwiftUIX in Frameworks */,
 				0C64A4B7288903880079976D /* KeychainSwift in Frameworks */,
 				0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */,
 			);
@@ -221,6 +225,7 @@
 				0CA148C1288903F000DE2211 /* NavView.swift */,
 				0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */,
 				0C32FB562890D1F2002BD219 /* ListRowViews.swift */,
+				0C7D11FB28AA01E900ED92DB /* DynamicAccentColor.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -240,6 +245,7 @@
 				0CA148CA288903F000DE2211 /* Data.swift */,
 				0CA148CB288903F000DE2211 /* Task.swift */,
 				0C32FB542890D1BF002BD219 /* UIApplication.swift */,
+				0C7D11FD28AA03FE00ED92DB /* View.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -338,10 +344,10 @@
 			name = Ferrite;
 			packageProductDependencies = (
 				0CAF1C7A286F5C8600296F86 /* SwiftSoup */,
-				0C90E32B2888E5D000C0BC89 /* ActivityView */,
 				0C64A4B3288903680079976D /* Base32 */,
 				0C64A4B6288903880079976D /* KeychainSwift */,
 				0C4CFC452897030D00AD9FAD /* Regex */,
+				0C7376EF28A97D1400D60918 /* SwiftUIX */,
 			);
 			productName = Torrenter;
 			productReference = 0CAF1C68286F5C0E00296F86 /* Ferrite.app */;
@@ -373,10 +379,10 @@
 			mainGroup = 0CAF1C5F286F5C0D00296F86;
 			packageReferences = (
 				0CAF1C79286F5C8600296F86 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
-				0C90E32A2888E5D000C0BC89 /* XCRemoteSwiftPackageReference "ActivityView" */,
 				0C64A4B2288903680079976D /* XCRemoteSwiftPackageReference "Base32" */,
 				0C64A4B5288903880079976D /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */,
+				0C7376EE28A97D1400D60918 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 			);
 			productRefGroup = 0CAF1C69286F5C0E00296F86 /* Products */;
 			projectDirPath = "";
@@ -419,6 +425,7 @@
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
 				0CF501F2289AE06A0099C785 /* SourceTracker+CoreDataClass.swift in Sources */,
 				0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */,
+				0C7D11FE28AA03FE00ED92DB /* View.swift in Sources */,
 				0C0D50E7288DFF850035ECC8 /* SourcesView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0C95D8D828A55B03005E22B3 /* DefaultActionsPickerViews.swift in Sources */,
@@ -439,6 +446,7 @@
 				0C4CFC4E28970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift in Sources */,
 				0CA148E2288903F000DE2211 /* Data.swift in Sources */,
 				0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */,
+				0C7D11FC28AA01E900ED92DB /* DynamicAccentColor.swift in Sources */,
 				0CA05459288EE9E600850554 /* SourceManager.swift in Sources */,
 				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,
 				0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */,
@@ -513,7 +521,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -567,7 +575,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -596,6 +604,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -628,6 +637,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -689,12 +699,12 @@
 				kind = branch;
 			};
 		};
-		0C90E32A2888E5D000C0BC89 /* XCRemoteSwiftPackageReference "ActivityView" */ = {
+		0C7376EE28A97D1400D60918 /* XCRemoteSwiftPackageReference "SwiftUIX" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftUI-Plus/ActivityView.git";
+			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = master;
+				kind = branch;
 			};
 		};
 		0CAF1C79286F5C8600296F86 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
@@ -723,10 +733,10 @@
 			package = 0C64A4B5288903880079976D /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
 		};
-		0C90E32B2888E5D000C0BC89 /* ActivityView */ = {
+		0C7376EF28A97D1400D60918 /* SwiftUIX */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0C90E32A2888E5D000C0BC89 /* XCRemoteSwiftPackageReference "ActivityView" */;
-			productName = ActivityView;
+			package = 0C7376EE28A97D1400D60918 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
 		};
 		0CAF1C7A286F5C8600296F86 /* SwiftSoup */ = {
 			isa = XCSwiftPackageProductDependency;

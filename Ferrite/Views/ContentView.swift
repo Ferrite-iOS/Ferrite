@@ -5,8 +5,8 @@
 //  Created by Brian Dashore on 7/1/22.
 //
 
-import ActivityView
 import SwiftUI
+import SwiftUIX
 
 struct ContentView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
@@ -66,38 +66,63 @@ struct ContentView: View {
 
                     Spacer()
                 }
+                .padding(.vertical, 5)
                 .padding(.horizontal, 20)
 
                 SearchResultsView()
             }
-            .searchable(text: $scrapingModel.searchText)
-            .onSubmit(of: .search) {
-                scrapingModel.runningSearchTask = Task {
-                    navModel.showSearchProgress = true
-
-                    await scrapingModel.scanSources(sources: sources.compactMap { $0 })
-
-                    if realDebridEnabled, !scrapingModel.searchResults.isEmpty {
-                        await debridManager.populateDebridHashes(scrapingModel.searchResults)
+            .sheet(item: $navModel.currentChoiceSheet) { item in
+                Group {
+                    switch item {
+                    case .magnet:
+                        MagnetChoiceView()
+                            .environmentObject(debridManager)
+                            .environmentObject(scrapingModel)
+                            .environmentObject(navModel)
+                    case .batch:
+                        BatchChoiceView()
+                            .environmentObject(debridManager)
+                            .environmentObject(scrapingModel)
+                            .environmentObject(navModel)
                     }
-
-                    navModel.showSearchProgress = false
+                }
+                .dynamicAccentColor(.primary)
+            }
+            .sheet(isPresented: $navModel.showActivityView) {
+                if #available(iOS 16, *) {
+                    AppActivityView(activityItems: navModel.activityItems)
+                        .presentationDetents([.medium])
+                } else {
+                    AppActivityView(activityItems: navModel.activityItems)
                 }
             }
             .navigationTitle("Search")
-        }
-        .sheet(item: $navModel.currentChoiceSheet) { item in
-            Group {
-                switch item {
-                case .magnet:
-                    MagnetChoiceView()
-                case .batch:
-                    BatchChoiceView()
-                }
+            .navigationSearchBar {
+                SearchBar("Search", text: $scrapingModel.searchText, isEditing: $navModel.isEditingSearch,
+                          onCommit: {
+                              scrapingModel.runningSearchTask = Task {
+                                  navModel.isSearching = true
+                                  navModel.showSearchProgress = true
+
+                                  await scrapingModel.scanSources(sources: sources.compactMap { $0 })
+
+                                  if realDebridEnabled, !scrapingModel.searchResults.isEmpty {
+                                      await debridManager.populateDebridHashes(scrapingModel.searchResults)
+                                  }
+
+                                  navModel.showSearchProgress = false
+                              }
+                          })
+                          .showsCancelButton(navModel.isEditingSearch || navModel.isSearching)
+                          .onCancel {
+                              scrapingModel.searchResults = []
+                              scrapingModel.runningSearchTask?.cancel()
+                              scrapingModel.runningSearchTask = nil
+                              navModel.isSearching = false
+                              scrapingModel.searchText = ""
+                          }
             }
-            .tint(.primary)
         }
-        .activitySheet($navModel.currentActivityItem)
     }
 }
 

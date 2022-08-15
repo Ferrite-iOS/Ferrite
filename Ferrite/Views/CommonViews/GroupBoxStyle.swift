@@ -14,7 +14,7 @@ struct ErrorGroupBoxStyle: GroupBoxStyle {
             configuration.content
         }
         .padding(10)
-        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .background(Color(UIColor.secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }

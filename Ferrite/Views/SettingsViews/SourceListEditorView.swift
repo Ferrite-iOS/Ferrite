@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SourceListEditorView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.presentationMode) var presentationMode
 
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var sourceManager: SourceManager
@@ -42,7 +42,7 @@ struct SourceListEditorView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
 
@@ -53,7 +53,7 @@ struct SourceListEditorView: View {
                                 sourceUrl: sourceUrl,
                                 existingSourceList: navModel.selectedSourceList
                             ) {
-                                dismiss()
+                                presentationMode.wrappedValue.dismiss()
                             }
                         }
                     }
