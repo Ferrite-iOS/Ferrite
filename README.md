@@ -18,9 +18,7 @@ I also wanted to support the use of RealDebrid since there aren't any (free) opt
 
 ## What iOS versions are supported?
 
-iOS 15 and up. This is because SwiftUI is very flexible with these versions. I have no intention of backporting Ferrite to iOS 14, so please update if you want to use it.
-
-However, if you want an immersive browser for your websites with iOS 14 support, please look at my sister app Asobi.
+iOS 14 and up. I was able to successfully backport the app!
 
 ## Planned features
 
