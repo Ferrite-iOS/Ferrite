@@ -25,9 +25,11 @@ struct BatchChoiceView: View {
                             Task {
                                 await debridManager.fetchRdDownload(searchResult: searchResult, iaFile: file)
 
-                                // The download may complete before this sheet dismisses
-                                try? await Task.sleep(seconds: 1)
-                                navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
+                                if !debridManager.realDebridDownloadUrl.isEmpty {
+                                    // The download may complete before this sheet dismisses
+                                    try? await Task.sleep(seconds: 1)
+                                    navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
+                                }
 
                                 debridManager.selectedRealDebridFile = nil
                                 debridManager.selectedRealDebridItem = nil

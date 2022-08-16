@@ -51,6 +51,7 @@ struct MainView: View {
                 }
             }
             .font(.caption)
+            .shadow(radius: 10)
             .animation(.easeInOut(duration: 0.3), value: toastModel.showToast)
         }
     }
