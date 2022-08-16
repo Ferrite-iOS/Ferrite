@@ -274,6 +274,8 @@ public class SourceManager: ObservableObject {
                 existingSourceList.urlString = sourceUrl
                 existingSourceList.name = rawResponse.name
                 existingSourceList.author = rawResponse.author
+
+                try PersistenceController.shared.container.viewContext.save()
             } else {
                 let sourceListRequest = SourceList.fetchRequest()
                 let urlPredicate = NSPredicate(format: "urlString == %@", sourceUrl)
@@ -293,9 +295,9 @@ public class SourceManager: ObservableObject {
                 newSourceUrl.urlString = sourceUrl
                 newSourceUrl.name = rawResponse.name
                 newSourceUrl.author = rawResponse.author
-            }
 
-            try backgroundContext.save()
+                try backgroundContext.save()
+            }
 
             return true
         } catch {
