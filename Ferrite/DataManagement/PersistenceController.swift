@@ -46,6 +46,10 @@ struct PersistenceController {
         backgroundContext.automaticallyMergesChangesFromParent = true
         backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         try? backgroundContext.setQueryGenerationFrom(.current)
+
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        try? container.viewContext.setQueryGenerationFrom(.current)
     }
 
     func save(_ context: NSManagedObjectContext? = nil) {
