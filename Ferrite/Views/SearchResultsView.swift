@@ -26,7 +26,10 @@ struct SearchResultsView: View {
                             case .full:
                                 Task {
                                     await debridManager.fetchRdDownload(searchResult: result)
-                                    navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
+
+                                    if !debridManager.realDebridDownloadUrl.isEmpty {
+                                        navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
+                                    }
                                 }
                             case .partial:
                                 if debridManager.setSelectedRdResult(result: result) {
