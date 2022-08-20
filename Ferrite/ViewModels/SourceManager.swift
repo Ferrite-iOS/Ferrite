@@ -143,6 +143,7 @@ public class SourceManager: ObservableObject {
         newSourceRssParser.rssUrl = rssParserJson.rssUrl
         newSourceRssParser.searchUrl = rssParserJson.searchUrl
         newSourceRssParser.items = rssParserJson.items
+        newSourceRssParser.trackers = rssParserJson.trackers
 
         if let magnetLinkJson = rssParserJson.magnetLink {
             let newSourceMagnetLink = SourceMagnetLink(context: backgroundContext)
@@ -191,14 +192,6 @@ public class SourceManager: ObservableObject {
             newSourceSeedLeech.leecherRegex = seedLeechJson.leecherRegex
 
             newSourceRssParser.seedLeech = newSourceSeedLeech
-        }
-
-        if let trackerJson = rssParserJson.trackers {
-            for urlString in trackerJson {
-                let newSourceTracker = SourceTracker(context: backgroundContext)
-                newSourceTracker.urlString = urlString
-                newSourceTracker.parentRssParser = newSourceRssParser
-            }
         }
 
         newSource.rssParser = newSourceRssParser

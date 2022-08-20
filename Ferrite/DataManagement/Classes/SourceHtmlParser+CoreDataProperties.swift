@@ -2,43 +2,32 @@
 //  SourceHtmlParser+CoreDataProperties.swift
 //  Ferrite
 //
-//  Created by Brian Dashore on 8/3/22.
+//  Created by Brian Dashore on 8/20/22.
 //
 //
 
-import CoreData
 import Foundation
+import CoreData
 
-public extension SourceHtmlParser {
-    @nonobjc class func fetchRequest() -> NSFetchRequest<SourceHtmlParser> {
-        NSFetchRequest<SourceHtmlParser>(entityName: "SourceHtmlParser")
+
+extension SourceHtmlParser {
+
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<SourceHtmlParser> {
+        return NSFetchRequest<SourceHtmlParser>(entityName: "SourceHtmlParser")
     }
 
-    @NSManaged var rows: String
-    @NSManaged var searchUrl: String
-    @NSManaged var magnetLink: SourceMagnetLink?
-    @NSManaged var parentSource: Source?
-    @NSManaged var seedLeech: SourceSeedLeech?
-    @NSManaged var size: SourceSize?
-    @NSManaged var title: SourceTitle?
-    @NSManaged var magnetHash: SourceMagnetHash?
-    @NSManaged var trackers: NSSet?
+    @NSManaged public var rows: String
+    @NSManaged public var searchUrl: String
+    @NSManaged public var trackers: [String]?
+    @NSManaged public var magnetHash: SourceMagnetHash?
+    @NSManaged public var magnetLink: SourceMagnetLink?
+    @NSManaged public var parentSource: Source?
+    @NSManaged public var seedLeech: SourceSeedLeech?
+    @NSManaged public var size: SourceSize?
+    @NSManaged public var title: SourceTitle?
+
 }
 
-// MARK: Generated accessors for trackers
+extension SourceHtmlParser : Identifiable {
 
-public extension SourceHtmlParser {
-    @objc(addTrackersObject:)
-    @NSManaged func addToTrackers(_ value: SourceTracker)
-
-    @objc(removeTrackersObject:)
-    @NSManaged func removeFromTrackers(_ value: SourceTracker)
-
-    @objc(addTrackers:)
-    @NSManaged func addToTrackers(_ values: NSSet)
-
-    @objc(removeTrackers:)
-    @NSManaged func removeFromTrackers(_ values: NSSet)
 }
-
-extension SourceHtmlParser: Identifiable {}

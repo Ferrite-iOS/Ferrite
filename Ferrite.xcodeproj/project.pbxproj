@@ -66,8 +66,6 @@
 		0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */; };
 		0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */; };
 		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
-		0CF501F2289AE06A0099C785 /* SourceTracker+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF501F0289AE06A0099C785 /* SourceTracker+CoreDataClass.swift */; };
-		0CF501F3289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF501F1289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift */; };
 		0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */; };
 /* End PBXBuildFile section */
 
@@ -128,8 +126,6 @@
 		0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewModel.swift; sourceTree = "<group>"; };
 		0CBC7704288DE7F40054BE44 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		0CC6E4D428A45BA000AF2BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		0CF501F0289AE06A0099C785 /* SourceTracker+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceTracker+CoreDataClass.swift"; sourceTree = "<group>"; };
-		0CF501F1289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceTracker+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -154,8 +150,6 @@
 			children = (
 				0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */,
 				0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */,
-				0CF501F0289AE06A0099C785 /* SourceTracker+CoreDataClass.swift */,
-				0CF501F1289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift */,
 				0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */,
 				0C79DC062899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift */,
 				0C4CFC4728970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift */,
@@ -423,7 +417,6 @@
 				0C794B6B289DACF100DD1CC8 /* SourceCatalogView.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
-				0CF501F2289AE06A0099C785 /* SourceTracker+CoreDataClass.swift in Sources */,
 				0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */,
 				0C7D11FE28AA03FE00ED92DB /* View.swift in Sources */,
 				0C0D50E7288DFF850035ECC8 /* SourcesView.swift in Sources */,
@@ -451,7 +444,6 @@
 				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,
 				0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */,
 				0CA05457288EE58200850554 /* SettingsSourceListView.swift in Sources */,
-				0CF501F3289AE06A0099C785 /* SourceTracker+CoreDataProperties.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,
 				0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */,
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,

@@ -29,13 +29,13 @@
     <entity name="SourceHtmlParser" representedClassName="SourceHtmlParser" syncable="YES">
         <attribute name="rows" attributeType="String" defaultValueString=""/>
         <attribute name="searchUrl" attributeType="String" defaultValueString=""/>
+        <attribute name="trackers" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <relationship name="magnetHash" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetHash" inverseName="parentHtmlParser" inverseEntity="SourceMagnetHash"/>
         <relationship name="magnetLink" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetLink" inverseName="parentHtmlParser" inverseEntity="SourceMagnetLink"/>
         <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="htmlParser" inverseEntity="Source"/>
         <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceSeedLeech" inverseName="parentHtmlParser" inverseEntity="SourceSeedLeech"/>
         <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentHtmlParser" inverseEntity="SourceSize"/>
         <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentHtmlParser" inverseEntity="SourceTitle"/>
-        <relationship name="trackers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SourceTracker" inverseName="parentHtmlParser" inverseEntity="SourceTracker"/>
     </entity>
     <entity name="SourceList" representedClassName="SourceList" syncable="YES">
         <attribute name="author" attributeType="String" defaultValueString=""/>
@@ -56,13 +56,13 @@
         <attribute name="items" attributeType="String" defaultValueString=""/>
         <attribute name="rssUrl" optional="YES" attributeType="String"/>
         <attribute name="searchUrl" attributeType="String" defaultValueString=""/>
+        <attribute name="trackers" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <relationship name="magnetHash" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetHash" inverseName="parentRssParser" inverseEntity="SourceMagnetHash"/>
         <relationship name="magnetLink" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetLink" inverseName="parentRssParser" inverseEntity="SourceMagnetLink"/>
         <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="rssParser" inverseEntity="Source"/>
         <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSeedLeech" inverseName="parentRssParser" inverseEntity="SourceSeedLeech"/>
         <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentRssParser" inverseEntity="SourceSize"/>
         <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentRssParser" inverseEntity="SourceTitle"/>
-        <relationship name="trackers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SourceTracker" inverseName="parentRssParser" inverseEntity="SourceTracker"/>
     </entity>
     <entity name="SourceSeedLeech" representedClassName="SourceSeedLeech" syncable="YES">
         <attribute name="attribute" attributeType="String" defaultValueString=""/>
@@ -82,10 +82,5 @@
     <entity name="SourceTitle" representedClassName="SourceTitle" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
         <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="title" inverseEntity="SourceHtmlParser"/>
         <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="title" inverseEntity="SourceRssParser"/>
-    </entity>
-    <entity name="SourceTracker" representedClassName="SourceTracker" syncable="YES">
-        <attribute name="urlString" attributeType="String" defaultValueString=""/>
-        <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="trackers" inverseEntity="SourceHtmlParser"/>
-        <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="trackers" inverseEntity="SourceRssParser"/>
     </entity>
 </model>
