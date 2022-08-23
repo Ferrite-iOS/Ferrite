@@ -12,6 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var sourceManager: SourceManager
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
@@ -98,13 +99,17 @@ struct ContentView: View {
             }
             .navigationTitle("Search")
             .navigationSearchBar {
-                SearchBar("Search", text: $scrapingModel.searchText, isEditing: $navModel.isEditingSearch,
+                SearchBar("Search",
+                          text: $scrapingModel.searchText,
+                          isEditing: $navModel.isEditingSearch,
                           onCommit: {
+                              scrapingModel.searchResults = []
                               scrapingModel.runningSearchTask = Task {
                                   navModel.isSearching = true
                                   navModel.showSearchProgress = true
 
-                                  await scrapingModel.scanSources(sources: sources.compactMap { $0 })
+                                  let sources = sourceManager.fetchInstalledSources()
+                                  await scrapingModel.scanSources(sources: sources)
 
                                   if realDebridEnabled, !scrapingModel.searchResults.isEmpty {
                                       await debridManager.populateDebridHashes(scrapingModel.searchResults)

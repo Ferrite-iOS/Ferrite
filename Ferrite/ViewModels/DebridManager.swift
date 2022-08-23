@@ -106,8 +106,17 @@ public class DebridManager: ObservableObject {
     }
 
     public func fetchRdDownload(searchResult: SearchResult, iaFile: RealDebridIAFile? = nil) async {
+        guard let magnetLink = searchResult.magnetLink else {
+            Task { @MainActor in
+                toastModel?.toastDescription = "Could not run your action because the magnet link is invalid."
+            }
+            print("RD error: Invalid magnet link")
+
+            return
+        }
+
         do {
-            let realDebridId = try await realDebrid.addMagnet(magnetLink: searchResult.magnetLink)
+            let realDebridId = try await realDebrid.addMagnet(magnetLink: magnetLink)
 
             var fileIds: [Int] = []
 

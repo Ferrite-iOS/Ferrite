@@ -28,7 +28,9 @@ struct SearchResultRDView: View {
                 Text("L: \(leechers)")
             }
 
-            Text(result.size)
+            if let size = result.size {
+                Text(size)
+            }
 
             if realDebridEnabled {
                 Text("RD")

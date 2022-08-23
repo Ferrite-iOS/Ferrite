@@ -25,7 +25,9 @@ public extension Source {
     @NSManaged var version: Int16
     @NSManaged var htmlParser: SourceHtmlParser?
     @NSManaged var rssParser: SourceRssParser?
+    @NSManaged var jsonParser: SourceJsonParser?
     @NSManaged var api: SourceApi?
+    @NSManaged var trackers: [String]?
 }
 
 extension Source: Identifiable {}

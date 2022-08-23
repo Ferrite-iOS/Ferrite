@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
 		0C0D50E7288DFF850035ECC8 /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourcesView.swift */; };
+		0C31133C28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C31133A28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift */; };
+		0C31133D28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C31133B28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift */; };
 		0C32FB532890D19D002BD219 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB522890D19D002BD219 /* AboutView.swift */; };
 		0C32FB552890D1BF002BD219 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB542890D1BF002BD219 /* UIApplication.swift */; };
 		0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB562890D1F2002BD219 /* ListRowViews.swift */; };
@@ -21,6 +23,7 @@
 		0C64A4B7288903880079976D /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B6288903880079976D /* KeychainSwift */; };
 		0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C733286289C4C820058D1FE /* SourceSettingsView.swift */; };
 		0C7376F028A97D1400D60918 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = 0C7376EF28A97D1400D60918 /* SwiftUIX */; };
+		0C7506D728B1AC9A008BEE38 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 0C7506D628B1AC9A008BEE38 /* SwiftyJSON */; };
 		0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */; };
 		0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */; };
 		0C794B67289DACB600DD1CC8 /* SourceUpdateButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C794B66289DACB600DD1CC8 /* SourceUpdateButtonView.swift */; };
@@ -72,6 +75,8 @@
 /* Begin PBXFileReference section */
 		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
 		0C0D50E6288DFF850035ECC8 /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
+		0C31133A28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceJsonParser+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C31133B28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceJsonParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C32FB522890D19D002BD219 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		0C32FB542890D1BF002BD219 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		0C32FB562890D1F2002BD219 /* ListRowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowViews.swift; sourceTree = "<group>"; };
@@ -134,6 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C7506D728B1AC9A008BEE38 /* SwiftyJSON in Frameworks */,
 				0C64A4B4288903680079976D /* Base32 in Frameworks */,
 				0C4CFC462897030D00AD9FAD /* Regex in Frameworks */,
 				0C7376F028A97D1400D60918 /* SwiftUIX in Frameworks */,
@@ -148,6 +154,8 @@
 		0C0D50DE288DF72D0035ECC8 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				0C31133A28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift */,
+				0C31133B28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift */,
 				0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */,
 				0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */,
 				0C79DC052899AF3C003F1C5A /* SourceSeedLeech+CoreDataClass.swift */,
@@ -342,6 +350,7 @@
 				0C64A4B6288903880079976D /* KeychainSwift */,
 				0C4CFC452897030D00AD9FAD /* Regex */,
 				0C7376EF28A97D1400D60918 /* SwiftUIX */,
+				0C7506D628B1AC9A008BEE38 /* SwiftyJSON */,
 			);
 			productName = Torrenter;
 			productReference = 0CAF1C68286F5C0E00296F86 /* Ferrite.app */;
@@ -377,6 +386,7 @@
 				0C64A4B5288903880079976D /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */,
 				0C7376EE28A97D1400D60918 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
+				0C7506D528B1AC9A008BEE38 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 			);
 			productRefGroup = 0CAF1C69286F5C0E00296F86 /* Products */;
 			projectDirPath = "";
@@ -412,6 +422,7 @@
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
 				0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */,
 				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
+				0C31133D28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift in Sources */,
 				0CA0545B288EEA4E00850554 /* SourceListEditorView.swift in Sources */,
 				0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */,
 				0C794B6B289DACF100DD1CC8 /* SourceCatalogView.swift in Sources */,
@@ -444,6 +455,7 @@
 				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,
 				0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */,
 				0CA05457288EE58200850554 /* SettingsSourceListView.swift in Sources */,
+				0C31133C28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift in Sources */,
 				0CA148DE288903F000DE2211 /* RealDebridModels.swift in Sources */,
 				0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */,
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,
@@ -699,6 +711,14 @@
 				kind = branch;
 			};
 		};
+		0C7506D528B1AC9A008BEE38 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		0CAF1C79286F5C8600296F86 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
@@ -729,6 +749,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0C7376EE28A97D1400D60918 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
 			productName = SwiftUIX;
+		};
+		0C7506D628B1AC9A008BEE38 /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0C7506D528B1AC9A008BEE38 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
 		};
 		0CAF1C7A286F5C8600296F86 /* SwiftSoup */ = {
 			isa = XCSwiftPackageProductDependency;

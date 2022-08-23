@@ -2,7 +2,7 @@
 //  SourceComplexQuery+CoreDataProperties.swift
 //  Ferrite
 //
-//  Created by Brian Dashore on 7/31/22.
+//  Created by Brian Dashore on 8/22/22.
 //
 //
 
@@ -15,7 +15,7 @@ public extension SourceComplexQuery {
     }
 
     @NSManaged var attribute: String
-    @NSManaged var lookupAttribute: String?
+    @NSManaged var discriminator: String?
     @NSManaged var query: String
     @NSManaged var regex: String?
 }

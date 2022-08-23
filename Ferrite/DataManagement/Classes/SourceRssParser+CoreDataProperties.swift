@@ -6,29 +6,23 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension SourceRssParser {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<SourceRssParser> {
-        return NSFetchRequest<SourceRssParser>(entityName: "SourceRssParser")
+public extension SourceRssParser {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<SourceRssParser> {
+        NSFetchRequest<SourceRssParser>(entityName: "SourceRssParser")
     }
 
-    @NSManaged public var items: String
-    @NSManaged public var rssUrl: String?
-    @NSManaged public var searchUrl: String
-    @NSManaged public var trackers: [String]?
-    @NSManaged public var magnetHash: SourceMagnetHash?
-    @NSManaged public var magnetLink: SourceMagnetLink?
-    @NSManaged public var parentSource: Source?
-    @NSManaged public var seedLeech: SourceSeedLeech?
-    @NSManaged public var size: SourceSize?
-    @NSManaged public var title: SourceTitle?
-
+    @NSManaged var items: String
+    @NSManaged var rssUrl: String?
+    @NSManaged var searchUrl: String
+    @NSManaged var magnetHash: SourceMagnetHash?
+    @NSManaged var magnetLink: SourceMagnetLink?
+    @NSManaged var parentSource: Source?
+    @NSManaged var seedLeech: SourceSeedLeech?
+    @NSManaged var size: SourceSize?
+    @NSManaged var title: SourceTitle?
 }
 
-extension SourceRssParser : Identifiable {
-
-}
+extension SourceRssParser: Identifiable {}

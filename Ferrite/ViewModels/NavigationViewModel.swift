@@ -86,17 +86,26 @@ class NavigationViewModel: ObservableObject {
     public func runMagnetAction(action: DefaultMagnetActionType?, searchResult: SearchResult) {
         let selectedAction = action ?? defaultMagnetAction
 
+        guard let magnetLink = searchResult.magnetLink else {
+            toastModel?.toastDescription = "Could not run your action because the magnet link is invalid."
+            print("Magnet action error: The magnet link is invalid.")
+
+            return
+        }
+
         switch selectedAction {
         case .none:
             currentChoiceSheet = .magnet
         case .webtor:
-            if let url = URL(string: "https://webtor.io/#/show?magnet=\(searchResult.magnetLink)") {
+            if let url = URL(string: "https://webtor.io/#/show?magnet=\(magnetLink)") {
                 UIApplication.shared.open(url)
             } else {
                 toastModel?.toastDescription = "Could not create a WebTor URL"
             }
         case .shareMagnet:
-            if let magnetUrl = URL(string: searchResult.magnetLink), currentChoiceSheet == nil {
+            if let magnetUrl = URL(string: magnetLink),
+               currentChoiceSheet == nil
+            {
                 activityItems = [magnetUrl]
                 showActivityView.toggle()
             } else {

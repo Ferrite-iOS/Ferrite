@@ -46,7 +46,9 @@ struct SourceSettingsView: View {
                         SourceSettingsBaseUrlView(selectedSource: selectedSource)
                     }
 
-                    if let sourceApi = selectedSource.api {
+                    if let sourceApi = selectedSource.api,
+                       sourceApi.clientId?.dynamic ?? false || sourceApi.clientSecret?.dynamic ?? false
+                    {
                         SourceSettingsApiView(selectedSourceApi: sourceApi)
                     }
 
@@ -110,27 +112,29 @@ struct SourceSettingsApiView: View {
             header: Text("API credentials"),
             footer: Text("Grab the required API credentials from the website. A client secret can be an API token.")
         ) {
-            if selectedSourceApi.dynamicClientId {
+            if let clientId = selectedSourceApi.clientId, clientId.dynamic {
                 TextField("Client ID", text: $tempClientId, onEditingChanged: { isFocused in
                     if !isFocused {
-                        selectedSourceApi.clientId = tempClientId
+                        clientId.value = tempClientId
+                        clientId.timeStamp = Date()
                     }
                 })
                 .autocapitalization(.none)
                 .onAppear {
-                    tempClientId = selectedSourceApi.clientId ?? ""
+                    tempClientId = clientId.value ?? ""
                 }
             }
 
-            if selectedSourceApi.clientSecret != nil {
+            if let clientSecret = selectedSourceApi.clientSecret, clientSecret.dynamic {
                 TextField("Token", text: $tempClientSecret, onEditingChanged: { isFocused in
                     if !isFocused {
-                        selectedSourceApi.clientSecret = tempClientSecret
+                        clientSecret.value = tempClientSecret
+                        clientSecret.timeStamp = Date()
                     }
                 })
                 .autocapitalization(.none)
                 .onAppear {
-                    tempClientSecret = selectedSourceApi.clientSecret ?? ""
+                    tempClientSecret = clientSecret.value ?? ""
                 }
             }
         }
@@ -144,14 +148,19 @@ struct SourceSettingsMethodView: View {
 
     var body: some View {
         Picker("Fetch method", selection: $selectedTempParser) {
-            if selectedSource.htmlParser != nil {
-                Text("Web scraping")
-                    .tag(SourcePreferredParser.scraping)
+            if selectedSource.jsonParser != nil {
+                Text("Website API")
+                    .tag(SourcePreferredParser.siteApi)
             }
 
             if selectedSource.rssParser != nil {
                 Text("RSS")
                     .tag(SourcePreferredParser.rss)
+            }
+
+            if selectedSource.htmlParser != nil {
+                Text("Web scraping")
+                    .tag(SourcePreferredParser.scraping)
             }
         }
         .pickerStyle(.inline)

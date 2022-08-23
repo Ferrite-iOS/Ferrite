@@ -6,28 +6,22 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension SourceHtmlParser {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<SourceHtmlParser> {
-        return NSFetchRequest<SourceHtmlParser>(entityName: "SourceHtmlParser")
+public extension SourceHtmlParser {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<SourceHtmlParser> {
+        NSFetchRequest<SourceHtmlParser>(entityName: "SourceHtmlParser")
     }
 
-    @NSManaged public var rows: String
-    @NSManaged public var searchUrl: String
-    @NSManaged public var trackers: [String]?
-    @NSManaged public var magnetHash: SourceMagnetHash?
-    @NSManaged public var magnetLink: SourceMagnetLink?
-    @NSManaged public var parentSource: Source?
-    @NSManaged public var seedLeech: SourceSeedLeech?
-    @NSManaged public var size: SourceSize?
-    @NSManaged public var title: SourceTitle?
-
+    @NSManaged var rows: String
+    @NSManaged var searchUrl: String
+    @NSManaged var magnetHash: SourceMagnetHash?
+    @NSManaged var magnetLink: SourceMagnetLink?
+    @NSManaged var parentSource: Source?
+    @NSManaged var seedLeech: SourceSeedLeech?
+    @NSManaged var size: SourceSize?
+    @NSManaged var title: SourceTitle?
 }
 
-extension SourceHtmlParser : Identifiable {
-
-}
+extension SourceHtmlParser: Identifiable {}

@@ -9,12 +9,13 @@ import Base32
 import Regex
 import SwiftSoup
 import SwiftUI
+import SwiftyJSON
 
 public struct SearchResult: Hashable, Codable {
-    let title: String
+    let title: String?
     let source: String
-    let size: String
-    let magnetLink: String
+    let size: String?
+    let magnetLink: String?
     let magnetHash: String?
     let seeders: String?
     let leechers: String?
@@ -42,7 +43,7 @@ class ScrapingViewModel: ObservableObject {
                 toastModel?.toastDescription = "There are no sources to search!"
             }
 
-            print("Sources empty")
+            print("There are no sources to search!")
             return
         }
 
@@ -53,9 +54,7 @@ class ScrapingViewModel: ObservableObject {
                 currentSourceName = source.name
 
                 guard let baseUrl = source.baseUrl else {
-                    Task { @MainActor in
-                        toastModel?.toastDescription = "The base URL could not be found for source \(source.name)"
-                    }
+                    toastModel?.toastDescription = "The base URL could not be found for source \(source.name)"
 
                     print("The base URL could not be found for source \(source.name)")
                     continue
@@ -64,54 +63,82 @@ class ScrapingViewModel: ObservableObject {
                 // Default to HTML scraping
                 let preferredParser = SourcePreferredParser(rawValue: source.preferredParser) ?? .none
 
+                guard let encodedQuery = searchText.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+                    toastModel?.toastDescription = "Could not process search query, invalid characters present."
+                    print("Could not process search query, invalid characters present")
+
+                    continue
+                }
+
                 switch preferredParser {
                 case .scraping:
                     if let htmlParser = source.htmlParser {
-                        guard let encodedQuery = searchText.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
-                            toastModel?.toastDescription = "Could not process search query, invalid characters present."
-                            print("Could not process search query, invalid characters present")
+                        let urlString = baseUrl + htmlParser.searchUrl
+                            .replacingOccurrences(of: "{query}", with: encodedQuery)
 
-                            continue
+                        if let data = await fetchWebsiteData(urlString: urlString),
+                           let html = String(data: data, encoding: .utf8)
+                        {
+                            let sourceResults = await scrapeHtml(source: source, baseUrl: baseUrl, html: html)
+                            tempResults += sourceResults
                         }
-
-                        let urlString = baseUrl + htmlParser.searchUrl.replacingOccurrences(of: "{query}", with: encodedQuery)
-
-                        guard let html = await fetchWebsiteData(urlString: urlString) else {
-                            continue
-                        }
-
-                        let sourceResults = await scrapeHtml(source: source, baseUrl: baseUrl, html: html)
-                        tempResults += sourceResults
                     }
                 case .rss:
                     if let rssParser = source.rssParser {
-                        guard let encodedQuery = searchText.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
-                            toastModel?.toastDescription = "Could not process search query, invalid characters present."
-                            print("Could not process search query, invalid characters present")
-
-                            continue
-                        }
-
                         let replacedSearchUrl = rssParser.searchUrl
-                            .replacingOccurrences(of: "{apiKey}", with: source.api?.clientSecret ?? "")
+                            .replacingOccurrences(of: "{secret}", with: source.api?.clientSecret?.value ?? "")
                             .replacingOccurrences(of: "{query}", with: encodedQuery)
 
                         // If there is an RSS base URL, use that instead
-                        var urlString: String
-                        if let rssUrl = rssParser.rssUrl {
-                            urlString = rssUrl + replacedSearchUrl
-                        } else {
-                            urlString = baseUrl + replacedSearchUrl
-                        }
+                        let urlString = (rssParser.rssUrl ?? baseUrl) + replacedSearchUrl
 
-                        guard let rss = await fetchWebsiteData(urlString: urlString) else {
-                            continue
+                        if let data = await fetchWebsiteData(urlString: urlString),
+                           let rss = String(data: data, encoding: .utf8)
+                        {
+                            let sourceResults = scrapeRss(source: source, rss: rss)
+                            tempResults += sourceResults
                         }
-
-                        let sourceResults = scrapeRss(source: source, rss: rss)
-                        tempResults += sourceResults
                     }
-                case .siteApi, .none:
+                case .siteApi:
+                    if let jsonParser = source.jsonParser {
+                        var replacedSearchUrl = jsonParser.searchUrl
+                            .replacingOccurrences(of: "{query}", with: encodedQuery)
+
+                        // Handle anything API related including tokens, client IDs, and appending the API URL
+                        // The source API key is for APIs that require extra credentials or use a different URL
+                        if let sourceApi = source.api {
+                            if let clientIdInfo = sourceApi.clientId {
+                                if let newSearchUrl = await handleApiCredential(clientIdInfo,
+                                                                                replacement: "{clientId}",
+                                                                                searchUrl: replacedSearchUrl,
+                                                                                apiUrl: sourceApi.apiUrl,
+                                                                                baseUrl: baseUrl)
+                                {
+                                    replacedSearchUrl = newSearchUrl
+                                }
+                            }
+
+                            // Works exactly the same as the client ID check
+                            if let clientSecretInfo = sourceApi.clientSecret {
+                                if let newSearchUrl = await handleApiCredential(clientSecretInfo,
+                                                                                replacement: "{secret}",
+                                                                                searchUrl: replacedSearchUrl,
+                                                                                apiUrl: sourceApi.apiUrl,
+                                                                                baseUrl: baseUrl)
+                                {
+                                    replacedSearchUrl = newSearchUrl
+                                }
+                            }
+                        }
+
+                        let urlString = (source.api?.apiUrl ?? baseUrl) + replacedSearchUrl
+
+                        if let data = await fetchWebsiteData(urlString: urlString) {
+                            let sourceResults = scrapeJson(source: source, jsonData: data)
+                            tempResults += sourceResults
+                        }
+                    }
+                case .none:
                     continue
                 }
             }
@@ -125,11 +152,90 @@ class ScrapingViewModel: ObservableObject {
         searchResults = tempResults
     }
 
-    // Fetches the data for a URL
-    @MainActor
-    public func fetchWebsiteData(urlString: String) async -> String? {
+    public func handleApiCredential(_ credential: SourceApiCredential,
+                                    replacement: String,
+                                    searchUrl: String,
+                                    apiUrl: String?,
+                                    baseUrl: String) async -> String?
+    {
+        // Is the credential expired
+        var isExpired = false
+        if let timeStamp = credential.timeStamp?.timeIntervalSince1970, credential.expiryLength != 0 {
+            let now = Date().timeIntervalSince1970
+
+            isExpired = now > timeStamp + credential.expiryLength
+        }
+
+        // Fetch a new credential if it's expired or doesn't exist yet
+        if let value = credential.value, !isExpired {
+            return searchUrl
+                .replacingOccurrences(of: replacement, with: value)
+        } else if
+            credential.value == nil || isExpired,
+            let credentialUrl = credential.urlString,
+            let newValue = await fetchApiCredential(
+                urlString: (apiUrl ?? baseUrl) + credentialUrl,
+                credential: credential
+            )
+        {
+            let backgroundContext = PersistenceController.shared.backgroundContext
+
+            credential.value = newValue
+            credential.timeStamp = Date()
+
+            PersistenceController.shared.save(backgroundContext)
+
+            return searchUrl
+                .replacingOccurrences(of: replacement, with: newValue)
+        }
+
+        return nil
+    }
+
+    public func fetchApiCredential(urlString: String, credential: SourceApiCredential) async -> String? {
         guard let url = URL(string: urlString) else {
-            toastModel?.toastDescription = "Source doesn't contain a valid URL, contact the source dev!"
+            Task { @MainActor in
+                toastModel?.toastDescription = "This token URL is invalid."
+            }
+            print("Token url \(urlString) is invalid!")
+
+            return nil
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+
+            let responseType = ApiCredentialResponseType(rawValue: credential.responseType ?? "") ?? .json
+
+            switch responseType {
+            case .json:
+                guard let credentialQuery = credential.query else {
+                    return nil
+                }
+
+                let json = try JSON(data: data)
+
+                return json[credentialQuery.components(separatedBy: ".")].string
+            case .text:
+                return String(data: data, encoding: .utf8)
+            }
+        } catch {
+            Task { @MainActor in
+                toastModel?.toastDescription = "Error in fetching an API credential \(error)"
+            }
+            print("Error in fetching an API credential \(error)")
+
+            return nil
+        }
+    }
+
+    // Fetches the data for a URL
+    public func fetchWebsiteData(urlString: String) async -> Data? {
+        guard let url = URL(string: urlString) else {
+            Task { @MainActor in
+                toastModel?.toastDescription = "Source doesn't contain a valid URL, contact the source dev!"
+            }
+
             print("Source doesn't contain a valid URL, contact the source dev!")
 
             return nil
@@ -137,27 +243,182 @@ class ScrapingViewModel: ObservableObject {
 
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-            let html = String(data: data, encoding: .ascii)
-            return html
+            return data
         } catch {
             let error = error as NSError
 
-            switch error.code {
-            case -999:
-                toastModel?.toastType = .info
-                toastModel?.toastDescription = "Search cancelled"
-            default:
-                toastModel?.toastDescription = "Error in fetching data \(error)"
+            Task { @MainActor in
+                switch error.code {
+                case -999:
+                    toastModel?.toastType = .info
+                    toastModel?.toastDescription = "Search cancelled"
+                default:
+                    toastModel?.toastDescription = "Error in fetching data \(error)"
+                }
             }
-
             print("Error in fetching data \(error)")
 
             return nil
         }
     }
 
+    public func scrapeJson(source: Source, jsonData: Data) -> [SearchResult] {
+        var tempResults: [SearchResult] = []
+
+        guard let jsonParser = source.jsonParser else {
+            return tempResults
+        }
+
+        var jsonResults: [JSON] = []
+
+        do {
+            let json = try JSON(data: jsonData)
+
+            if let resultsQuery = jsonParser.results {
+                jsonResults = json[resultsQuery.components(separatedBy: ".")].arrayValue
+            } else {
+                jsonResults = json.arrayValue
+            }
+        } catch {
+            if let api = source.api {
+                Task { @MainActor in
+                    cleanApiCreds(api: api)
+                }
+
+                print("JSON parsing error, couldn't fetch results: \(error)")
+            }
+        }
+
+        // If there are no results and the client secret isn't dynamic, just clear out the token
+        if let api = source.api, jsonResults.isEmpty {
+            Task { @MainActor in
+                cleanApiCreds(api: api)
+            }
+
+            print("JSON results were empty!")
+        }
+
+        // Iterate through results and grab what we can
+        for result in jsonResults {
+            var subResults: [JSON] = []
+
+            let searchResult = parseJsonResult(result, jsonParser: jsonParser, source: source)
+
+            // If subresults exist, iterate through those as well with the existing result
+            // Otherwise append the applied result if it exists
+            // Better to be redundant with checks rather than another for loop or filter
+            if let subResultsQuery = jsonParser.subResults {
+                subResults = result[subResultsQuery.components(separatedBy: ".")].arrayValue
+
+                for subResult in subResults {
+                    if let newSearchResult =
+                        parseJsonResult(
+                            subResult,
+                            jsonParser: jsonParser,
+                            source: source,
+                            existingSearchResult: searchResult
+                        ),
+                        let magnetLink = newSearchResult.magnetLink,
+                        magnetLink.starts(with: "magnet:"),
+                        !tempResults.contains(newSearchResult)
+                    {
+                        tempResults.append(newSearchResult)
+                    }
+                }
+            } else if
+                let searchResult = searchResult,
+                let magnetLink = searchResult.magnetLink,
+                magnetLink.starts(with: "magnet:"),
+                !tempResults.contains(searchResult)
+            {
+                tempResults.append(searchResult)
+            }
+        }
+
+        return tempResults
+    }
+
+    public func parseJsonResult(_ result: JSON, jsonParser: SourceJsonParser, source: Source, existingSearchResult: SearchResult? = nil) -> SearchResult? {
+        var magnetHash: String? = existingSearchResult?.magnetHash
+
+        if let magnetHashParser = jsonParser.magnetHash {
+            let rawHash = result[magnetHashParser.query.components(separatedBy: ".")].rawValue
+
+            if !(rawHash is NSNull) {
+                magnetHash = fetchMagnetHash(existingHash: String(describing: rawHash))
+            }
+        }
+
+        var title: String? = existingSearchResult?.title
+
+        if let titleParser = jsonParser.title {
+            if let existingTitle = existingSearchResult?.title,
+               let discriminatorQuery = titleParser.discriminator
+            {
+                let rawDiscriminator = result[discriminatorQuery.components(separatedBy: ".")].rawValue
+
+                if !(rawDiscriminator is NSNull) {
+                    title = String(describing: rawDiscriminator) + existingTitle
+                }
+            } else if existingSearchResult?.title == nil {
+                let rawTitle = result[titleParser.query].rawValue
+                title = rawTitle is NSNull ? nil : String(describing: rawTitle)
+            }
+        }
+
+        var link: String? = existingSearchResult?.magnetLink
+
+        if let magnetLinkParser = jsonParser.magnetLink, existingSearchResult?.magnetLink == nil {
+            let rawLink = result[magnetLinkParser.query.components(separatedBy: ".")].rawValue
+            link = rawLink is NSNull ? nil : String(describing: rawLink)
+        } else if let magnetHash = magnetHash {
+            link = generateMagnetLink(magnetHash: magnetHash, title: title, trackers: source.trackers)
+        }
+
+        if magnetHash == nil, let href = link {
+            magnetHash = fetchMagnetHash(magnetLink: href)
+        }
+
+        var size: String? = existingSearchResult?.size
+
+        if let sizeParser = jsonParser.size, existingSearchResult?.size == nil {
+            let rawSize = result[sizeParser.query.components(separatedBy: ".")].rawValue
+            size = rawSize is NSNull ? nil : String(describing: rawSize)
+        }
+
+        if let sizeString = size, let sizeInt = Int64(sizeString) {
+            size = byteCountFormatter.string(fromByteCount: sizeInt)
+        }
+
+        var seeders: String? = existingSearchResult?.seeders
+        var leechers: String? = existingSearchResult?.leechers
+
+        if let seederLeecher = jsonParser.seedLeech {
+            if let seederQuery = seederLeecher.seeders, existingSearchResult?.seeders == nil {
+                let rawSeeders = result[seederQuery.components(separatedBy: ".")].rawValue
+                seeders = rawSeeders is NSNull ? nil : String(describing: rawSeeders)
+            }
+
+            if let leecherQuery = seederLeecher.leechers, existingSearchResult?.leechers == nil {
+                let rawLeechers = result[leecherQuery.components(separatedBy: ".")].rawValue
+                leechers = rawLeechers is NSNull ? nil : String(describing: rawLeechers)
+            }
+        }
+
+        let result = SearchResult(
+            title: title,
+            source: source.name,
+            size: size,
+            magnetLink: link,
+            magnetHash: magnetHash,
+            seeders: seeders,
+            leechers: leechers
+        )
+
+        return result
+    }
+
     // RSS feed scraper
-    @MainActor
     public func scrapeRss(source: Source, rss: String) -> [SearchResult] {
         var tempResults: [SearchResult] = []
 
@@ -171,7 +432,9 @@ class ScrapingViewModel: ObservableObject {
             let document = try SwiftSoup.parse(rss, "", Parser.xmlParser())
             items = try document.getElementsByTag("item")
         } catch {
-            toastModel?.toastDescription = "RSS scraping error, couldn't fetch items: \(error)"
+            Task { @MainActor in
+                toastModel?.toastDescription = "RSS scraping error, couldn't fetch items: \(error)"
+            }
             print("RSS scraping error, couldn't fetch items: \(error)")
 
             return tempResults
@@ -181,13 +444,15 @@ class ScrapingViewModel: ObservableObject {
             // Parse magnet link or translate hash
             var magnetHash: String?
             if let magnetHashParser = rssParser.magnetHash {
-                magnetHash = try? runRssComplexQuery(
+                let tempHash = try? runRssComplexQuery(
                     item: item,
                     query: magnetHashParser.query,
                     attribute: magnetHashParser.attribute,
-                    lookupAttribute: magnetHashParser.lookupAttribute,
+                    discriminator: magnetHashParser.discriminator,
                     regexString: magnetHashParser.regex
                 )
+
+                magnetHash = fetchMagnetHash(existingHash: tempHash)
             }
 
             var title: String?
@@ -196,7 +461,7 @@ class ScrapingViewModel: ObservableObject {
                     item: item,
                     query: titleParser.query,
                     attribute: titleParser.attribute,
-                    lookupAttribute: titleParser.lookupAttribute,
+                    discriminator: titleParser.discriminator,
                     regexString: titleParser.regex
                 )
             }
@@ -207,11 +472,11 @@ class ScrapingViewModel: ObservableObject {
                     item: item,
                     query: magnetLinkParser.query,
                     attribute: magnetLinkParser.attribute,
-                    lookupAttribute: magnetLinkParser.lookupAttribute,
+                    discriminator: magnetLinkParser.discriminator,
                     regexString: magnetLinkParser.regex
                 )
             } else if let magnetHash = magnetHash {
-                link = generateMagnetLink(magnetHash: magnetHash, title: title, trackers: rssParser.trackers)
+                link = generateMagnetLink(magnetHash: magnetHash, title: title, trackers: source.trackers)
             } else {
                 continue
             }
@@ -230,7 +495,7 @@ class ScrapingViewModel: ObservableObject {
                     item: item,
                     query: sizeParser.query,
                     attribute: sizeParser.attribute,
-                    lookupAttribute: sizeParser.lookupAttribute,
+                    discriminator: sizeParser.discriminator,
                     regexString: sizeParser.regex
                 )
             }
@@ -247,7 +512,7 @@ class ScrapingViewModel: ObservableObject {
                         item: item,
                         query: seederQuery,
                         attribute: seederLeecher.attribute,
-                        lookupAttribute: seederLeecher.lookupAttribute,
+                        discriminator: seederLeecher.discriminator,
                         regexString: seederLeecher.seederRegex
                     )
                 }
@@ -257,7 +522,7 @@ class ScrapingViewModel: ObservableObject {
                         item: item,
                         query: leecherQuery,
                         attribute: seederLeecher.attribute,
-                        lookupAttribute: seederLeecher.lookupAttribute,
+                        discriminator: seederLeecher.discriminator,
                         regexString: seederLeecher.leecherRegex
                     )
                 }
@@ -281,8 +546,36 @@ class ScrapingViewModel: ObservableObject {
         return tempResults
     }
 
+    // Complex query parsing for RSS scraping
+    func runRssComplexQuery(item: Element, query: String, attribute: String, discriminator: String?, regexString: String?) throws -> String? {
+        var parsedValue: String?
+
+        switch attribute {
+        case "text":
+            parsedValue = try item.getElementsByTag(query).first()?.text()
+        default:
+            // If there's a key/value to lookup the attribute with, query it. Othewise assume the value is in the same attribute
+            if let discriminator = discriminator {
+                let containerElement = try item.getElementsByAttributeValue(discriminator, query).first()
+                parsedValue = try containerElement?.attr(attribute)
+            } else {
+                let containerElement = try item.getElementsByAttribute(attribute).first()
+                parsedValue = try containerElement?.attr(attribute)
+            }
+        }
+
+        // A capture group must be used in the provided regex
+        if let regexString = regexString,
+           let parsedValue = parsedValue,
+           let regexValue = try? Regex(regexString).firstMatch(in: parsedValue)?.groups[safe: 0]?.value
+        {
+            return regexValue
+        } else {
+            return parsedValue
+        }
+    }
+
     // HTML scraper
-    @MainActor
     public func scrapeHtml(source: Source, baseUrl: String, html: String) async -> [SearchResult] {
         var tempResults: [SearchResult] = []
 
@@ -296,7 +589,9 @@ class ScrapingViewModel: ObservableObject {
             let document = try SwiftSoup.parse(html)
             rows = try document.select(htmlParser.rows)
         } catch {
-            toastModel?.toastDescription = "Scraping error, couldn't fetch rows: \(error)"
+            Task { @MainActor in
+                toastModel?.toastDescription = "Scraping error, couldn't fetch rows: \(error)"
+            }
             print("Scraping error, couldn't fetch rows: \(error)")
 
             return tempResults
@@ -314,11 +609,11 @@ class ScrapingViewModel: ObservableObject {
 
                 var href: String
                 if let externalMagnetQuery = magnetParser.externalLinkQuery, !externalMagnetQuery.isEmpty {
-                    guard let externalMagnetLink = try row.select(externalMagnetQuery).first()?.attr("href") else {
-                        continue
-                    }
-
-                    guard let magnetHtml = await fetchWebsiteData(urlString: baseUrl + externalMagnetLink) else {
+                    guard
+                        let externalMagnetLink = try row.select(externalMagnetQuery).first()?.attr("href"),
+                        let data = await fetchWebsiteData(urlString: baseUrl + externalMagnetLink),
+                        let magnetHtml = String(data: data, encoding: .utf8)
+                    else {
                         continue
                     }
 
@@ -429,7 +724,9 @@ class ScrapingViewModel: ObservableObject {
                     tempResults.append(result)
                 }
             } catch {
-                toastModel?.toastDescription = "Scraping error: \(error)"
+                Task { @MainActor in
+                    toastModel?.toastDescription = "Scraping error: \(error)"
+                }
                 print("Scraping error: \(error)")
 
                 continue
@@ -463,42 +760,19 @@ class ScrapingViewModel: ObservableObject {
         }
     }
 
-    // Complex query parsing for RSS scraping
-    func runRssComplexQuery(item: Element, query: String, attribute: String, lookupAttribute: String?, regexString: String?) throws -> String? {
-        var parsedValue: String?
-
-        switch attribute {
-        case "text":
-            parsedValue = try item.getElementsByTag(query).first()?.text()
-        default:
-            // If there's a key/value to lookup the attribute with, query it. Othewise assume the value is in the same attribute
-            if let lookupAttribute = lookupAttribute {
-                let containerElement = try item.getElementsByAttributeValue(lookupAttribute, query).first()
-                parsedValue = try containerElement?.attr(attribute)
-            } else {
-                let containerElement = try item.getElementsByAttribute(attribute).first()
-                parsedValue = try containerElement?.attr(attribute)
-            }
-        }
-
-        // A capture group must be used in the provided regex
-        if let regexString = regexString,
-           let parsedValue = parsedValue,
-           let regexValue = try? Regex(regexString).firstMatch(in: parsedValue)?.groups[safe: 0]?.value
-        {
-            return regexValue
-        } else {
-            return parsedValue
-        }
-    }
-
     // Fetches and possibly converts the magnet hash value to sha1
-    public func fetchMagnetHash(magnetLink: String) -> String? {
-        guard let firstSplit = magnetLink.split(separator: ":")[safe: 3] else {
-            return nil
-        }
+    public func fetchMagnetHash(magnetLink: String? = nil, existingHash: String? = nil) -> String? {
+        var magnetHash: String
 
-        guard let magnetHash = firstSplit.split(separator: "&")[safe: 0] else {
+        if let existingHash = existingHash {
+            magnetHash = existingHash
+        } else if
+            let magnetLink = magnetLink,
+            let firstSplit = magnetLink.split(separator: ":")[safe: 3],
+            let tempHash = firstSplit.split(separator: "&")[safe: 0]
+        {
+            magnetHash = String(tempHash)
+        } else {
             return nil
         }
 
@@ -553,5 +827,28 @@ class ScrapingViewModel: ObservableObject {
         }
 
         return magnetLinkArray.joined()
+    }
+
+    @MainActor
+    func cleanApiCreds(api: SourceApi) {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        var clientIdReset = false
+        var clientSecretReset = false
+
+        if let clientId = api.clientId, !clientId.dynamic {
+            clientId.value = nil
+            clientIdReset = true
+        }
+
+        if let clientSecret = api.clientSecret, !clientSecret.dynamic {
+            clientSecret.value = nil
+            clientSecretReset = true
+        }
+
+        toastModel?.toastDescription =
+            "Could not fetch results, your \(clientIdReset ? "client ID" : "") \(clientIdReset && clientSecretReset ? "and" : "") \(clientSecretReset ? "token" : "") was automatically reset. Make sure all credentials are correct in the source's settings!"
+
+        PersistenceController.shared.save(backgroundContext)
     }
 }

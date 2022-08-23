@@ -74,7 +74,10 @@ struct MagnetChoiceView: View {
                     }
 
                     ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
-                        if let result = scrapingModel.selectedSearchResult, let url = URL(string: result.magnetLink) {
+                        if let result = scrapingModel.selectedSearchResult,
+                           let magnetLink = result.magnetLink,
+                           let url = URL(string: magnetLink)
+                        {
                             activityItems = [url]
                             navModel.showActivityView.toggle()
                         }

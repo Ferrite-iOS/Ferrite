@@ -7,6 +7,11 @@
 
 import Foundation
 
+public enum ApiCredentialResponseType: String, Codable, Hashable {
+    case json
+    case text
+}
+
 public struct SourceListJson: Codable {
     let name: String
     let author: String
@@ -20,7 +25,9 @@ public struct SourceJson: Codable, Hashable {
     var dynamicBaseUrl: Bool?
     var author: String?
     var listId: UUID?
+    let trackers: [String]?
     let api: SourceApiJson?
+    let jsonParser: SourceJsonParserJson?
     let rssParser: SourceRssParserJson?
     let htmlParser: SourceHtmlParserJson?
 }
@@ -33,9 +40,29 @@ public enum SourcePreferredParser: Int16, CaseIterable {
 }
 
 public struct SourceApiJson: Codable, Hashable {
-    let clientId: String?
-    var dynamicClientId: Bool?
-    let usesSecret: Bool
+    let apiUrl: String?
+    let clientId: SourceApiCredentialJson?
+    let clientSecret: SourceApiCredentialJson?
+}
+
+public struct SourceApiCredentialJson: Codable, Hashable {
+    let query: String?
+    let value: String?
+    let dynamic: Bool?
+    let url: String?
+    let responseType: ApiCredentialResponseType?
+    let expiryLength: Double?
+}
+
+public struct SourceJsonParserJson: Codable, Hashable {
+    let searchUrl: String
+    let results: String?
+    let subResults: String?
+    let magnetHash: SouceComplexQueryJson?
+    let magnetLink: SouceComplexQueryJson?
+    let title: SouceComplexQueryJson?
+    let size: SouceComplexQueryJson?
+    let sl: SourceSLJson?
 }
 
 public struct SourceRssParserJson: Codable, Hashable {
@@ -47,7 +74,6 @@ public struct SourceRssParserJson: Codable, Hashable {
     let title: SouceComplexQueryJson?
     let size: SouceComplexQueryJson?
     let sl: SourceSLJson?
-    let trackers: [String]?
 }
 
 public struct SourceHtmlParserJson: Codable, Hashable {
@@ -61,7 +87,7 @@ public struct SourceHtmlParserJson: Codable, Hashable {
 
 public struct SouceComplexQueryJson: Codable, Hashable {
     let query: String
-    let lookupAttribute: String?
+    let discriminator: String?
     let attribute: String?
     let regex: String?
 }
@@ -78,7 +104,7 @@ public struct SourceSLJson: Codable, Hashable {
     let leechers: String?
     let combined: String?
     let attribute: String?
-    let lookupAttribute: String?
+    let discriminator: String?
     let seederRegex: String?
     let leecherRegex: String?
 }

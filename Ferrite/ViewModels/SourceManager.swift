@@ -28,7 +28,10 @@ public class SourceManager: ObservableObject {
                     return
                 }
 
-                let (data, _) = try await URLSession.shared.data(for: URLRequest(url: url))
+                // Always get the up-to-date source list
+                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+
+                let (data, _) = try await URLSession.shared.data(for: request)
                 var sourceResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
 
                 for index in sourceResponse.sources.indices {
@@ -42,6 +45,17 @@ public class SourceManager: ObservableObject {
             availableSources = tempSourceUrls
         } catch {
             print(error)
+        }
+    }
+
+    // Fetches sources using the background context
+    public func fetchInstalledSources() -> [Source] {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        if let sources = try? backgroundContext.fetch(Source.fetchRequest()) {
+            return sources.compactMap { $0 }
+        } else {
+            return []
         }
     }
 
@@ -84,9 +98,14 @@ public class SourceManager: ObservableObject {
         newSource.baseUrl = sourceJson.baseUrl
         newSource.author = sourceJson.author ?? "Unknown"
         newSource.listId = sourceJson.listId
+        newSource.trackers = sourceJson.trackers
 
         if let sourceApiJson = sourceJson.api {
             addSourceApi(newSource: newSource, apiJson: sourceApiJson)
+        }
+
+        if let jsonParserJson = sourceJson.jsonParser {
+            addJsonParser(newSource: newSource, jsonParserJson: jsonParserJson)
         }
 
         // Adds an RSS parser if present
@@ -100,7 +119,9 @@ public class SourceManager: ObservableObject {
         }
 
         // Add an API condition as well
-        if newSource.rssParser != nil {
+        if newSource.jsonParser != nil {
+            newSource.preferredParser = Int16(SourcePreferredParser.siteApi.rawValue)
+        } else if newSource.rssParser != nil {
             newSource.preferredParser = Int16(SourcePreferredParser.rss.rawValue)
         } else {
             newSource.preferredParser = Int16(SourcePreferredParser.scraping.rawValue)
@@ -121,19 +142,96 @@ public class SourceManager: ObservableObject {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         let newSourceApi = SourceApi(context: backgroundContext)
-        newSourceApi.clientId = apiJson.clientId
+        newSourceApi.apiUrl = apiJson.apiUrl
 
-        if let clientId = apiJson.clientId {
-            newSourceApi.clientId = clientId
+        if let clientIdJson = apiJson.clientId {
+            let newClientId = SourceApiClientId(context: backgroundContext)
+            newClientId.query = clientIdJson.query
+            newClientId.urlString = clientIdJson.url
+            newClientId.dynamic = clientIdJson.dynamic ?? false
+            newClientId.value = clientIdJson.value
+            newClientId.responseType = clientIdJson.responseType?.rawValue ?? ApiCredentialResponseType.json.rawValue
+            newClientId.expiryLength = clientIdJson.expiryLength ?? 0
+            newClientId.timeStamp = Date()
+
+            newSourceApi.clientId = newClientId
         }
 
-        newSourceApi.dynamicClientId = apiJson.dynamicClientId ?? false
+        if let clientSecretJson = apiJson.clientSecret {
+            let newClientSecret = SourceApiClientSecret(context: backgroundContext)
+            newClientSecret.query = clientSecretJson.query
+            newClientSecret.urlString = clientSecretJson.url
+            newClientSecret.dynamic = clientSecretJson.dynamic ?? false
+            newClientSecret.value = clientSecretJson.value
+            newClientSecret.responseType = clientSecretJson.responseType?.rawValue ?? ApiCredentialResponseType.json.rawValue
+            newClientSecret.expiryLength = clientSecretJson.expiryLength ?? 0
+            newClientSecret.timeStamp = Date()
 
-        if apiJson.usesSecret {
-            newSourceApi.clientSecret = ""
+            newSourceApi.clientSecret = newClientSecret
         }
 
         newSource.api = newSourceApi
+    }
+
+    func addJsonParser(newSource: Source, jsonParserJson: SourceJsonParserJson) {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        let newSourceJsonParser = SourceJsonParser(context: backgroundContext)
+        newSourceJsonParser.searchUrl = jsonParserJson.searchUrl
+        newSourceJsonParser.results = jsonParserJson.results
+        newSourceJsonParser.subResults = jsonParserJson.subResults
+
+        // Tune these complex queries to the final JSON parser format
+        if let magnetLinkJson = jsonParserJson.magnetLink {
+            let newSourceMagnetLink = SourceMagnetLink(context: backgroundContext)
+            newSourceMagnetLink.query = magnetLinkJson.query
+            newSourceMagnetLink.attribute = magnetLinkJson.attribute ?? "text"
+            newSourceMagnetLink.discriminator = magnetLinkJson.discriminator
+
+            newSourceJsonParser.magnetLink = newSourceMagnetLink
+        }
+
+        if let magnetHashJson = jsonParserJson.magnetHash {
+            let newSourceMagnetHash = SourceMagnetHash(context: backgroundContext)
+            newSourceMagnetHash.query = magnetHashJson.query
+            newSourceMagnetHash.attribute = magnetHashJson.attribute ?? "text"
+            newSourceMagnetHash.discriminator = magnetHashJson.discriminator
+
+            newSourceJsonParser.magnetHash = newSourceMagnetHash
+        }
+
+        if let titleJson = jsonParserJson.title {
+            let newSourceTitle = SourceTitle(context: backgroundContext)
+            newSourceTitle.query = titleJson.query
+            newSourceTitle.attribute = titleJson.attribute ?? "text"
+            newSourceTitle.discriminator = titleJson.discriminator
+
+            newSourceJsonParser.title = newSourceTitle
+        }
+
+        if let sizeJson = jsonParserJson.size {
+            let newSourceSize = SourceSize(context: backgroundContext)
+            newSourceSize.query = sizeJson.query
+            newSourceSize.attribute = sizeJson.attribute ?? "text"
+            newSourceSize.discriminator = sizeJson.discriminator
+
+            newSourceJsonParser.size = newSourceSize
+        }
+
+        if let seedLeechJson = jsonParserJson.sl {
+            let newSourceSeedLeech = SourceSeedLeech(context: backgroundContext)
+            newSourceSeedLeech.seeders = seedLeechJson.seeders
+            newSourceSeedLeech.leechers = seedLeechJson.leechers
+            newSourceSeedLeech.combined = seedLeechJson.combined
+            newSourceSeedLeech.attribute = seedLeechJson.attribute ?? "text"
+            newSourceSeedLeech.discriminator = seedLeechJson.discriminator
+            newSourceSeedLeech.seederRegex = seedLeechJson.seederRegex
+            newSourceSeedLeech.leecherRegex = seedLeechJson.leecherRegex
+
+            newSourceJsonParser.seedLeech = newSourceSeedLeech
+        }
+
+        newSource.jsonParser = newSourceJsonParser
     }
 
     func addRssParser(newSource: Source, rssParserJson: SourceRssParserJson) {
@@ -143,13 +241,12 @@ public class SourceManager: ObservableObject {
         newSourceRssParser.rssUrl = rssParserJson.rssUrl
         newSourceRssParser.searchUrl = rssParserJson.searchUrl
         newSourceRssParser.items = rssParserJson.items
-        newSourceRssParser.trackers = rssParserJson.trackers
 
         if let magnetLinkJson = rssParserJson.magnetLink {
             let newSourceMagnetLink = SourceMagnetLink(context: backgroundContext)
             newSourceMagnetLink.query = magnetLinkJson.query
             newSourceMagnetLink.attribute = magnetLinkJson.attribute ?? "text"
-            newSourceMagnetLink.lookupAttribute = magnetLinkJson.lookupAttribute
+            newSourceMagnetLink.discriminator = magnetLinkJson.discriminator
 
             newSourceRssParser.magnetLink = newSourceMagnetLink
         }
@@ -158,7 +255,7 @@ public class SourceManager: ObservableObject {
             let newSourceMagnetHash = SourceMagnetHash(context: backgroundContext)
             newSourceMagnetHash.query = magnetHashJson.query
             newSourceMagnetHash.attribute = magnetHashJson.attribute ?? "text"
-            newSourceMagnetHash.lookupAttribute = magnetHashJson.lookupAttribute
+            newSourceMagnetHash.discriminator = magnetHashJson.discriminator
 
             newSourceRssParser.magnetHash = newSourceMagnetHash
         }
@@ -167,7 +264,7 @@ public class SourceManager: ObservableObject {
             let newSourceTitle = SourceTitle(context: backgroundContext)
             newSourceTitle.query = titleJson.query
             newSourceTitle.attribute = titleJson.attribute ?? "text"
-            newSourceTitle.lookupAttribute = newSourceTitle.lookupAttribute
+            newSourceTitle.discriminator = titleJson.discriminator
 
             newSourceRssParser.title = newSourceTitle
         }
@@ -176,7 +273,7 @@ public class SourceManager: ObservableObject {
             let newSourceSize = SourceSize(context: backgroundContext)
             newSourceSize.query = sizeJson.query
             newSourceSize.attribute = sizeJson.attribute ?? "text"
-            newSourceSize.lookupAttribute = sizeJson.lookupAttribute
+            newSourceSize.discriminator = sizeJson.discriminator
 
             newSourceRssParser.size = newSourceSize
         }
@@ -187,7 +284,7 @@ public class SourceManager: ObservableObject {
             newSourceSeedLeech.leechers = seedLeechJson.leechers
             newSourceSeedLeech.combined = seedLeechJson.combined
             newSourceSeedLeech.attribute = seedLeechJson.attribute ?? "text"
-            newSourceSeedLeech.lookupAttribute = seedLeechJson.lookupAttribute
+            newSourceSeedLeech.discriminator = seedLeechJson.discriminator
             newSourceSeedLeech.seederRegex = seedLeechJson.seederRegex
             newSourceSeedLeech.leecherRegex = seedLeechJson.leecherRegex
 

@@ -39,7 +39,7 @@ struct SearchResultsView: View {
                                 navModel.runMagnetAction(action: nil, searchResult: result)
                             }
                         } label: {
-                            Text(result.title)
+                            Text(result.title ?? "No title")
                                 .font(.callout)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
