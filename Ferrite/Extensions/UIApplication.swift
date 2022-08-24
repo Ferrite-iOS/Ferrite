@@ -10,11 +10,11 @@ import SwiftUI
 // Extensions to get the version/build number for AboutView
 extension UIApplication {
     var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
     }
 
     var appBuild: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
     }
 
     var buildType: String {
