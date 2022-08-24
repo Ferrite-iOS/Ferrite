@@ -7,6 +7,7 @@
 
 import CoreData
 import Foundation
+import UIKit
 
 public class SourceManager: ObservableObject {
     var toastModel: ToastViewModel?
@@ -21,7 +22,7 @@ public class SourceManager: ObservableObject {
         let sourceListRequest = SourceList.fetchRequest()
         do {
             let sourceLists = try PersistenceController.shared.backgroundContext.fetch(sourceListRequest)
-            var tempSourceUrls: [SourceJson] = []
+            var tempAvailableSources: [SourceJson] = []
 
             for sourceList in sourceLists {
                 guard let url = URL(string: sourceList.urlString) else {
@@ -32,20 +33,52 @@ public class SourceManager: ObservableObject {
                 let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
 
                 let (data, _) = try await URLSession.shared.data(for: request)
-                var sourceResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
+                let sourceResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
 
-                for index in sourceResponse.sources.indices {
-                    sourceResponse.sources[index].author = sourceList.author
-                    sourceResponse.sources[index].listId = sourceList.id
+                for var source in sourceResponse.sources {
+                    // If there is a minVersion, check and see if the source is valid
+                    if checkAppVersion(minVersion: source.minVersion) {
+                        source.author = sourceList.author
+                        source.listId = sourceList.id
+
+                        tempAvailableSources.append(source)
+                    }
                 }
-
-                tempSourceUrls += sourceResponse.sources
             }
 
-            availableSources = tempSourceUrls
+            availableSources = tempAvailableSources
         } catch {
             print(error)
         }
+    }
+
+    // Checks if the current app version is supported by the source
+    func checkAppVersion(minVersion: String?) -> Bool {
+        // If there's no min version, assume that every version is supported
+        guard let minVersion = minVersion else {
+            return true
+        }
+
+        var splitCurrentVersion = UIApplication.shared.appVersion
+            .split(separator: ".")
+            .map { Int($0) ?? 0 }
+
+        if splitCurrentVersion.count < 3 {
+            splitCurrentVersion += [Int](repeating: 0, count: 3 - splitCurrentVersion.count)
+        }
+
+        var splitMinVersion = minVersion
+            .split(separator: ".")
+            .map { Int($0) ?? 0 }
+
+        if splitMinVersion.count < 3 {
+            splitMinVersion += [Int](repeating: 0, count: 3 - splitMinVersion.count)
+        }
+
+        let combined = zip(splitCurrentVersion, splitMinVersion)
+        return combined.allSatisfy({ part, minPart in
+            part >= minPart
+        })
     }
 
     // Fetches sources using the background context
