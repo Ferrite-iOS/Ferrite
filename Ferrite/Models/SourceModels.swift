@@ -22,6 +22,7 @@ public struct SourceJson: Codable, Hashable {
     let name: String
     let version: Int16
     let baseUrl: String?
+    let fallbackUrls: [String]?
     var dynamicBaseUrl: Bool?
     var author: String?
     var listId: UUID?

@@ -96,6 +96,7 @@ public class SourceManager: ObservableObject {
         newSource.version = sourceJson.version
         newSource.dynamicBaseUrl = dynamicBaseUrl
         newSource.baseUrl = sourceJson.baseUrl
+        newSource.fallbackUrls = dynamicBaseUrl ? nil : sourceJson.fallbackUrls
         newSource.author = sourceJson.author ?? "Unknown"
         newSource.listId = sourceJson.listId
         newSource.trackers = sourceJson.trackers

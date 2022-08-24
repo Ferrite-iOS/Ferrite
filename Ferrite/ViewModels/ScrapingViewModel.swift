@@ -73,10 +73,16 @@ class ScrapingViewModel: ObservableObject {
                 switch preferredParser {
                 case .scraping:
                     if let htmlParser = source.htmlParser {
-                        let urlString = baseUrl + htmlParser.searchUrl
+                        let replacedSearchUrl = htmlParser.searchUrl
                             .replacingOccurrences(of: "{query}", with: encodedQuery)
 
-                        if let data = await fetchWebsiteData(urlString: urlString),
+                        let data = await handleUrls(
+                            baseUrl: baseUrl,
+                            replacedSearchUrl: replacedSearchUrl,
+                            fallbackUrls: source.fallbackUrls
+                        )
+
+                        if let data = data,
                            let html = String(data: data, encoding: .utf8)
                         {
                             let sourceResults = await scrapeHtml(source: source, baseUrl: baseUrl, html: html)
@@ -89,10 +95,19 @@ class ScrapingViewModel: ObservableObject {
                             .replacingOccurrences(of: "{secret}", with: source.api?.clientSecret?.value ?? "")
                             .replacingOccurrences(of: "{query}", with: encodedQuery)
 
-                        // If there is an RSS base URL, use that instead
-                        let urlString = (rssParser.rssUrl ?? baseUrl) + replacedSearchUrl
+                        // Do not use fallback URLs if the base URL isn't used
+                        let data: Data?
+                        if let rssUrl = rssParser.rssUrl {
+                            data = await fetchWebsiteData(urlString: rssUrl + replacedSearchUrl)
+                        } else {
+                            data = await handleUrls(
+                                baseUrl: baseUrl,
+                                replacedSearchUrl: replacedSearchUrl,
+                                fallbackUrls: source.fallbackUrls
+                            )
+                        }
 
-                        if let data = await fetchWebsiteData(urlString: urlString),
+                        if let data = data,
                            let rss = String(data: data, encoding: .utf8)
                         {
                             let sourceResults = scrapeRss(source: source, rss: rss)
@@ -131,9 +146,14 @@ class ScrapingViewModel: ObservableObject {
                             }
                         }
 
-                        let urlString = (source.api?.apiUrl ?? baseUrl) + replacedSearchUrl
+                        let passedUrl = source.api?.apiUrl ?? baseUrl
+                        let data = await handleUrls(
+                            baseUrl: passedUrl,
+                            replacedSearchUrl: replacedSearchUrl,
+                            fallbackUrls: source.fallbackUrls
+                        )
 
-                        if let data = await fetchWebsiteData(urlString: urlString) {
+                        if let data = data {
                             let sourceResults = scrapeJson(source: source, jsonData: data)
                             tempResults += sourceResults
                         }
@@ -150,6 +170,23 @@ class ScrapingViewModel: ObservableObject {
         }
 
         searchResults = tempResults
+    }
+
+    // Checks the base URL for any website data then iterates through the fallback URLs
+    func handleUrls(baseUrl: String, replacedSearchUrl: String, fallbackUrls: [String]?) async -> Data? {
+        if let data = await fetchWebsiteData(urlString: baseUrl + replacedSearchUrl) {
+            return data
+        }
+
+        if let fallbackUrls = fallbackUrls {
+            for fallbackUrl in fallbackUrls {
+                if let data = await fetchWebsiteData(urlString: fallbackUrl + replacedSearchUrl) {
+                    return data
+                }
+            }
+        }
+
+        return nil
     }
 
     public func handleApiCredential(_ credential: SourceApiCredential,
@@ -220,8 +257,18 @@ class ScrapingViewModel: ObservableObject {
                 return String(data: data, encoding: .utf8)
             }
         } catch {
+            let error = error as NSError
+
             Task { @MainActor in
-                toastModel?.toastDescription = "Error in fetching an API credential \(error)"
+                switch error.code {
+                case -999:
+                    toastModel?.toastType = .info
+                    toastModel?.toastDescription = "Search cancelled"
+                case -1001:
+                    toastModel?.toastDescription = "Credentials request timed out"
+                default:
+                    toastModel?.toastDescription = "Error in fetching an API credential \(error)"
+                }
             }
             print("Error in fetching an API credential \(error)")
 
@@ -241,8 +288,10 @@ class ScrapingViewModel: ObservableObject {
             return nil
         }
 
+        let request = URLRequest(url: url, timeoutInterval: 15)
+
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, _) = try await URLSession.shared.data(for: request)
             return data
         } catch {
             let error = error as NSError
@@ -252,8 +301,10 @@ class ScrapingViewModel: ObservableObject {
                 case -999:
                     toastModel?.toastType = .info
                     toastModel?.toastDescription = "Search cancelled"
+                case -1001:
+                    toastModel?.toastDescription = "Data request timed out. Trying fallback URLs if present."
                 default:
-                    toastModel?.toastDescription = "Error in fetching data \(error)"
+                    toastModel?.toastDescription = "Error in fetching website data \(error)"
                 }
             }
             print("Error in fetching data \(error)")
@@ -833,21 +884,49 @@ class ScrapingViewModel: ObservableObject {
     func cleanApiCreds(api: SourceApi) {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        var clientIdReset = false
-        var clientSecretReset = false
+        let hasCredentials = api.clientId != nil || api.clientSecret != nil
+        let clientIdReset: Bool
+        let clientSecretReset: Bool
+
+        var responseArray = ["Could not fetch API results"]
 
         if let clientId = api.clientId, !clientId.dynamic {
             clientId.value = nil
             clientIdReset = true
+        } else {
+            clientIdReset = false
         }
 
         if let clientSecret = api.clientSecret, !clientSecret.dynamic {
             clientSecret.value = nil
             clientSecretReset = true
+        } else {
+            clientSecretReset = false
         }
 
-        toastModel?.toastDescription =
-            "Could not fetch results, your \(clientIdReset ? "client ID" : "") \(clientIdReset && clientSecretReset ? "and" : "") \(clientSecretReset ? "token" : "") was automatically reset. Make sure all credentials are correct in the source's settings!"
+        if hasCredentials {
+            responseArray.append("your")
+
+            if clientIdReset {
+                responseArray.append("client ID")
+            }
+
+            if clientIdReset && clientSecretReset {
+                responseArray.append("and")
+            }
+
+            if clientSecretReset {
+                responseArray.append("token")
+            }
+
+            responseArray.append("was automatically reset.")
+
+            if !(clientIdReset || clientSecretReset) {
+                responseArray.append("Make sure all credentials are correct in the source's settings!")
+            }
+        }
+
+        toastModel?.toastDescription = responseArray.joined()
 
         PersistenceController.shared.save(backgroundContext)
     }
