@@ -25,7 +25,7 @@ class ToastViewModel: ObservableObject {
                 try? await Task.sleep(seconds: 0.1)
                 showToast = true
 
-                try await Task.sleep(seconds: 5)
+                try? await Task.sleep(seconds: 5)
 
                 showToast = false
                 toastType = .error

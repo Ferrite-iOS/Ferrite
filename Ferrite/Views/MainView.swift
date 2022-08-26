@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIX
 
 struct MainView: View {
     @EnvironmentObject var navModel: NavigationViewModel
@@ -35,7 +36,7 @@ struct MainView: View {
             VStack {
                 Spacer()
                 if toastModel.showToast {
-                    GroupBox {
+                    Group {
                         switch toastModel.toastType {
                         case .info:
                             Text(toastModel.toastDescription ?? "This shouldn't be showing up... Contact the dev!")
@@ -43,15 +44,18 @@ struct MainView: View {
                             Text("Error: \(toastModel.toastDescription ?? "This shouldn't be showing up... Contact the dev!")")
                         }
                     }
-                    .groupBoxStyle(ErrorGroupBoxStyle())
-
-                    Rectangle()
-                        .foregroundColor(.clear)
-                        .frame(height: 60)
+                    .padding(12)
+                    .font(.caption)
+                    .background {
+                        VisualEffectBlurView(blurStyle: .systemThinMaterial)
+                    }
+                    .cornerRadius(10)
                 }
+
+                Rectangle()
+                    .foregroundColor(.clear)
+                    .frame(height: 60)
             }
-            .font(.caption)
-            .shadow(radius: 10)
             .animation(.easeInOut(duration: 0.3), value: toastModel.showToast)
         }
     }
