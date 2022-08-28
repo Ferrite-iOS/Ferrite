@@ -35,6 +35,7 @@ Xcode 14 must be used since Ferrite requires some iOS 16 APIs that are not prese
 There is currently one branch in the repository:
 
 - default: The current working branch. This will change in the future once a stable version is released.
+- next: The development branch. Nightlies are automatically built here.
 
 ## Nightly builds
 
@@ -56,7 +57,6 @@ If you have issues with the app:
 
 - Describe the issue in detail
 - If you have a feature request, please indicate it as so. Planned features are in a different section of the README, so be sure to read those before submitting.
-  If you want to make custom icons for the app:
 - Please join [the discord](https://discord.gg/sYQxnuD7Fj) for more info
 
 ## Developers and Permissions
