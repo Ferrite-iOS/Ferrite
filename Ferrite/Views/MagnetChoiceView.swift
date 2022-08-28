@@ -17,10 +17,8 @@ struct MagnetChoiceView: View {
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
-    @State private var showActivityView = false
     @State private var showLinkCopyAlert = false
     @State private var showMagnetCopyAlert = false
-    @State private var activityItems: [Any] = []
 
     var body: some View {
         NavView {
@@ -53,8 +51,8 @@ struct MagnetChoiceView: View {
 
                         ListRowButtonView("Share download URL", systemImage: "square.and.arrow.up.fill") {
                             if let url = URL(string: debridManager.realDebridDownloadUrl) {
-                                activityItems = [url]
-                                navModel.showActivityView.toggle()
+                                navModel.activityItems = [url]
+                                navModel.showLocalActivitySheet.toggle()
                             }
                         }
                     }
@@ -78,8 +76,8 @@ struct MagnetChoiceView: View {
                            let magnetLink = result.magnetLink,
                            let url = URL(string: magnetLink)
                         {
-                            activityItems = [url]
-                            navModel.showActivityView.toggle()
+                            navModel.activityItems = [url]
+                            navModel.showLocalActivitySheet.toggle()
                         }
                     }
 
@@ -90,12 +88,12 @@ struct MagnetChoiceView: View {
                     }
                 }
             }
-            .sheet(isPresented: $navModel.showActivityView) {
+            .sheet(isPresented: $navModel.showLocalActivitySheet) {
                 if #available(iOS 16, *) {
-                    AppActivityView(activityItems: activityItems)
-                        .presentationDetents([.medium])
+                    AppActivityView(activityItems: navModel.activityItems)
+                        .presentationDetents([.medium, .large])
                 } else {
-                    AppActivityView(activityItems: activityItems)
+                    AppActivityView(activityItems: navModel.activityItems)
                 }
             }
             .navigationTitle("Link actions")

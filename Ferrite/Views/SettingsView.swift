@@ -13,11 +13,8 @@ struct SettingsView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
     @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
     @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none
-
-    @State private var isProcessing = false
 
     var body: some View {
         NavView {
@@ -28,16 +25,15 @@ struct SettingsView: View {
                         Spacer()
                         Button {
                             Task {
-                                if realDebridEnabled {
-                                    try? await debridManager.realDebrid.deleteTokens()
-                                } else if !isProcessing {
+                                if debridManager.realDebridEnabled {
+                                    await debridManager.logoutRd()
+                                } else if !debridManager.realDebridAuthProcessing {
                                     await debridManager.authenticateRd()
-                                    isProcessing = true
                                 }
                             }
                         } label: {
-                            Text(realDebridEnabled ? "Logout" : (isProcessing ? "Processing" : "Login"))
-                                .foregroundColor(realDebridEnabled ? .red : .blue)
+                            Text(debridManager.realDebridEnabled ? "Logout" : (debridManager.realDebridAuthProcessing ? "Processing" : "Login"))
+                                .foregroundColor(debridManager.realDebridEnabled ? .red : .blue)
                         }
                     }
                 }
@@ -47,7 +43,7 @@ struct SettingsView: View {
                 }
 
                 Section(header: "Default actions") {
-                    if realDebridEnabled {
+                    if debridManager.realDebridEnabled {
                         NavigationLink(
                             destination: DebridActionPickerView(),
                             label: {

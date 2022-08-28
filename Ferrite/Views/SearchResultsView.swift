@@ -20,23 +20,25 @@ struct SearchResultsView: View {
                 if result.source == scrapingModel.filteredSource?.name || scrapingModel.filteredSource == nil {
                     VStack(alignment: .leading) {
                         Button {
-                            scrapingModel.selectedSearchResult = result
+                            if debridManager.currentDebridTask == nil {
+                                scrapingModel.selectedSearchResult = result
 
-                            switch debridManager.matchSearchResult(result: result) {
-                            case .full:
-                                Task {
-                                    await debridManager.fetchRdDownload(searchResult: result)
+                                switch debridManager.matchSearchResult(result: result) {
+                                case .full:
+                                    debridManager.currentDebridTask = Task {
+                                        await debridManager.fetchRdDownload(searchResult: result)
 
-                                    if !debridManager.realDebridDownloadUrl.isEmpty {
-                                        navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
+                                        if !debridManager.realDebridDownloadUrl.isEmpty {
+                                            navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
+                                        }
                                     }
+                                case .partial:
+                                    if debridManager.setSelectedRdResult(result: result) {
+                                        navModel.currentChoiceSheet = .batch
+                                    }
+                                case .none:
+                                    navModel.runMagnetAction(action: nil, searchResult: result)
                                 }
-                            case .partial:
-                                if debridManager.setSelectedRdResult(result: result) {
-                                    navModel.currentChoiceSheet = .batch
-                                }
-                            case .none:
-                                navModel.runMagnetAction(action: nil, searchResult: result)
                             }
                         } label: {
                             Text(result.title ?? "No title")

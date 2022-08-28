@@ -92,16 +92,14 @@ public class SourceManager: ObservableObject {
         }
     }
 
-    public func installSource(sourceJson: SourceJson, doUpsert: Bool = false) {
+    public func installSource(sourceJson: SourceJson, doUpsert: Bool = false) async {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         // If there's no base URL and it isn't dynamic, return before any transactions occur
         let dynamicBaseUrl = sourceJson.dynamicBaseUrl ?? false
 
         if !dynamicBaseUrl, sourceJson.baseUrl == nil {
-            Task { @MainActor in
-                toastModel?.toastDescription = "Not adding this source because base URL parameters are malformed. Please contact the source dev."
-            }
+            await toastModel?.updateToastDescription("Not adding this source because base URL parameters are malformed. Please contact the source dev.")
 
             print("Not adding this source because base URL parameters are malformed")
             return
@@ -116,9 +114,7 @@ public class SourceManager: ObservableObject {
             if doUpsert {
                 PersistenceController.shared.delete(existingSource, context: backgroundContext)
             } else {
-                Task { @MainActor in
-                    toastModel?.toastDescription = "Could not install source with name \(sourceJson.name) because it is already installed."
-                }
+                await toastModel?.updateToastDescription("Could not install source with name \(sourceJson.name) because it is already installed.")
                 return
             }
         }
@@ -166,9 +162,7 @@ public class SourceManager: ObservableObject {
         do {
             try backgroundContext.save()
         } catch {
-            Task { @MainActor in
-                toastModel?.toastDescription = error.localizedDescription
-            }
+            await toastModel?.updateToastDescription(error.localizedDescription)
         }
     }
 

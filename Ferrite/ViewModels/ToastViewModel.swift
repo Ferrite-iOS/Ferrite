@@ -35,6 +35,14 @@ class ToastViewModel: ObservableObject {
 
     @Published var showToast: Bool = false
 
+    public func updateToastDescription(_ description: String, newToastType: ToastType? = nil) {
+        if let newToastType = newToastType {
+            toastType = newToastType
+        }
+
+        toastDescription = description
+    }
+
     // Default the toast type to error since the majority of toasts are errors
     @Published var toastType: ToastType = .error
 }

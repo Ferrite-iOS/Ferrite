@@ -25,6 +25,7 @@ class NavigationViewModel: ObservableObject {
 
         case magnet
         case batch
+        case activity
     }
 
     @Published var isEditingSearch: Bool = false
@@ -34,7 +35,9 @@ class NavigationViewModel: ObservableObject {
 
     @Published var currentChoiceSheet: ChoiceSheetType?
     @Published var activityItems: [Any] = []
-    @Published var showActivityView: Bool = false
+
+    // Used to show the activity sheet in the share menu
+    @Published var showLocalActivitySheet = false
 
     @Published var selectedTab: ViewTab = .search
     @Published var showSearchProgress: Bool = false
@@ -59,26 +62,26 @@ class NavigationViewModel: ObservableObject {
             if let downloadUrl = URL(string: "outplayer://\(urlString)") {
                 UIApplication.shared.open(downloadUrl)
             } else {
-                toastModel?.toastDescription = "Could not create an Outplayer URL"
+                toastModel?.updateToastDescription("Could not create an Outplayer URL")
             }
         case .vlc:
             if let downloadUrl = URL(string: "vlc://\(urlString)") {
                 UIApplication.shared.open(downloadUrl)
             } else {
-                toastModel?.toastDescription = "Could not create a VLC URL"
+                toastModel?.updateToastDescription("Could not create a VLC URL")
             }
         case .infuse:
             if let downloadUrl = URL(string: "infuse://x-callback-url/play?url=\(urlString)") {
                 UIApplication.shared.open(downloadUrl)
             } else {
-                toastModel?.toastDescription = "Could not create a Infuse URL"
+                toastModel?.updateToastDescription("Could not create a Infuse URL")
             }
         case .shareDownload:
             if let downloadUrl = URL(string: urlString), currentChoiceSheet == nil {
                 activityItems = [downloadUrl]
-                showActivityView.toggle()
+                currentChoiceSheet = .activity
             } else {
-                toastModel?.toastDescription = "Could not create object for sharing"
+                toastModel?.updateToastDescription("Could not create object for sharing")
             }
         }
     }
@@ -100,16 +103,16 @@ class NavigationViewModel: ObservableObject {
             if let url = URL(string: "https://webtor.io/#/show?magnet=\(magnetLink)") {
                 UIApplication.shared.open(url)
             } else {
-                toastModel?.toastDescription = "Could not create a WebTor URL"
+                toastModel?.updateToastDescription("Could not create a WebTor URL")
             }
         case .shareMagnet:
             if let magnetUrl = URL(string: magnetLink),
                currentChoiceSheet == nil
             {
                 activityItems = [magnetUrl]
-                showActivityView.toggle()
+                currentChoiceSheet = .activity
             } else {
-                toastModel?.toastDescription = "Could not create object for sharing"
+                toastModel?.updateToastDescription("Could not create object for sharing")
             }
         }
     }

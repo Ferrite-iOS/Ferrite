@@ -11,6 +11,7 @@ import SwiftUIX
 struct MainView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var toastModel: ToastViewModel
+    @EnvironmentObject var debridManager: DebridManager
 
     var body: some View {
         TabView(selection: $navModel.selectedTab) {
@@ -52,11 +53,34 @@ struct MainView: View {
                     .cornerRadius(10)
                 }
 
+                if debridManager.showLoadingProgress {
+                    VStack {
+                        Text("Loading content")
+
+                        HStack {
+                            IndeterminateProgressView()
+
+                            Button("Cancel") {
+                                debridManager.currentDebridTask?.cancel()
+                                debridManager.currentDebridTask = nil
+                                debridManager.showLoadingProgress = false
+                            }
+                        }
+                    }
+                    .padding(12)
+                    .font(.caption)
+                    .background {
+                        VisualEffectBlurView(blurStyle: .systemThinMaterial)
+                    }
+                    .cornerRadius(10)
+                    .frame(width: 200)
+                }
+
                 Rectangle()
                     .foregroundColor(.clear)
                     .frame(height: 60)
             }
-            .animation(.easeInOut(duration: 0.3), value: toastModel.showToast)
+            .animation(.easeInOut(duration: 0.3), value: toastModel.showToast || debridManager.showLoadingProgress)
         }
     }
 }

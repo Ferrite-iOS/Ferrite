@@ -28,7 +28,9 @@ struct SourceUpdateButtonView: View {
             Spacer()
 
             Button("Update") {
-                sourceManager.installSource(sourceJson: updatedSource, doUpsert: true)
+                Task {
+                    await sourceManager.installSource(sourceJson: updatedSource, doUpsert: true)
+                }
             }
         }
     }

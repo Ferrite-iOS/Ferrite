@@ -8,24 +8,35 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 public class DebridManager: ObservableObject {
     // UI Variables
     var toastModel: ToastViewModel?
     @Published var showWebView: Bool = false
+    @Published var showLoadingProgress: Bool = false
 
-    // RealDebrid variables
+    // Service agnostic variables
+    @Published var currentDebridTask: Task<Void, Never>?
+
+    // RealDebrid auth variables
     let realDebrid: RealDebrid = .init()
 
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
-    @Published var realDebridHashes: [RealDebridIA] = []
+    @Published var realDebridEnabled: Bool = false {
+        didSet {
+            UserDefaults.standard.set(realDebridEnabled, forKey: "RealDebrid.Enabled")
+        }
+    }
+    @Published var realDebridAuthProcessing: Bool = false
     @Published var realDebridAuthUrl: String = ""
+
+    // RealDebrid fetch variables
+    @Published var realDebridHashes: [RealDebridIA] = []
     @Published var realDebridDownloadUrl: String = ""
     @Published var selectedRealDebridItem: RealDebridIA?
     @Published var selectedRealDebridFile: RealDebridIAFile?
 
     init() {
-        realDebrid.parentManager = self
+        realDebridEnabled = UserDefaults.standard.bool(forKey: "RealDebrid.Enabled")
     }
 
     public func populateDebridHashes(_ searchResults: [SearchResult]) async {
@@ -40,16 +51,12 @@ public class DebridManager: ObservableObject {
         do {
             let debridHashes = try await realDebrid.instantAvailability(magnetHashes: hashes)
 
-            Task { @MainActor in
-                realDebridHashes = debridHashes
-            }
+            realDebridHashes = debridHashes
         } catch {
-            Task { @MainActor in
-                let error = error as NSError
+            let error = error as NSError
 
-                if error.code != -999 {
-                    toastModel?.toastDescription = "RealDebrid hash error: \(error)"
-                }
+            if error.code != -999 {
+                toastModel?.updateToastDescription("RealDebrid hash error: \(error)")
             }
 
             print("RealDebrid hash error: \(error)")
@@ -72,10 +79,9 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    @MainActor
     public func setSelectedRdResult(result: SearchResult) -> Bool {
         guard let magnetHash = result.magnetHash else {
-            toastModel?.toastDescription = "Could not find the torrent magnet hash"
+            toastModel?.updateToastDescription("Could not find the torrent magnet hash")
             return false
         }
 
@@ -83,40 +89,61 @@ public class DebridManager: ObservableObject {
             selectedRealDebridItem = realDebridItem
             return true
         } else {
-            toastModel?.toastDescription = "Could not find the associated RealDebrid entry for magnet hash \(magnetHash)"
+            toastModel?.updateToastDescription("Could not find the associated RealDebrid entry for magnet hash \(magnetHash)")
             return false
         }
     }
 
     public func authenticateRd() async {
         do {
-            let url = try await realDebrid.getVerificationInfo()
+            realDebridAuthProcessing = true
+            let verificationResponse = try await realDebrid.getVerificationInfo()
 
-            Task { @MainActor in
-                realDebridAuthUrl = url
-                showWebView.toggle()
-            }
+            realDebridAuthUrl = verificationResponse.directVerificationURL
+            showWebView.toggle()
+
+            try await realDebrid.getDeviceCredentials(deviceCode: verificationResponse.deviceCode)
+
+            realDebridEnabled = true
         } catch {
-            Task { @MainActor in
-                toastModel?.toastDescription = "RealDebrid Authentication error: \(error)"
-            }
+            toastModel?.updateToastDescription("RealDebrid authentication error: \(error)")
+            realDebrid.authTask?.cancel()
 
-            print(error)
+            print("RealDebrid authentication error: \(error)")
+        }
+    }
+
+    public func logoutRd() async {
+        do {
+            try await realDebrid.deleteTokens()
+            realDebridEnabled = false
+            realDebridAuthProcessing = false
+        } catch {
+            toastModel?.updateToastDescription("RealDebrid logout error: \(error)")
+
+            print("RealDebrid logout error: \(error)")
         }
     }
 
     public func fetchRdDownload(searchResult: SearchResult, iaFile: RealDebridIAFile? = nil) async {
+        defer {
+            currentDebridTask = nil
+            showLoadingProgress = false
+        }
+
+        showLoadingProgress = true
+
         guard let magnetLink = searchResult.magnetLink else {
-            Task { @MainActor in
-                toastModel?.toastDescription = "Could not run your action because the magnet link is invalid."
-            }
-            print("RD error: Invalid magnet link")
+            toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
+            print("RealDebrid error: Invalid magnet link")
 
             return
         }
 
+        var realDebridId: String?
+
         do {
-            let realDebridId = try await realDebrid.addMagnet(magnetLink: magnetLink)
+            realDebridId = try await realDebrid.addMagnet(magnetLink: magnetLink)
 
             var fileIds: [Int] = []
 
@@ -128,23 +155,34 @@ public class DebridManager: ObservableObject {
                 fileIds = iaBatchFromFile.files.map(\.id)
             }
 
-            try await realDebrid.selectFiles(debridID: realDebridId, fileIds: fileIds)
+            if let realDebridId = realDebridId {
+                try await realDebrid.selectFiles(debridID: realDebridId, fileIds: fileIds)
 
-            let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId, selectedIndex: iaFile == nil ? 0 : iaFile?.batchFileIndex)
-            let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
+                let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId, selectedIndex: iaFile?.batchFileIndex ?? 0)
+                let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
 
-            let downloadUrlTask = Task { @MainActor in
                 realDebridDownloadUrl = downloadLink
+            } else {
+                toastModel?.updateToastDescription("Could not cache this torrent. Aborting.")
             }
-
-            // Prevent a race condition when setting the published variable
-            await downloadUrlTask.value
         } catch {
-            Task { @MainActor in
-                toastModel?.toastDescription = "RealDebrid download error: \(error)"
+            let error = error as NSError
+
+            switch error.code {
+            case -999:
+                toastModel?.updateToastDescription("Download cancelled", newToastType: .info)
+            default:
+                toastModel?.updateToastDescription("RealDebrid download error: \(error)")
             }
 
-            print(error)
+            // Delete the torrent download if it exists
+            if let realDebridId = realDebridId {
+                try? await realDebrid.deleteTorrent(debridID: realDebridId)
+            }
+
+            showLoadingProgress = false
+
+            print("RealDebrid download error: \(error)")
         }
     }
 }

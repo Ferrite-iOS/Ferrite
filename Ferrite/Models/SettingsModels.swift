@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum DefaultMagnetActionType: Int {
+public enum DefaultMagnetActionType: Int, CaseIterable {
     // Let the user choose
     case none = 0
 
@@ -18,7 +18,7 @@ public enum DefaultMagnetActionType: Int {
     case shareMagnet = 2
 }
 
-public enum DefaultDebridActionType: Int {
+public enum DefaultDebridActionType: Int, CaseIterable {
     // Let the user choose
     case none = 0
 

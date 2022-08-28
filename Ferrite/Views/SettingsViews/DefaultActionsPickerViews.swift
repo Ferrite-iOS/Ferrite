@@ -12,19 +12,36 @@ struct MagnetActionPickerView: View {
 
     var body: some View {
         List {
-            Picker(selection: $defaultMagnetAction, label: EmptyView()) {
-                Text("Let me choose")
-                    .tag(DefaultMagnetActionType.none)
-                Text("Open in Webtor")
-                    .tag(DefaultMagnetActionType.webtor)
-                Text("Share magnet link")
-                    .tag(DefaultMagnetActionType.shareMagnet)
+            ForEach(DefaultMagnetActionType.allCases, id: \.self) { action in
+                Button {
+                    defaultMagnetAction = action
+                } label: {
+                    HStack {
+                        Text(fetchPickerChoiceName(choice: action))
+                        Spacer()
+                        if action == defaultMagnetAction {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.blue)
+                        }
+                    }
+                }
+                .dynamicAccentColor(.primary)
             }
         }
-        .pickerStyle(.inline)
         .listStyle(.insetGrouped)
         .navigationTitle("Default magnet action")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    func fetchPickerChoiceName(choice: DefaultMagnetActionType) -> String {
+        switch choice {
+        case .none:
+            return "Let me choose"
+        case .webtor:
+            return "Open in Webtor"
+        case .shareMagnet:
+            return "Share magnet link"
+        }
     }
 }
 
@@ -33,22 +50,39 @@ struct DebridActionPickerView: View {
 
     var body: some View {
         List {
-            Picker(selection: $defaultDebridAction, label: EmptyView()) {
-                Text("Let me choose")
-                    .tag(DefaultDebridActionType.none)
-                Text("Open in Outplayer")
-                    .tag(DefaultDebridActionType.outplayer)
-                Text("Open in VLC")
-                    .tag(DefaultDebridActionType.vlc)
-                Text("Open in Infuse")
-                    .tag(DefaultDebridActionType.infuse)
-                Text("Share download link")
-                    .tag(DefaultDebridActionType.shareDownload)
+            ForEach(DefaultDebridActionType.allCases, id: \.self) { action in
+                Button {
+                    defaultDebridAction = action
+                } label: {
+                    HStack {
+                        Text(fetchPickerChoiceName(choice: action))
+                        Spacer()
+                        if action == defaultDebridAction {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.blue)
+                        }
+                    }
+                }
+                .dynamicAccentColor(.primary)
             }
         }
-        .pickerStyle(.inline)
         .listStyle(.insetGrouped)
         .navigationTitle("Default debrid action")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    func fetchPickerChoiceName(choice: DefaultDebridActionType) -> String {
+        switch choice {
+        case .none:
+            return "Let me choose"
+        case .outplayer:
+            return "Open in Outplayer"
+        case .vlc:
+            return "Open in VLC"
+        case .infuse:
+            return "Open in Infuse"
+        case .shareDownload:
+            return "Share download link"
+        }
     }
 }

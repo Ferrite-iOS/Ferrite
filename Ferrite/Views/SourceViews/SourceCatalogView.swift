@@ -28,7 +28,9 @@ struct SourceCatalogButtonView: View {
             Spacer()
 
             Button("Install") {
-                sourceManager.installSource(sourceJson: availableSource)
+                Task {
+                    await sourceManager.installSource(sourceJson: availableSource)
+                }
             }
         }
     }

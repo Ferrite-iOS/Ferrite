@@ -85,17 +85,16 @@ struct ContentView: View {
                             .environmentObject(debridManager)
                             .environmentObject(scrapingModel)
                             .environmentObject(navModel)
+                    case .activity:
+                        if #available(iOS 16, *) {
+                            AppActivityView(activityItems: navModel.activityItems)
+                                .presentationDetents([.medium, .large])
+                        } else {
+                            AppActivityView(activityItems: navModel.activityItems)
+                        }
                     }
                 }
                 .dynamicAccentColor(.primary)
-            }
-            .sheet(isPresented: $navModel.showActivityView) {
-                if #available(iOS 16, *) {
-                    AppActivityView(activityItems: navModel.activityItems)
-                        .presentationDetents([.medium])
-                } else {
-                    AppActivityView(activityItems: navModel.activityItems)
-                }
             }
             .navigationTitle("Search")
             .navigationSearchBar {

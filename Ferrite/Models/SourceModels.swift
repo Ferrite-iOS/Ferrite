@@ -35,7 +35,7 @@ public struct SourceJson: Codable, Hashable {
 }
 
 public enum SourcePreferredParser: Int16, CaseIterable {
-    case none = 0
+    // case none = 0
     case scraping = 1
     case rss = 2
     case siteApi = 3

@@ -18,9 +18,7 @@ public enum RealDebridError: Error {
     case AuthQuery(description: String)
 }
 
-public class RealDebrid: ObservableObject {
-    var parentManager: DebridManager?
-
+public class RealDebrid {
     let jsonDecoder = JSONDecoder()
     let keychain = KeychainSwift()
 
@@ -31,7 +29,7 @@ public class RealDebrid: ObservableObject {
     var authTask: Task<Void, Error>?
 
     // Fetches the device code from RD
-    public func getVerificationInfo() async throws -> String {
+    public func getVerificationInfo() async throws -> DeviceCodeResponse {
         var urlComponents = URLComponents(string: "\(baseAuthUrl)/device/code")!
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: openSourceClientId),
@@ -47,22 +45,7 @@ public class RealDebrid: ObservableObject {
             let (data, _) = try await URLSession.shared.data(for: request)
 
             let rawResponse = try jsonDecoder.decode(DeviceCodeResponse.self, from: data)
-
-            // Spawn a separate process to get the device code
-            Task {
-                do {
-                    try await getDeviceCredentials(deviceCode: rawResponse.deviceCode)
-                } catch {
-                    print("Authentication error in \(#function): \(error)")
-                    authTask?.cancel()
-
-                    Task { @MainActor in
-                        parentManager?.toastModel?.toastDescription = "Authentication error in \(#function): \(error)"
-                    }
-                }
-            }
-
-            return rawResponse.directVerificationURL
+            return rawResponse
         } catch {
             print("Couldn't get the new client creds!")
             throw RealDebridError.AuthQuery(description: error.localizedDescription)
@@ -82,32 +65,36 @@ public class RealDebrid: ObservableObject {
         }
 
         let request = URLRequest(url: url)
-        try await getDeviceCredentialsInternal(urlRequest: request, deviceCode: deviceCode)
-    }
 
-    // Timer to poll RD api for credentials
-    func getDeviceCredentialsInternal(urlRequest: URLRequest, deviceCode: String) async throws {
+        // Timer to poll RD API for credentials
         authTask = Task {
             var count = 0
 
             while count < 20 {
-                let (data, _) = try await URLSession.shared.data(for: urlRequest)
+                if Task.isCancelled {
+                    throw RealDebridError.AuthQuery(description: "Token request cancelled.")
+                }
+
+                let (data, _) = try await URLSession.shared.data(for: request)
 
                 // We don't care if this fails
                 let rawResponse = try? self.jsonDecoder.decode(DeviceCredentialsResponse.self, from: data)
 
+                // If there's a client ID from the response, end the task successfully
                 if let clientId = rawResponse?.clientID, let clientSecret = rawResponse?.clientSecret {
                     UserDefaults.standard.set(clientId, forKey: "RealDebrid.ClientId")
                     keychain.set(clientSecret, forKey: "RealDebrid.ClientSecret")
 
                     try await getTokens(deviceCode: deviceCode)
 
-                    break
+                    return
                 } else {
                     try await Task.sleep(seconds: 5)
                     count += 1
                 }
             }
+
+            throw RealDebridError.AuthQuery(description: "Could not fetch the client ID and secret in time. Try logging in again.")
         }
 
         if case let .failure(error) = await authTask?.result {
@@ -148,11 +135,6 @@ public class RealDebrid: ObservableObject {
 
         let accessTimestamp = Date().timeIntervalSince1970 + Double(rawResponse.expiresIn)
         UserDefaults.standard.set(accessTimestamp, forKey: "RealDebrid.AccessTokenStamp")
-
-        // Set AppStorage variable
-        Task { @MainActor in
-            parentManager?.realDebridEnabled = true
-        }
     }
 
     public func fetchToken() async -> String? {
@@ -185,10 +167,6 @@ public class RealDebrid: ObservableObject {
             _ = try? await URLSession.shared.data(for: request)
 
             keychain.delete("RealDebrid.AccessToken")
-        }
-
-        Task { @MainActor in
-            parentManager?.realDebridEnabled = false
         }
     }
 
@@ -329,6 +307,14 @@ public class RealDebrid: ObservableObject {
         } else {
             throw RealDebridError.EmptyData
         }
+    }
+
+    // Deletes a torrent download from RD
+    public func deleteTorrent(debridID: String) async throws {
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/delete/\(debridID)")!)
+        request.httpMethod = "DELETE"
+
+        try await performRequest(request: &request, requestName: #function)
     }
 
     // Downloads link from selectFiles for playback

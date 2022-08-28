@@ -22,7 +22,7 @@ struct BatchChoiceView: View {
                         debridManager.selectedRealDebridFile = file
 
                         if let searchResult = scrapingModel.selectedSearchResult {
-                            Task {
+                            debridManager.currentDebridTask = Task {
                                 await debridManager.fetchRdDownload(searchResult: searchResult, iaFile: file)
 
                                 if !debridManager.realDebridDownloadUrl.isEmpty {

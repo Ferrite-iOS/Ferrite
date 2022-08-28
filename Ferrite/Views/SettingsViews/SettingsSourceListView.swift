@@ -51,6 +51,7 @@ struct SettingsSourceListView: View {
                 }
             }
         }
+        .listStyle(.insetGrouped)
         .sheet(isPresented: $presentSourceSheet) {
             if #available(iOS 16, *) {
                 SourceListEditorView()
