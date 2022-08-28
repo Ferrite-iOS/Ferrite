@@ -4,7 +4,7 @@ A media search engine for iOS with a plugin API to extend its functionality.
 
 ## Disclaimer
 
-This project is developed with a hobbyist/educational purpose and I am not responsible for what you do with Ferrite.
+This project is developed with a hobbyist/educational purpose and I am not responsible for what happens when you install Ferrite.
 
 Ferrite does not and will never host any content. It is a search engine and will be nothing more.
 
@@ -26,7 +26,7 @@ iOS 14 and up. I was able to successfully backport the app!
 
 ## Downloads
 
-Ferrite will only exist as an ipa. There are and will never be any plans to release on TestFlight or the App Store. Ipa builds are automatically built and are provided in CircleCI artifacts.
+Ferrite will only exist as an ipa. There are and will never be any plans to release on TestFlight or the App Store. Ipa builds are automatically built and are provided in Github actions artifacts.
 
 ## Building from source
 
@@ -35,6 +35,20 @@ Xcode 14 must be used since Ferrite requires some iOS 16 APIs that are not prese
 There is currently one branch in the repository:
 
 - default: The current working branch. This will change in the future once a stable version is released.
+
+## Nightly builds
+
+Nightlies are builds automatically compiled by GitHub actions. These are development builds which may or may not be stable!
+
+It is required to log into GitHub or ask for a [nightly link](https://nightly.link/) to grab a build.
+
+To install a nightly build:
+
+1. Download the artifact from GitHub actions
+
+2. Unzip the file containing the ipa
+
+3. Install the ipa on your device
 
 ## Contribution
 
