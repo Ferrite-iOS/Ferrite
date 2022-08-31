@@ -34,9 +34,9 @@ extension String {
         return result
     }
 
-    static func ==(lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) == .orderedSame }
-    static func <(lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) == .orderedAscending }
-    static func <=(lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) != .orderedDescending }
-    static func >(lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) == .orderedDescending }
-    static func >=(lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) != .orderedAscending }
+    static func == (lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) == .orderedSame }
+    static func < (lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) == .orderedAscending }
+    static func <= (lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) != .orderedDescending }
+    static func > (lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) == .orderedDescending }
+    static func >= (lhs: String, rhs: String) -> Bool { lhs.compare(toVersion: rhs) != .orderedAscending }
 }

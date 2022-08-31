@@ -101,7 +101,8 @@ struct SettingsView: View {
                     NavigationLink("Version history", destination: SettingsAppVersionView())
                 }
 
-                Section {
+                Section(header: Text("Information")) {
+                    ListRowLinkView(text: "Donate", link: "https://ko-fi.com/kingbri")
                     ListRowLinkView(text: "Report issues", link: "https://github.com/bdashore3/Ferrite/issues")
                     NavigationLink("About", destination: AboutView())
                 }
