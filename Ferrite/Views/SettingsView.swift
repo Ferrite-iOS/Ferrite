@@ -13,6 +13,8 @@ struct SettingsView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
+    @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
+
     @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
     @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none
 
@@ -92,9 +94,15 @@ struct SettingsView: View {
                     )
                 }
 
+                Section(header: Text("Updates")) {
+                    Toggle(isOn: $autoUpdateNotifs) {
+                        Text("Show update alerts")
+                    }
+                    NavigationLink("Version history", destination: SettingsAppVersionView())
+                }
+
                 Section {
                     ListRowLinkView(text: "Report issues", link: "https://github.com/bdashore3/Ferrite/issues")
-
                     NavigationLink("About", destination: AboutView())
                 }
             }

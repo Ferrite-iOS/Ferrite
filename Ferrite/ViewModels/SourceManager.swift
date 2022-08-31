@@ -59,26 +59,7 @@ public class SourceManager: ObservableObject {
             return true
         }
 
-        var splitCurrentVersion = UIApplication.shared.appVersion
-            .split(separator: ".")
-            .map { Int($0) ?? 0 }
-
-        if splitCurrentVersion.count < 3 {
-            splitCurrentVersion += [Int](repeating: 0, count: 3 - splitCurrentVersion.count)
-        }
-
-        var splitMinVersion = minVersion
-            .split(separator: ".")
-            .map { Int($0) ?? 0 }
-
-        if splitMinVersion.count < 3 {
-            splitMinVersion += [Int](repeating: 0, count: 3 - splitMinVersion.count)
-        }
-
-        let combined = zip(splitCurrentVersion, splitMinVersion)
-        return combined.allSatisfy({ part, minPart in
-            part >= minPart
-        })
+        return UIApplication.shared.appVersion >= minVersion
     }
 
     // Fetches sources using the background context

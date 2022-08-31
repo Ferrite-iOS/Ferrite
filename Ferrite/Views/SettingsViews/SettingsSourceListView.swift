@@ -22,31 +22,33 @@ struct SettingsSourceListView: View {
 
     var body: some View {
         List {
-            ForEach(sourceLists, id: \.self) { sourceList in
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(sourceList.name)
+            Section(header: Text("List information")) {
+                ForEach(sourceLists, id: \.self) { sourceList in
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(sourceList.name)
 
-                    Text(sourceList.author)
-                        .foregroundColor(.gray)
+                        Text(sourceList.author)
+                            .foregroundColor(.gray)
 
-                    Text("ID: \(sourceList.id)")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                .contextMenu {
-                    Button {
-                        navModel.selectedSourceList = sourceList
-                        presentSourceSheet.toggle()
-                    } label: {
-                        Text("Edit")
-                        Image(systemName: "pencil")
+                        Text("ID: \(sourceList.id)")
+                            .font(.caption)
+                            .foregroundColor(.gray)
                     }
+                    .contextMenu {
+                        Button {
+                            navModel.selectedSourceList = sourceList
+                            presentSourceSheet.toggle()
+                        } label: {
+                            Text("Edit")
+                            Image(systemName: "pencil")
+                        }
 
-                    Button {
-                        PersistenceController.shared.delete(sourceList, context: backgroundContext)
-                    } label: {
-                        Text("Remove")
-                        Image(systemName: "trash")
+                        Button {
+                            PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                        } label: {
+                            Text("Remove")
+                            Image(systemName: "trash")
+                        }
                     }
                 }
             }
@@ -61,6 +63,7 @@ struct SettingsSourceListView: View {
             }
         }
         .navigationTitle("Source lists")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {

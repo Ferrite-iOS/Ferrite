@@ -13,6 +13,13 @@ struct MainView: View {
     @EnvironmentObject var toastModel: ToastViewModel
     @EnvironmentObject var debridManager: DebridManager
 
+    @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
+
+    @State private var showUpdateAlert = false
+    @State private var releaseVersionString: String = ""
+    @State private var releaseUrlString: String = ""
+    @State private var viewTask: Task<Void, Never>?
+
     var body: some View {
         TabView(selection: $navModel.selectedTab) {
             ContentView()
@@ -32,6 +39,45 @@ struct MainView: View {
                     Label("Settings", systemImage: "gear")
                 }
                 .tag(ViewTab.settings)
+        }
+        .alert(isPresented: $showUpdateAlert) {
+            Alert(
+                title: Text("Update available"),
+                message: Text("Ferrite \(releaseVersionString) can be downloaded. \n\n This alert can be disabled in Settings."),
+                primaryButton: .default(Text("Download")) {
+                    guard let releaseUrl = URL(string: releaseUrlString) else {
+                        return
+                    }
+
+                    UIApplication.shared.open(releaseUrl)
+                },
+                secondaryButton: .cancel()
+            )
+        }
+        .onAppear {
+            if autoUpdateNotifs {
+                viewTask = Task {
+                    do {
+                        guard let latestRelease = try await Github().fetchLatestRelease() else {
+                            toastModel.updateToastDescription("Github error: No releases found")
+                            return
+                        }
+
+                        let releaseVersion = String(latestRelease.tagName.dropFirst())
+                        if releaseVersion > UIApplication.shared.appVersion {
+                            print("Greater")
+                            releaseVersionString = latestRelease.tagName
+                            releaseUrlString = latestRelease.htmlUrl
+                            showUpdateAlert.toggle()
+                        }
+                    } catch {
+                        toastModel.updateToastDescription("Github error: \(error)")
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            viewTask?.cancel()
         }
         .overlay {
             VStack {

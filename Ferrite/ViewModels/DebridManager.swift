@@ -26,6 +26,7 @@ public class DebridManager: ObservableObject {
             UserDefaults.standard.set(realDebridEnabled, forKey: "RealDebrid.Enabled")
         }
     }
+
     @Published var realDebridAuthProcessing: Bool = false
     @Published var realDebridAuthUrl: String = ""
 

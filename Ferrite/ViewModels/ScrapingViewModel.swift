@@ -897,7 +897,7 @@ class ScrapingViewModel: ObservableObject {
                 responseArray.append("client ID")
             }
 
-            if clientIdReset && clientSecretReset {
+            if clientIdReset, clientSecretReset {
                 responseArray.append("and")
             }
 
