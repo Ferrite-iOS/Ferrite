@@ -474,7 +474,7 @@ class ScrapingViewModel: ObservableObject {
 
         do {
             let document = try SwiftSoup.parse(rss, "", Parser.xmlParser())
-            items = try document.getElementsByTag("item")
+            items = try document.getElementsByTag(rssParser.items)
         } catch {
             await toastModel?.updateToastDescription("RSS scraping error, couldn't fetch items: \(error)")
             print("RSS scraping error, couldn't fetch items: \(error)")
