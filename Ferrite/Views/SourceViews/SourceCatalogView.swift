@@ -33,5 +33,6 @@ struct SourceCatalogButtonView: View {
                 }
             }
         }
+        .padding(.vertical, 2)
     }
 }

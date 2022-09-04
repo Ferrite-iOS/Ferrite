@@ -36,6 +36,7 @@ struct SettingsSourceListView: View {
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
+                    .padding(.vertical, 2)
                     .contextMenu {
                         Button {
                             navModel.selectedSourceList = sourceList

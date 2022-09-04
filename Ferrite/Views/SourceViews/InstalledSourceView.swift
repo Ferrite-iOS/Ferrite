@@ -32,6 +32,7 @@ struct InstalledSourceView: View {
                 Text("by \(installedSource.author)")
                     .foregroundColor(.secondary)
             }
+            .padding(.vertical, 2)
         }
         .contextMenu {
             Button {
@@ -42,11 +43,20 @@ struct InstalledSourceView: View {
                 Image(systemName: "gear")
             }
 
-            Button {
-                PersistenceController.shared.delete(installedSource, context: backgroundContext)
-            } label: {
-                Text("Remove")
-                Image(systemName: "trash")
+            if #available(iOS 15.0, *) {
+                Button(role: .destructive) {
+                    PersistenceController.shared.delete(installedSource, context: backgroundContext)
+                } label: {
+                    Text("Remove")
+                    Image(systemName: "trash")
+                }
+            } else {
+                Button {
+                    PersistenceController.shared.delete(installedSource, context: backgroundContext)
+                } label: {
+                    Text("Remove")
+                    Image(systemName: "trash")
+                }
             }
         }
     }

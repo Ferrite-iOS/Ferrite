@@ -40,6 +40,7 @@ struct SourceSettingsView: View {
                             .foregroundColor(.secondary)
                             .font(.caption)
                         }
+                        .padding(.vertical, 2)
                     }
 
                     if selectedSource.dynamicBaseUrl {
