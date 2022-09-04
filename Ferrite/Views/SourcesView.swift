@@ -42,6 +42,12 @@ struct SourcesView: View {
     @State private var viewTask: Task<Void, Never>? = nil
     @State private var checkedForSources = false
 
+    @State private var searchText: String = ""
+    @State private var isEditing = false
+
+    @State var filteredUpdatedSources: [SourceJson] = []
+    @State var filteredAvailableSources: [SourceJson] = []
+
     var body: some View {
         NavView {
             ZStack {
@@ -58,9 +64,9 @@ struct SourcesView: View {
                     .padding(.top, verticalSizeClass == .regular ? -50 : 0)
                 } else {
                     List {
-                        if !updatedSources.isEmpty {
+                        if !filteredUpdatedSources.isEmpty {
                             Section(header: "Updates") {
-                                ForEach(updatedSources, id: \.self) { source in
+                                ForEach(filteredUpdatedSources, id: \.self) { source in
                                     SourceUpdateButtonView(updatedSource: source)
                                 }
                             }
@@ -74,7 +80,7 @@ struct SourcesView: View {
                             }
                         }
 
-                        if sourceManager.availableSources.contains(where: { availableSource in
+                        if !filteredAvailableSources.isEmpty && sourceManager.availableSources.contains(where: { availableSource in
                             !sources.contains(
                                 where: {
                                     availableSource.name == $0.name &&
@@ -84,7 +90,7 @@ struct SourcesView: View {
                             )
                         }) {
                             Section(header: "Catalog") {
-                                ForEach(sourceManager.availableSources, id: \.self) { availableSource in
+                                ForEach(filteredAvailableSources, id: \.self) { availableSource in
                                     if !sources.contains(
                                         where: {
                                             availableSource.name == $0.name &&
@@ -106,8 +112,10 @@ struct SourcesView: View {
                     .environmentObject(navModel)
             }
             .onAppear {
+                filteredUpdatedSources = updatedSources
                 viewTask = Task {
                     await sourceManager.fetchSourcesFromUrl()
+                    filteredAvailableSources = sourceManager.availableSources
                     checkedForSources = true
                 }
             }
@@ -115,6 +123,21 @@ struct SourcesView: View {
                 viewTask?.cancel()
             }
             .navigationTitle("Sources")
+            .navigationSearchBar {
+                SearchBar("Search", text: $searchText, isEditing: $isEditing)
+                    .showsCancelButton(isEditing)
+            }
+            .onChange(of: searchText) { newValue in
+                filteredAvailableSources = sourceManager.availableSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
+                filteredUpdatedSources = updatedSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
+                if #available(iOS 15.0, *) {
+                    if searchText.isEmpty {
+                        sources.nsPredicate = nil
+                    } else {
+                        sources.nsPredicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+                    }
+                }
+            }
         }
     }
 }
