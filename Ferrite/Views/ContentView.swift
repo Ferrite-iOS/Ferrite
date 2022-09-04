@@ -30,7 +30,7 @@ struct ContentView: View {
     var body: some View {
         NavView {
             VStack(spacing: 10) {
-                HStack {
+                HStack(spacing: 6) {
                     Text("Filter")
                         .foregroundColor(.secondary)
 
@@ -50,10 +50,10 @@ struct ContentView: View {
                                 Button {
                                     selectedSource = source
                                 } label: {
-                                    Text(name)
-
                                     if selectedSource == source {
-                                        Image(systemName: "checkmark")
+                                        Label(name, systemImage: "checkmark")
+                                    } else {
+                                        Text(name)
                                     }
                                 }
                             }
