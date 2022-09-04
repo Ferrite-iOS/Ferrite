@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct SettingsAppVersionView: View {
     @EnvironmentObject var toastModel: ToastViewModel
@@ -19,7 +18,7 @@ struct SettingsAppVersionView: View {
     var body: some View {
         ZStack {
             if !loadedReleases {
-                ActivityIndicator()
+                ProgressView()
             } else if !releases.isEmpty {
                 List {
                     Section(header: Text("GitHub links")) {
