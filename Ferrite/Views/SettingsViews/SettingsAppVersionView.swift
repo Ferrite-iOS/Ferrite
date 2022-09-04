@@ -47,7 +47,7 @@ struct SettingsAppVersionView: View {
         .onDisappear {
             viewTask?.cancel()
         }
-        .navigationTitle("Version history")
+        .navigationTitle("Version History")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
