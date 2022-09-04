@@ -88,6 +88,7 @@ struct MagnetChoiceView: View {
                     }
                 }
             }
+            .dynamicAccentColor(.primary)
             .sheet(isPresented: $navModel.showLocalActivitySheet) {
                 if #available(iOS 16, *) {
                     AppActivityView(activityItems: navModel.activityItems)

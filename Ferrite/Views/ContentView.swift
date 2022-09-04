@@ -94,7 +94,6 @@ struct ContentView: View {
                         }
                     }
                 }
-                .dynamicAccentColor(.primary)
             }
             .navigationTitle("Search")
             .navigationSearchBar {
