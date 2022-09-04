@@ -24,6 +24,7 @@ struct SourceUpdateButtonView: View {
                 Text("by \(updatedSource.author ?? "Unknown")")
                     .foregroundColor(.secondary)
             }
+            .padding(.vertical, 2)
 
             Spacer()
 
