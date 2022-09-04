@@ -52,7 +52,7 @@ struct SourcesView: View {
         NavView {
             ZStack {
                 if !checkedForSources {
-                    ActivityIndicator()
+                    ProgressView()
                 } else if sources.isEmpty && sourceManager.availableSources.isEmpty {
                     VStack {
                         Text("No Sources")
