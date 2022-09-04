@@ -14,11 +14,13 @@ struct SettingsAppVersionView: View {
     @State private var viewTask: Task<Void, Never>?
     @State private var releases: [GithubRelease] = []
 
+    @State private var loadedReleases = false
+
     var body: some View {
         ZStack {
-            if releases.isEmpty {
+            if !loadedReleases {
                 ActivityIndicator()
-            } else {
+            } else if !releases.isEmpty {
                 List {
                     Section(header: Text("GitHub links")) {
                         ForEach(releases, id: \.self) { release in
@@ -33,14 +35,15 @@ struct SettingsAppVersionView: View {
             viewTask = Task {
                 do {
                     if let fetchedReleases = try await Github().fetchReleases() {
-                        withAnimation {
-                            releases = fetchedReleases
-                        }
+                        releases = fetchedReleases
                     } else {
                         toastModel.updateToastDescription("Github error: No releases found")
                     }
                 } catch {
                     toastModel.updateToastDescription("Github error: \(error)")
+                }
+                withAnimation {
+                    loadedReleases = true
                 }
             }
         }
