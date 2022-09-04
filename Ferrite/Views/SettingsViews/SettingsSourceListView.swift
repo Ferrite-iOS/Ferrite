@@ -73,7 +73,7 @@ struct SettingsSourceListView: View {
                 SourceListEditorView(sourceUrl: navModel.selectedSourceList?.urlString ?? "")
             }
         }
-        .navigationTitle("Source lists")
+        .navigationTitle("Source Lists")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
