@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIX
 
 struct SettingsAppVersionView: View {
     @EnvironmentObject var toastModel: ToastViewModel
@@ -14,18 +15,27 @@ struct SettingsAppVersionView: View {
     @State private var releases: [GithubRelease] = []
 
     var body: some View {
-        List {
-            Section(header: Text("GitHub links")) {
-                ForEach(releases, id: \.self) { release in
-                    ListRowLinkView(text: release.tagName, link: release.htmlUrl)
+        ZStack {
+            if releases.isEmpty {
+                ActivityIndicator()
+            } else {
+                List {
+                    Section(header: Text("GitHub links")) {
+                        ForEach(releases, id: \.self) { release in
+                            ListRowLinkView(text: release.tagName, link: release.htmlUrl)
+                        }
+                    }
                 }
+                .listStyle(.insetGrouped)
             }
         }
         .onAppear {
             viewTask = Task {
                 do {
                     if let fetchedReleases = try await Github().fetchReleases() {
-                        releases = fetchedReleases
+                        withAnimation {
+                            releases = fetchedReleases
+                        }
                     } else {
                         toastModel.updateToastDescription("Github error: No releases found")
                     }
@@ -37,7 +47,6 @@ struct SettingsAppVersionView: View {
         .onDisappear {
             viewTask?.cancel()
         }
-        .listStyle(.insetGrouped)
         .navigationTitle("Version history")
         .navigationBarTitleDisplayMode(.inline)
     }

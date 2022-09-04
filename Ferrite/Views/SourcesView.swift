@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import SwiftUIX
 
 struct SourcesView: View {
+    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
+
     @EnvironmentObject var sourceManager: SourceManager
     @EnvironmentObject var navModel: NavigationViewModel
 
@@ -37,51 +40,67 @@ struct SourcesView: View {
     }
 
     @State private var viewTask: Task<Void, Never>? = nil
+    @State private var checkedForSources = false
 
     var body: some View {
         NavView {
-            List {
-                if !updatedSources.isEmpty {
-                    Section(header: "Updates") {
-                        ForEach(updatedSources, id: \.self) { source in
-                            SourceUpdateButtonView(updatedSource: source)
-                        }
+            ZStack {
+                if !checkedForSources {
+                    ActivityIndicator()
+                } else if sources.isEmpty && sourceManager.availableSources.isEmpty {
+                    VStack {
+                        Text("No Sources")
+                            .font(.system(size: 25, weight: .semibold))
+                            .foregroundColor(.secondaryLabel)
+                        Text("Add a source list in Settings")
+                            .foregroundColor(.secondaryLabel)
                     }
-                }
-
-                if !sources.isEmpty {
-                    Section(header: "Installed") {
-                        ForEach(sources, id: \.self) { source in
-                            InstalledSourceView(installedSource: source)
+                    .padding(.top, verticalSizeClass == .regular ? -50 : 0)
+                } else {
+                    List {
+                        if !updatedSources.isEmpty {
+                            Section(header: "Updates") {
+                                ForEach(updatedSources, id: \.self) { source in
+                                    SourceUpdateButtonView(updatedSource: source)
+                                }
+                            }
                         }
-                    }
-                }
 
-                if sourceManager.availableSources.contains(where: { availableSource in
-                    !sources.contains(
-                        where: {
-                            availableSource.name == $0.name &&
-                                availableSource.listId == $0.listId &&
-                                availableSource.author == $0.author
+                        if !sources.isEmpty {
+                            Section(header: "Installed") {
+                                ForEach(sources, id: \.self) { source in
+                                    InstalledSourceView(installedSource: source)
+                                }
+                            }
                         }
-                    )
-                }) {
-                    Section(header: "Catalog") {
-                        ForEach(sourceManager.availableSources, id: \.self) { availableSource in
-                            if !sources.contains(
+
+                        if sourceManager.availableSources.contains(where: { availableSource in
+                            !sources.contains(
                                 where: {
                                     availableSource.name == $0.name &&
-                                        availableSource.listId == $0.listId &&
-                                        availableSource.author == $0.author
+                                    availableSource.listId == $0.listId &&
+                                    availableSource.author == $0.author
                                 }
-                            ) {
-                                SourceCatalogButtonView(availableSource: availableSource)
+                            )
+                        }) {
+                            Section(header: "Catalog") {
+                                ForEach(sourceManager.availableSources, id: \.self) { availableSource in
+                                    if !sources.contains(
+                                        where: {
+                                            availableSource.name == $0.name &&
+                                            availableSource.listId == $0.listId &&
+                                            availableSource.author == $0.author
+                                        }
+                                    ) {
+                                        SourceCatalogButtonView(availableSource: availableSource)
+                                    }
+                                }
                             }
                         }
                     }
+                    .listStyle(.insetGrouped)
                 }
             }
-            .listStyle(.insetGrouped)
             .sheet(isPresented: $navModel.showSourceSettings) {
                 SourceSettingsView()
                     .environmentObject(navModel)
@@ -89,6 +108,7 @@ struct SourcesView: View {
             .onAppear {
                 viewTask = Task {
                     await sourceManager.fetchSourcesFromUrl()
+                    checkedForSources = true
                 }
             }
             .onDisappear {

@@ -22,7 +22,9 @@ struct SettingsSourceListView: View {
 
     var body: some View {
         List {
-            Section(header: Text("List information")) {
+            if sourceLists.isEmpty {
+                Text("No source lists")
+            } else {
                 ForEach(sourceLists, id: \.self) { sourceList in
                     VStack(alignment: .leading, spacing: 5) {
                         Text(sourceList.name)
@@ -43,11 +45,20 @@ struct SettingsSourceListView: View {
                             Image(systemName: "pencil")
                         }
 
-                        Button {
-                            PersistenceController.shared.delete(sourceList, context: backgroundContext)
-                        } label: {
-                            Text("Remove")
-                            Image(systemName: "trash")
+                        if #available(iOS 15.0, *) {
+                            Button(role: .destructive) {
+                                PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                            } label: {
+                                Text("Remove")
+                                Image(systemName: "trash")
+                            }
+                        } else {
+                            Button {
+                                PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                            } label: {
+                                Text("Remove")
+                                Image(systemName: "trash")
+                            }
                         }
                     }
                 }
@@ -56,10 +67,10 @@ struct SettingsSourceListView: View {
         .listStyle(.insetGrouped)
         .sheet(isPresented: $presentSourceSheet) {
             if #available(iOS 16, *) {
-                SourceListEditorView()
+                SourceListEditorView(sourceUrl: navModel.selectedSourceList?.urlString ?? "")
                     .presentationDetents([.medium])
             } else {
-                SourceListEditorView()
+                SourceListEditorView(sourceUrl: navModel.selectedSourceList?.urlString ?? "")
             }
         }
         .navigationTitle("Source lists")

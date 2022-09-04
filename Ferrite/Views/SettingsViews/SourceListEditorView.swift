@@ -15,7 +15,11 @@ struct SourceListEditorView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
-    @State private var sourceUrl = ""
+    @State private var sourceUrl: String
+
+    init(sourceUrl: String = "") {
+        _sourceUrl = State(initialValue: sourceUrl)
+    }
 
     var body: some View {
         NavView {
