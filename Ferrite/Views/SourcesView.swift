@@ -73,26 +73,10 @@ struct SourcesView: View {
                             }
                         }
 
-                        if !filteredAvailableSources.isEmpty, sourceManager.availableSources.contains(where: { availableSource in
-                            !sources.contains(
-                                where: {
-                                    availableSource.name == $0.name &&
-                                        availableSource.listId == $0.listId &&
-                                        availableSource.author == $0.author
-                                }
-                            )
-                        }) {
+                        if !filteredAvailableSources.isEmpty {
                             Section(header: InlineHeader("Catalog")) {
                                 ForEach(filteredAvailableSources, id: \.self) { availableSource in
-                                    if !sources.contains(
-                                        where: {
-                                            availableSource.name == $0.name &&
-                                                availableSource.listId == $0.listId &&
-                                                availableSource.author == $0.author
-                                        }
-                                    ) {
-                                        SourceCatalogButtonView(availableSource: availableSource)
-                                    }
+                                    SourceCatalogButtonView(availableSource: availableSource)
                                 }
                             }
                         }
@@ -109,7 +93,15 @@ struct SourcesView: View {
                 filteredUpdatedSources = updatedSources
                 viewTask = Task {
                     await sourceManager.fetchSourcesFromUrl()
-                    filteredAvailableSources = sourceManager.availableSources
+                    filteredAvailableSources = sourceManager.availableSources.filter { availableSource in
+                        !sources.contains(
+                            where: {
+                                availableSource.name == $0.name &&
+                                    availableSource.listId == $0.listId &&
+                                    availableSource.author == $0.author
+                            }
+                        )
+                    }
                     checkedForSources = true
                 }
             }
@@ -125,8 +117,19 @@ struct SourcesView: View {
                     }
             }
             .onChange(of: searchText) { _ in
-                filteredAvailableSources = sourceManager.availableSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
-                filteredUpdatedSources = updatedSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
+                filteredAvailableSources = sourceManager.availableSources.filter { availableSource in
+                    searchText.isEmpty ? true : availableSource.name.lowercased().contains(searchText.lowercased())
+                    && !sources.contains(
+                        where: {
+                            availableSource.name == $0.name &&
+                                availableSource.listId == $0.listId &&
+                                availableSource.author == $0.author
+                        }
+                    )
+                }
+                filteredUpdatedSources = updatedSources.filter {
+                    searchText.isEmpty ? true : $0.name.lowercased().contains(searchText.lowercased())
+                }
                 if #available(iOS 15.0, *) {
                     if searchText.isEmpty {
                         sources.nsPredicate = nil
