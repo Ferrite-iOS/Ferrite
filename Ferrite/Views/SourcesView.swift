@@ -40,14 +40,13 @@ struct SourcesView: View {
         return tempSources
     }
 
-    @State private var viewTask: Task<Void, Never>? = nil
     @State private var checkedForSources = false
-
-    @State private var searchText: String = ""
     @State private var isEditing = false
 
-    @State var filteredUpdatedSources: [SourceJson] = []
-    @State var filteredAvailableSources: [SourceJson] = []
+    @State private var viewTask: Task<Void, Never>? = nil
+    @State private var searchText: String = ""
+    @State private var filteredUpdatedSources: [SourceJson] = []
+    @State private var filteredAvailableSources: [SourceJson] = []
 
     var body: some View {
         NavView {
@@ -128,6 +127,9 @@ struct SourcesView: View {
             .navigationSearchBar {
                 SearchBar("Search", text: $searchText, isEditing: $isEditing)
                     .showsCancelButton(isEditing)
+                    .onCancel {
+                        searchText = ""
+                    }
             }
             .onChange(of: searchText) { newValue in
                 filteredAvailableSources = sourceManager.availableSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
