@@ -38,6 +38,7 @@ struct BatchChoiceView: View {
 
                         presentationMode.wrappedValue.dismiss()
                     }
+                    .dynamicAccentColor(.primary)
                 }
             }
             .listStyle(.insetGrouped)

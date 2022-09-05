@@ -5,14 +5,14 @@
 //  Created by Brian Dashore on 8/15/22.
 //
 
-import SwiftUI
 import Introspect
+import SwiftUI
 
 extension View {
     // MARK: Custom introspect functions
 
-    func introspectCollectionView(customize: @escaping (UICollectionView) -> ()) -> some View {
-        return inject(UIKitIntrospectionView(
+    func introspectCollectionView(customize: @escaping (UICollectionView) -> Void) -> some View {
+        inject(UIKitIntrospectionView(
             selector: { introspectionView in
                 guard let viewHost = Introspect.findViewHost(from: introspectionView) else {
                     return nil

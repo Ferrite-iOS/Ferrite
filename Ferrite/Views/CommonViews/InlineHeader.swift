@@ -4,6 +4,8 @@
 //
 //  Created by Brian Dashore on 9/5/22.
 //
+//  For iOS 15's weird defaults regarding sectioned list padding
+//
 
 import SwiftUI
 
@@ -15,16 +17,13 @@ struct InlineHeader: View {
     }
 
     var body: some View {
-        Group {
-            if #available(iOS 16, *) {
-                Text(title)
-                    .padding(.vertical, 5)
-            } else {
-                Text(title)
-                    .padding(.vertical, 10)
-            }
+        if #available(iOS 16, *) {
+            Text(title)
+        } else if #available(iOS 15, *) {
+            Text(title)
+                .listRowInsets(EdgeInsets(top: 10, leading: 15, bottom: 0, trailing: 0))
+        } else {
+            Text(title)
         }
-        .padding(.horizontal, 20)
-        .listRowInsets(EdgeInsets())
     }
 }

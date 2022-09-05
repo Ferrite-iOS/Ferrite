@@ -8,8 +8,8 @@
 //  Use UITableView.appearance().contentInset.top = -20 for iOS 15 and below in the App file
 //
 
-import SwiftUI
 import Introspect
+import SwiftUI
 
 struct InlinedList: ViewModifier {
     func body(content: Content) -> some View {
