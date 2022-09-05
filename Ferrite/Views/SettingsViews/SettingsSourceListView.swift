@@ -21,58 +21,60 @@ struct SettingsSourceListView: View {
     @State private var selectedSourceList: SourceList?
 
     var body: some View {
-        List {
+        ZStack {
             if sourceLists.isEmpty {
-                Text("No source lists")
+                EmptyInstructionView(title: "No Lists", message: "Add a source list using the + button in the top-right")
             } else {
-                ForEach(sourceLists, id: \.self) { sourceList in
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(sourceList.name)
+                List {
+                    ForEach(sourceLists, id: \.self) { sourceList in
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(sourceList.name)
 
-                        Text(sourceList.author)
-                            .foregroundColor(.gray)
+                            Text(sourceList.author)
+                                .foregroundColor(.gray)
 
-                        Text("ID: \(sourceList.id)")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.vertical, 2)
-                    .contextMenu {
-                        Button {
-                            navModel.selectedSourceList = sourceList
-                            presentSourceSheet.toggle()
-                        } label: {
-                            Text("Edit")
-                            Image(systemName: "pencil")
+                            Text("ID: \(sourceList.id)")
+                                .font(.caption)
+                                .foregroundColor(.gray)
                         }
-
-                        if #available(iOS 15.0, *) {
-                            Button(role: .destructive) {
-                                PersistenceController.shared.delete(sourceList, context: backgroundContext)
-                            } label: {
-                                Text("Remove")
-                                Image(systemName: "trash")
-                            }
-                        } else {
+                        .padding(.vertical, 2)
+                        .contextMenu {
                             Button {
-                                PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                                navModel.selectedSourceList = sourceList
+                                presentSourceSheet.toggle()
                             } label: {
-                                Text("Remove")
-                                Image(systemName: "trash")
+                                Text("Edit")
+                                Image(systemName: "pencil")
+                            }
+
+                            if #available(iOS 15.0, *) {
+                                Button(role: .destructive) {
+                                    PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                                } label: {
+                                    Text("Remove")
+                                    Image(systemName: "trash")
+                                }
+                            } else {
+                                Button {
+                                    PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                                } label: {
+                                    Text("Remove")
+                                    Image(systemName: "trash")
+                                }
                             }
                         }
                     }
                 }
-            }
-        }
-        .listStyle(.insetGrouped)
-        .inlinedList()
-        .sheet(isPresented: $presentSourceSheet) {
-            if #available(iOS 16, *) {
-                SourceListEditorView(sourceUrl: navModel.selectedSourceList?.urlString ?? "")
-                    .presentationDetents([.medium])
-            } else {
-                SourceListEditorView(sourceUrl: navModel.selectedSourceList?.urlString ?? "")
+                .listStyle(.insetGrouped)
+                .inlinedList()
+                .sheet(isPresented: $presentSourceSheet) {
+                    if #available(iOS 16, *) {
+                        SourceListEditorView()
+                            .presentationDetents([.medium])
+                    } else {
+                        SourceListEditorView()
+                    }
+                }
             }
         }
         .navigationTitle("Source Lists")

@@ -15,11 +15,9 @@ struct SourceListEditorView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
-    @State private var sourceUrl: String
+    @State private var sourceUrlSet = false
 
-    init(sourceUrl: String = "") {
-        _sourceUrl = State(initialValue: sourceUrl)
-    }
+    @State private var sourceUrl: String = ""
 
     var body: some View {
         NavView {
@@ -28,9 +26,11 @@ struct SourceListEditorView: View {
                     .disableAutocorrection(true)
                     .keyboardType(.URL)
                     .autocapitalization(.none)
+                    .conditionalId(sourceUrlSet)
             }
             .onAppear {
                 sourceUrl = navModel.selectedSourceList?.urlString ?? ""
+                sourceUrlSet = true
             }
             .alert(isPresented: $sourceManager.showUrlErrorAlert) {
                 Alert(

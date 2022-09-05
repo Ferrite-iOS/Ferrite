@@ -5,8 +5,8 @@
 //  Created by Brian Dashore on 7/11/22.
 //
 
-import SwiftUI
 import Introspect
+import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var debridManager: DebridManager
