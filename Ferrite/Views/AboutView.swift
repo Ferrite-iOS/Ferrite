@@ -21,7 +21,7 @@ struct AboutView: View {
                     Image("AppImage")
                         .resizable()
                         .frame(width: 100, height: 100)
-                        .clipShape(RoundedRectangle(cornerRadius: 100*0.225, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: 100 * 0.225, style: .continuous))
                         .padding(.top, 24)
 
                     Text("Ferrite is a free and open source application developed by kingbri under the GNU-GPLv3 license.")

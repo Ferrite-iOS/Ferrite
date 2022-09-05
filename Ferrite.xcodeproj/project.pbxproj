@@ -78,6 +78,7 @@
 		0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */; };
 		0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */; };
 		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
+		0CDCB91828C662640098B513 /* EmptyInstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDCB91728C662640098B513 /* EmptyInstructionView.swift */; };
 		0CFEFCFD288A006200B3F490 /* GroupBoxStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */; };
 /* End PBXBuildFile section */
 
@@ -148,6 +149,7 @@
 		0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewModel.swift; sourceTree = "<group>"; };
 		0CBC7704288DE7F40054BE44 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		0CC6E4D428A45BA000AF2BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0CDCB91728C662640098B513 /* EmptyInstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyInstructionView.swift; sourceTree = "<group>"; };
 		0CFEFCFC288A006200B3F490 /* GroupBoxStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -252,6 +254,7 @@
 				0CB6516228C5A57300DCA721 /* ConditionalId.swift */,
 				0CB6516428C5A5D700DCA721 /* InlinedList.swift */,
 				0CB6516928C5B4A600DCA721 /* InlineHeader.swift */,
+				0CDCB91728C662640098B513 /* EmptyInstructionView.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -482,6 +485,7 @@
 				0C794B67289DACB600DD1CC8 /* SourceUpdateButtonView.swift in Sources */,
 				0CA148E6288903F000DE2211 /* WebView.swift in Sources */,
 				0C4CFC4E28970C8B00AD9FAD /* SourceComplexQuery+CoreDataProperties.swift in Sources */,
+				0CDCB91828C662640098B513 /* EmptyInstructionView.swift in Sources */,
 				0CA148E2288903F000DE2211 /* Data.swift in Sources */,
 				0C57D4CC289032ED008534E8 /* SearchResultRDView.swift in Sources */,
 				0C7D11FC28AA01E900ED92DB /* DynamicAccentColor.swift in Sources */,

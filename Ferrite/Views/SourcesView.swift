@@ -5,9 +5,9 @@
 //  Created by Brian Dashore on 7/24/22.
 //
 
+import Introspect
 import SwiftUI
 import SwiftUIX
-import Introspect
 
 struct SourcesView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
@@ -53,15 +53,8 @@ struct SourcesView: View {
             ZStack {
                 if !checkedForSources {
                     ProgressView()
-                } else if sources.isEmpty && sourceManager.availableSources.isEmpty {
-                    VStack {
-                        Text("No Sources")
-                            .font(.system(size: 25, weight: .semibold))
-                            .foregroundColor(.secondaryLabel)
-                        Text("Add a source list in Settings")
-                            .foregroundColor(.secondaryLabel)
-                    }
-                    .padding(.top, verticalSizeClass == .regular ? -50 : 0)
+                } else if sources.isEmpty, sourceManager.availableSources.isEmpty {
+                    EmptyInstructionView(title: "No Sources", message: "Add a source list in Settings")
                 } else {
                     List {
                         if !filteredUpdatedSources.isEmpty {
@@ -80,12 +73,12 @@ struct SourcesView: View {
                             }
                         }
 
-                        if !filteredAvailableSources.isEmpty && sourceManager.availableSources.contains(where: { availableSource in
+                        if !filteredAvailableSources.isEmpty, sourceManager.availableSources.contains(where: { availableSource in
                             !sources.contains(
                                 where: {
                                     availableSource.name == $0.name &&
-                                    availableSource.listId == $0.listId &&
-                                    availableSource.author == $0.author
+                                        availableSource.listId == $0.listId &&
+                                        availableSource.author == $0.author
                                 }
                             )
                         }) {
@@ -94,8 +87,8 @@ struct SourcesView: View {
                                     if !sources.contains(
                                         where: {
                                             availableSource.name == $0.name &&
-                                            availableSource.listId == $0.listId &&
-                                            availableSource.author == $0.author
+                                                availableSource.listId == $0.listId &&
+                                                availableSource.author == $0.author
                                         }
                                     ) {
                                         SourceCatalogButtonView(availableSource: availableSource)
@@ -131,7 +124,7 @@ struct SourcesView: View {
                         searchText = ""
                     }
             }
-            .onChange(of: searchText) { newValue in
+            .onChange(of: searchText) { _ in
                 filteredAvailableSources = sourceManager.availableSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
                 filteredUpdatedSources = updatedSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
                 if #available(iOS 15.0, *) {

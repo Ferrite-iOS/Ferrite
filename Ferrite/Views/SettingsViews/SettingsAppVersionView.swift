@@ -41,6 +41,7 @@ struct SettingsAppVersionView: View {
                 } catch {
                     toastModel.updateToastDescription("Github error: \(error)")
                 }
+
                 withAnimation {
                     loadedReleases = true
                 }
