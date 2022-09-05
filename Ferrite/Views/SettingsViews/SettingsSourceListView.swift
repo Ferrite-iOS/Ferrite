@@ -66,6 +66,7 @@ struct SettingsSourceListView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .inlinedList()
         .sheet(isPresented: $presentSourceSheet) {
             if #available(iOS 16, *) {
                 SourceListEditorView(sourceUrl: navModel.selectedSourceList?.urlString ?? "")

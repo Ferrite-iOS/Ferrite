@@ -54,6 +54,7 @@ struct SearchResultsView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .inlinedList()
         .overlay {
             if scrapingModel.searchResults.isEmpty {
                 if navModel.showSearchProgress {

@@ -29,6 +29,7 @@ struct MagnetActionPickerView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .inlinedList()
         .navigationTitle("Default magnet action")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -67,6 +68,7 @@ struct DebridActionPickerView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .inlinedList()
         .navigationTitle("Default debrid action")
         .navigationBarTitleDisplayMode(.inline)
     }
