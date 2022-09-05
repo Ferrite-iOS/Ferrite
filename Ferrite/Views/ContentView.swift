@@ -110,7 +110,11 @@ struct ContentView: View {
                                   await scrapingModel.scanSources(sources: sources)
 
                                   if realDebridEnabled, !scrapingModel.searchResults.isEmpty {
-                                      await debridManager.populateDebridHashes(scrapingModel.searchResults)
+                                      debridManager.realDebridIAValues = []
+
+                                      await debridManager.populateDebridHashes(
+                                          scrapingModel.searchResults.compactMap(\.magnetHash)
+                                      )
                                   }
 
                                   navModel.showSearchProgress = false

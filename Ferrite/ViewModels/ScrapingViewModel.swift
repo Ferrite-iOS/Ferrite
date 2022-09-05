@@ -11,16 +11,6 @@ import SwiftSoup
 import SwiftUI
 import SwiftyJSON
 
-public struct SearchResult: Hashable, Codable {
-    let title: String?
-    let source: String
-    let size: String?
-    let magnetLink: String?
-    let magnetHash: String?
-    let seeders: String?
-    let leechers: String?
-}
-
 class ScrapingViewModel: ObservableObject {
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
 
@@ -31,7 +21,6 @@ class ScrapingViewModel: ObservableObject {
     @Published var runningSearchTask: Task<Void, Error>?
     @Published var searchResults: [SearchResult] = []
     @Published var searchText: String = ""
-    @Published var selectedSearchResult: SearchResult?
     @Published var filteredSource: Source?
     @Published var currentSourceName: String?
 

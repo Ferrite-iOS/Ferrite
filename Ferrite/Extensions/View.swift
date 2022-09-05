@@ -36,4 +36,11 @@ extension View {
     func inlinedList() -> some View {
         modifier(InlinedList())
     }
+
+    func conditionalContextMenu<InternalContent: View, ID: Hashable>(
+        id: ID,
+        @ViewBuilder _ internalContent: @escaping () -> InternalContent
+    ) -> some View {
+        modifier(ConditionalContextMenu(internalContent, id: id))
+    }
 }

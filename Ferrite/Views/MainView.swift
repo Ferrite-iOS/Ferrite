@@ -28,6 +28,12 @@ struct MainView: View {
                 }
                 .tag(ViewTab.search)
 
+            LibraryView()
+                .tabItem {
+                    Label("Library", systemImage: "book.closed")
+                }
+                .tag(ViewTab.library)
+
             SourcesView()
                 .tabItem {
                     Label("Sources", systemImage: "doc.text")

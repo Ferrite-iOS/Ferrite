@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21277" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Bookmark" representedClassName="Bookmark" syncable="YES">
+        <attribute name="leechers" optional="YES" attributeType="String"/>
+        <attribute name="magnetHash" optional="YES" attributeType="String"/>
+        <attribute name="magnetLink" optional="YES" attributeType="String"/>
+        <attribute name="orderNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="seeders" optional="YES" attributeType="String"/>
+        <attribute name="size" optional="YES" attributeType="String"/>
+        <attribute name="source" attributeType="String" defaultValueString=""/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="History" representedClassName="History" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dateString" optional="YES" attributeType="String"/>
+        <relationship name="entries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HistoryEntry" inverseName="parentHistory" inverseEntity="HistoryEntry"/>
+    </entity>
+    <entity name="HistoryEntry" representedClassName="HistoryEntry" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="timeStamp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="parentHistory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="History" inverseName="entries" inverseEntity="History"/>
+    </entity>
     <entity name="Source" representedClassName="Source" syncable="YES">
         <attribute name="author" attributeType="String" defaultValueString=""/>
         <attribute name="baseUrl" optional="YES" attributeType="String"/>

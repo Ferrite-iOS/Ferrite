@@ -147,7 +147,7 @@ struct SourceSettingsMethodView: View {
 
     var body: some View {
         Section(header: InlineHeader("Fetch method")) {
-            if selectedSource.api != nil, selectedSource.jsonParser != nil {
+            if selectedSource.jsonParser != nil {
                 Button {
                     selectedSource.preferredParser = SourcePreferredParser.siteApi.rawValue
                 } label: {

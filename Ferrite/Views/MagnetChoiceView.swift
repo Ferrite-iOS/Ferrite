@@ -23,7 +23,7 @@ struct MagnetChoiceView: View {
     var body: some View {
         NavView {
             Form {
-                if realDebridEnabled, debridManager.matchSearchResult(result: scrapingModel.selectedSearchResult) != .none {
+                if realDebridEnabled, debridManager.matchSearchResult(result: navModel.selectedSearchResult) != .none {
                     Section(header: "Real Debrid options") {
                         ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
                             navModel.runDebridAction(action: .outplayer, urlString: debridManager.realDebridDownloadUrl)
@@ -60,7 +60,7 @@ struct MagnetChoiceView: View {
 
                 Section(header: "Magnet options") {
                     ListRowButtonView("Copy magnet", systemImage: "doc.on.doc.fill") {
-                        UIPasteboard.general.string = scrapingModel.selectedSearchResult?.magnetLink
+                        UIPasteboard.general.string = navModel.selectedSearchResult?.magnetLink
                         showMagnetCopyAlert.toggle()
                     }
                     .alert(isPresented: $showMagnetCopyAlert) {
@@ -72,7 +72,7 @@ struct MagnetChoiceView: View {
                     }
 
                     ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
-                        if let result = scrapingModel.selectedSearchResult,
+                        if let result = navModel.selectedSearchResult,
                            let magnetLink = result.magnetLink,
                            let url = URL(string: magnetLink)
                         {
@@ -82,9 +82,7 @@ struct MagnetChoiceView: View {
                     }
 
                     ListRowButtonView("Open in WebTor", systemImage: "arrow.up.forward.app.fill") {
-                        if let result = scrapingModel.selectedSearchResult {
-                            navModel.runMagnetAction(action: .webtor, searchResult: result)
-                        }
+                        navModel.runMagnetAction(.webtor)
                     }
                 }
             }

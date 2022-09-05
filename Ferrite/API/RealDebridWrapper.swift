@@ -248,9 +248,21 @@ public class RealDebrid {
                     }
                 }
 
-                availableHashes.append(RealDebridIA(hash: hash, files: files, batches: batches))
+                // TTL: 5 minutes
+                availableHashes.append(
+                    RealDebridIA(
+                        hash: hash,
+                        expiryTimeStamp: Date().timeIntervalSince1970 + 300,
+                        files: files,
+                        batches: batches)
+                )
             } else {
-                availableHashes.append(RealDebridIA(hash: hash))
+                availableHashes.append(
+                    RealDebridIA(
+                        hash: hash,
+                        expiryTimeStamp: Date().timeIntervalSince1970 + 300
+                    )
+                )
             }
         }
 

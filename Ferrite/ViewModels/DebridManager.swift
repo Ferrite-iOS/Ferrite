@@ -10,8 +10,11 @@ import SwiftUI
 
 @MainActor
 public class DebridManager: ObservableObject {
-    // UI Variables
+    // Linked classes
     var toastModel: ToastViewModel?
+    let realDebrid: RealDebrid = .init()
+
+    // UI Variables
     @Published var showWebView: Bool = false
     @Published var showLoadingProgress: Bool = false
 
@@ -19,8 +22,6 @@ public class DebridManager: ObservableObject {
     @Published var currentDebridTask: Task<Void, Never>?
 
     // RealDebrid auth variables
-    let realDebrid: RealDebrid = .init()
-
     @Published var realDebridEnabled: Bool = false {
         didSet {
             UserDefaults.standard.set(realDebridEnabled, forKey: "RealDebrid.Enabled")
@@ -31,7 +32,7 @@ public class DebridManager: ObservableObject {
     @Published var realDebridAuthUrl: String = ""
 
     // RealDebrid fetch variables
-    @Published var realDebridHashes: [RealDebridIA] = []
+    @Published var realDebridIAValues: [RealDebridIA] = []
     @Published var realDebridDownloadUrl: String = ""
     @Published var selectedRealDebridItem: RealDebridIA?
     @Published var selectedRealDebridFile: RealDebridIAFile?
@@ -40,19 +41,30 @@ public class DebridManager: ObservableObject {
         realDebridEnabled = UserDefaults.standard.bool(forKey: "RealDebrid.Enabled")
     }
 
-    public func populateDebridHashes(_ searchResults: [SearchResult]) async {
-        var hashes: [String] = []
-
-        for result in searchResults {
-            if let hash = result.magnetHash {
-                hashes.append(hash)
-            }
-        }
-
+    public func populateDebridHashes(_ resultHashes: [String]) async {
         do {
-            let debridHashes = try await realDebrid.instantAvailability(magnetHashes: hashes)
+            let now = Date()
 
-            realDebridHashes = debridHashes
+            // If a hash isn't found in the IA, update it
+            // If the hash is expired, remove it and update it
+            let sendHashes = resultHashes.filter { hash in
+                if let IAIndex = realDebridIAValues.firstIndex(where: { $0.hash == hash }) {
+                    if now.timeIntervalSince1970 > realDebridIAValues[IAIndex].expiryTimeStamp {
+                        realDebridIAValues.remove(at: IAIndex)
+                        return true
+                    } else {
+                        return false
+                    }
+                } else {
+                    return true
+                }
+            }
+
+            if !sendHashes.isEmpty {
+                let fetchedIAValues = try await realDebrid.instantAvailability(magnetHashes: sendHashes)
+
+                realDebridIAValues += fetchedIAValues
+            }
         } catch {
             let error = error as NSError
 
@@ -69,7 +81,7 @@ public class DebridManager: ObservableObject {
             return .none
         }
 
-        guard let debridMatch = realDebridHashes.first(where: { result.magnetHash == $0.hash }) else {
+        guard let debridMatch = realDebridIAValues.first(where: { result.magnetHash == $0.hash }) else {
             return .none
         }
 
@@ -86,7 +98,7 @@ public class DebridManager: ObservableObject {
             return false
         }
 
-        if let realDebridItem = realDebridHashes.first(where: { magnetHash == $0.hash }) {
+        if let realDebridItem = realDebridIAValues.first(where: { magnetHash == $0.hash }) {
             selectedRealDebridItem = realDebridItem
             return true
         } else {

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct SearchResultsView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
-    @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
 
     @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
@@ -18,38 +17,7 @@ struct SearchResultsView: View {
         List {
             ForEach(scrapingModel.searchResults, id: \.self) { result in
                 if result.source == scrapingModel.filteredSource?.name || scrapingModel.filteredSource == nil {
-                    VStack(alignment: .leading) {
-                        Button {
-                            if debridManager.currentDebridTask == nil {
-                                scrapingModel.selectedSearchResult = result
-
-                                switch debridManager.matchSearchResult(result: result) {
-                                case .full:
-                                    debridManager.currentDebridTask = Task {
-                                        await debridManager.fetchRdDownload(searchResult: result)
-
-                                        if !debridManager.realDebridDownloadUrl.isEmpty {
-                                            navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
-                                        }
-                                    }
-                                case .partial:
-                                    if debridManager.setSelectedRdResult(result: result) {
-                                        navModel.currentChoiceSheet = .batch
-                                    }
-                                case .none:
-                                    navModel.runMagnetAction(action: nil, searchResult: result)
-                                }
-                            }
-                        } label: {
-                            Text(result.title ?? "No title")
-                                .font(.callout)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .dynamicAccentColor(.primary)
-                        .padding(.bottom, 5)
-
-                        SearchResultRDView(result: result)
-                    }
+                    SearchResultButtonView(result: result)
                 }
             }
         }

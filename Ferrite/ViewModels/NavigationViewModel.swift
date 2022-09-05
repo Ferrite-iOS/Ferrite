@@ -11,6 +11,7 @@ enum ViewTab {
     case search
     case sources
     case settings
+    case library
 }
 
 @MainActor
@@ -30,6 +31,8 @@ class NavigationViewModel: ObservableObject {
 
     @Published var isEditingSearch: Bool = false
     @Published var isSearching: Bool = false
+
+    @Published var selectedSearchResult: SearchResult?
 
     @Published var hideNavigationBar = false
 
@@ -86,11 +89,18 @@ class NavigationViewModel: ObservableObject {
         }
     }
 
-    public func runMagnetAction(action: DefaultMagnetActionType?, searchResult: SearchResult) {
+    public func runMagnetAction(_ action: DefaultMagnetActionType? = nil) {
+        guard let searchResult = selectedSearchResult else {
+            toastModel?.updateToastDescription("Magnet action error: A search result was not selected.")
+            print("Magnet action error: A search result was not selected.")
+
+            return
+        }
+
         let selectedAction = action ?? defaultMagnetAction
 
         guard let magnetLink = searchResult.magnetLink else {
-            toastModel?.toastDescription = "Could not run your action because the magnet link is invalid."
+            toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
             print("Magnet action error: The magnet link is invalid.")
 
             return
