@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Introspect
 
 struct SettingsView: View {
     @EnvironmentObject var debridManager: DebridManager
@@ -21,7 +22,7 @@ struct SettingsView: View {
     var body: some View {
         NavView {
             Form {
-                Section(header: "Debrid services") {
+                Section(header: InlineHeader("Debrid Services")) {
                     HStack {
                         Text("Real Debrid")
                         Spacer()
@@ -40,11 +41,11 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: "Source management") {
+                Section(header: InlineHeader("Source management")) {
                     NavigationLink("Source lists", destination: SettingsSourceListView())
                 }
 
-                Section(header: "Default actions") {
+                Section(header: InlineHeader("Default actions")) {
                     if debridManager.realDebridEnabled {
                         NavigationLink(
                             destination: DebridActionPickerView(),
@@ -94,14 +95,14 @@ struct SettingsView: View {
                     )
                 }
 
-                Section(header: Text("Updates")) {
+                Section(header: InlineHeader("Updates")) {
                     Toggle(isOn: $autoUpdateNotifs) {
                         Text("Show update alerts")
                     }
                     NavigationLink("Version history", destination: SettingsAppVersionView())
                 }
 
-                Section(header: Text("Information")) {
+                Section(header: InlineHeader("Information")) {
                     ListRowLinkView(text: "Donate", link: "https://ko-fi.com/kingbri")
                     ListRowLinkView(text: "Report issues", link: "https://github.com/bdashore3/Ferrite/issues")
                     NavigationLink("About", destination: AboutView())

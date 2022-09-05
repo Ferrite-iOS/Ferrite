@@ -21,7 +21,7 @@ struct SettingsAppVersionView: View {
                 ProgressView()
             } else if !releases.isEmpty {
                 List {
-                    Section(header: Text("GitHub links")) {
+                    Section(header: InlineHeader("GitHub links")) {
                         ForEach(releases, id: \.self) { release in
                             ListRowLinkView(text: release.tagName, link: release.htmlUrl)
                         }

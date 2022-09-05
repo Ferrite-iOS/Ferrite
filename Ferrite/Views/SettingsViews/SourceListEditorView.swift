@@ -24,12 +24,10 @@ struct SourceListEditorView: View {
     var body: some View {
         NavView {
             Form {
-                Section {
-                    TextField("Enter URL", text: $sourceUrl)
-                        .disableAutocorrection(true)
-                        .keyboardType(.URL)
-                        .autocapitalization(.none)
-                }
+                TextField("Enter URL", text: $sourceUrl)
+                    .disableAutocorrection(true)
+                    .keyboardType(.URL)
+                    .autocapitalization(.none)
             }
             .onAppear {
                 sourceUrl = navModel.selectedSourceList?.urlString ?? ""

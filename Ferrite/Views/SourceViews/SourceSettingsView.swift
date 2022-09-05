@@ -16,7 +16,7 @@ struct SourceSettingsView: View {
         NavView {
             List {
                 if let selectedSource = navModel.selectedSource {
-                    Section(header: "Info") {
+                    Section(header: InlineHeader("Info")) {
                         VStack(alignment: .leading, spacing: 5) {
                             HStack {
                                 Text(selectedSource.name)
@@ -78,7 +78,7 @@ struct SourceSettingsBaseUrlView: View {
     @State private var tempBaseUrl: String = ""
     var body: some View {
         Section(
-            header: Text("Base URL"),
+            header: InlineHeader("Base URL"),
             footer: Text("Enter the base URL of your server.")
         ) {
             TextField("https://...", text: $tempBaseUrl, onEditingChanged: { isFocused in
@@ -110,7 +110,7 @@ struct SourceSettingsApiView: View {
 
     var body: some View {
         Section(
-            header: Text("API credentials"),
+            header: InlineHeader("API credentials"),
             footer: Text("Grab the required API credentials from the website. A client secret can be an API token.")
         ) {
             if let clientId = selectedSourceApi.clientId, clientId.dynamic {
@@ -146,7 +146,7 @@ struct SourceSettingsMethodView: View {
     @ObservedObject var selectedSource: Source
 
     var body: some View {
-        Section(header: Text("Fetch method")) {
+        Section(header: InlineHeader("Fetch method")) {
             if selectedSource.api != nil, selectedSource.jsonParser != nil {
                 Button {
                     selectedSource.preferredParser = SourcePreferredParser.siteApi.rawValue

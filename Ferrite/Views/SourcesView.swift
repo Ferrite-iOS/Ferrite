@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftUIX
+import Introspect
 
 struct SourcesView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
@@ -65,7 +66,7 @@ struct SourcesView: View {
                 } else {
                     List {
                         if !filteredUpdatedSources.isEmpty {
-                            Section(header: "Updates") {
+                            Section(header: InlineHeader("Updates")) {
                                 ForEach(filteredUpdatedSources, id: \.self) { source in
                                     SourceUpdateButtonView(updatedSource: source)
                                 }
@@ -73,7 +74,7 @@ struct SourcesView: View {
                         }
 
                         if !sources.isEmpty {
-                            Section(header: "Installed") {
+                            Section(header: InlineHeader("Installed")) {
                                 ForEach(sources, id: \.self) { source in
                                     InstalledSourceView(installedSource: source)
                                 }
@@ -89,7 +90,7 @@ struct SourcesView: View {
                                 }
                             )
                         }) {
-                            Section(header: "Catalog") {
+                            Section(header: InlineHeader("Catalog")) {
                                 ForEach(filteredAvailableSources, id: \.self) { availableSource in
                                     if !sources.contains(
                                         where: {
@@ -104,6 +105,7 @@ struct SourcesView: View {
                             }
                         }
                     }
+                    .conditionalId(UUID())
                     .listStyle(.insetGrouped)
                 }
             }
