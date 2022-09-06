@@ -7,7 +7,7 @@
 
 import CoreData
 import Foundation
-import UIKit
+import SwiftUI
 
 public class SourceManager: ObservableObject {
     var toastModel: ToastViewModel?
@@ -50,6 +50,22 @@ public class SourceManager: ObservableObject {
         } catch {
             print(error)
         }
+    }
+
+    func fetchUpdatedSources(installedSources: FetchedResults<Source>) -> [SourceJson] {
+        var updatedSources: [SourceJson] = []
+
+        for source in installedSources {
+            if let availableSource = availableSources.first(where: {
+                source.listId == $0.listId && source.name == $0.name && source.author == $0.author
+            }),
+                availableSource.version > source.version
+            {
+                updatedSources.append(availableSource)
+            }
+        }
+
+        return updatedSources
     }
 
     // Checks if the current app version is supported by the source
