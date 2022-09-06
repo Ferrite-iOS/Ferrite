@@ -33,6 +33,10 @@ extension View {
         modifier(ConditionalId(id: id))
     }
 
+    func disabledAppearance(_ disabled: Bool, dimmedOpacity: Double? = nil, animation: Animation? = nil) -> some View {
+        modifier(DisabledAppearance(disabled: disabled, dimmedOpacity: dimmedOpacity, animation: animation))
+    }
+
     func inlinedList() -> some View {
         modifier(InlinedList())
     }
@@ -42,5 +46,27 @@ extension View {
         @ViewBuilder _ internalContent: @escaping () -> InternalContent
     ) -> some View {
         modifier(ConditionalContextMenu(internalContent, id: id))
+    }
+
+    func dynamicActionSheet(
+        isPresented: Binding<Bool>,
+        title: String,
+        message: String? = nil,
+        buttons: [AlertButton]) -> some View
+    {
+        modifier(DynamicActionSheet(isPresented: isPresented, title: title, message: message, buttons: buttons))
+    }
+
+    func dynamicAlert(
+        isPresented: Binding<Bool>,
+        title: String,
+        message: String? = nil,
+        buttons: [AlertButton]) -> some View
+    {
+        modifier(DynamicAlert(isPresented: isPresented, title: title, message: message, buttons: buttons))
+    }
+
+    func disableInteraction(_ disabled: Bool) -> some View {
+        modifier(DisableInteraction(disabled: disabled))
     }
 }

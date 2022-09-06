@@ -46,20 +46,21 @@ struct MainView: View {
                 }
                 .tag(ViewTab.settings)
         }
-        .alert(isPresented: $showUpdateAlert) {
-            Alert(
-                title: Text("Update available"),
-                message: Text("Ferrite \(releaseVersionString) can be downloaded. \n\n This alert can be disabled in Settings."),
-                primaryButton: .default(Text("Download")) {
+        .dynamicAlert(
+            isPresented: $showUpdateAlert,
+            title: "Update available",
+            message: "Ferrite \(releaseVersionString) can be downloaded. \n\n This alert can be disabled in Settings.",
+            buttons: [
+                AlertButton("Download") {
                     guard let releaseUrl = URL(string: releaseUrlString) else {
                         return
                     }
 
                     UIApplication.shared.open(releaseUrl)
                 },
-                secondaryButton: .cancel()
-            )
-        }
+                AlertButton(role: .cancel)
+            ]
+        )
         .onAppear {
             if autoUpdateNotifs {
                 viewTask = Task {
@@ -71,7 +72,6 @@ struct MainView: View {
 
                         let releaseVersion = String(latestRelease.tagName.dropFirst())
                         if releaseVersion > UIApplication.shared.appVersion {
-                            print("Greater")
                             releaseVersionString = latestRelease.tagName
                             releaseUrlString = latestRelease.htmlUrl
                             showUpdateAlert.toggle()

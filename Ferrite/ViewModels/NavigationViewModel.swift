@@ -55,7 +55,7 @@ class NavigationViewModel: ObservableObject {
     @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
     @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none
 
-    public func runDebridAction(action: DefaultDebridActionType?, urlString: String) {
+    public func runDebridAction(urlString: String, _ action: DefaultDebridActionType? = nil) {
         let selectedAction = action ?? defaultDebridAction
 
         switch selectedAction {
@@ -89,17 +89,10 @@ class NavigationViewModel: ObservableObject {
         }
     }
 
-    public func runMagnetAction(_ action: DefaultMagnetActionType? = nil) {
-        guard let searchResult = selectedSearchResult else {
-            toastModel?.updateToastDescription("Magnet action error: A search result was not selected.")
-            print("Magnet action error: A search result was not selected.")
-
-            return
-        }
-
+    public func runMagnetAction(magnetString: String?, _ action: DefaultMagnetActionType? = nil) {
         let selectedAction = action ?? defaultMagnetAction
 
-        guard let magnetLink = searchResult.magnetLink else {
+        guard let magnetLink = magnetString else {
             toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
             print("Magnet action error: The magnet link is invalid.")
 
@@ -125,5 +118,49 @@ class NavigationViewModel: ObservableObject {
                 toastModel?.updateToastDescription("Could not create object for sharing")
             }
         }
+    }
+
+    public func addToHistory(name: String?, source: String?, url: String?, subName: String? = nil) {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        let newHistoryEntry = HistoryEntry(context: backgroundContext)
+        newHistoryEntry.name = name
+        newHistoryEntry.source = source
+        newHistoryEntry.url = url
+        newHistoryEntry.subName = subName
+
+        let now = Date()
+        newHistoryEntry.timeStamp = now.timeIntervalSince1970
+
+        let dateString = DateFormatter.historyDateFormatter.string(from: now)
+
+        let historyRequest = History.fetchRequest()
+        historyRequest.predicate = NSPredicate(format: "dateString = %@", dateString)
+
+        if var histories = try? backgroundContext.fetch(historyRequest) {
+            for (i, history) in histories.enumerated() {
+                let existingEntries = history.entryArray.filter { $0.url == newHistoryEntry.url && $0.name == newHistoryEntry.name }
+
+                if !existingEntries.isEmpty {
+                    for entry in existingEntries {
+                        PersistenceController.shared.delete(entry, context: backgroundContext)
+                    }
+                }
+
+                if history.entryArray.isEmpty {
+                    PersistenceController.shared.delete(history, context: backgroundContext)
+                    histories.remove(at: i)
+                }
+            }
+
+            newHistoryEntry.parentHistory = histories.first ?? History(context: backgroundContext)
+        } else {
+            newHistoryEntry.parentHistory = History(context: backgroundContext)
+        }
+
+        newHistoryEntry.parentHistory?.dateString = dateString
+        newHistoryEntry.parentHistory?.date = now
+
+        PersistenceController.shared.save(backgroundContext)
     }
 }

@@ -32,13 +32,12 @@ struct SourceListEditorView: View {
                 sourceUrl = navModel.selectedSourceList?.urlString ?? ""
                 sourceUrlSet = true
             }
-            .alert(isPresented: $sourceManager.showUrlErrorAlert) {
-                Alert(
-                    title: Text("Error"),
-                    message: Text(sourceManager.urlErrorAlertText),
-                    dismissButton: .default(Text("OK"))
-                )
-            }
+            .dynamicAlert(
+                isPresented: $sourceManager.showUrlErrorAlert,
+                title: "Error",
+                message: sourceManager.urlErrorAlertText,
+                buttons: [AlertButton("OK")]
+            )
             .navigationTitle("Editing source list")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

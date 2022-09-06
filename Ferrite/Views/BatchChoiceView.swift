@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct BatchChoiceView: View {
-    @Environment(\.presentationMode) var presentationMode
-
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var navModel: NavigationViewModel
+
+    let backgroundContext = PersistenceController.shared.backgroundContext
 
     var body: some View {
         NavView {
@@ -28,7 +28,8 @@ struct BatchChoiceView: View {
                                 if !debridManager.realDebridDownloadUrl.isEmpty {
                                     // The download may complete before this sheet dismisses
                                     try? await Task.sleep(seconds: 1)
-                                    navModel.runDebridAction(action: nil, urlString: debridManager.realDebridDownloadUrl)
+                                    navModel.addToHistory(name: searchResult.title, source: searchResult.source, url: debridManager.realDebridDownloadUrl, subName: file.name)
+                                    navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl)
                                 }
 
                                 debridManager.selectedRealDebridFile = nil
@@ -36,7 +37,7 @@ struct BatchChoiceView: View {
                             }
                         }
 
-                        presentationMode.wrappedValue.dismiss()
+                        navModel.currentChoiceSheet = nil
                     }
                     .dynamicAccentColor(.primary)
                 }
@@ -47,9 +48,12 @@ struct BatchChoiceView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        debridManager.selectedRealDebridItem = nil
+                        navModel.currentChoiceSheet = nil
 
-                        presentationMode.wrappedValue.dismiss()
+                        Task {
+                            try? await Task.sleep(seconds: 1)
+                            debridManager.selectedRealDebridItem = nil
+                        }
                     }
                 }
             }

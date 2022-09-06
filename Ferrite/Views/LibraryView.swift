@@ -22,6 +22,13 @@ struct LibraryView: View {
         ]
     ) var bookmarks: FetchedResults<Bookmark>
 
+    @FetchRequest(
+        entity: History.entity(),
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \History.date, ascending: false)
+        ]
+    ) var history: FetchedResults<History>
+
     @State private var historyEmpty = true
 
     @State private var selectedSegment: LibraryPickerSegment = .bookmarks
@@ -42,7 +49,7 @@ struct LibraryView: View {
                 case .bookmarks:
                     BookmarksView(bookmarks: bookmarks)
                 case .history:
-                    HistoryView()
+                    HistoryView(history: history)
                 }
 
                 Spacer()
@@ -54,7 +61,7 @@ struct LibraryView: View {
                         EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
                     }
                 case .history:
-                    if historyEmpty {
+                    if history.isEmpty {
                         EmptyInstructionView(title: "No History", message: "Start watching to build history")
                     }
                 }
@@ -62,7 +69,13 @@ struct LibraryView: View {
             .navigationTitle("Library")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                    HStack {
+                        EditButton()
+
+                        if selectedSegment == .history {
+                            HistoryActionsView()
+                        }
+                    }
                 }
             }
             .environment(\.editMode, $editMode)

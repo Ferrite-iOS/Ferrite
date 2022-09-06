@@ -37,20 +37,18 @@ struct SearchResultRDView: View {
                     .fontWeight(.bold)
                     .padding(2)
                     .background {
-                        switch debridManager.matchSearchResult(result: result) {
-                        case .full:
-                            Color.green
-                                .cornerRadius(4)
-                                .opacity(0.5)
-                        case .partial:
-                            Color.orange
-                                .cornerRadius(4)
-                                .opacity(0.5)
-                        case .none:
-                            Color.red
-                                .cornerRadius(4)
-                                .opacity(0.5)
+                        Group {
+                            switch debridManager.matchSearchResult(result: result) {
+                            case .full:
+                                Color.green
+                            case .partial:
+                                Color.orange
+                            case .none:
+                                Color.red
+                            }
                         }
+                        .cornerRadius(4)
+                        .opacity(0.5)
                     }
             }
         }

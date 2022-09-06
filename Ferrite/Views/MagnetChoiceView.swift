@@ -23,31 +23,30 @@ struct MagnetChoiceView: View {
     var body: some View {
         NavView {
             Form {
-                if realDebridEnabled, debridManager.matchSearchResult(result: navModel.selectedSearchResult) != .none {
+                if !debridManager.realDebridDownloadUrl.isEmpty {
                     Section(header: "Real Debrid options") {
                         ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(action: .outplayer, urlString: debridManager.realDebridDownloadUrl)
+                            navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl, .outplayer)
                         }
 
                         ListRowButtonView("Play on VLC", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(action: .vlc, urlString: debridManager.realDebridDownloadUrl)
+                            navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl, .vlc)
                         }
 
                         ListRowButtonView("Play on Infuse", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(action: .infuse, urlString: debridManager.realDebridDownloadUrl)
+                            navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl, .infuse)
                         }
 
                         ListRowButtonView("Copy download URL", systemImage: "doc.on.doc.fill") {
                             UIPasteboard.general.string = debridManager.realDebridDownloadUrl
                             showLinkCopyAlert.toggle()
                         }
-                        .alert(isPresented: $showLinkCopyAlert) {
-                            Alert(
-                                title: Text("Copied"),
-                                message: Text("Download link copied successfully"),
-                                dismissButton: .cancel(Text("OK"))
-                            )
-                        }
+                        .dynamicAlert(
+                            isPresented: $showLinkCopyAlert ,
+                            title: "Copied",
+                            message: "Download link copied successfully",
+                            buttons: [AlertButton("OK")]
+                        )
 
                         ListRowButtonView("Share download URL", systemImage: "square.and.arrow.up.fill") {
                             if let url = URL(string: debridManager.realDebridDownloadUrl) {
@@ -63,13 +62,12 @@ struct MagnetChoiceView: View {
                         UIPasteboard.general.string = navModel.selectedSearchResult?.magnetLink
                         showMagnetCopyAlert.toggle()
                     }
-                    .alert(isPresented: $showMagnetCopyAlert) {
-                        Alert(
-                            title: Text("Copied"),
-                            message: Text("Magnet link copied successfully"),
-                            dismissButton: .cancel(Text("OK"))
-                        )
-                    }
+                    .dynamicAlert(
+                        isPresented: $showMagnetCopyAlert,
+                        title: "Copied",
+                        message: "Magnet link copied successfully",
+                        buttons: [AlertButton("OK")]
+                    )
 
                     ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
                         if let result = navModel.selectedSearchResult,
@@ -82,7 +80,7 @@ struct MagnetChoiceView: View {
                     }
 
                     ListRowButtonView("Open in WebTor", systemImage: "arrow.up.forward.app.fill") {
-                        navModel.runMagnetAction(.webtor)
+                        navModel.runMagnetAction(magnetString: navModel.selectedSearchResult?.magnetLink, .webtor)
                     }
                 }
             }
@@ -94,6 +92,9 @@ struct MagnetChoiceView: View {
                 } else {
                     AppActivityView(activityItems: navModel.activityItems)
                 }
+            }
+            .onDisappear {
+                debridManager.realDebridDownloadUrl = ""
             }
             .navigationTitle("Link actions")
             .navigationBarTitleDisplayMode(.inline)

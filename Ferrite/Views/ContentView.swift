@@ -73,25 +73,23 @@ struct ContentView: View {
                 SearchResultsView()
             }
             .sheet(item: $navModel.currentChoiceSheet) { item in
-                Group {
-                    switch item {
-                    case .magnet:
-                        MagnetChoiceView()
-                            .environmentObject(debridManager)
-                            .environmentObject(scrapingModel)
-                            .environmentObject(navModel)
-                    case .batch:
-                        BatchChoiceView()
-                            .environmentObject(debridManager)
-                            .environmentObject(scrapingModel)
-                            .environmentObject(navModel)
-                    case .activity:
-                        if #available(iOS 16, *) {
-                            AppActivityView(activityItems: navModel.activityItems)
-                                .presentationDetents([.medium, .large])
-                        } else {
-                            AppActivityView(activityItems: navModel.activityItems)
-                        }
+                switch item {
+                case .magnet:
+                    MagnetChoiceView()
+                        .environmentObject(debridManager)
+                        .environmentObject(scrapingModel)
+                        .environmentObject(navModel)
+                case .batch:
+                    BatchChoiceView()
+                        .environmentObject(debridManager)
+                        .environmentObject(scrapingModel)
+                        .environmentObject(navModel)
+                case .activity:
+                    if #available(iOS 16, *) {
+                        AppActivityView(activityItems: navModel.activityItems)
+                            .presentationDetents([.medium, .large])
+                    } else {
+                        AppActivityView(activityItems: navModel.activityItems)
                     }
                 }
             }
