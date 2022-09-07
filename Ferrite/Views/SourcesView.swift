@@ -20,24 +20,6 @@ struct SourcesView: View {
         sortDescriptors: []
     ) var sources: FetchedResults<Source>
 
-    private var updatedSources: [SourceJson] {
-        var tempSources: [SourceJson] = []
-
-        for source in sources {
-            guard let availableSource = sourceManager.availableSources.first(where: {
-                source.listId == $0.listId && source.name == $0.name && source.author == $0.author
-            }) else {
-                continue
-            }
-
-            if availableSource.version > source.version {
-                tempSources.append(availableSource)
-            }
-        }
-
-        return tempSources
-    }
-
     @State private var checkedForSources = false
     @State private var isEditing = false
 
@@ -45,92 +27,103 @@ struct SourcesView: View {
     @State private var searchText: String = ""
     @State private var filteredUpdatedSources: [SourceJson] = []
     @State private var filteredAvailableSources: [SourceJson] = []
+    @State private var sourcePredicate: NSPredicate?
 
     var body: some View {
         NavView {
-            ZStack {
-                if !checkedForSources {
-                    ProgressView()
-                } else if sources.isEmpty, sourceManager.availableSources.isEmpty {
-                    EmptyInstructionView(title: "No Sources", message: "Add a source list in Settings")
-                } else {
-                    List {
-                        if !filteredUpdatedSources.isEmpty {
-                            Section(header: InlineHeader("Updates")) {
-                                ForEach(filteredUpdatedSources, id: \.self) { source in
-                                    SourceUpdateButtonView(updatedSource: source)
+            DynamicFetchRequest(predicate: sourcePredicate) { (installedSources: FetchedResults<Source>) in
+                ZStack {
+                    if !checkedForSources {
+                        ProgressView()
+                    } else if sources.isEmpty, sourceManager.availableSources.isEmpty {
+                        EmptyInstructionView(title: "No Sources", message: "Add a source list in Settings")
+                    } else {
+                        List {
+                            if !filteredUpdatedSources.isEmpty {
+                                Section(header: InlineHeader("Updates")) {
+                                    ForEach(filteredUpdatedSources, id: \.self) { source in
+                                        SourceUpdateButtonView(updatedSource: source)
+                                    }
                                 }
                             }
-                        }
 
-                        if !sources.isEmpty {
-                            Section(header: InlineHeader("Installed")) {
-                                ForEach(sources, id: \.self) { source in
-                                    InstalledSourceView(installedSource: source)
+                            if !installedSources.isEmpty {
+                                Section(header: InlineHeader("Installed")) {
+                                    ForEach(installedSources, id: \.self) { source in
+                                        InstalledSourceView(installedSource: source)
+                                    }
                                 }
                             }
-                        }
 
-                        if !filteredAvailableSources.isEmpty, sourceManager.availableSources.contains(where: { availableSource in
-                            !sources.contains(
-                                where: {
-                                    availableSource.name == $0.name &&
-                                        availableSource.listId == $0.listId &&
-                                        availableSource.author == $0.author
-                                }
-                            )
-                        }) {
-                            Section(header: InlineHeader("Catalog")) {
-                                ForEach(filteredAvailableSources, id: \.self) { availableSource in
-                                    if !sources.contains(
-                                        where: {
+                            if !filteredAvailableSources.isEmpty {
+                                Section(header: InlineHeader("Catalog")) {
+                                    ForEach(filteredAvailableSources, id: \.self) { availableSource in
+                                        if !installedSources.contains(where: {
                                             availableSource.name == $0.name &&
                                                 availableSource.listId == $0.listId &&
                                                 availableSource.author == $0.author
+                                        }) {
+                                            SourceCatalogButtonView(availableSource: availableSource)
                                         }
-                                    ) {
-                                        SourceCatalogButtonView(availableSource: availableSource)
                                     }
                                 }
                             }
                         }
+                        .conditionalId(UUID())
+                        .listStyle(.insetGrouped)
                     }
-                    .conditionalId(UUID())
-                    .listStyle(.insetGrouped)
                 }
-            }
-            .sheet(isPresented: $navModel.showSourceSettings) {
-                SourceSettingsView()
-                    .environmentObject(navModel)
-            }
-            .onAppear {
-                filteredUpdatedSources = updatedSources
-                viewTask = Task {
-                    await sourceManager.fetchSourcesFromUrl()
-                    filteredAvailableSources = sourceManager.availableSources
-                    checkedForSources = true
+                .sheet(isPresented: $navModel.showSourceSettings) {
+                    SourceSettingsView()
+                        .environmentObject(navModel)
                 }
-            }
-            .onDisappear {
-                viewTask?.cancel()
-            }
-            .navigationTitle("Sources")
-            .navigationSearchBar {
-                SearchBar("Search", text: $searchText, isEditing: $isEditing)
-                    .showsCancelButton(isEditing)
-                    .onCancel {
-                        searchText = ""
+                .onAppear {
+                    viewTask = Task {
+                        await sourceManager.fetchSourcesFromUrl()
+                        filteredAvailableSources = sourceManager.availableSources.filter { availableSource in
+                            !installedSources.contains(where: {
+                                availableSource.name == $0.name &&
+                                    availableSource.listId == $0.listId &&
+                                    availableSource.author == $0.author
+                            })
+                        }
+
+                        filteredUpdatedSources = sourceManager.fetchUpdatedSources(installedSources: installedSources)
+                        checkedForSources = true
                     }
-            }
-            .onChange(of: searchText) { _ in
-                filteredAvailableSources = sourceManager.availableSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
-                filteredUpdatedSources = updatedSources.filter { searchText.isEmpty ? true : $0.name.contains(searchText) }
-                if #available(iOS 15.0, *) {
-                    if searchText.isEmpty {
-                        sources.nsPredicate = nil
-                    } else {
-                        sources.nsPredicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+                }
+                .onDisappear {
+                    viewTask?.cancel()
+                }
+                .onChange(of: searchText) { _ in
+                    sourcePredicate = searchText.isEmpty ? nil : NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+                }
+                .onReceive(installedSources.publisher.count()) { _ in
+                    filteredAvailableSources = sourceManager.availableSources.filter { availableSource in
+                        let sourceExists = installedSources.contains(where: {
+                            availableSource.name == $0.name &&
+                                availableSource.listId == $0.listId &&
+                                availableSource.author == $0.author
+                        })
+
+                        if searchText.isEmpty {
+                            return !sourceExists
+                        } else {
+                            return !sourceExists && availableSource.name.lowercased().contains(searchText.lowercased())
+                        }
                     }
+
+                    filteredUpdatedSources = sourceManager.fetchUpdatedSources(installedSources: installedSources).filter {
+                        searchText.isEmpty ? true : $0.name.lowercased().contains(searchText.lowercased())
+                    }
+                }
+                .navigationTitle("Sources")
+                .navigationSearchBar {
+                    SearchBar("Search", text: $searchText, isEditing: $isEditing)
+                        .showsCancelButton(isEditing)
+                        .onCancel {
+                            searchText = ""
+                        }
                 }
             }
         }
