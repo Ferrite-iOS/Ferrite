@@ -50,7 +50,7 @@ struct SourcesView: View {
                             if !installedSources.isEmpty {
                                 Section(header: InlineHeader("Installed")) {
                                     ForEach(installedSources, id: \.self) { source in
-                                        InstalledSourceView(installedSource: source)
+                                        InstalledSourceButtonView(installedSource: source)
                                     }
                                 }
                             }

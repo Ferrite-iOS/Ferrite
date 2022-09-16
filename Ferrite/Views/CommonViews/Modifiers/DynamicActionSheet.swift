@@ -4,6 +4,8 @@
 //
 //  Created by Brian Dashore on 9/8/22.
 //
+//  Switches between confirmationDialog and actionSheet
+//
 
 import SwiftUI
 
@@ -36,7 +38,7 @@ struct DynamicActionSheet: ViewModifier {
                     ActionSheet(
                         title: Text(title),
                         message: message.map { Text($0) } ?? nil,
-                        buttons: [buttons.map { $0.toActionButton() }, [.cancel()]].flatMap{ $0 }
+                        buttons: [buttons.map { $0.toActionButton() }, [.cancel()]].flatMap { $0 }
                     )
                 }
         }

@@ -7,18 +7,18 @@
 
 import Foundation
 
-public enum ApiCredentialResponseType: String, Codable, Hashable {
+public enum ApiCredentialResponseType: String, Codable, Hashable, Sendable {
     case json
     case text
 }
 
-public struct SourceListJson: Codable {
+public struct SourceListJson: Codable, Sendable {
     let name: String
     let author: String
     var sources: [SourceJson]
 }
 
-public struct SourceJson: Codable, Hashable {
+public struct SourceJson: Codable, Hashable, Sendable {
     let name: String
     let version: Int16
     let minVersion: String?
@@ -34,20 +34,20 @@ public struct SourceJson: Codable, Hashable {
     let htmlParser: SourceHtmlParserJson?
 }
 
-public enum SourcePreferredParser: Int16, CaseIterable {
+public enum SourcePreferredParser: Int16, CaseIterable, Sendable {
     // case none = 0
     case scraping = 1
     case rss = 2
     case siteApi = 3
 }
 
-public struct SourceApiJson: Codable, Hashable {
+public struct SourceApiJson: Codable, Hashable, Sendable {
     let apiUrl: String?
     let clientId: SourceApiCredentialJson?
     let clientSecret: SourceApiCredentialJson?
 }
 
-public struct SourceApiCredentialJson: Codable, Hashable {
+public struct SourceApiCredentialJson: Codable, Hashable, Sendable {
     let query: String?
     let value: String?
     let dynamic: Bool?
@@ -56,7 +56,7 @@ public struct SourceApiCredentialJson: Codable, Hashable {
     let expiryLength: Double?
 }
 
-public struct SourceJsonParserJson: Codable, Hashable {
+public struct SourceJsonParserJson: Codable, Hashable, Sendable {
     let searchUrl: String
     let results: String?
     let subResults: String?
@@ -67,7 +67,7 @@ public struct SourceJsonParserJson: Codable, Hashable {
     let sl: SourceSLJson?
 }
 
-public struct SourceRssParserJson: Codable, Hashable {
+public struct SourceRssParserJson: Codable, Hashable, Sendable {
     let rssUrl: String?
     let searchUrl: String
     let items: String
@@ -78,7 +78,7 @@ public struct SourceRssParserJson: Codable, Hashable {
     let sl: SourceSLJson?
 }
 
-public struct SourceHtmlParserJson: Codable, Hashable {
+public struct SourceHtmlParserJson: Codable, Hashable, Sendable {
     let searchUrl: String
     let rows: String
     let magnet: SourceMagnetJson
@@ -87,21 +87,21 @@ public struct SourceHtmlParserJson: Codable, Hashable {
     let sl: SourceSLJson?
 }
 
-public struct SouceComplexQueryJson: Codable, Hashable {
+public struct SouceComplexQueryJson: Codable, Hashable, Sendable {
     let query: String
     let discriminator: String?
     let attribute: String?
     let regex: String?
 }
 
-public struct SourceMagnetJson: Codable, Hashable {
+public struct SourceMagnetJson: Codable, Hashable, Sendable {
     let query: String
     let attribute: String
     let regex: String?
     let externalLinkQuery: String?
 }
 
-public struct SourceSLJson: Codable, Hashable {
+public struct SourceSLJson: Codable, Hashable, Sendable {
     let seeders: String?
     let leechers: String?
     let combined: String?

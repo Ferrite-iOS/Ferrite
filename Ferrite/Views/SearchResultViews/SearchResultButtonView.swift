@@ -25,13 +25,13 @@ struct SearchResultButtonView: View {
         Button {
             if debridManager.currentDebridTask == nil {
                 navModel.selectedSearchResult = result
-                
+
                 switch debridManager.matchSearchResult(result: result) {
                 case .full:
                     if debridManager.setSelectedRdResult(result: result) {
                         debridManager.currentDebridTask = Task {
                             await debridManager.fetchRdDownload(searchResult: result)
-                            
+
                             if !debridManager.realDebridDownloadUrl.isEmpty {
                                 navModel.addToHistory(name: result.title, source: result.source, url: debridManager.realDebridDownloadUrl)
                                 navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl)
@@ -83,9 +83,9 @@ struct SearchResultButtonView: View {
                     newBookmark.magnetLink = result.magnetLink
                     newBookmark.seeders = result.seeders
                     newBookmark.leechers = result.leechers
-                    
+
                     existingBookmark = newBookmark
-                    
+
                     PersistenceController.shared.save(backgroundContext)
                 } label: {
                     Text("Bookmark")
@@ -111,7 +111,7 @@ struct SearchResultButtonView: View {
         }
         .onAppear {
             // Only run a exists request if a bookmark isn't passed to the view
-            if existingBookmark == nil && !runOnce {
+            if existingBookmark == nil, !runOnce {
                 let bookmarkRequest = Bookmark.fetchRequest()
                 bookmarkRequest.predicate = NSPredicate(
                     format: "title == %@ AND source == %@ AND magnetLink == %@ AND magnetHash = %@",

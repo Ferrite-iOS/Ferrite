@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SearchResult: Hashable, Codable {
+public struct SearchResult: Hashable, Codable, Sendable {
     let title: String?
     let source: String
     let size: String?

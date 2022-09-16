@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GithubRelease: Codable, Hashable {
+public struct GithubRelease: Codable, Hashable, Sendable {
     let htmlUrl: String
     let tagName: String
 

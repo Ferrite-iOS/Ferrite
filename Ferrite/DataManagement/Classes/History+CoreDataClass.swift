@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(History)
-public class History: NSManagedObject {
-
-}
+public class History: NSManagedObject {}

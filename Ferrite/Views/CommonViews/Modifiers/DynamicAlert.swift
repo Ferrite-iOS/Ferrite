@@ -4,6 +4,8 @@
 //
 //  Created by Brian Dashore on 9/8/22.
 //
+//  Switches between iOS 15 and 14 alert initalizers
+//
 
 import SwiftUI
 

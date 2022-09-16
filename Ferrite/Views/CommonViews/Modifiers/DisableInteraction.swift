@@ -4,7 +4,7 @@
 //
 //  Created by Brian Dashore on 9/13/22.
 //
-//  Disables interaction without applying the appearance
+//  Disables interaction on any view without applying the appearance
 //
 
 import SwiftUI

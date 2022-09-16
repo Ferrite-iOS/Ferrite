@@ -1,5 +1,5 @@
 //
-//  Library.swift
+//  LibraryView.swift
 //  Ferrite
 //
 //  Created by Brian Dashore on 9/2/22.

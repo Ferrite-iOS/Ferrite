@@ -255,7 +255,8 @@ public class RealDebrid {
                         hash: hash,
                         expiryTimeStamp: Date().timeIntervalSince1970 + 300,
                         files: files,
-                        batches: batches)
+                        batches: batches
+                    )
                 )
             } else {
                 availableHashes.append(

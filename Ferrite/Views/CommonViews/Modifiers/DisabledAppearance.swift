@@ -4,6 +4,8 @@
 //
 //  Created by Brian Dashore on 9/10/22.
 //
+//  Adds opacity transitions to the disabled modifier
+//
 
 import SwiftUI
 

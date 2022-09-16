@@ -1,5 +1,5 @@
 //
-//  SourceViewModel.swift
+//  SourceManager.swift
 //  Ferrite
 //
 //  Created by Brian Dashore on 7/25/22.
@@ -75,7 +75,7 @@ public class SourceManager: ObservableObject {
             return true
         }
 
-        return UIApplication.shared.appVersion >= minVersion
+        return Application.shared.appVersion >= minVersion
     }
 
     // Fetches sources using the background context

@@ -25,8 +25,10 @@ extension View {
 
     // MARK: Modifiers
 
-    func dynamicAccentColor(_ color: Color) -> some View {
-        modifier(DynamicAccentColor(color: color))
+    func conditionalContextMenu<InternalContent: View, ID: Hashable>(id: ID,
+                                                                     @ViewBuilder _ internalContent: @escaping () -> InternalContent) -> some View
+    {
+        modifier(ConditionalContextMenu(internalContent, id: id))
     }
 
     func conditionalId<ID: Hashable>(_ id: ID) -> some View {
@@ -37,36 +39,31 @@ extension View {
         modifier(DisabledAppearance(disabled: disabled, dimmedOpacity: dimmedOpacity, animation: animation))
     }
 
-    func inlinedList() -> some View {
-        modifier(InlinedList())
+    func disableInteraction(_ disabled: Bool) -> some View {
+        modifier(DisableInteraction(disabled: disabled))
     }
 
-    func conditionalContextMenu<InternalContent: View, ID: Hashable>(
-        id: ID,
-        @ViewBuilder _ internalContent: @escaping () -> InternalContent
-    ) -> some View {
-        modifier(ConditionalContextMenu(internalContent, id: id))
+    func dynamicAccentColor(_ color: Color) -> some View {
+        modifier(DynamicAccentColor(color: color))
     }
 
-    func dynamicActionSheet(
-        isPresented: Binding<Bool>,
-        title: String,
-        message: String? = nil,
-        buttons: [AlertButton]) -> some View
+    func dynamicActionSheet(isPresented: Binding<Bool>,
+                            title: String,
+                            message: String? = nil,
+                            buttons: [AlertButton]) -> some View
     {
         modifier(DynamicActionSheet(isPresented: isPresented, title: title, message: message, buttons: buttons))
     }
 
-    func dynamicAlert(
-        isPresented: Binding<Bool>,
-        title: String,
-        message: String? = nil,
-        buttons: [AlertButton]) -> some View
+    func dynamicAlert(isPresented: Binding<Bool>,
+                      title: String,
+                      message: String? = nil,
+                      buttons: [AlertButton]) -> some View
     {
         modifier(DynamicAlert(isPresented: isPresented, title: title, message: message, buttons: buttons))
     }
 
-    func disableInteraction(_ disabled: Bool) -> some View {
-        modifier(DisableInteraction(disabled: disabled))
+    func inlinedList() -> some View {
+        modifier(InlinedList())
     }
 }

@@ -4,8 +4,8 @@
 //
 //  Created by Brian Dashore on 9/4/22.
 //
-//  Removes the top padding on lists for iOS 16
-//  Use UITableView.appearance().contentInset.top = -20 for iOS 15 and below in the App file
+//  Removes the top padding on unsectioned lists
+//  If a list is sectioned, see InlineHeader
 //
 
 import Introspect

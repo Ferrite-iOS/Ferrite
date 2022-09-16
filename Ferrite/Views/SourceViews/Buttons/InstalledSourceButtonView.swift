@@ -1,5 +1,5 @@
 //
-//  InstalledSourceView.swift
+//  InstalledSourceButtonView.swift
 //  Ferrite
 //
 //  Created by Brian Dashore on 8/5/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct InstalledSourceView: View {
+struct InstalledSourceButtonView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @EnvironmentObject var navModel: NavigationViewModel

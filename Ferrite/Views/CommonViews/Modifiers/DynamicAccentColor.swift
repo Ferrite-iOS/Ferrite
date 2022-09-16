@@ -1,8 +1,10 @@
 //
-//  dynamicAccentColor.swift
+//  DynamicAccentColor.swift
 //  Ferrite
 //
 //  Created by Brian Dashore on 8/15/22.
+//
+//  Wrapper that switches between tint and accentColor
 //
 
 import SwiftUI

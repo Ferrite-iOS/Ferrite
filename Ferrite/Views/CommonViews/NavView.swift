@@ -3,6 +3,9 @@
 //  Ferrite
 //
 //  Created by Brian Dashore on 7/4/22.
+//  Contributed by Mantton
+//
+//  A wrapper that switches between NavigationStack and the legacy NavigationView
 //
 
 import SwiftUI

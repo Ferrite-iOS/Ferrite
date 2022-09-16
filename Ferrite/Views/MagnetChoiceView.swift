@@ -42,7 +42,7 @@ struct MagnetChoiceView: View {
                             showLinkCopyAlert.toggle()
                         }
                         .dynamicAlert(
-                            isPresented: $showLinkCopyAlert ,
+                            isPresented: $showLinkCopyAlert,
                             title: "Copied",
                             message: "Download link copied successfully",
                             buttons: [AlertButton("OK")]

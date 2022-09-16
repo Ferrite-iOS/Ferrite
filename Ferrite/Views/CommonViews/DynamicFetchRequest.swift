@@ -4,6 +4,9 @@
 //
 //  Created by Brian Dashore on 9/6/22.
 //
+//  Used for FetchRequests with a dynamic predicate
+//  iOS 14 compatible view
+//
 
 import CoreData
 import SwiftUI

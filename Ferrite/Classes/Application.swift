@@ -1,14 +1,17 @@
 //
-//  UIApplication.swift
+//  Application.swift
 //  Ferrite
 //
-//  Created by Brian Dashore on 7/26/22.
+//  Created by Brian Dashore on 9/16/22.
+//
+//  A thread-safe UIApplication alternative for specifying app properties
 //
 
-import SwiftUI
+import Foundation
 
-// Extensions to get the version/build number for AboutView
-extension UIApplication {
+public class Application {
+    static let shared = Application()
+
     var appVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
     }

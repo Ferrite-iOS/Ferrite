@@ -6,21 +6,19 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension History {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<History> {
-        return NSFetchRequest<History>(entityName: "History")
+public extension History {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<History> {
+        NSFetchRequest<History>(entityName: "History")
     }
 
-    @NSManaged public var date: Date?
-    @NSManaged public var dateString: String?
-    @NSManaged public var entries: NSSet?
-    
-    var entryArray: [HistoryEntry] {
+    @NSManaged var date: Date?
+    @NSManaged var dateString: String?
+    @NSManaged var entries: NSSet?
+
+    internal var entryArray: [HistoryEntry] {
         let entrySet = entries as? Set<HistoryEntry> ?? []
 
         return entrySet.sorted {
@@ -30,22 +28,19 @@ extension History {
 }
 
 // MARK: Generated accessors for entries
-extension History {
 
+public extension History {
     @objc(addEntriesObject:)
-    @NSManaged public func addToEntries(_ value: HistoryEntry)
+    @NSManaged func addToEntries(_ value: HistoryEntry)
 
     @objc(removeEntriesObject:)
-    @NSManaged public func removeFromEntries(_ value: HistoryEntry)
+    @NSManaged func removeFromEntries(_ value: HistoryEntry)
 
     @objc(addEntries:)
-    @NSManaged public func addToEntries(_ values: NSSet)
+    @NSManaged func addToEntries(_ values: NSSet)
 
     @objc(removeEntries:)
-    @NSManaged public func removeFromEntries(_ values: NSSet)
-
+    @NSManaged func removeFromEntries(_ values: NSSet)
 }
 
-extension History : Identifiable {
-
-}
+extension History: Identifiable {}

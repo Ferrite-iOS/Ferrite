@@ -21,7 +21,7 @@ enum HistoryDeleteError: Error {
 
 // No iCloud until finalized sources
 struct PersistenceController {
-    static var shared = PersistenceController()
+    static let shared = PersistenceController()
 
     // Coredata storage
     let container: NSPersistentContainer
@@ -91,7 +91,6 @@ struct PersistenceController {
         save()
     }
 
-    
     func getHistoryPredicate(range: HistoryDeleteRange) -> NSPredicate? {
         if range == .allTime {
             return nil

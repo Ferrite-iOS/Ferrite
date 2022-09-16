@@ -21,7 +21,7 @@ struct HistoryButtonView: View {
                     Task {
                         debridManager.realDebridDownloadUrl = url
                         navModel.runDebridAction(urlString: url)
-                        
+
                         if navModel.currentChoiceSheet != .magnet {
                             debridManager.realDebridDownloadUrl = ""
                         }
@@ -37,19 +37,19 @@ struct HistoryButtonView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(entry.name ?? "Unknown title")
                         .font(entry.subName == nil ? .body : .subheadline)
-                    
+
                     if let subName = entry.subName {
                         Text(subName)
                             .foregroundColor(.gray)
                             .font(.subheadline)
                     }
                 }
-                
+
                 HStack {
                     Text(entry.source ?? "Unknown source")
-                    
+
                     Spacer()
-                    
+
                     Text("DEBRID")
                         .fontWeight(.bold)
                         .padding(3)

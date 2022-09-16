@@ -4,6 +4,8 @@
 //
 //  Created by Brian Dashore on 9/8/22.
 //
+//  Universal alert button for dynamic alert views
+//
 
 import SwiftUI
 
@@ -20,7 +22,7 @@ struct AlertButton: Identifiable {
 
     // Used for all buttons
     init(_ label: String, role: Role? = nil, action: @escaping () -> Void) {
-        self.id = UUID()
+        id = UUID()
         self.label = label
         self.action = action
         self.role = role
@@ -28,19 +30,19 @@ struct AlertButton: Identifiable {
 
     // Used for buttons with no action
     init(_ label: String = "Cancel", role: Role? = nil) {
-        self.id = UUID()
+        id = UUID()
         self.label = label
-        self.action = { }
+        action = {}
         self.role = role
     }
 
     func toActionButton() -> Alert.Button {
         if let role = role {
             switch role {
-                case .cancel:
-                    return .cancel(Text(label))
-                case .destructive:
-                    return .destructive(Text(label), action: action)
+            case .cancel:
+                return .cancel(Text(label))
+            case .destructive:
+                return .destructive(Text(label), action: action)
             }
         } else {
             return .default(Text(label), action: action)

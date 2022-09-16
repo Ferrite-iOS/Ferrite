@@ -6,27 +6,22 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension Bookmark {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Bookmark> {
-        return NSFetchRequest<Bookmark>(entityName: "Bookmark")
+public extension Bookmark {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<Bookmark> {
+        NSFetchRequest<Bookmark>(entityName: "Bookmark")
     }
 
-    @NSManaged public var leechers: String?
-    @NSManaged public var magnetHash: String?
-    @NSManaged public var magnetLink: String?
-    @NSManaged public var seeders: String?
-    @NSManaged public var size: String?
-    @NSManaged public var source: String
-    @NSManaged public var title: String?
-    @NSManaged public var orderNum: Int16
-
+    @NSManaged var leechers: String?
+    @NSManaged var magnetHash: String?
+    @NSManaged var magnetLink: String?
+    @NSManaged var seeders: String?
+    @NSManaged var size: String?
+    @NSManaged var source: String
+    @NSManaged var title: String?
+    @NSManaged var orderNum: Int16
 }
 
-extension Bookmark : Identifiable {
-
-}
+extension Bookmark: Identifiable {}

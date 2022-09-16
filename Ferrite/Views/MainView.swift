@@ -71,7 +71,7 @@ struct MainView: View {
                         }
 
                         let releaseVersion = String(latestRelease.tagName.dropFirst())
-                        if releaseVersion > UIApplication.shared.appVersion {
+                        if releaseVersion > Application.shared.appVersion {
                             releaseVersionString = latestRelease.tagName
                             releaseUrlString = latestRelease.htmlUrl
                             showUpdateAlert.toggle()

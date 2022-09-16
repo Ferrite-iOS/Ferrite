@@ -174,7 +174,7 @@ public class DebridManager: ObservableObject {
 
             // If the links match from a user's downloads, no need to re-run a download
             if let existingTorrent = existingTorrents[safe: 0],
-                let torrentLink = existingTorrent.links[safe: selectedRealDebridFile?.batchFileIndex ?? 0]
+               let torrentLink = existingTorrent.links[safe: selectedRealDebridFile?.batchFileIndex ?? 0]
             {
                 let existingLinks = try await realDebrid.userDownloads().filter { $0.link == torrentLink }
                 if let existingLink = existingLinks[safe: 0]?.download {

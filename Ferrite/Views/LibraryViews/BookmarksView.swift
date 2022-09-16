@@ -37,7 +37,7 @@ struct BookmarksView: View {
                             }
                         }
                     }
-                    .onMove { (source, destination) in
+                    .onMove { source, destination in
                         var changedBookmarks = bookmarks.map { $0 }
 
                         changedBookmarks.move(fromOffsets: source, toOffset: destination)
@@ -56,7 +56,7 @@ struct BookmarksView: View {
         .onAppear {
             if realDebridEnabled {
                 viewTask = Task {
-                    let hashes = bookmarks.compactMap { $0.magnetHash }
+                    let hashes = bookmarks.compactMap(\.magnetHash)
                     await debridManager.populateDebridHashes(hashes)
                 }
             }

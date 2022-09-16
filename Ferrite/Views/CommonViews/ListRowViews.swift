@@ -4,11 +4,11 @@
 //
 //  Created by Brian Dashore on 7/26/22.
 //
+//  List row button, text, and link boilerplate
+//
 
 import SwiftUI
 
-// These views were imported from Asobi
-// View alias for a list row with an external link
 struct ListRowLinkView: View {
     let text: String
     let link: String

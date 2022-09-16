@@ -9,6 +9,6 @@ import Foundation
 
 extension Notification.Name {
     static var didDeleteBookmark: Notification.Name {
-        return Notification.Name("Deleted bookmark")
+        Notification.Name("Deleted bookmark")
     }
 }

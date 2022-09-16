@@ -11,9 +11,9 @@ struct AboutView: View {
     var body: some View {
         List {
             Section {
-                ListRowTextView(leftText: "Version", rightText: UIApplication.shared.appVersion)
-                ListRowTextView(leftText: "Build number", rightText: UIApplication.shared.appBuild)
-                ListRowTextView(leftText: "Build type", rightText: UIApplication.shared.buildType)
+                ListRowTextView(leftText: "Version", rightText: Application.shared.appVersion)
+                ListRowTextView(leftText: "Build number", rightText: Application.shared.appBuild)
+                ListRowTextView(leftText: "Build type", rightText: Application.shared.buildType)
                 ListRowLinkView(text: "Discord server", link: "https://discord.gg/sYQxnuD7Fj")
                 ListRowLinkView(text: "GitHub repository", link: "https://github.com/bdashore3/Ferrite")
             } header: {
