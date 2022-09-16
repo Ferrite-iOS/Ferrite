@@ -14,6 +14,7 @@ public enum RealDebridError: Error {
     case InvalidResponse
     case InvalidToken
     case EmptyData
+    case EmptyTorrents
     case FailedRequest(description: String)
     case AuthQuery(description: String)
 }
@@ -306,19 +307,31 @@ public class RealDebrid {
         try await performRequest(request: &request, requestName: #function)
     }
 
-    // Fetches the info of a torrent
+    // Gets the info of a torrent from a given ID
     public func torrentInfo(debridID: String, selectedIndex: Int?) async throws -> String {
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/info/\(debridID)")!)
 
         let data = try await performRequest(request: &request, requestName: #function)
         let rawResponse = try jsonDecoder.decode(TorrentInfoResponse.self, from: data)
 
-        // Error out if no index is provided
-        if let torrentLink = rawResponse.links[safe: selectedIndex ?? -1] {
+        // Let the user know if a torrent is downloading
+        if let torrentLink = rawResponse.links[safe: selectedIndex ?? -1], rawResponse.status == "downloaded" {
             return torrentLink
+        } else if rawResponse.status == "downloading" || rawResponse.status == "queued" {
+            throw RealDebridError.EmptyTorrents
         } else {
             throw RealDebridError.EmptyData
         }
+    }
+
+    // Gets the user's torrent library
+    public func userTorrents() async throws -> [UserTorrentsResponse] {
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents")!)
+
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode([UserTorrentsResponse].self, from: data)
+
+        return rawResponse
     }
 
     // Deletes a torrent download from RD
@@ -344,5 +357,15 @@ public class RealDebrid {
         let rawResponse = try jsonDecoder.decode(UnrestrictLinkResponse.self, from: data)
 
         return rawResponse.download
+    }
+
+    // Gets the user's downloads
+    public func userDownloads() async throws -> [UserDownloadsResponse] {
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/downloads")!)
+
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode([UserDownloadsResponse].self, from: data)
+
+        return rawResponse
     }
 }

@@ -11,8 +11,6 @@ struct SearchResultsView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var navModel: NavigationViewModel
 
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
     var body: some View {
         List {
             ForEach(scrapingModel.searchResults, id: \.self) { result in

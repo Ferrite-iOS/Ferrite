@@ -18,7 +18,7 @@ class ScrapingViewModel: ObservableObject {
     var toastModel: ToastViewModel?
     let byteCountFormatter: ByteCountFormatter = .init()
 
-    @Published var runningSearchTask: Task<Void, Error>?
+    var runningSearchTask: Task<Void, Error>?
     @Published var searchResults: [SearchResult] = []
     @Published var searchText: String = ""
     @Published var filteredSource: Source?

@@ -37,7 +37,7 @@ class NavigationViewModel: ObservableObject {
     @Published var hideNavigationBar = false
 
     @Published var currentChoiceSheet: ChoiceSheetType?
-    @Published var activityItems: [Any] = []
+    var activityItems: [Any] = []
 
     // Used to show the activity sheet in the share menu
     @Published var showLocalActivitySheet = false
@@ -47,10 +47,10 @@ class NavigationViewModel: ObservableObject {
 
     // Used between SourceListView and SourceSettingsView
     @Published var showSourceSettings: Bool = false
-    @Published var selectedSource: Source?
+    var selectedSource: Source?
 
     @Published var showSourceListEditor: Bool = false
-    @Published var selectedSourceList: SourceList?
+    var selectedSourceList: SourceList?
 
     @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
     @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none

@@ -14,7 +14,7 @@ public class SourceManager: ObservableObject {
 
     @Published var availableSources: [SourceJson] = []
 
-    @Published var urlErrorAlertText = ""
+    var urlErrorAlertText = ""
     @Published var showUrlErrorAlert = false
 
     @MainActor

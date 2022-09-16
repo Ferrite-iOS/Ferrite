@@ -49,19 +49,20 @@ struct BookmarksView: View {
                         PersistenceController.shared.save()
                     }
                 }
+                .id(UUID())
                 .listStyle(.insetGrouped)
-                .onAppear {
-                    if realDebridEnabled {
-                        viewTask = Task {
-                            let hashes = bookmarks.compactMap { $0.magnetHash }
-                            await debridManager.populateDebridHashes(hashes)
-                        }
-                    }
-                }
-                .onDisappear {
-                    viewTask?.cancel()
+            }
+        }
+        .onAppear {
+            if realDebridEnabled {
+                viewTask = Task {
+                    let hashes = bookmarks.compactMap { $0.magnetHash }
+                    await debridManager.populateDebridHashes(hashes)
                 }
             }
+        }
+        .onDisappear {
+            viewTask?.cancel()
         }
     }
 }

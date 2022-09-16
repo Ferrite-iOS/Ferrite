@@ -23,7 +23,7 @@ struct BatchChoiceView: View {
 
                         if let searchResult = navModel.selectedSearchResult {
                             debridManager.currentDebridTask = Task {
-                                await debridManager.fetchRdDownload(searchResult: searchResult, iaFile: file)
+                                await debridManager.fetchRdDownload(searchResult: searchResult)
 
                                 if !debridManager.realDebridDownloadUrl.isEmpty {
                                     // The download may complete before this sheet dismisses

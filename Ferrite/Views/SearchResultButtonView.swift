@@ -28,15 +28,17 @@ struct SearchResultButtonView: View {
                 
                 switch debridManager.matchSearchResult(result: result) {
                 case .full:
-                    debridManager.currentDebridTask = Task {
-                        await debridManager.fetchRdDownload(searchResult: result)
-                        
-                        if !debridManager.realDebridDownloadUrl.isEmpty {
-                            navModel.addToHistory(name: result.title, source: result.source, url: debridManager.realDebridDownloadUrl)
-                            navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl)
+                    if debridManager.setSelectedRdResult(result: result) {
+                        debridManager.currentDebridTask = Task {
+                            await debridManager.fetchRdDownload(searchResult: result)
+                            
+                            if !debridManager.realDebridDownloadUrl.isEmpty {
+                                navModel.addToHistory(name: result.title, source: result.source, url: debridManager.realDebridDownloadUrl)
+                                navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl)
 
-                            if navModel.currentChoiceSheet != .magnet {
-                                debridManager.realDebridDownloadUrl = ""
+                                if navModel.currentChoiceSheet != .magnet {
+                                    debridManager.realDebridDownloadUrl = ""
+                                }
                             }
                         }
                     }
@@ -91,6 +93,19 @@ struct SearchResultButtonView: View {
                 }
             }
         }
+        .dynamicAlert(
+            isPresented: $debridManager.showDeleteAlert,
+            title: "Caching file",
+            message: "RealDebrid is currently caching this file. Would you like to delete it? \n\nProgress can be checked on the RealDebrid website.",
+            buttons: [
+                AlertButton("Yes", role: .destructive) {
+                    Task {
+                        await debridManager.deleteRdTorrent()
+                    }
+                },
+                AlertButton(role: .cancel)
+            ]
+        )
         .onReceive(NotificationCenter.default.publisher(for: .didDeleteBookmark)) { _ in
             existingBookmark = nil
         }

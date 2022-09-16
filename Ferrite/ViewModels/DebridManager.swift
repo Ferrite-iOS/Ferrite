@@ -19,23 +19,28 @@ public class DebridManager: ObservableObject {
     @Published var showLoadingProgress: Bool = false
 
     // Service agnostic variables
-    @Published var currentDebridTask: Task<Void, Never>?
+    var currentDebridTask: Task<Void, Never>?
 
     // RealDebrid auth variables
-    @Published var realDebridEnabled: Bool = false {
+    var realDebridEnabled: Bool = false {
         didSet {
             UserDefaults.standard.set(realDebridEnabled, forKey: "RealDebrid.Enabled")
         }
     }
 
     @Published var realDebridAuthProcessing: Bool = false
-    @Published var realDebridAuthUrl: String = ""
+    var realDebridAuthUrl: String = ""
 
     // RealDebrid fetch variables
     @Published var realDebridIAValues: [RealDebridIA] = []
-    @Published var realDebridDownloadUrl: String = ""
-    @Published var selectedRealDebridItem: RealDebridIA?
-    @Published var selectedRealDebridFile: RealDebridIAFile?
+    var realDebridDownloadUrl: String = ""
+
+    @Published var showDeleteAlert: Bool = false
+
+    // TODO: Switch to an individual item based sheet system to remove these variables
+    var selectedRealDebridItem: RealDebridIA?
+    var selectedRealDebridFile: RealDebridIAFile?
+    var selectedRealDebridID: String?
 
     init() {
         realDebridEnabled = UserDefaults.standard.bool(forKey: "RealDebrid.Enabled")
@@ -138,7 +143,7 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    public func fetchRdDownload(searchResult: SearchResult, iaFile: RealDebridIAFile? = nil) async {
+    public func fetchRdDownload(searchResult: SearchResult) async {
         defer {
             currentDebridTask = nil
             showLoadingProgress = false
@@ -153,14 +158,10 @@ public class DebridManager: ObservableObject {
             return
         }
 
-        var realDebridId: String?
-
         do {
-            realDebridId = try await realDebrid.addMagnet(magnetLink: magnetLink)
-
             var fileIds: [Int] = []
 
-            if let iaFile = iaFile {
+            if let iaFile = selectedRealDebridFile {
                 guard let iaBatchFromFile = selectedRealDebridItem?.batches[safe: iaFile.batchIndex] else {
                     return
                 }
@@ -168,34 +169,65 @@ public class DebridManager: ObservableObject {
                 fileIds = iaBatchFromFile.files.map(\.id)
             }
 
-            if let realDebridId = realDebridId {
-                try await realDebrid.selectFiles(debridID: realDebridId, fileIds: fileIds)
+            // If there's an existing torrent, check for a download link. Otherwise check for an unrestrict link
+            let existingTorrents = try await realDebrid.userTorrents().filter { $0.hash == selectedRealDebridItem?.hash }
 
-                let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId, selectedIndex: iaFile?.batchFileIndex ?? 0)
-                let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
+            // If the links match from a user's downloads, no need to re-run a download
+            if let existingTorrent = existingTorrents[safe: 0],
+                let torrentLink = existingTorrent.links[safe: selectedRealDebridFile?.batchFileIndex ?? 0]
+            {
+                let existingLinks = try await realDebrid.userDownloads().filter { $0.link == torrentLink }
+                if let existingLink = existingLinks[safe: 0]?.download {
+                    realDebridDownloadUrl = existingLink
+                } else {
+                    let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
 
-                realDebridDownloadUrl = downloadLink
+                    realDebridDownloadUrl = downloadLink
+                }
+
             } else {
-                toastModel?.updateToastDescription("Could not cache this torrent. Aborting.")
+                // Add a magnet after all the cache checks fail
+                selectedRealDebridID = try await realDebrid.addMagnet(magnetLink: magnetLink)
+
+                if let realDebridId = selectedRealDebridID {
+                    try await realDebrid.selectFiles(debridID: realDebridId, fileIds: fileIds)
+
+                    let torrentLink = try await realDebrid.torrentInfo(debridID: realDebridId, selectedIndex: selectedRealDebridFile?.batchFileIndex ?? 0)
+                    let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
+
+                    realDebridDownloadUrl = downloadLink
+                } else {
+                    toastModel?.updateToastDescription("Could not cache this torrent. Aborting.")
+                }
             }
         } catch {
-            let error = error as NSError
-
-            switch error.code {
-            case -999:
-                toastModel?.updateToastDescription("Download cancelled", newToastType: .info)
+            switch error {
+            case RealDebridError.EmptyTorrents:
+                showDeleteAlert.toggle()
             default:
-                toastModel?.updateToastDescription("RealDebrid download error: \(error)")
-            }
+                let error = error as NSError
 
-            // Delete the torrent download if it exists
-            if let realDebridId = realDebridId {
-                try? await realDebrid.deleteTorrent(debridID: realDebridId)
+                switch error.code {
+                case -999:
+                    toastModel?.updateToastDescription("Download cancelled", newToastType: .info)
+                default:
+                    toastModel?.updateToastDescription("RealDebrid download error: \(error)")
+                }
+
+                await deleteRdTorrent()
             }
 
             showLoadingProgress = false
 
             print("RealDebrid download error: \(error)")
         }
+    }
+
+    public func deleteRdTorrent() async {
+        if let realDebridId = selectedRealDebridID {
+            try? await realDebrid.deleteTorrent(debridID: realDebridId)
+        }
+
+        selectedRealDebridID = nil
     }
 }

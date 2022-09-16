@@ -122,14 +122,16 @@ struct TorrentInfoResponse: Codable {
    let status, added: String
    let files: [TorrentInfoFile]
    let links: [String]
-   let ended: String
+   let ended: String?
+   let speed: Int?
+   let seeders: Int?
 
    enum CodingKeys: String, CodingKey {
        case id, filename
        case originalFilename = "original_filename"
        case hash, bytes
        case originalBytes = "original_bytes"
-       case host, split, progress, status, added, files, links, ended
+       case host, split, progress, status, added, files, links, ended, speed, seeders
    }
 }
 
@@ -137,6 +139,17 @@ struct TorrentInfoFile: Codable {
    let id: Int
    let path: String
    let bytes, selected: Int
+}
+
+public struct UserTorrentsResponse: Codable {
+    let id, filename, hash: String
+    let bytes: Int
+    let host: String
+    let split, progress: Int
+    let status, added: String
+    let links: [String]
+    let speed, seeders: Int?
+    let ended: String?
 }
 
 // MARK: - unrestrictLink endpoint
@@ -156,4 +169,24 @@ struct UnrestrictLinkResponse: Codable {
        case hostIcon = "host_icon"
        case chunks, crc, download, streamable
    }
+}
+
+// MARK: - User downloads list
+
+public struct UserDownloadsResponse: Codable {
+    let id, filename, mimeType: String
+    let filesize: Int
+    let link: String
+    let host: String
+    let hostIcon: String
+    let chunks: Int
+    let download: String
+    let streamable: Int
+    let generated: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, filename, mimeType, filesize, link, host
+        case hostIcon = "host_icon"
+        case chunks, download, streamable, generated
+    }
 }
