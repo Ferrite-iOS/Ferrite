@@ -43,26 +43,6 @@ extension View {
         modifier(DisableInteraction(disabled: disabled))
     }
 
-    func dynamicAccentColor(_ color: Color) -> some View {
-        modifier(DynamicAccentColor(color: color))
-    }
-
-    func dynamicActionSheet(isPresented: Binding<Bool>,
-                            title: String,
-                            message: String? = nil,
-                            buttons: [AlertButton]) -> some View
-    {
-        modifier(DynamicActionSheet(isPresented: isPresented, title: title, message: message, buttons: buttons))
-    }
-
-    func dynamicAlert(isPresented: Binding<Bool>,
-                      title: String,
-                      message: String? = nil,
-                      buttons: [AlertButton]) -> some View
-    {
-        modifier(DynamicAlert(isPresented: isPresented, title: title, message: message, buttons: buttons))
-    }
-
     func inlinedList() -> some View {
         modifier(InlinedList())
     }

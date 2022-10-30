@@ -16,8 +16,8 @@ struct HistoryActionsView: View {
         Button("Clear") {
             showActionSheet.toggle()
         }
-        .dynamicAccentColor(.red)
-        .dynamicActionSheet(
+        .backport.tint(.red)
+        .backport.confirmationDialog(
             isPresented: $showActionSheet,
             title: "Clear watch history",
             message: "This is an irreversible action!",

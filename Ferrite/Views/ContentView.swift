@@ -72,27 +72,6 @@ struct ContentView: View {
 
                 SearchResultsView()
             }
-            .sheet(item: $navModel.currentChoiceSheet) { item in
-                switch item {
-                case .magnet:
-                    MagnetChoiceView()
-                        .environmentObject(debridManager)
-                        .environmentObject(scrapingModel)
-                        .environmentObject(navModel)
-                case .batch:
-                    BatchChoiceView()
-                        .environmentObject(debridManager)
-                        .environmentObject(scrapingModel)
-                        .environmentObject(navModel)
-                case .activity:
-                    if #available(iOS 16, *) {
-                        AppActivityView(activityItems: navModel.activityItems)
-                            .presentationDetents([.medium, .large])
-                    } else {
-                        AppActivityView(activityItems: navModel.activityItems)
-                    }
-                }
-            }
             .navigationTitle("Search")
             .navigationSearchBar {
                 SearchBar("Search",

@@ -192,6 +192,6 @@ struct SourceSettingsMethodView: View {
                 }
             }
         }
-        .dynamicAccentColor(.primary)
+        .backport.tint(.primary)
     }
 }

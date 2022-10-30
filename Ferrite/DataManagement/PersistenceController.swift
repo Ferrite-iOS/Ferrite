@@ -91,6 +91,70 @@ struct PersistenceController {
         save()
     }
 
+    func createBookmark(_ bookmarkJson: BookmarkJson) {
+        let bookmarkRequest = Bookmark.fetchRequest()
+        bookmarkRequest.predicate = NSPredicate(
+            format: "source == %@ AND title == %@ AND magnetLink == %@",
+            bookmarkJson.source,
+            bookmarkJson.title ?? "",
+            bookmarkJson.magnetLink ?? ""
+        )
+
+        if (try? backgroundContext.fetch(bookmarkRequest).first) != nil {
+            return
+        }
+
+        let newBookmark = Bookmark(context: backgroundContext)
+
+        newBookmark.title = bookmarkJson.title
+        newBookmark.source = bookmarkJson.source
+        newBookmark.magnetHash = bookmarkJson.magnetHash
+        newBookmark.magnetLink = bookmarkJson.magnetLink
+        newBookmark.seeders = bookmarkJson.seeders
+        newBookmark.leechers = bookmarkJson.leechers
+    }
+
+    // TODO: Change timestamp to use a date instead of a double
+    func createHistory(entryJson: HistoryEntryJson, date: Double?) {
+        let historyDate = date.map { Date(timeIntervalSince1970: $0) } ?? Date()
+        let historyDateString = DateFormatter.historyDateFormatter.string(from: historyDate)
+
+        let newHistoryEntry = HistoryEntry(context: backgroundContext)
+
+        newHistoryEntry.source = entryJson.source
+        newHistoryEntry.name = entryJson.name
+        newHistoryEntry.url = entryJson.url
+        newHistoryEntry.subName = entryJson.source
+
+        let historyRequest = History.fetchRequest()
+        historyRequest.predicate = NSPredicate(format: "dateString = %@", historyDateString)
+
+        // Safely add entries to a parent history if it exists
+        if var histories = try? backgroundContext.fetch(historyRequest) {
+            for (i, history) in histories.enumerated() {
+                let existingEntries = history.entryArray.filter { $0.url == newHistoryEntry.url && $0.name == newHistoryEntry.name }
+
+                if !existingEntries.isEmpty {
+                    for entry in existingEntries {
+                        PersistenceController.shared.delete(entry, context: backgroundContext)
+                    }
+                }
+
+                if history.entryArray.isEmpty {
+                    PersistenceController.shared.delete(history, context: backgroundContext)
+                    histories.remove(at: i)
+                }
+            }
+
+            newHistoryEntry.parentHistory = histories.first ?? History(context: backgroundContext)
+        } else {
+            newHistoryEntry.parentHistory = History(context: backgroundContext)
+        }
+
+        newHistoryEntry.parentHistory?.dateString = historyDateString
+        newHistoryEntry.parentHistory?.date = historyDate
+    }
+
     func getHistoryPredicate(range: HistoryDeleteRange) -> NSPredicate? {
         if range == .allTime {
             return nil

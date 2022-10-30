@@ -25,7 +25,7 @@ struct MagnetActionPickerView: View {
                         }
                     }
                 }
-                .dynamicAccentColor(.primary)
+                .backport.tint(.primary)
             }
         }
         .listStyle(.insetGrouped)
@@ -64,7 +64,7 @@ struct DebridActionPickerView: View {
                         }
                     }
                 }
-                .dynamicAccentColor(.primary)
+                .backport.tint(.primary)
             }
         }
         .listStyle(.insetGrouped)

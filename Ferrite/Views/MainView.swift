@@ -12,6 +12,8 @@ struct MainView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var toastModel: ToastViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var scrapingModel: ScrapingViewModel
+    @EnvironmentObject var backupManager: BackupManager
 
     @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
 
@@ -46,21 +48,27 @@ struct MainView: View {
                 }
                 .tag(ViewTab.settings)
         }
-        .dynamicAlert(
-            isPresented: $showUpdateAlert,
-            title: "Update available",
-            message: "Ferrite \(releaseVersionString) can be downloaded. \n\n This alert can be disabled in Settings.",
-            buttons: [
-                AlertButton("Download") {
-                    guard let releaseUrl = URL(string: releaseUrlString) else {
-                        return
-                    }
-
-                    UIApplication.shared.open(releaseUrl)
-                },
-                AlertButton(role: .cancel)
-            ]
-        )
+        .sheet(item: $navModel.currentChoiceSheet) { item in
+            switch item {
+            case .magnet:
+                MagnetChoiceView()
+                    .environmentObject(debridManager)
+                    .environmentObject(scrapingModel)
+                    .environmentObject(navModel)
+            case .batch:
+                BatchChoiceView()
+                    .environmentObject(debridManager)
+                    .environmentObject(scrapingModel)
+                    .environmentObject(navModel)
+            case .activity:
+                if #available(iOS 16, *) {
+                    AppActivityView(activityItems: navModel.activityItems)
+                        .presentationDetents([.medium, .large])
+                } else {
+                    AppActivityView(activityItems: navModel.activityItems)
+                }
+            }
+        }
         .onAppear {
             if autoUpdateNotifs {
                 viewTask = Task {
@@ -85,6 +93,52 @@ struct MainView: View {
         .onDisappear {
             viewTask?.cancel()
         }
+        .onOpenURL { url in
+            if url.scheme == "file" {
+                // Attempt to copy to backups directory if backup doesn't exist
+                backupManager.copyBackup(backupUrl: url)
+
+                backupManager.showRestoreAlert.toggle()
+            }
+        }
+        // Global alerts for backups
+        .backport.alert(
+            isPresented: $backupManager.showRestoreAlert,
+            title: "Restore backup?",
+            message: "Restoring this backup will merge all your data!",
+            buttons: [
+                .init("Restore", role: .destructive) {
+                    backupManager.restoreBackup()
+                },
+                .init(role: .cancel)
+            ]
+        )
+        .backport.alert(
+            isPresented: $backupManager.showRestoreCompletedAlert,
+            title: "Backup restored",
+            message: backupManager.backupSourceNames.isEmpty ?
+                "No sources need to be reinstalled" :
+                "Reinstall sources: \(backupManager.backupSourceNames.joined(separator: ", "))",
+            buttons: [
+                .init("OK") {}
+            ]
+        )
+        // Updater alert
+        .backport.alert(
+            isPresented: $showUpdateAlert,
+            title: "Update available",
+            message: "Ferrite \(releaseVersionString) can be downloaded. \n\n This alert can be disabled in Settings.",
+            buttons: [
+                AlertButton("Download") {
+                    guard let releaseUrl = URL(string: releaseUrlString) else {
+                        return
+                    }
+
+                    UIApplication.shared.open(releaseUrl)
+                },
+                AlertButton(role: .cancel)
+            ]
+        )
         .overlay {
             VStack {
                 Spacer()

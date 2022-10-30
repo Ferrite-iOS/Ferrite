@@ -95,6 +95,12 @@ struct SettingsView: View {
                     )
                 }
 
+                Section(header: Text("Backups")) {
+                    NavigationLink(destination: BackupsView()) {
+                        Text("Backups")
+                    }
+                }
+
                 Section(header: Text("Updates")) {
                     Toggle(isOn: $autoUpdateNotifs) {
                         Text("Show update alerts")

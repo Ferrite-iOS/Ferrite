@@ -41,7 +41,7 @@ struct MagnetChoiceView: View {
                             UIPasteboard.general.string = debridManager.realDebridDownloadUrl
                             showLinkCopyAlert.toggle()
                         }
-                        .dynamicAlert(
+                        .backport.alert(
                             isPresented: $showLinkCopyAlert,
                             title: "Copied",
                             message: "Download link copied successfully",
@@ -62,7 +62,7 @@ struct MagnetChoiceView: View {
                         UIPasteboard.general.string = navModel.selectedSearchResult?.magnetLink
                         showMagnetCopyAlert.toggle()
                     }
-                    .dynamicAlert(
+                    .backport.alert(
                         isPresented: $showMagnetCopyAlert,
                         title: "Copied",
                         message: "Magnet link copied successfully",
@@ -84,7 +84,7 @@ struct MagnetChoiceView: View {
                     }
                 }
             }
-            .dynamicAccentColor(.primary)
+            .backport.tint(.primary)
             .sheet(isPresented: $navModel.showLocalActivitySheet) {
                 if #available(iOS 16, *) {
                     AppActivityView(activityItems: navModel.activityItems)

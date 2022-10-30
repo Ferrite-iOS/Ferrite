@@ -123,43 +123,16 @@ class NavigationViewModel: ObservableObject {
     public func addToHistory(name: String?, source: String?, url: String?, subName: String? = nil) {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        let newHistoryEntry = HistoryEntry(context: backgroundContext)
-        newHistoryEntry.name = name
-        newHistoryEntry.source = source
-        newHistoryEntry.url = url
-        newHistoryEntry.subName = subName
-
-        let now = Date()
-        newHistoryEntry.timeStamp = now.timeIntervalSince1970
-
-        let dateString = DateFormatter.historyDateFormatter.string(from: now)
-
-        let historyRequest = History.fetchRequest()
-        historyRequest.predicate = NSPredicate(format: "dateString = %@", dateString)
-
-        if var histories = try? backgroundContext.fetch(historyRequest) {
-            for (i, history) in histories.enumerated() {
-                let existingEntries = history.entryArray.filter { $0.url == newHistoryEntry.url && $0.name == newHistoryEntry.name }
-
-                if !existingEntries.isEmpty {
-                    for entry in existingEntries {
-                        PersistenceController.shared.delete(entry, context: backgroundContext)
-                    }
-                }
-
-                if history.entryArray.isEmpty {
-                    PersistenceController.shared.delete(history, context: backgroundContext)
-                    histories.remove(at: i)
-                }
-            }
-
-            newHistoryEntry.parentHistory = histories.first ?? History(context: backgroundContext)
-        } else {
-            newHistoryEntry.parentHistory = History(context: backgroundContext)
-        }
-
-        newHistoryEntry.parentHistory?.dateString = dateString
-        newHistoryEntry.parentHistory?.date = now
+        PersistenceController.shared.createHistory(
+            entryJson: HistoryEntryJson(
+                name: name ?? "",
+                subName: subName,
+                url: url ?? "",
+                timeStamp: nil,
+                source: source
+            ),
+            date: nil
+        )
 
         PersistenceController.shared.save(backgroundContext)
     }

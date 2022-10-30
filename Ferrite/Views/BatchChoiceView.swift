@@ -39,7 +39,7 @@ struct BatchChoiceView: View {
 
                         navModel.currentChoiceSheet = nil
                     }
-                    .dynamicAccentColor(.primary)
+                    .backport.tint(.primary)
                 }
             }
             .listStyle(.insetGrouped)

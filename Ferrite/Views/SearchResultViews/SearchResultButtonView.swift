@@ -62,7 +62,7 @@ struct SearchResultButtonView: View {
             .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
         }
         .disableInteraction(navModel.currentChoiceSheet != nil)
-        .dynamicAccentColor(.primary)
+        .backport.tint(.primary)
         .conditionalContextMenu(id: existingBookmark) {
             if let bookmark = existingBookmark {
                 Button {
@@ -93,7 +93,7 @@ struct SearchResultButtonView: View {
                 }
             }
         }
-        .dynamicAlert(
+        .backport.alert(
             isPresented: $debridManager.showDeleteAlert,
             title: "Caching file",
             message: "RealDebrid is currently caching this file. Would you like to delete it? \n\nProgress can be checked on the RealDebrid website.",

@@ -70,7 +70,7 @@ struct HistoryButtonView: View {
             .lineLimit(1)
             .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
         }
-        .dynamicAccentColor(.white)
+        .backport.tint(.white)
         .disableInteraction(navModel.currentChoiceSheet != nil)
     }
 }

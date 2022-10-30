@@ -32,7 +32,7 @@ struct SourceListEditorView: View {
                 sourceUrl = navModel.selectedSourceList?.urlString ?? ""
                 sourceUrlSet = true
             }
-            .dynamicAlert(
+            .backport.alert(
                 isPresented: $sourceManager.showUrlErrorAlert,
                 title: "Error",
                 message: sourceManager.urlErrorAlertText,
