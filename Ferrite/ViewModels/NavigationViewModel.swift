@@ -34,6 +34,10 @@ class NavigationViewModel: ObservableObject {
 
     @Published var selectedSearchResult: SearchResult?
 
+    // For giving information in magnet choice sheet
+    @Published var selectedTitle: String?
+    @Published var selectedBatchTitle: String?
+
     @Published var hideNavigationBar = false
 
     @Published var currentChoiceSheet: ChoiceSheetType?
@@ -123,6 +127,7 @@ class NavigationViewModel: ObservableObject {
     public func addToHistory(name: String?, source: String?, url: String?, subName: String? = nil) {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
+        // The timeStamp and date are nil because the create function will make them automatically
         PersistenceController.shared.createHistory(
             entryJson: HistoryEntryJson(
                 name: name ?? "",

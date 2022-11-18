@@ -49,7 +49,7 @@ struct BookmarksView: View {
                         PersistenceController.shared.save()
                     }
                 }
-                .id(UUID())
+                .inlinedList()
                 .listStyle(.insetGrouped)
             }
         }

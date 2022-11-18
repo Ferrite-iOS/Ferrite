@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// BUG: iOS 15 cannot refresh the context menu. Debating using swipe actions or adopting a workaround.
 struct SearchResultButtonView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
@@ -25,6 +24,7 @@ struct SearchResultButtonView: View {
         Button {
             if debridManager.currentDebridTask == nil {
                 navModel.selectedSearchResult = result
+                navModel.selectedTitle = result.title
 
                 switch debridManager.matchSearchResult(result: result) {
                 case .full:
@@ -56,6 +56,7 @@ struct SearchResultButtonView: View {
                 Text(result.title ?? "No title")
                     .font(.callout)
                     .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(4)
 
                 SearchResultRDView(result: result)
             }

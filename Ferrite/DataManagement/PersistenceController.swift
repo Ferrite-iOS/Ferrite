@@ -114,7 +114,6 @@ struct PersistenceController {
         newBookmark.leechers = bookmarkJson.leechers
     }
 
-    // TODO: Change timestamp to use a date instead of a double
     func createHistory(entryJson: HistoryEntryJson, date: Double?) {
         let historyDate = date.map { Date(timeIntervalSince1970: $0) } ?? Date()
         let historyDateString = DateFormatter.historyDateFormatter.string(from: historyDate)
@@ -124,7 +123,8 @@ struct PersistenceController {
         newHistoryEntry.source = entryJson.source
         newHistoryEntry.name = entryJson.name
         newHistoryEntry.url = entryJson.url
-        newHistoryEntry.subName = entryJson.source
+        newHistoryEntry.subName = entryJson.subName
+        newHistoryEntry.timeStamp = entryJson.timeStamp ?? Date().timeIntervalSince1970
 
         let historyRequest = History.fetchRequest()
         historyRequest.predicate = NSPredicate(format: "dateString = %@", historyDateString)

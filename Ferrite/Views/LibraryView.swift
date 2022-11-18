@@ -36,14 +36,13 @@ struct LibraryView: View {
 
     var body: some View {
         NavView {
-            VStack(spacing: 0) {
+            VStack {
                 Picker("Segments", selection: $selectedSegment) {
                     Text("Bookmarks").tag(LibraryPickerSegment.bookmarks)
                     Text("History").tag(LibraryPickerSegment.history)
                 }
                 .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.top)
+                .padding()
 
                 switch selectedSegment {
                 case .bookmarks:

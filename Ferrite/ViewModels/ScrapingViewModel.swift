@@ -901,7 +901,7 @@ class ScrapingViewModel: ObservableObject {
             }
         }
 
-        await toastModel?.updateToastDescription(responseArray.joined())
+        await toastModel?.updateToastDescription(responseArray.joined(separator: " "))
 
         PersistenceController.shared.save(backgroundContext)
     }

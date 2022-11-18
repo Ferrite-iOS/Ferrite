@@ -16,6 +16,9 @@ struct HistoryButtonView: View {
 
     var body: some View {
         Button {
+            navModel.selectedTitle = entry.name
+            navModel.selectedBatchTitle = entry.subName
+
             if let url = entry.url {
                 if url.starts(with: "https://") {
                     Task {
@@ -37,11 +40,13 @@ struct HistoryButtonView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(entry.name ?? "Unknown title")
                         .font(entry.subName == nil ? .body : .subheadline)
+                        .lineLimit(entry.subName == nil ? 2 : 1)
 
                     if let subName = entry.subName {
                         Text(subName)
                             .foregroundColor(.gray)
                             .font(.subheadline)
+                            .lineLimit(2)
                     }
                 }
 
@@ -67,10 +72,9 @@ struct HistoryButtonView: View {
                 }
                 .font(.caption)
             }
-            .lineLimit(1)
             .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
         }
-        .backport.tint(.white)
+        .backport.tint(.primary)
         .disableInteraction(navModel.currentChoiceSheet != nil)
     }
 }

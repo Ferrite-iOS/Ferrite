@@ -28,6 +28,7 @@ struct BatchChoiceView: View {
                                 if !debridManager.realDebridDownloadUrl.isEmpty {
                                     // The download may complete before this sheet dismisses
                                     try? await Task.sleep(seconds: 1)
+                                    navModel.selectedBatchTitle = file.name
                                     navModel.addToHistory(name: searchResult.title, source: searchResult.source, url: debridManager.realDebridDownloadUrl, subName: file.name)
                                     navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl)
                                 }

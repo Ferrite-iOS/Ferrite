@@ -23,6 +23,20 @@ struct MagnetChoiceView: View {
     var body: some View {
         NavView {
             Form {
+                Section(header: "Now Playing") {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(navModel.selectedTitle ?? "No title")
+                            .font(.callout)
+                            .lineLimit(navModel.selectedBatchTitle == nil ? .max : 1)
+
+                        if let batchTitle = navModel.selectedBatchTitle {
+                            Text(batchTitle)
+                                .foregroundColor(.gray)
+                                .font(.subheadline)
+                        }
+                    }
+                }
+
                 if !debridManager.realDebridDownloadUrl.isEmpty {
                     Section(header: "Real Debrid options") {
                         ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
