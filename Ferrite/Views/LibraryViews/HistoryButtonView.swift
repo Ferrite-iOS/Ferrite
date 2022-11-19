@@ -37,7 +37,7 @@ struct HistoryButtonView: View {
             }
         } label: {
             VStack(alignment: .leading) {
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading) {
                     Text(entry.name ?? "Unknown title")
                         .font(entry.subName == nil ? .body : .subheadline)
                         .lineLimit(entry.subName == nil ? 2 : 1)

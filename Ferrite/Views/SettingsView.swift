@@ -37,6 +37,9 @@ struct SettingsView: View {
                         } label: {
                             Text(debridManager.realDebridEnabled ? "Logout" : (debridManager.realDebridAuthProcessing ? "Processing" : "Login"))
                                 .foregroundColor(debridManager.realDebridEnabled ? .red : .blue)
+                                .onChange(of: debridManager.realDebridEnabled) { changed in
+                                    print("Debrid enabled changed to \(changed)")
+                                }
                         }
                     }
                 }

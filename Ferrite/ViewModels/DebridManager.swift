@@ -22,7 +22,7 @@ public class DebridManager: ObservableObject {
     var currentDebridTask: Task<Void, Never>?
 
     // RealDebrid auth variables
-    var realDebridEnabled: Bool = false {
+    @Published var realDebridEnabled: Bool = false {
         didSet {
             UserDefaults.standard.set(realDebridEnabled, forKey: "RealDebrid.Enabled")
         }
