@@ -29,6 +29,17 @@ class ScrapingViewModel: ObservableObject {
         searchResults = newResults
     }
 
+    // Utility function to print source specific errors
+    func sendSourceError(_ description: String, newToastType: ToastViewModel.ToastType? = nil) async {
+        let newDescription = "\(currentSourceName ?? "No source given"): \(description)"
+        await toastModel?.updateToastDescription(
+            newDescription,
+            newToastType: newToastType
+        )
+
+        print(newDescription)
+    }
+
     public func scanSources(sources: [Source]) async {
         if sources.isEmpty {
             await toastModel?.updateToastDescription("There are no sources to search!", newToastType: .info)
@@ -56,8 +67,7 @@ class ScrapingViewModel: ObservableObject {
                 let preferredParser = SourcePreferredParser(rawValue: source.preferredParser) ?? .none
 
                 guard let encodedQuery = searchText.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
-                    await toastModel?.updateToastDescription("Could not process search query, invalid characters present.")
-                    print("Could not process search query, invalid characters present")
+                    await sendSourceError("Could not process search query, invalid characters present.")
 
                     continue
                 }
@@ -255,12 +265,10 @@ class ScrapingViewModel: ObservableObject {
             case -999:
                 await toastModel?.updateToastDescription("Search cancelled", newToastType: .info)
             case -1001:
-                await toastModel?.updateToastDescription("Credentials request timed out")
+                await sendSourceError("Credentials request timed out")
             default:
-                await toastModel?.updateToastDescription("Error in fetching an API credential \(error)")
+                await sendSourceError("Error in fetching an API credential \(error)")
             }
-
-            print("Error in fetching an API credential \(error)")
 
             return nil
         }
@@ -269,9 +277,7 @@ class ScrapingViewModel: ObservableObject {
     // Fetches the data for a URL
     public func fetchWebsiteData(urlString: String) async -> Data? {
         guard let url = URL(string: urlString) else {
-            await toastModel?.updateToastDescription("Source doesn't contain a valid URL, contact the source dev!")
-
-            print("Source doesn't contain a valid URL, contact the source dev!")
+            await sendSourceError("Source doesn't contain a valid URL, contact the source dev!")
 
             return nil
         }
@@ -288,12 +294,10 @@ class ScrapingViewModel: ObservableObject {
             case -999:
                 await toastModel?.updateToastDescription("Search cancelled", newToastType: .info)
             case -1001:
-                await toastModel?.updateToastDescription("Data request timed out. Trying fallback URLs if present.")
+                await sendSourceError("Data request timed out. Trying fallback URLs if present.")
             default:
-                await toastModel?.updateToastDescription("Error in fetching website data \(error)")
+                await sendSourceError("Error in fetching website data \(error)")
             }
-
-            print("Error in fetching data \(error)")
 
             return nil
         }
@@ -465,8 +469,7 @@ class ScrapingViewModel: ObservableObject {
             let document = try SwiftSoup.parse(rss, "", Parser.xmlParser())
             items = try document.getElementsByTag(rssParser.items)
         } catch {
-            await toastModel?.updateToastDescription("RSS scraping error, couldn't fetch items: \(error)")
-            print("RSS scraping error, couldn't fetch items: \(error)")
+            await sendSourceError("RSS scraping error, couldn't fetch items: \(error)")
 
             return tempResults
         }
@@ -620,8 +623,7 @@ class ScrapingViewModel: ObservableObject {
             let document = try SwiftSoup.parse(html)
             rows = try document.select(htmlParser.rows)
         } catch {
-            await toastModel?.updateToastDescription("Scraping error, couldn't fetch rows: \(error)")
-            print("Scraping error, couldn't fetch rows: \(error)")
+            await sendSourceError("Scraping error, couldn't fetch rows: \(error)")
 
             return tempResults
         }
@@ -753,8 +755,7 @@ class ScrapingViewModel: ObservableObject {
                     tempResults.append(result)
                 }
             } catch {
-                await toastModel?.updateToastDescription("Scraping error: \(error)")
-                print("Scraping error: \(error)")
+                await sendSourceError("Scraping error: \(error)")
 
                 continue
             }
@@ -901,7 +902,7 @@ class ScrapingViewModel: ObservableObject {
             }
         }
 
-        await toastModel?.updateToastDescription(responseArray.joined(separator: " "))
+        await sendSourceError(responseArray.joined(separator: " "))
 
         PersistenceController.shared.save(backgroundContext)
     }
