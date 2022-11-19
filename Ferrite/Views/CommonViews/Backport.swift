@@ -32,7 +32,7 @@ extension Backport where Content: View {
                         }
                     },
                     message: {
-                        if let message = message {
+                        if let message {
                             Text(message)
                         }
                     }
@@ -75,7 +75,7 @@ extension Backport where Content: View {
                         button.toButtonView()
                     }
                 } message: {
-                    if let message = message {
+                    if let message {
                         Text(message)
                     }
                 }

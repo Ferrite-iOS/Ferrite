@@ -37,7 +37,7 @@ struct AlertButton: Identifiable {
     }
 
     func toActionButton() -> Alert.Button {
-        if let role = role {
+        if let role {
             switch role {
             case .cancel:
                 return .cancel(Text(label))
@@ -57,7 +57,7 @@ struct AlertButton: Identifiable {
 
     @available(iOS 15.0, *)
     func toButtonRole(_ role: Role?) -> ButtonRole? {
-        if let role = role {
+        if let role {
             switch role {
             case .destructive:
                 return .destructive

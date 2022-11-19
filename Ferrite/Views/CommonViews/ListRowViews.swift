@@ -64,7 +64,7 @@ struct ListRowTextView: View {
 
             Spacer()
 
-            if let rightText = rightText {
+            if let rightText {
                 Text(rightText)
             } else {
                 Image(systemName: rightSymbol!)

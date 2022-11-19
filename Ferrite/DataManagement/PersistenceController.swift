@@ -45,7 +45,7 @@ struct PersistenceController {
         description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
         container.loadPersistentStores { _, error in
-            if let error = error {
+            if let error {
                 fatalError("CoreData init error: \(error)")
             }
         }
@@ -203,7 +203,7 @@ struct PersistenceController {
 
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
 
-        if let predicate = predicate {
+        if let predicate {
             fetchRequest.predicate = predicate
         } else if range != .allTime {
             throw HistoryDeleteError.noDate("No history date range was provided and you weren't trying to clear everything! Try relaunching the app?")

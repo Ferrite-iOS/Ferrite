@@ -82,7 +82,7 @@ public class DebridManager: ObservableObject {
     }
 
     public func matchSearchResult(result: SearchResult?) -> RealDebridIAStatus {
-        guard let result = result else {
+        guard let result else {
             return .none
         }
 

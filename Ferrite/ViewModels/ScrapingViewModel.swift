@@ -74,7 +74,7 @@ class ScrapingViewModel: ObservableObject {
                             fallbackUrls: source.fallbackUrls
                         )
 
-                        if let data = data,
+                        if let data,
                            let html = String(data: data, encoding: .utf8)
                         {
                             let sourceResults = await scrapeHtml(source: source, baseUrl: baseUrl, html: html)
@@ -99,7 +99,7 @@ class ScrapingViewModel: ObservableObject {
                             )
                         }
 
-                        if let data = data,
+                        if let data,
                            let rss = String(data: data, encoding: .utf8)
                         {
                             let sourceResults = await scrapeRss(source: source, rss: rss)
@@ -145,7 +145,7 @@ class ScrapingViewModel: ObservableObject {
                             fallbackUrls: source.fallbackUrls
                         )
 
-                        if let data = data {
+                        if let data {
                             let sourceResults = await scrapeJson(source: source, jsonData: data)
                             tempResults += sourceResults
                         }
@@ -170,7 +170,7 @@ class ScrapingViewModel: ObservableObject {
             return data
         }
 
-        if let fallbackUrls = fallbackUrls {
+        if let fallbackUrls {
             for fallbackUrl in fallbackUrls {
                 if let data = await fetchWebsiteData(urlString: fallbackUrl + replacedSearchUrl) {
                     return data
@@ -359,7 +359,7 @@ class ScrapingViewModel: ObservableObject {
                     }
                 }
             } else if
-                let searchResult = searchResult,
+                let searchResult,
                 let magnetLink = searchResult.magnetLink,
                 magnetLink.starts(with: "magnet:"),
                 !tempResults.contains(searchResult)
@@ -404,7 +404,7 @@ class ScrapingViewModel: ObservableObject {
         if let magnetLinkParser = jsonParser.magnetLink, existingSearchResult?.magnetLink == nil {
             let rawLink = result[magnetLinkParser.query.components(separatedBy: ".")].rawValue
             link = rawLink is NSNull ? nil : String(describing: rawLink)
-        } else if let magnetHash = magnetHash {
+        } else if let magnetHash {
             link = generateMagnetLink(magnetHash: magnetHash, title: title, trackers: source.trackers)
         }
 
@@ -506,7 +506,7 @@ class ScrapingViewModel: ObservableObject {
                     discriminator: magnetLinkParser.discriminator,
                     regexString: magnetLinkParser.regex
                 )
-            } else if let magnetHash = magnetHash {
+            } else if let magnetHash {
                 link = generateMagnetLink(magnetHash: magnetHash, title: title, trackers: source.trackers)
             } else {
                 continue
@@ -586,7 +586,7 @@ class ScrapingViewModel: ObservableObject {
             parsedValue = try item.getElementsByTag(query).first()?.text()
         default:
             // If there's a key/value to lookup the attribute with, query it. Othewise assume the value is in the same attribute
-            if let discriminator = discriminator {
+            if let discriminator {
                 let containerElement = try item.getElementsByAttributeValue(discriminator, query).first()
                 parsedValue = try containerElement?.attr(attribute)
             } else {
@@ -596,8 +596,8 @@ class ScrapingViewModel: ObservableObject {
         }
 
         // A capture group must be used in the provided regex
-        if let regexString = regexString,
-           let parsedValue = parsedValue,
+        if let regexString,
+           let parsedValue,
            let regexValue = try? Regex(regexString).firstMatch(in: parsedValue)?.groups[safe: 0]?.value
         {
             return regexValue
@@ -777,8 +777,8 @@ class ScrapingViewModel: ObservableObject {
         }
 
         // A capture group must be used in the provided regex
-        if let regexString = regexString,
-           let parsedValue = parsedValue,
+        if let regexString,
+           let parsedValue,
            let regexValue = try? Regex(regexString).firstMatch(in: parsedValue)?.groups[safe: 0]?.value
         {
             return regexValue
@@ -791,10 +791,10 @@ class ScrapingViewModel: ObservableObject {
     public func fetchMagnetHash(magnetLink: String? = nil, existingHash: String? = nil) -> String? {
         var magnetHash: String
 
-        if let existingHash = existingHash {
+        if let existingHash {
             magnetHash = existingHash
         } else if
-            let magnetLink = magnetLink,
+            let magnetLink,
             let firstSplit = magnetLink.split(separator: ":")[safe: 3],
             let tempHash = firstSplit.split(separator: "&")[safe: 0]
         {
@@ -839,11 +839,11 @@ class ScrapingViewModel: ObservableObject {
 
         magnetLinkArray.append(magnetHash)
 
-        if let title = title, let encodedTitle = title.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) {
+        if let title, let encodedTitle = title.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) {
             magnetLinkArray.append("&dn=\(encodedTitle)")
         }
 
-        if let trackers = trackers {
+        if let trackers {
             for trackerUrl in trackers {
                 if URL(string: trackerUrl) != nil,
                    let encodedUrlString = trackerUrl.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)

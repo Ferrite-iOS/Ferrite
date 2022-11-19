@@ -64,6 +64,13 @@ struct SettingsSourceListView: View {
                             }
                         }
                     }
+                    .onDelete { offsets in
+                        for index in offsets {
+                            if let list = sourceLists[safe: index] {
+                                PersistenceController.shared.delete(list, context: backgroundContext)
+                            }
+                        }
+                    }
                 }
                 .listStyle(.insetGrouped)
                 .inlinedList()

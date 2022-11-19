@@ -71,7 +71,7 @@ public class SourceManager: ObservableObject {
     // Checks if the current app version is supported by the source
     func checkAppVersion(minVersion: String?) -> Bool {
         // If there's no min version, assume that every version is supported
-        guard let minVersion = minVersion else {
+        guard let minVersion else {
             return true
         }
 
@@ -385,7 +385,7 @@ public class SourceManager: ObservableObject {
             let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: sourceUrl)!))
             let rawResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
 
-            if let existingSourceList = existingSourceList {
+            if let existingSourceList {
                 existingSourceList.urlString = sourceUrl
                 existingSourceList.name = rawResponse.name
                 existingSourceList.author = rawResponse.author

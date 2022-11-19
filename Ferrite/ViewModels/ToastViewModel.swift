@@ -36,7 +36,7 @@ class ToastViewModel: ObservableObject {
     @Published var showToast: Bool = false
 
     public func updateToastDescription(_ description: String, newToastType: ToastType? = nil) {
-        if let newToastType = newToastType {
+        if let newToastType {
             toastType = newToastType
         }
 

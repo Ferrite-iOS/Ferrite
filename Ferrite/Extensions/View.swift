@@ -25,13 +25,13 @@ extension View {
 
     // MARK: Modifiers
 
-    func conditionalContextMenu<InternalContent: View, ID: Hashable>(id: ID,
-                                                                     @ViewBuilder _ internalContent: @escaping () -> InternalContent) -> some View
+    func conditionalContextMenu(id: some Hashable,
+                                @ViewBuilder _ internalContent: @escaping () -> some View) -> some View
     {
         modifier(ConditionalContextMenu(internalContent, id: id))
     }
 
-    func conditionalId<ID: Hashable>(_ id: ID) -> some View {
+    func conditionalId(_ id: some Hashable) -> some View {
         modifier(ConditionalId(id: id))
     }
 

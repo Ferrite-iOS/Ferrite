@@ -177,7 +177,7 @@ public class BackupManager: ObservableObject {
         do {
             try FileManager.default.removeItem(at: backupUrl)
 
-            if let index = index {
+            if let index {
                 backupUrls.remove(at: index)
             } else {
                 backupUrls.removeAll(where: { $0 == backupUrl })
