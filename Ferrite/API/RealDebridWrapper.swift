@@ -8,17 +8,6 @@
 import Foundation
 import KeychainSwift
 
-public enum RealDebridError: Error {
-    case InvalidUrl
-    case InvalidPostBody
-    case InvalidResponse
-    case InvalidToken
-    case EmptyData
-    case EmptyTorrents
-    case FailedRequest(description: String)
-    case AuthQuery(description: String)
-}
-
 public class RealDebrid {
     let jsonDecoder = JSONDecoder()
     let keychain = KeychainSwift()
@@ -38,7 +27,7 @@ public class RealDebrid {
         ]
 
         guard let url = urlComponents.url else {
-            throw RealDebridError.InvalidUrl
+            throw RDError.InvalidUrl
         }
 
         let request = URLRequest(url: url)
@@ -49,7 +38,7 @@ public class RealDebrid {
             return rawResponse
         } catch {
             print("Couldn't get the new client creds!")
-            throw RealDebridError.AuthQuery(description: error.localizedDescription)
+            throw RDError.AuthQuery(description: error.localizedDescription)
         }
     }
 
@@ -62,7 +51,7 @@ public class RealDebrid {
         ]
 
         guard let url = urlComponents.url else {
-            throw RealDebridError.InvalidUrl
+            throw RDError.InvalidUrl
         }
 
         let request = URLRequest(url: url)
@@ -73,7 +62,7 @@ public class RealDebrid {
 
             while count < 20 {
                 if Task.isCancelled {
-                    throw RealDebridError.AuthQuery(description: "Token request cancelled.")
+                    throw RDError.AuthQuery(description: "Token request cancelled.")
                 }
 
                 let (data, _) = try await URLSession.shared.data(for: request)
@@ -95,7 +84,7 @@ public class RealDebrid {
                 }
             }
 
-            throw RealDebridError.AuthQuery(description: "Could not fetch the client ID and secret in time. Try logging in again.")
+            throw RDError.AuthQuery(description: "Could not fetch the client ID and secret in time. Try logging in again.")
         }
 
         if case let .failure(error) = await authTask?.result {
@@ -106,11 +95,11 @@ public class RealDebrid {
     // Fetch all tokens for the user and store in keychain
     public func getTokens(deviceCode: String) async throws {
         guard let clientId = UserDefaults.standard.string(forKey: "RealDebrid.ClientId") else {
-            throw RealDebridError.EmptyData
+            throw RDError.EmptyData
         }
 
         guard let clientSecret = keychain.get("RealDebrid.ClientSecret") else {
-            throw RealDebridError.EmptyData
+            throw RDError.EmptyData
         }
 
         var request = URLRequest(url: URL(string: "\(baseAuthUrl)/token")!)
@@ -174,7 +163,7 @@ public class RealDebrid {
     // Wrapper request function which matches the responses and returns data
     @discardableResult public func performRequest(request: inout URLRequest, requestName: String) async throws -> Data {
         guard let token = await fetchToken() else {
-            throw RealDebridError.InvalidToken
+            throw RDError.InvalidToken
         }
 
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -182,23 +171,23 @@ public class RealDebrid {
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let response = response as? HTTPURLResponse else {
-            throw RealDebridError.FailedRequest(description: "No HTTP response given")
+            throw RDError.FailedRequest(description: "No HTTP response given")
         }
 
         if response.statusCode >= 200, response.statusCode <= 299 {
             return data
         } else if response.statusCode == 401 {
             try await deleteTokens()
-            throw RealDebridError.FailedRequest(description: "The request \(requestName) failed because you were unauthorized. Please relogin to RealDebrid in Settings.")
+            throw RDError.FailedRequest(description: "The request \(requestName) failed because you were unauthorized. Please relogin to RealDebrid in Settings.")
         } else {
-            throw RealDebridError.FailedRequest(description: "The request \(requestName) failed with status code \(response.statusCode).")
+            throw RDError.FailedRequest(description: "The request \(requestName) failed with status code \(response.statusCode).")
         }
     }
 
     // Checks if the magnet is streamable on RD
     // Currently does not work for batch links
-    public func instantAvailability(magnetHashes: [String]) async throws -> [RealDebridIA] {
-        var availableHashes: [RealDebridIA] = []
+    public func instantAvailability(magnetHashes: [String]) async throws -> [RealDebrid.IA] {
+        var availableHashes: [RealDebrid.IA] = []
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnetHashes.joined(separator: "/"))")!)
 
         let data = try await performRequest(request: &request, requestName: #function)
@@ -219,17 +208,17 @@ public class RealDebrid {
             if data.rd.count > 1 || data.rd[0].count > 1 {
                 // Batch array
                 let batches = data.rd.map { fileDict in
-                    let batchFiles: [RealDebridIABatchFile] = fileDict.map { key, value in
+                    let batchFiles: [RealDebrid.IABatchFile] = fileDict.map { key, value in
                         // Force unwrapped ID. Is safe because ID is guaranteed on a successful response
-                        RealDebridIABatchFile(id: Int(key)!, fileName: value.filename)
+                        RealDebrid.IABatchFile(id: Int(key)!, fileName: value.filename)
                     }.sorted(by: { $0.id < $1.id })
 
-                    return RealDebridIABatch(files: batchFiles)
+                    return RealDebrid.IABatch(files: batchFiles)
                 }
 
                 // RD files array
                 // Possibly sort this in the future, but not sure how at the moment
-                var files: [RealDebridIAFile] = []
+                var files: [RealDebrid.IAFile] = []
 
                 for index in batches.indices {
                     let batchFiles = batches[index].files
@@ -239,7 +228,7 @@ public class RealDebrid {
 
                         if !files.contains(where: { $0.name == batchFile.fileName }) {
                             files.append(
-                                RealDebridIAFile(
+                                RealDebrid.IAFile(
                                     name: batchFile.fileName,
                                     batchIndex: index,
                                     batchFileIndex: batchFileIndex
@@ -251,7 +240,7 @@ public class RealDebrid {
 
                 // TTL: 5 minutes
                 availableHashes.append(
-                    RealDebridIA(
+                    RealDebrid.IA(
                         hash: hash,
                         expiryTimeStamp: Date().timeIntervalSince1970 + 300,
                         files: files,
@@ -260,7 +249,7 @@ public class RealDebrid {
                 )
             } else {
                 availableHashes.append(
-                    RealDebridIA(
+                    RealDebrid.IA(
                         hash: hash,
                         expiryTimeStamp: Date().timeIntervalSince1970 + 300
                     )
@@ -319,9 +308,9 @@ public class RealDebrid {
         if let torrentLink = rawResponse.links[safe: selectedIndex ?? -1], rawResponse.status == "downloaded" {
             return torrentLink
         } else if rawResponse.status == "downloading" || rawResponse.status == "queued" {
-            throw RealDebridError.EmptyTorrents
+            throw RDError.EmptyTorrents
         } else {
-            throw RealDebridError.EmptyData
+            throw RDError.EmptyData
         }
     }
 

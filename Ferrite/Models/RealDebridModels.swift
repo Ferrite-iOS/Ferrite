@@ -8,187 +8,201 @@
 
 import Foundation
 
-// MARK: - device code endpoint
-
-public struct DeviceCodeResponse: Codable, Sendable {
-    let deviceCode, userCode: String
-    let interval, expiresIn: Int
-    let verificationURL, directVerificationURL: String
-
-    enum CodingKeys: String, CodingKey {
-        case deviceCode = "device_code"
-        case userCode = "user_code"
-        case interval
-        case expiresIn = "expires_in"
-        case verificationURL = "verification_url"
-        case directVerificationURL = "direct_verification_url"
+extension RealDebrid {
+    // MARK: - Errors
+    public enum RDError: Error {
+        case InvalidUrl
+        case InvalidPostBody
+        case InvalidResponse
+        case InvalidToken
+        case EmptyData
+        case EmptyTorrents
+        case FailedRequest(description: String)
+        case AuthQuery(description: String)
     }
-}
 
-// MARK: - device credentials endpoint
+    // MARK: - device code endpoint
 
-public struct DeviceCredentialsResponse: Codable, Sendable {
-    let clientID, clientSecret: String?
+    public struct DeviceCodeResponse: Codable, Sendable {
+        let deviceCode, userCode: String
+        let interval, expiresIn: Int
+        let verificationURL, directVerificationURL: String
 
-    enum CodingKeys: String, CodingKey {
-        case clientID = "client_id"
-        case clientSecret = "client_secret"
-    }
-}
-
-// MARK: - token endpoint
-
-public struct TokenResponse: Codable, Sendable {
-    let accessToken: String
-    let expiresIn: Int
-    let refreshToken, tokenType: String
-
-    enum CodingKeys: String, CodingKey {
-        case accessToken = "access_token"
-        case expiresIn = "expires_in"
-        case refreshToken = "refresh_token"
-        case tokenType = "token_type"
-    }
-}
-
-// MARK: - instantAvailability endpoint
-
-// Thanks Skitty!
-public struct InstantAvailabilityResponse: Codable, Sendable {
-    var data: InstantAvailabilityData?
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-
-        if let data = try? container.decode(InstantAvailabilityData.self) {
-            self.data = data
+        enum CodingKeys: String, CodingKey {
+            case deviceCode = "device_code"
+            case userCode = "user_code"
+            case interval
+            case expiresIn = "expires_in"
+            case verificationURL = "verification_url"
+            case directVerificationURL = "direct_verification_url"
         }
     }
-}
 
-// MARK: - Instant Availability client side structures
+    // MARK: - device credentials endpoint
 
-struct InstantAvailabilityData: Codable, Sendable {
-    var rd: [[String: InstantAvailabilityInfo]]
-}
+    public struct DeviceCredentialsResponse: Codable, Sendable {
+        let clientID, clientSecret: String?
 
-struct InstantAvailabilityInfo: Codable, Sendable {
-    var filename: String
-    var filesize: Int
-}
-
-public struct RealDebridIA: Codable, Hashable, Sendable {
-    let hash: String
-    let expiryTimeStamp: Double
-    var files: [RealDebridIAFile] = []
-    var batches: [RealDebridIABatch] = []
-}
-
-public struct RealDebridIABatch: Codable, Hashable, Sendable {
-    let files: [RealDebridIABatchFile]
-}
-
-public struct RealDebridIABatchFile: Codable, Hashable, Sendable {
-    let id: Int
-    let fileName: String
-}
-
-public struct RealDebridIAFile: Codable, Hashable, Sendable {
-    let name: String
-    let batchIndex: Int
-    let batchFileIndex: Int
-}
-
-public enum RealDebridIAStatus: Codable, Hashable, Sendable {
-    case full
-    case partial
-    case none
-}
-
-// MARK: - addMagnet endpoint
-
-public struct AddMagnetResponse: Codable, Sendable {
-    let id: String
-    let uri: String
-}
-
-// MARK: - torrentInfo endpoint
-
-struct TorrentInfoResponse: Codable, Sendable {
-    let id, filename, originalFilename, hash: String
-    let bytes, originalBytes: Int
-    let host: String
-    let split, progress: Int
-    let status, added: String
-    let files: [TorrentInfoFile]
-    let links: [String]
-    let ended: String?
-    let speed: Int?
-    let seeders: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case id, filename
-        case originalFilename = "original_filename"
-        case hash, bytes
-        case originalBytes = "original_bytes"
-        case host, split, progress, status, added, files, links, ended, speed, seeders
+        enum CodingKeys: String, CodingKey {
+            case clientID = "client_id"
+            case clientSecret = "client_secret"
+        }
     }
-}
 
-struct TorrentInfoFile: Codable, Sendable {
-    let id: Int
-    let path: String
-    let bytes, selected: Int
-}
+    // MARK: - token endpoint
 
-public struct UserTorrentsResponse: Codable, Sendable {
-    let id, filename, hash: String
-    let bytes: Int
-    let host: String
-    let split, progress: Int
-    let status, added: String
-    let links: [String]
-    let speed, seeders: Int?
-    let ended: String?
-}
+    public struct TokenResponse: Codable, Sendable {
+        let accessToken: String
+        let expiresIn: Int
+        let refreshToken, tokenType: String
 
-// MARK: - unrestrictLink endpoint
-
-struct UnrestrictLinkResponse: Codable, Sendable {
-    let id, filename: String
-    let mimeType: String?
-    let filesize: Int
-    let link: String
-    let host: String
-    let hostIcon: String
-    let chunks, crc: Int
-    let download: String
-    let streamable: Int
-
-    enum CodingKeys: String, CodingKey {
-        case id, filename, mimeType, filesize, link, host
-        case hostIcon = "host_icon"
-        case chunks, crc, download, streamable
+        enum CodingKeys: String, CodingKey {
+            case accessToken = "access_token"
+            case expiresIn = "expires_in"
+            case refreshToken = "refresh_token"
+            case tokenType = "token_type"
+        }
     }
-}
 
-// MARK: - User downloads list
+    // MARK: - instantAvailability endpoint
 
-public struct UserDownloadsResponse: Codable, Sendable {
-    let id, filename: String
-    let mimeType: String?
-    let filesize: Int
-    let link: String
-    let host: String
-    let hostIcon: String
-    let chunks: Int
-    let download: String
-    let streamable: Int
-    let generated: String
+    // Thanks Skitty!
+    public struct InstantAvailabilityResponse: Codable, Sendable {
+        var data: InstantAvailabilityData?
 
-    enum CodingKeys: String, CodingKey {
-        case id, filename, mimeType, filesize, link, host
-        case hostIcon = "host_icon"
-        case chunks, download, streamable, generated
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+
+            if let data = try? container.decode(InstantAvailabilityData.self) {
+                self.data = data
+            }
+        }
+    }
+
+    struct InstantAvailabilityData: Codable, Sendable {
+        var rd: [[String: InstantAvailabilityInfo]]
+    }
+
+    struct InstantAvailabilityInfo: Codable, Sendable {
+        var filename: String
+        var filesize: Int
+    }
+
+    // MARK: - Instant Availability client side structures
+
+    public struct IA: Codable, Hashable, Sendable {
+        let hash: String
+        let expiryTimeStamp: Double
+        var files: [IAFile] = []
+        var batches: [IABatch] = []
+    }
+
+    public struct IABatch: Codable, Hashable, Sendable {
+        let files: [IABatchFile]
+    }
+
+    public struct IABatchFile: Codable, Hashable, Sendable {
+        let id: Int
+        let fileName: String
+    }
+
+    public struct IAFile: Codable, Hashable, Sendable {
+        let name: String
+        let batchIndex: Int
+        let batchFileIndex: Int
+    }
+
+    public enum IAStatus: Codable, Hashable, Sendable {
+        case full
+        case partial
+        case none
+    }
+
+    // MARK: - addMagnet endpoint
+
+    public struct AddMagnetResponse: Codable, Sendable {
+        let id: String
+        let uri: String
+    }
+
+    // MARK: - torrentInfo endpoint
+
+    struct TorrentInfoResponse: Codable, Sendable {
+        let id, filename, originalFilename, hash: String
+        let bytes, originalBytes: Int
+        let host: String
+        let split, progress: Int
+        let status, added: String
+        let files: [TorrentInfoFile]
+        let links: [String]
+        let ended: String?
+        let speed: Int?
+        let seeders: Int?
+
+        enum CodingKeys: String, CodingKey {
+            case id, filename
+            case originalFilename = "original_filename"
+            case hash, bytes
+            case originalBytes = "original_bytes"
+            case host, split, progress, status, added, files, links, ended, speed, seeders
+        }
+    }
+
+    struct TorrentInfoFile: Codable, Sendable {
+        let id: Int
+        let path: String
+        let bytes, selected: Int
+    }
+
+    public struct UserTorrentsResponse: Codable, Sendable {
+        let id, filename, hash: String
+        let bytes: Int
+        let host: String
+        let split, progress: Int
+        let status, added: String
+        let links: [String]
+        let speed, seeders: Int?
+        let ended: String?
+    }
+
+    // MARK: - unrestrictLink endpoint
+
+    struct UnrestrictLinkResponse: Codable, Sendable {
+        let id, filename: String
+        let mimeType: String?
+        let filesize: Int
+        let link: String
+        let host: String
+        let hostIcon: String
+        let chunks, crc: Int
+        let download: String
+        let streamable: Int
+
+        enum CodingKeys: String, CodingKey {
+            case id, filename, mimeType, filesize, link, host
+            case hostIcon = "host_icon"
+            case chunks, crc, download, streamable
+        }
+    }
+
+    // MARK: - User downloads list
+
+    public struct UserDownloadsResponse: Codable, Sendable {
+        let id, filename: String
+        let mimeType: String?
+        let filesize: Int
+        let link: String
+        let host: String
+        let hostIcon: String
+        let chunks: Int
+        let download: String
+        let streamable: Int
+        let generated: String
+
+        enum CodingKeys: String, CodingKey {
+            case id, filename, mimeType, filesize, link, host
+            case hostIcon = "host_icon"
+            case chunks, download, streamable, generated
+        }
     }
 }

@@ -8,21 +8,21 @@
 import Foundation
 
 public class Github {
-    public func fetchLatestRelease() async throws -> GithubRelease? {
+    public func fetchLatestRelease() async throws -> Release? {
         let url = URL(string: "https://api.github.com/repos/bdashore3/Ferrite/releases/latest")!
 
         let (data, _) = try await URLSession.shared.data(from: url)
 
-        let rawResponse = try JSONDecoder().decode(GithubRelease.self, from: data)
+        let rawResponse = try JSONDecoder().decode(Release.self, from: data)
         return rawResponse
     }
 
-    public func fetchReleases() async throws -> [GithubRelease]? {
+    public func fetchReleases() async throws -> [Release]? {
         let url = URL(string: "https://api.github.com/repos/bdashore3/Ferrite/releases")!
 
         let (data, _) = try await URLSession.shared.data(from: url)
 
-        let rawResponse = try JSONDecoder().decode([GithubRelease].self, from: data)
+        let rawResponse = try JSONDecoder().decode([Release].self, from: data)
         return rawResponse
     }
 }

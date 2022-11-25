@@ -11,7 +11,7 @@ struct SettingsAppVersionView: View {
     @EnvironmentObject var toastModel: ToastViewModel
 
     @State private var viewTask: Task<Void, Never>?
-    @State private var releases: [GithubRelease] = []
+    @State private var releases: [Github.Release] = []
 
     @State private var loadedReleases = false
 

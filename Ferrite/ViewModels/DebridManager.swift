@@ -32,14 +32,14 @@ public class DebridManager: ObservableObject {
     var realDebridAuthUrl: String = ""
 
     // RealDebrid fetch variables
-    @Published var realDebridIAValues: [RealDebridIA] = []
+    @Published var realDebridIAValues: [RealDebrid.IA] = []
     var realDebridDownloadUrl: String = ""
 
     @Published var showDeleteAlert: Bool = false
 
     // TODO: Switch to an individual item based sheet system to remove these variables
-    var selectedRealDebridItem: RealDebridIA?
-    var selectedRealDebridFile: RealDebridIAFile?
+    var selectedRealDebridItem: RealDebrid.IA?
+    var selectedRealDebridFile: RealDebrid.IAFile?
     var selectedRealDebridID: String?
 
     init() {
@@ -81,7 +81,7 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    public func matchSearchResult(result: SearchResult?) -> RealDebridIAStatus {
+    public func matchSearchResult(result: SearchResult?) -> RealDebrid.IAStatus {
         guard let result else {
             return .none
         }
@@ -202,7 +202,7 @@ public class DebridManager: ObservableObject {
             }
         } catch {
             switch error {
-            case RealDebridError.EmptyTorrents:
+            case RealDebrid.RDError.EmptyTorrents:
                 showDeleteAlert.toggle()
             default:
                 let error = error as NSError
