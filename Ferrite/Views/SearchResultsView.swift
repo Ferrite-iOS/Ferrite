@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchResultsView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var debridManager: DebridManager
 
     var body: some View {
         List {

@@ -13,12 +13,11 @@ struct SearchResultButtonView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
 
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
     var result: SearchResult
 
     @State private var runOnce = false
     @State var existingBookmark: Bookmark? = nil
+    @State private var showConfirmation = false
 
     var body: some View {
         Button {
@@ -28,22 +27,22 @@ struct SearchResultButtonView: View {
 
                 switch debridManager.matchSearchResult(result: result) {
                 case .full:
-                    if debridManager.setSelectedRdResult(result: result) {
+                    if debridManager.selectDebridResult(result: result) {
                         debridManager.currentDebridTask = Task {
-                            await debridManager.fetchRdDownload(searchResult: result)
+                            await debridManager.fetchDebridDownload(searchResult: result)
 
-                            if !debridManager.realDebridDownloadUrl.isEmpty {
-                                navModel.addToHistory(name: result.title, source: result.source, url: debridManager.realDebridDownloadUrl)
-                                navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl)
+                            if !debridManager.downloadUrl.isEmpty {
+                                navModel.addToHistory(name: result.title, source: result.source, url: debridManager.downloadUrl)
+                                navModel.runDebridAction(urlString: debridManager.downloadUrl)
 
                                 if navModel.currentChoiceSheet != .magnet {
-                                    debridManager.realDebridDownloadUrl = ""
+                                    debridManager.downloadUrl = ""
                                 }
                             }
                         }
                     }
                 case .partial:
-                    if debridManager.setSelectedRdResult(result: result) {
+                    if debridManager.selectDebridResult(result: result) {
                         navModel.currentChoiceSheet = .batch
                     }
                 case .none:
@@ -58,7 +57,7 @@ struct SearchResultButtonView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .lineLimit(4)
 
-                SearchResultRDView(result: result)
+                SearchResultInfoView(result: result)
             }
             .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
         }

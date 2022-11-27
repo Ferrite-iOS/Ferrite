@@ -23,6 +23,16 @@ extension View {
         ))
     }
 
+    // From https://github.com/siteline/SwiftUI-Introspect/pull/129
+    public func introspectSearchController(customize: @escaping (UISearchController) -> Void) -> some View {
+        introspectNavigationController { navigationController in
+            let navigationBar = navigationController.navigationBar
+            if let searchController = navigationBar.topItem?.searchController {
+                customize(searchController)
+            }
+        }
+    }
+
     // MARK: Modifiers
 
     func conditionalContextMenu(id: some Hashable,

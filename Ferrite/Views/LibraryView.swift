@@ -71,7 +71,10 @@ struct LibraryView: View {
                     HStack {
                         EditButton()
 
-                        if selectedSegment == .history {
+                        switch selectedSegment {
+                        case .bookmarks:
+                            DebridChoiceView()
+                        case .history:
                             HistoryActionsView()
                         }
                     }

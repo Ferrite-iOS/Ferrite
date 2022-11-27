@@ -37,22 +37,22 @@ struct MagnetChoiceView: View {
                     }
                 }
 
-                if !debridManager.realDebridDownloadUrl.isEmpty {
+                if !debridManager.downloadUrl.isEmpty {
                     Section(header: "Real Debrid options") {
                         ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl, .outplayer)
+                            navModel.runDebridAction(urlString: debridManager.downloadUrl, .outplayer)
                         }
 
                         ListRowButtonView("Play on VLC", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl, .vlc)
+                            navModel.runDebridAction(urlString: debridManager.downloadUrl, .vlc)
                         }
 
                         ListRowButtonView("Play on Infuse", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(urlString: debridManager.realDebridDownloadUrl, .infuse)
+                            navModel.runDebridAction(urlString: debridManager.downloadUrl, .infuse)
                         }
 
                         ListRowButtonView("Copy download URL", systemImage: "doc.on.doc.fill") {
-                            UIPasteboard.general.string = debridManager.realDebridDownloadUrl
+                            UIPasteboard.general.string = debridManager.downloadUrl
                             showLinkCopyAlert.toggle()
                         }
                         .backport.alert(
@@ -63,7 +63,7 @@ struct MagnetChoiceView: View {
                         )
 
                         ListRowButtonView("Share download URL", systemImage: "square.and.arrow.up.fill") {
-                            if let url = URL(string: debridManager.realDebridDownloadUrl) {
+                            if let url = URL(string: debridManager.downloadUrl) {
                                 navModel.activityItems = [url]
                                 navModel.showLocalActivitySheet.toggle()
                             }
@@ -108,14 +108,14 @@ struct MagnetChoiceView: View {
                 }
             }
             .onDisappear {
-                debridManager.realDebridDownloadUrl = ""
+                debridManager.downloadUrl = ""
             }
             .navigationTitle("Link actions")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        debridManager.realDebridDownloadUrl = ""
+                        debridManager.downloadUrl = ""
 
                         presentationMode.wrappedValue.dismiss()
                     }

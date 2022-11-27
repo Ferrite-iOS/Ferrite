@@ -24,22 +24,36 @@ struct SettingsView: View {
             Form {
                 Section(header: InlineHeader("Debrid Services")) {
                     HStack {
-                        Text("Real Debrid")
+                        Text("RealDebrid")
                         Spacer()
                         Button {
                             Task {
-                                if debridManager.realDebridEnabled {
-                                    await debridManager.logoutRd()
+                                if debridManager.enabledDebrids.contains(.realDebrid) {
+                                    await debridManager.logoutDebrid(debridType: .realDebrid)
                                 } else if !debridManager.realDebridAuthProcessing {
-                                    await debridManager.authenticateRd()
+                                    await debridManager.authenticateDebrid(debridType: .realDebrid)
                                 }
                             }
                         } label: {
-                            Text(debridManager.realDebridEnabled ? "Logout" : (debridManager.realDebridAuthProcessing ? "Processing" : "Login"))
-                                .foregroundColor(debridManager.realDebridEnabled ? .red : .blue)
-                                .onChange(of: debridManager.realDebridEnabled) { changed in
-                                    print("Debrid enabled changed to \(changed)")
+                            Text(debridManager.enabledDebrids.contains(.realDebrid) ? "Logout" : (debridManager.realDebridAuthProcessing ? "Processing" : "Login"))
+                                .foregroundColor(debridManager.enabledDebrids.contains(.realDebrid) ? .red : .blue)
+                        }
+                    }
+
+                    HStack {
+                        Text("AllDebrid")
+                        Spacer()
+                        Button {
+                            Task {
+                                if debridManager.enabledDebrids.contains(.allDebrid) {
+                                    await debridManager.logoutDebrid(debridType: .allDebrid)
+                                } else if !debridManager.realDebridAuthProcessing {
+                                    await debridManager.authenticateDebrid(debridType: .allDebrid)
                                 }
+                            }
+                        } label: {
+                            Text(debridManager.enabledDebrids.contains(.allDebrid) ? "Logout" : (debridManager.allDebridAuthProcessing ? "Processing" : "Login"))
+                                .foregroundColor(debridManager.enabledDebrids.contains(.allDebrid) ? .red : .blue)
                         }
                     }
                 }
@@ -49,7 +63,7 @@ struct SettingsView: View {
                 }
 
                 Section(header: Text("Default actions")) {
-                    if debridManager.realDebridEnabled {
+                    if debridManager.enabledDebrids.count > 0 {
                         NavigationLink(
                             destination: DebridActionPickerView(),
                             label: {
@@ -118,7 +132,7 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $debridManager.showWebView) {
-                LoginWebView(url: URL(string: debridManager.realDebridAuthUrl)!)
+                LoginWebView(url: URL(string: debridManager.authUrl)!)
             }
             .navigationTitle("Settings")
         }

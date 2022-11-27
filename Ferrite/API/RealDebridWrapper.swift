@@ -161,7 +161,7 @@ public class RealDebrid {
     }
 
     // Wrapper request function which matches the responses and returns data
-    @discardableResult public func performRequest(request: inout URLRequest, requestName: String) async throws -> Data {
+    @discardableResult private func performRequest(request: inout URLRequest, requestName: String) async throws -> Data {
         guard let token = await fetchToken() else {
             throw RDError.InvalidToken
         }
@@ -186,7 +186,7 @@ public class RealDebrid {
 
     // Checks if the magnet is streamable on RD
     // Currently does not work for batch links
-    public func instantAvailability(magnetHashes: [String]) async throws -> [RealDebrid.IA] {
+    public func instantAvailability(magnetHashes: [String]) async throws -> [IA] {
         var availableHashes: [RealDebrid.IA] = []
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnetHashes.joined(separator: "/"))")!)
 

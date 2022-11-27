@@ -12,8 +12,6 @@ import SwiftUI
 import SwiftyJSON
 
 class ScrapingViewModel: ObservableObject {
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
     // Link the toast view model for single-directional communication
     var toastModel: ToastViewModel?
     let byteCountFormatter: ByteCountFormatter = .init()

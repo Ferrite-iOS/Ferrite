@@ -13,8 +13,6 @@ struct BookmarksView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
 
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     var bookmarks: FetchedResults<Bookmark>
@@ -54,7 +52,7 @@ struct BookmarksView: View {
             }
         }
         .onAppear {
-            if realDebridEnabled {
+            if debridManager.enabledDebrids.count > 0 {
                 viewTask = Task {
                     let hashes = bookmarks.compactMap(\.magnetHash)
                     await debridManager.populateDebridHashes(hashes)

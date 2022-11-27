@@ -22,11 +22,11 @@ struct HistoryButtonView: View {
             if let url = entry.url {
                 if url.starts(with: "https://") {
                     Task {
-                        debridManager.realDebridDownloadUrl = url
+                        debridManager.downloadUrl = url
                         navModel.runDebridAction(urlString: url)
 
                         if navModel.currentChoiceSheet != .magnet {
-                            debridManager.realDebridDownloadUrl = ""
+                            debridManager.downloadUrl = ""
                         }
                     }
                 } else {

@@ -8,9 +8,11 @@
 
 import Foundation
 
-extension RealDebrid {
+public extension RealDebrid {
     // MARK: - Errors
-    public enum RDError: Error {
+
+    // TODO: Hybridize debrid errors in one structure
+    enum RDError: Error {
         case InvalidUrl
         case InvalidPostBody
         case InvalidResponse
@@ -23,7 +25,7 @@ extension RealDebrid {
 
     // MARK: - device code endpoint
 
-    public struct DeviceCodeResponse: Codable, Sendable {
+    struct DeviceCodeResponse: Codable, Sendable {
         let deviceCode, userCode: String
         let interval, expiresIn: Int
         let verificationURL, directVerificationURL: String
@@ -40,7 +42,7 @@ extension RealDebrid {
 
     // MARK: - device credentials endpoint
 
-    public struct DeviceCredentialsResponse: Codable, Sendable {
+    struct DeviceCredentialsResponse: Codable, Sendable {
         let clientID, clientSecret: String?
 
         enum CodingKeys: String, CodingKey {
@@ -51,7 +53,7 @@ extension RealDebrid {
 
     // MARK: - token endpoint
 
-    public struct TokenResponse: Codable, Sendable {
+    struct TokenResponse: Codable, Sendable {
         let accessToken: String
         let expiresIn: Int
         let refreshToken, tokenType: String
@@ -67,7 +69,7 @@ extension RealDebrid {
     // MARK: - instantAvailability endpoint
 
     // Thanks Skitty!
-    public struct InstantAvailabilityResponse: Codable, Sendable {
+    struct InstantAvailabilityResponse: Codable, Sendable {
         var data: InstantAvailabilityData?
 
         public init(from decoder: Decoder) throws {
@@ -79,55 +81,49 @@ extension RealDebrid {
         }
     }
 
-    struct InstantAvailabilityData: Codable, Sendable {
+    internal struct InstantAvailabilityData: Codable, Sendable {
         var rd: [[String: InstantAvailabilityInfo]]
     }
 
-    struct InstantAvailabilityInfo: Codable, Sendable {
+    internal struct InstantAvailabilityInfo: Codable, Sendable {
         var filename: String
         var filesize: Int
     }
 
     // MARK: - Instant Availability client side structures
 
-    public struct IA: Codable, Hashable, Sendable {
+    struct IA: Codable, Hashable, Sendable {
         let hash: String
         let expiryTimeStamp: Double
         var files: [IAFile] = []
         var batches: [IABatch] = []
     }
 
-    public struct IABatch: Codable, Hashable, Sendable {
+    struct IABatch: Codable, Hashable, Sendable {
         let files: [IABatchFile]
     }
 
-    public struct IABatchFile: Codable, Hashable, Sendable {
+    struct IABatchFile: Codable, Hashable, Sendable {
         let id: Int
         let fileName: String
     }
 
-    public struct IAFile: Codable, Hashable, Sendable {
+    struct IAFile: Codable, Hashable, Sendable {
         let name: String
         let batchIndex: Int
         let batchFileIndex: Int
     }
 
-    public enum IAStatus: Codable, Hashable, Sendable {
-        case full
-        case partial
-        case none
-    }
-
     // MARK: - addMagnet endpoint
 
-    public struct AddMagnetResponse: Codable, Sendable {
+    struct AddMagnetResponse: Codable, Sendable {
         let id: String
         let uri: String
     }
 
     // MARK: - torrentInfo endpoint
 
-    struct TorrentInfoResponse: Codable, Sendable {
+    internal struct TorrentInfoResponse: Codable, Sendable {
         let id, filename, originalFilename, hash: String
         let bytes, originalBytes: Int
         let host: String
@@ -148,13 +144,13 @@ extension RealDebrid {
         }
     }
 
-    struct TorrentInfoFile: Codable, Sendable {
+    internal struct TorrentInfoFile: Codable, Sendable {
         let id: Int
         let path: String
         let bytes, selected: Int
     }
 
-    public struct UserTorrentsResponse: Codable, Sendable {
+    struct UserTorrentsResponse: Codable, Sendable {
         let id, filename, hash: String
         let bytes: Int
         let host: String
@@ -167,7 +163,7 @@ extension RealDebrid {
 
     // MARK: - unrestrictLink endpoint
 
-    struct UnrestrictLinkResponse: Codable, Sendable {
+    internal struct UnrestrictLinkResponse: Codable, Sendable {
         let id, filename: String
         let mimeType: String?
         let filesize: Int
@@ -187,7 +183,7 @@ extension RealDebrid {
 
     // MARK: - User downloads list
 
-    public struct UserDownloadsResponse: Codable, Sendable {
+    struct UserDownloadsResponse: Codable, Sendable {
         let id, filename: String
         let mimeType: String?
         let filesize: Int

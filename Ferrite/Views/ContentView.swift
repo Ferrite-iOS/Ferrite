@@ -14,8 +14,6 @@ struct ContentView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var sourceManager: SourceManager
 
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
-
     @FetchRequest(
         entity: Source.entity(),
         sortDescriptors: []
@@ -64,6 +62,7 @@ struct ContentView: View {
                         Image(systemName: "chevron.down")
                     }
                     .foregroundColor(.primary)
+                    .animation(.none)
 
                     Spacer()
                 }
@@ -73,6 +72,7 @@ struct ContentView: View {
                 SearchResultsView()
             }
             .navigationTitle("Search")
+            .navigationBarTitleDisplayMode(navModel.isEditingSearch || navModel.isSearching ? .inline : .automatic)
             .navigationSearchBar {
                 SearchBar("Search",
                           text: $scrapingModel.searchText,
@@ -86,8 +86,9 @@ struct ContentView: View {
                                   let sources = sourceManager.fetchInstalledSources()
                                   await scrapingModel.scanSources(sources: sources)
 
-                                  if realDebridEnabled, !scrapingModel.searchResults.isEmpty {
+                                  if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {
                                       debridManager.realDebridIAValues = []
+                                      debridManager.allDebridIAValues = []
 
                                       await debridManager.populateDebridHashes(
                                           scrapingModel.searchResults.compactMap(\.magnetHash)
@@ -105,6 +106,14 @@ struct ContentView: View {
                               navModel.isSearching = false
                               scrapingModel.searchText = ""
                           }
+            }
+            .introspectSearchController { searchController in
+                searchController.hidesNavigationBarDuringPresentation = false
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    DebridChoiceView()
+                }
             }
         }
     }
