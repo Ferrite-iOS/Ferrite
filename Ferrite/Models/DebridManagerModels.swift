@@ -20,6 +20,7 @@ public enum IAStatus: Codable, Hashable, Sendable {
 public enum DebridType: Int, Codable, Hashable, CaseIterable {
     case realDebrid = 1
     case allDebrid = 2
+    case premiumize = 3
 
     func toString(abbreviated: Bool = false) -> String {
         switch self {
@@ -27,6 +28,14 @@ public enum DebridType: Int, Codable, Hashable, CaseIterable {
             return abbreviated ? "RD" : "RealDebrid"
         case .allDebrid:
             return abbreviated ? "AD" : "AllDebrid"
+        case .premiumize:
+            return abbreviated ? "PM" : "Premiumize"
         }
     }
+}
+
+// Wrapper struct for magnet links to contain both the link and hash for easy access
+public struct Magnet: Codable, Hashable, Sendable {
+    let link: String
+    let hash: String
 }

@@ -2,25 +2,16 @@
 //  Array.swift
 //  Ferrite
 //
-//  Created by Brian Dashore on 11/26/22.
+//  Created by Brian Dashore on 12/4/22.
 //
 
 import Foundation
 
-extension Set: RawRepresentable where Element: Codable {
-    public init?(rawValue: String) {
-        guard let data = rawValue.data(using: .utf8),
-              let result = try? JSONDecoder().decode(Set<Element>.self, from: data)
-        else { return nil }
-        self = result
-    }
-
-    public var rawValue: String {
-        guard let data = try? JSONEncoder().encode(self),
-              let result = String(data: data, encoding: .utf8)
-        else {
-            return "[]"
+extension Array {
+    // From https://www.hackingwithswift.com/example-code/language/how-to-split-an-array-into-chunks
+    func chunked(into size: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
         }
-        return result
     }
 }

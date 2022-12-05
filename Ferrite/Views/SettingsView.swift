@@ -5,6 +5,7 @@
 //  Created by Brian Dashore on 7/11/22.
 //
 
+import BetterSafariView
 import Introspect
 import SwiftUI
 
@@ -47,13 +48,30 @@ struct SettingsView: View {
                             Task {
                                 if debridManager.enabledDebrids.contains(.allDebrid) {
                                     await debridManager.logoutDebrid(debridType: .allDebrid)
-                                } else if !debridManager.realDebridAuthProcessing {
+                                } else if !debridManager.allDebridAuthProcessing {
                                     await debridManager.authenticateDebrid(debridType: .allDebrid)
                                 }
                             }
                         } label: {
                             Text(debridManager.enabledDebrids.contains(.allDebrid) ? "Logout" : (debridManager.allDebridAuthProcessing ? "Processing" : "Login"))
                                 .foregroundColor(debridManager.enabledDebrids.contains(.allDebrid) ? .red : .blue)
+                        }
+                    }
+
+                    HStack {
+                        Text("Premiumize")
+                        Spacer()
+                        Button {
+                            Task {
+                                if debridManager.enabledDebrids.contains(.premiumize) {
+                                    await debridManager.logoutDebrid(debridType: .premiumize)
+                                } else if !debridManager.premiumizeAuthProcessing {
+                                    await debridManager.authenticateDebrid(debridType: .premiumize)
+                                }
+                            }
+                        } label: {
+                            Text(debridManager.enabledDebrids.contains(.premiumize) ? "Logout" : (debridManager.premiumizeAuthProcessing ? "Processing" : "Login"))
+                                .foregroundColor(debridManager.enabledDebrids.contains(.premiumize) ? .red : .blue)
                         }
                     }
                 }
@@ -132,7 +150,16 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $debridManager.showWebView) {
-                LoginWebView(url: URL(string: debridManager.authUrl)!)
+                LoginWebView(url: debridManager.authUrl ?? URL(string: "https://google.com")!)
+            }
+            .webAuthenticationSession(isPresented: $debridManager.showAuthSession) {
+                WebAuthenticationSession(
+                    url: debridManager.authUrl ?? URL(string: "https://google.com")!,
+                    callbackURLScheme: "ferrite"
+                ) { callbackURL, error in
+                    debridManager.handleCallback(url: callbackURL, error: error)
+                }
+                .prefersEphemeralWebBrowserSession(false)
             }
             .navigationTitle("Settings")
         }

@@ -12,7 +12,11 @@ struct WebView: UIViewRepresentable {
     var url: URL
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        // Make the WebView ephemeral
+        let config = WKWebViewConfiguration()
+        config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+
+        let webView = WKWebView(frame: .zero, configuration: config)
         let _ = webView.load(URLRequest(url: url))
         return webView
     }

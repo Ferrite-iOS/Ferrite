@@ -90,9 +90,14 @@ struct ContentView: View {
                                       debridManager.realDebridIAValues = []
                                       debridManager.allDebridIAValues = []
 
-                                      await debridManager.populateDebridHashes(
-                                          scrapingModel.searchResults.compactMap(\.magnetHash)
-                                      )
+                                      let magnets = scrapingModel.searchResults.compactMap {
+                                          if let magnetLink = $0.magnetLink, let magnetHash = $0.magnetHash {
+                                              return Magnet(link: magnetLink, hash: magnetHash)
+                                          } else {
+                                              return nil
+                                          }
+                                      }
+                                      await debridManager.populateDebridIA(magnets)
                                   }
 
                                   navModel.showSearchProgress = false
@@ -109,6 +114,8 @@ struct ContentView: View {
             }
             .introspectSearchController { searchController in
                 searchController.hidesNavigationBarDuringPresentation = false
+                searchController.searchBar.autocorrectionType = .no
+                searchController.searchBar.autocapitalizationType = .none
             }
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {

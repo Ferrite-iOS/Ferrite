@@ -49,7 +49,7 @@ public class AllDebrid {
         authTask = Task {
             var count = 0
 
-            while count < 20 {
+            while count < 12 {
                 if Task.isCancelled {
                     throw ADError.AuthQuery(description: "Token request cancelled.")
                 }
@@ -177,8 +177,8 @@ public class AllDebrid {
         return rawResponse.link
     }
 
-    public func instantAvailability(hashes: [String]) async throws -> [IA] {
-        let queryItems = hashes.map { URLQueryItem(name: "magnets[]", value: $0) }
+    public func instantAvailability(magnets: [Magnet]) async throws -> [IA] {
+        let queryItems = magnets.map { URLQueryItem(name: "magnets[]", value: $0.hash) }
         var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/magnet/instant", queryItems: queryItems))
 
         let data = try await performRequest(request: &request, requestName: #function)

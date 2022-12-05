@@ -60,7 +60,7 @@ public class RealDebrid {
         authTask = Task {
             var count = 0
 
-            while count < 20 {
+            while count < 12 {
                 if Task.isCancelled {
                     throw RDError.AuthQuery(description: "Token request cancelled.")
                 }
@@ -186,9 +186,9 @@ public class RealDebrid {
 
     // Checks if the magnet is streamable on RD
     // Currently does not work for batch links
-    public func instantAvailability(magnetHashes: [String]) async throws -> [IA] {
+    public func instantAvailability(magnets: [Magnet]) async throws -> [IA] {
         var availableHashes: [RealDebrid.IA] = []
-        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnetHashes.joined(separator: "/"))")!)
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnets.map(\.hash).joined(separator: "/"))")!)
 
         let data = try await performRequest(request: &request, requestName: #function)
 

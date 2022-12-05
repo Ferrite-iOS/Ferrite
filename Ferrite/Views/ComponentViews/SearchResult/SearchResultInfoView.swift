@@ -37,6 +37,10 @@ struct SearchResultInfoView: View {
             if debridManager.selectedDebridType == .allDebrid {
                 DebridLabelView(result: result, debridAbbreviation: "AD")
             }
+
+            if debridManager.selectedDebridType == .premiumize {
+                DebridLabelView(result: result, debridAbbreviation: "PM")
+            }
         }
         .font(.caption)
     }

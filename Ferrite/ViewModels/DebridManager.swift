@@ -14,9 +14,11 @@ public class DebridManager: ObservableObject {
     var toastModel: ToastViewModel?
     let realDebrid: RealDebrid = .init()
     let allDebrid: AllDebrid = .init()
+    let premiumize: Premiumize = .init()
 
     // UI Variables
     @Published var showWebView: Bool = false
+    @Published var showAuthSession: Bool = false
     @Published var showLoadingProgress: Bool = false
 
     // Service agnostic variables
@@ -34,7 +36,7 @@ public class DebridManager: ObservableObject {
 
     var currentDebridTask: Task<Void, Never>?
     var downloadUrl: String = ""
-    var authUrl: String = ""
+    var authUrl: URL?
 
     // RealDebrid auth variables
     @Published var realDebridAuthProcessing: Bool = false
@@ -56,6 +58,15 @@ public class DebridManager: ObservableObject {
 
     var selectedAllDebridItem: AllDebrid.IA?
     var selectedAllDebridFile: AllDebrid.IAFile?
+
+    // Premiumize auth variables
+    @Published var premiumizeAuthProcessing: Bool = false
+
+    // Premiumize fetch variables
+    @Published var premiumizeIAValues: [Premiumize.IA] = []
+
+    var selectedPremiumizeItem: Premiumize.IA?
+    var selectedPremiumizeFile: Premiumize.IAFile?
 
     init() {
         if let rawDebridList = UserDefaults.standard.string(forKey: "Debrid.EnabledArray"),
@@ -88,26 +99,39 @@ public class DebridManager: ObservableObject {
             enabledDebrids.insert(.allDebrid)
             UserDefaults.standard.set(false, forKey: "AllDebrid.Enabled")
         }
+
+        let premiumizeEnabled = UserDefaults.standard.bool(forKey: "Premiumize.Enabled")
+        if premiumizeEnabled {
+            enabledDebrids.insert(.premiumize)
+            UserDefaults.standard.set(false, forKey: "Premiumize.Enabled")
+        }
     }
 
     // Common function to populate hashes for debrid services
-    public func populateDebridHashes(_ resultHashes: [String]) async {
+    public func populateDebridIA(_ resultMagnets: [Magnet]) async {
         do {
             let now = Date()
 
             // If a hash isn't found in the IA, update it
             // If the hash is expired, remove it and update it
-            let sendHashes = resultHashes.filter { hash in
-                if let IAIndex = realDebridIAValues.firstIndex(where: { $0.hash == hash }), enabledDebrids.contains(.realDebrid) {
+            let sendMagnets = resultMagnets.filter { magnet in
+                if let IAIndex = realDebridIAValues.firstIndex(where: { $0.hash == magnet.hash }), enabledDebrids.contains(.realDebrid) {
                     if now.timeIntervalSince1970 > realDebridIAValues[IAIndex].expiryTimeStamp {
                         realDebridIAValues.remove(at: IAIndex)
                         return true
                     } else {
                         return false
                     }
-                } else if let IAIndex = allDebridIAValues.firstIndex(where: { $0.hash == hash }), enabledDebrids.contains(.allDebrid) {
+                } else if let IAIndex = allDebridIAValues.firstIndex(where: { $0.hash == magnet.hash }), enabledDebrids.contains(.allDebrid) {
                     if now.timeIntervalSince1970 > allDebridIAValues[IAIndex].expiryTimeStamp {
                         allDebridIAValues.remove(at: IAIndex)
+                        return true
+                    } else {
+                        return false
+                    }
+                } else if let IAIndex = premiumizeIAValues.firstIndex(where: { $0.hash == magnet.hash }), enabledDebrids.contains(.premiumize) {
+                    if now.timeIntervalSince1970 > premiumizeIAValues[IAIndex].expiryTimeStamp {
+                        premiumizeIAValues.remove(at: IAIndex)
                         return true
                     } else {
                         return false
@@ -117,15 +141,26 @@ public class DebridManager: ObservableObject {
                 }
             }
 
-            if !sendHashes.isEmpty {
+            if !sendMagnets.isEmpty {
                 if enabledDebrids.contains(.realDebrid) {
-                    let fetchedRealDebridIA = try await realDebrid.instantAvailability(magnetHashes: sendHashes)
+                    let fetchedRealDebridIA = try await realDebrid.instantAvailability(magnets: sendMagnets)
                     realDebridIAValues += fetchedRealDebridIA
                 }
 
                 if enabledDebrids.contains(.allDebrid) {
-                    let fetchedAllDebridIA = try await allDebrid.instantAvailability(hashes: sendHashes)
+                    let fetchedAllDebridIA = try await allDebrid.instantAvailability(magnets: sendMagnets)
                     allDebridIAValues += fetchedAllDebridIA
+                }
+
+                if enabledDebrids.contains(.premiumize) {
+                    let availableMagnets = try await premiumize.checkCache(magnets: sendMagnets)
+
+                    // Split DDL requests into chunks of 10
+                    for chunk in availableMagnets.chunked(into: 10) {
+                        let tempIA = try await premiumize.divideDDLRequests(magnetChunk: chunk)
+
+                        premiumizeIAValues += tempIA
+                    }
                 }
             }
         } catch {
@@ -166,6 +201,16 @@ public class DebridManager: ObservableObject {
             } else {
                 return .full
             }
+        case .premiumize:
+            guard let premiumizeMatch = premiumizeIAValues.first(where: { result.magnetHash == $0.hash }) else {
+                return .none
+            }
+
+            if premiumizeMatch.files.count > 1 {
+                return .partial
+            } else {
+                return .full
+            }
         case .none:
             return .none
         }
@@ -194,6 +239,14 @@ public class DebridManager: ObservableObject {
                 toastModel?.updateToastDescription("Could not find the associated AllDebrid entry for magnet hash \(magnetHash)")
                 return false
             }
+        case .premiumize:
+            if let premiumizeItem = premiumizeIAValues.first(where: { magnetHash == $0.hash }) {
+                selectedPremiumizeItem = premiumizeItem
+                return true
+            } else {
+                toastModel?.updateToastDescription("Could not find the associated Premiumize entry for magnet hash \(magnetHash)")
+                return false
+            }
         case .none:
             return false
         }
@@ -205,50 +258,129 @@ public class DebridManager: ObservableObject {
     public func authenticateDebrid(debridType: DebridType) async {
         switch debridType {
         case .realDebrid:
-            await authenticateRd()
-            enabledDebrids.insert(.realDebrid)
+            let success = await authenticateRd()
+            completeDebridAuth(debridType, success: success)
         case .allDebrid:
-            await authenticateAd()
-            enabledDebrids.insert(.allDebrid)
-        }
-
-        // Automatically sets the preferred debrid service if only one login is provided
-        if enabledDebrids.count == 1 {
-            selectedDebridType = enabledDebrids.first
+            let success = await authenticateAd()
+            completeDebridAuth(debridType, success: success)
+        case .premiumize:
+            await authenticatePm()
         }
     }
 
-    private func authenticateRd() async {
+    // Callback to finish debrid auth since functions can be split
+    func completeDebridAuth(_ debridType: DebridType, success: Bool = true) {
+        if enabledDebrids.count == 1, success {
+            print("Enabled debrids is 1!")
+            selectedDebridType = enabledDebrids.first
+        }
+
+        switch debridType {
+        case .realDebrid:
+            realDebridAuthProcessing = false
+        case .allDebrid:
+            allDebridAuthProcessing = false
+        case .premiumize:
+            premiumizeAuthProcessing = false
+        }
+    }
+
+    // Wrapper function to validate and present an auth URL to the user
+    @discardableResult func validateAuthUrl(_ url: URL?, useAuthSession: Bool = false) -> Bool {
+        guard let url else {
+            toastModel?.updateToastDescription("Authentication Error: Invalid URL created: \(String(describing: url))")
+            return false
+        }
+
+        authUrl = url
+        if useAuthSession {
+            showAuthSession.toggle()
+        } else {
+            showWebView.toggle()
+        }
+
+        return true
+    }
+
+    private func authenticateRd() async -> Bool {
         do {
             realDebridAuthProcessing = true
             let verificationResponse = try await realDebrid.getVerificationInfo()
 
-            authUrl = verificationResponse.directVerificationURL
-            showWebView.toggle()
+            if validateAuthUrl(URL(string: verificationResponse.directVerificationURL)) {
+                try await realDebrid.getDeviceCredentials(deviceCode: verificationResponse.deviceCode)
+                enabledDebrids.insert(.realDebrid)
+            } else {
+                throw RealDebrid.RDError.AuthQuery(description: "The verification URL was invalid")
+            }
 
-            try await realDebrid.getDeviceCredentials(deviceCode: verificationResponse.deviceCode)
+            return true
         } catch {
             toastModel?.updateToastDescription("RealDebrid authentication error: \(error)")
             realDebrid.authTask?.cancel()
 
             print("RealDebrid authentication error: \(error)")
+
+            return false
         }
     }
 
-    private func authenticateAd() async {
+    private func authenticateAd() async -> Bool {
         do {
             allDebridAuthProcessing = true
             let pinResponse = try await allDebrid.getPinInfo()
 
-            authUrl = pinResponse.userURL
-            showWebView.toggle()
+            if validateAuthUrl(URL(string: pinResponse.userURL)) {
+                try await allDebrid.getApiKey(checkID: pinResponse.check, pin: pinResponse.pin)
+                enabledDebrids.insert(.allDebrid)
+            } else {
+                throw AllDebrid.ADError.AuthQuery(description: "The PIN URL was invalid")
+            }
 
-            try await allDebrid.getApiKey(checkID: pinResponse.check, pin: pinResponse.pin)
+            return true
         } catch {
             toastModel?.updateToastDescription("AllDebrid authentication error: \(error)")
             allDebrid.authTask?.cancel()
 
             print("AllDebrid authentication error: \(error)")
+
+            return false
+        }
+    }
+
+    private func authenticatePm() async {
+        do {
+            premiumizeAuthProcessing = true
+            let tempAuthUrl = try premiumize.buildAuthUrl()
+
+            validateAuthUrl(tempAuthUrl, useAuthSession: true)
+        } catch {
+            toastModel?.updateToastDescription("Premiumize authentication error: \(error)")
+            completeDebridAuth(.premiumize, success: false)
+
+            print("Premiumize authentication error (auth): \(error)")
+        }
+    }
+
+    // Currently handles Premiumize callback
+    public func handleCallback(url: URL?, error: Error?) {
+        do {
+            if let error {
+                throw Premiumize.PMError.AuthQuery(description: "OAuth callback Error: \(error)")
+            }
+
+            if let callbackUrl = url {
+                try premiumize.handleAuthCallback(url: callbackUrl)
+                enabledDebrids.insert(.premiumize)
+                completeDebridAuth(.premiumize)
+            } else {
+                throw Premiumize.PMError.AuthQuery(description: "The callback URL was invalid")
+            }
+        } catch {
+            toastModel?.updateToastDescription("Premiumize authentication error: \(error)")
+            completeDebridAuth(.premiumize, success: false)
+
+            print("Premiumize authentication error (callback): \(error)")
         }
     }
 
@@ -261,6 +393,8 @@ public class DebridManager: ObservableObject {
             await logoutRd()
         case .allDebrid:
             logoutAd()
+        case .premiumize:
+            logoutPm()
         }
 
         // Automatically resets the preferred debrid service if it was set to the logged out service
@@ -273,7 +407,6 @@ public class DebridManager: ObservableObject {
         do {
             try await realDebrid.deleteTokens()
             enabledDebrids.remove(.realDebrid)
-            realDebridAuthProcessing = false
         } catch {
             toastModel?.updateToastDescription("RealDebrid logout error: \(error)")
 
@@ -284,9 +417,13 @@ public class DebridManager: ObservableObject {
     private func logoutAd() {
         allDebrid.deleteTokens()
         enabledDebrids.remove(.allDebrid)
-        allDebridAuthProcessing = false
 
         toastModel?.updateToastDescription("Please manually delete the AllDebrid API key", newToastType: .info)
+    }
+
+    private func logoutPm() {
+        premiumize.deleteTokens()
+        enabledDebrids.remove(.premiumize)
     }
 
     // MARK: - Debrid fetch UI linked functions
@@ -300,7 +437,8 @@ public class DebridManager: ObservableObject {
 
         showLoadingProgress = true
 
-        guard let magnetLink = searchResult.magnetLink else {
+        // Premiumize doesn't need a magnet link
+        guard let magnetLink = searchResult.magnetLink, selectedDebridType == .premiumize else {
             toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
             print("Debrid error: Invalid magnet link")
 
@@ -312,14 +450,14 @@ public class DebridManager: ObservableObject {
             await fetchRdDownload(magnetLink: magnetLink)
         case .allDebrid:
             await fetchAdDownload(magnetLink: magnetLink)
+        case .premiumize:
+            fetchPmDownload()
         case .none:
             break
         }
     }
 
     func fetchRdDownload(magnetLink: String) async {
-        print("Called RD Download function!")
-
         do {
             var fileIds: [Int] = []
 
@@ -414,6 +552,24 @@ public class DebridManager: ObservableObject {
             default:
                 toastModel?.updateToastDescription("AllDebrid download error: \(error)")
             }
+        }
+    }
+
+    func fetchPmDownload() {
+        guard let premiumizeItem = selectedPremiumizeItem else {
+            toastModel?.updateToastDescription("Could not run your action because the result is invalid")
+            print("Premiumize download error: Invalid selected Premiumize item")
+
+            return
+        }
+
+        if let premiumizeFile = selectedPremiumizeFile {
+            downloadUrl = premiumizeFile.streamUrlString
+        } else if let firstFile = premiumizeItem.files[safe: 0] {
+            downloadUrl = firstFile.streamUrlString
+        } else {
+            toastModel?.updateToastDescription("Could not run your action because the result could not be found")
+            print("Premiumize download error: Could not find the selected Premiumize file")
         }
     }
 }

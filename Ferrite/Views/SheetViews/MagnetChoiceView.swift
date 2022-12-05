@@ -38,7 +38,7 @@ struct MagnetChoiceView: View {
                 }
 
                 if !debridManager.downloadUrl.isEmpty {
-                    Section(header: "Real Debrid options") {
+                    Section(header: "Debrid options") {
                         ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
                             navModel.runDebridAction(urlString: debridManager.downloadUrl, .outplayer)
                         }

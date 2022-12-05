@@ -34,6 +34,14 @@ struct BatchChoiceView: View {
                             queueCommonDownload(fileName: file.fileName)
                         }
                     }
+                case .premiumize:
+                    ForEach(debridManager.selectedPremiumizeItem?.files ?? [], id: \.self) { file in
+                        Button(file.name) {
+                            debridManager.selectedPremiumizeFile = file
+
+                            queueCommonDownload(fileName: file.name)
+                        }
+                    }
                 case .none:
                     EmptyView()
                 }
@@ -78,11 +86,14 @@ struct BatchChoiceView: View {
 
                 switch debridManager.selectedDebridType {
                 case .realDebrid:
-                    debridManager.selectedAllDebridFile = nil
-                    debridManager.selectedAllDebridItem = nil
-                case .allDebrid:
                     debridManager.selectedRealDebridFile = nil
                     debridManager.selectedRealDebridItem = nil
+                case .allDebrid:
+                    debridManager.selectedAllDebridFile = nil
+                    debridManager.selectedAllDebridItem = nil
+                case .premiumize:
+                    debridManager.selectedPremiumizeFile = nil
+                    debridManager.selectedPremiumizeItem = nil
                 case .none:
                     break
                 }
