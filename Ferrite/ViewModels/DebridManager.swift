@@ -438,18 +438,20 @@ public class DebridManager: ObservableObject {
         showLoadingProgress = true
 
         // Premiumize doesn't need a magnet link
-        guard let magnetLink = searchResult.magnetLink, selectedDebridType == .premiumize else {
+        guard searchResult.magnetLink != nil || selectedDebridType == .premiumize else {
             toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
             print("Debrid error: Invalid magnet link")
 
             return
         }
 
+        // Force unwrap is OK for debrid types that aren't ignored since the magnet link was already checked
+        // Do not force unwrap for Premiumize!
         switch selectedDebridType {
         case .realDebrid:
-            await fetchRdDownload(magnetLink: magnetLink)
+            await fetchRdDownload(magnetLink: searchResult.magnetLink!)
         case .allDebrid:
-            await fetchAdDownload(magnetLink: magnetLink)
+            await fetchAdDownload(magnetLink: searchResult.magnetLink!)
         case .premiumize:
             fetchPmDownload()
         case .none:
