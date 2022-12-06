@@ -14,18 +14,19 @@ jobs:
         with:
           xcode-version: latest
       - name: Get commit SHA
-        id: commitinfo
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Build
         run: xcodebuild -scheme Ferrite -configuration Release archive -archivePath build/Ferrite.xcarchive CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+        env:
+          IS_NIGHTLY: YES
       - name: Package ipa
         run: |
           mkdir Payload
           cp -r build/Ferrite.xcarchive/Products/Applications/Ferrite.app Payload
-          zip -r Ferrite-iOS_nightly-${{ steps.commitinfo.outputs.sha_short }}.ipa Payload
+          zip -r Ferrite-iOS_nightly-${{ env.sha_short }}.ipa Payload
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Ferrite-iOS_nightly-${{ steps.commitinfo.outputs.sha_short }}.ipa
-          path: Ferrite-iOS_nightly-${{ steps.commitinfo.outputs.sha_short }}.ipa
+          name: Ferrite-iOS_nightly-${{ env.sha_short }}.ipa
+          path: Ferrite-iOS_nightly-${{ env.sha_short }}.ipa
           if-no-files-found: error

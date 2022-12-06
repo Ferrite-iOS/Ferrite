@@ -26,6 +26,7 @@
 		0C422E80293542F300486D65 /* PremiumizeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C422E7F293542F300486D65 /* PremiumizeModels.swift */; };
 		0C42B5962932F2D5008057A0 /* DebridChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C42B5952932F2D5008057A0 /* DebridChoiceView.swift */; };
 		0C42B5982932F6DD008057A0 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C42B5972932F6DD008057A0 /* Set.swift */; };
+		0C445C62293F9A0B0060744D /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C445C61293F9A0B0060744D /* Bundle.swift */; };
 		0C44E2A828D4DDDC007711AE /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C44E2A728D4DDDC007711AE /* Application.swift */; };
 		0C44E2AD28D51C63007711AE /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C44E2AC28D51C63007711AE /* BackupManager.swift */; };
 		0C44E2AF28D52E8A007711AE /* BackupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C44E2AE28D52E8A007711AE /* BackupsView.swift */; };
@@ -133,6 +134,7 @@
 		0C422E7F293542F300486D65 /* PremiumizeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumizeModels.swift; sourceTree = "<group>"; };
 		0C42B5952932F2D5008057A0 /* DebridChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridChoiceView.swift; sourceTree = "<group>"; };
 		0C42B5972932F6DD008057A0 /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
+		0C445C61293F9A0B0060744D /* Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		0C44E2A728D4DDDC007711AE /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		0C44E2AC28D51C63007711AE /* BackupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManager.swift; sourceTree = "<group>"; };
 		0C44E2AE28D52E8A007711AE /* BackupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupsView.swift; sourceTree = "<group>"; };
@@ -410,6 +412,8 @@
 		0CA148C8288903F000DE2211 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				0CD72E16293D9928001A7EA4 /* Array.swift */,
+				0C445C61293F9A0B0060744D /* Bundle.swift */,
 				0CA148C9288903F000DE2211 /* Collection.swift */,
 				0CA148CA288903F000DE2211 /* Data.swift */,
 				0CA429F728C5098D000D0610 /* DateFormatter.swift */,
@@ -420,7 +424,6 @@
 				0C7ED14228D65518009E29AD /* FileManager.swift */,
 				0C42B5972932F6DD008057A0 /* Set.swift */,
 				0C7C128528DAA3CD00381CD1 /* URL.swift */,
-				0CD72E16293D9928001A7EA4 /* Array.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -523,6 +526,7 @@
 				0CAF1C64286F5C0E00296F86 /* Sources */,
 				0CAF1C65286F5C0E00296F86 /* Frameworks */,
 				0CAF1C66286F5C0E00296F86 /* Resources */,
+				0C445C60293F99360060744D /* Insert environment vars into Plist */,
 			);
 			buildRules = (
 			);
@@ -599,6 +603,29 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0C445C60293F99360060744D /* Insert environment vars into Plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH,
+			);
+			name = "Insert environment vars into Plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# From https://stackoverflow.com/questions/26514866/how-can-i-include-the-git-commit-hash-in-xcode\n\nINFO_PLIST=\"${TARGET_BUILD_DIR}\"/\"${INFOPLIST_PATH}\"\n\n# MARK: Adds commit hash to plist\ncommitValue=$(/usr/libexec/PlistBuddy -c 'print :GitCommitHash' \"${INFO_PLIST}\" 2>/dev/null)\n\n# Check if value is empty\nif [ -z \"$commitValue\" ] \nthen\n   /usr/libexec/PlistBuddy -c \"Add :GitCommitHash string\" \"${INFO_PLIST}\"\nfi\n\n/usr/libexec/PlistBuddy -c \"Set :GitCommitHash `git rev-parse --short HEAD`\" \"${INFO_PLIST}\"\n\n# MARK: Adds the git build type to plist (examples: nightly, stable)\nbuildTypeValue=$(/usr/libexec/PlistBuddy -c 'print :IsNightly' \"${INFO_PLIST}\" 2>/dev/null)\n\n# Check if value is empty\nif [ -z \"$buildTypeValue\" ] \nthen\n   /usr/libexec/PlistBuddy -c \"Add :IsNightly bool\" \"${INFO_PLIST}\"\nfi\n\n/usr/libexec/PlistBuddy -c \"Set :IsNightly ${IS_NIGHTLY}\" \"${INFO_PLIST}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0CAF1C64286F5C0E00296F86 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -647,6 +674,7 @@
 				0CD4CAC628C980EB0046E1DC /* HistoryActionsView.swift in Sources */,
 				0C422E7E293542EA00486D65 /* PremiumizeWrapper.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
+				0C445C62293F9A0B0060744D /* Bundle.swift in Sources */,
 				0C0755C6293424A200ECA142 /* DebridLabelView.swift in Sources */,
 				0CB6516A28C5B4A600DCA721 /* InlineHeader.swift in Sources */,
 				0CA148D8288903F000DE2211 /* MagnetChoiceView.swift in Sources */,

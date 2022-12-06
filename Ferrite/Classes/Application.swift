@@ -20,11 +20,16 @@ public class Application {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
     }
 
+    // Debug = development, Nightly = actions, Release = stable
     var buildType: String {
         #if DEBUG
         return "Debug"
         #else
-        return "Release"
+        if Bundle.main.isNightly {
+            return "Nightly"
+        } else {
+            return "Release"
+        }
         #endif
     }
 }

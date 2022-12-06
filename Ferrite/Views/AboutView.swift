@@ -14,6 +14,11 @@ struct AboutView: View {
                 ListRowTextView(leftText: "Version", rightText: Application.shared.appVersion)
                 ListRowTextView(leftText: "Build number", rightText: Application.shared.appBuild)
                 ListRowTextView(leftText: "Build type", rightText: Application.shared.buildType)
+
+                if let commitHash = Bundle.main.commitHash {
+                    ListRowTextView(leftText: "Commit", rightText: commitHash)
+                }
+
                 ListRowLinkView(text: "Discord server", link: "https://discord.gg/sYQxnuD7Fj")
                 ListRowLinkView(text: "GitHub repository", link: "https://github.com/bdashore3/Ferrite")
             } header: {
