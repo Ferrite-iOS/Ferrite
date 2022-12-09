@@ -77,13 +77,35 @@ public class Premiumize {
         }
     }
 
+    // Function to divide and execute cache endpoint requests in parallel
+    // Calls this for 100 hashes at a time due to API limits
+    public func divideCacheRequests(magnets: [Magnet]) async throws -> [Magnet] {
+        let availableMagnets = try await withThrowingTaskGroup(of: [Magnet].self) { group in
+            for chunk in magnets.chunked(into: 100) {
+                group.addTask {
+                    try await self.checkCache(magnets: chunk)
+                }
+            }
+
+            var chunkedMagnets: [Magnet] = []
+            for try await magnetArray in group {
+                chunkedMagnets += magnetArray
+            }
+
+            return chunkedMagnets
+        }
+
+        return availableMagnets
+    }
+
     // Parent function for initial checking of the cache
-    public func checkCache(magnets: [Magnet]) async throws -> [Magnet] {
+    func checkCache(magnets: [Magnet]) async throws -> [Magnet] {
         var urlComponents = URLComponents(string: "\(baseApiUrl)/cache/check")!
         urlComponents.queryItems = magnets.map { URLQueryItem(name: "items[]", value: $0.hash) }
         guard let url = urlComponents.url else {
             throw PMError.InvalidUrl
         }
+
         var request = URLRequest(url: url)
 
         let data = try await performRequest(request: &request, requestName: #function)

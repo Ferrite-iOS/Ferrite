@@ -153,7 +153,7 @@ public class DebridManager: ObservableObject {
                 }
 
                 if enabledDebrids.contains(.premiumize) {
-                    let availableMagnets = try await premiumize.checkCache(magnets: sendMagnets)
+                    let availableMagnets = try await premiumize.divideCacheRequests(magnets: sendMagnets)
 
                     // Split DDL requests into chunks of 10
                     for chunk in availableMagnets.chunked(into: 10) {
