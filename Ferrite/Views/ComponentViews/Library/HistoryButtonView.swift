@@ -16,8 +16,8 @@ struct HistoryButtonView: View {
 
     var body: some View {
         Button {
-            navModel.selectedTitle = entry.name
-            navModel.selectedBatchTitle = entry.subName
+            navModel.selectedTitle = entry.name ?? ""
+            navModel.selectedBatchTitle = entry.subName ?? ""
 
             if let url = entry.url {
                 if url.starts(with: "https://") {

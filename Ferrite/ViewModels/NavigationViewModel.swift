@@ -35,8 +35,8 @@ class NavigationViewModel: ObservableObject {
     @Published var selectedSearchResult: SearchResult?
 
     // For giving information in magnet choice sheet
-    @Published var selectedTitle: String?
-    @Published var selectedBatchTitle: String?
+    @Published var selectedTitle: String = ""
+    @Published var selectedBatchTitle: String = ""
 
     @Published var hideNavigationBar = false
 

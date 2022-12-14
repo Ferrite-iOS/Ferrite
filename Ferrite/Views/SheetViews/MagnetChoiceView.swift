@@ -25,12 +25,12 @@ struct MagnetChoiceView: View {
             Form {
                 Section(header: "Now Playing") {
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(navModel.selectedTitle ?? "No title")
+                        Text(navModel.selectedTitle)
                             .font(.callout)
-                            .lineLimit(navModel.selectedBatchTitle == nil ? .max : 1)
+                            .lineLimit(navModel.selectedBatchTitle.isEmpty ? .max : 1)
 
-                        if let batchTitle = navModel.selectedBatchTitle {
-                            Text(batchTitle)
+                        if !navModel.selectedBatchTitle.isEmpty {
+                            Text(navModel.selectedBatchTitle)
                                 .foregroundColor(.gray)
                                 .font(.subheadline)
                         }
@@ -109,6 +109,8 @@ struct MagnetChoiceView: View {
             }
             .onDisappear {
                 debridManager.downloadUrl = ""
+                navModel.selectedTitle = ""
+                navModel.selectedBatchTitle = ""
             }
             .navigationTitle("Link actions")
             .navigationBarTitleDisplayMode(.inline)
@@ -116,6 +118,8 @@ struct MagnetChoiceView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         debridManager.downloadUrl = ""
+                        navModel.selectedTitle = ""
+                        navModel.selectedBatchTitle = ""
 
                         presentationMode.wrappedValue.dismiss()
                     }

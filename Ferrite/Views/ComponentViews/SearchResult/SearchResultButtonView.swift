@@ -23,7 +23,7 @@ struct SearchResultButtonView: View {
         Button {
             if debridManager.currentDebridTask == nil {
                 navModel.selectedSearchResult = result
-                navModel.selectedTitle = result.title
+                navModel.selectedTitle = result.title ?? ""
 
                 switch debridManager.matchSearchResult(result: result) {
                 case .full:
