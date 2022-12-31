@@ -64,32 +64,34 @@ struct SearchResultButtonView: View {
         .disableInteraction(navModel.currentChoiceSheet != nil)
         .backport.tint(.primary)
         .conditionalContextMenu(id: existingBookmark) {
-            if let bookmark = existingBookmark {
-                Button {
-                    PersistenceController.shared.delete(bookmark, context: backgroundContext)
+            ZStack {
+                if let bookmark = existingBookmark {
+                    Button {
+                        PersistenceController.shared.delete(bookmark, context: backgroundContext)
 
-                    // When the entity is deleted, let other instances know to remove that reference
-                    NotificationCenter.default.post(name: .didDeleteBookmark, object: nil)
-                } label: {
-                    Text("Remove bookmark")
-                    Image(systemName: "bookmark.slash.fill")
-                }
-            } else {
-                Button {
-                    let newBookmark = Bookmark(context: backgroundContext)
-                    newBookmark.title = result.title
-                    newBookmark.source = result.source
-                    newBookmark.magnetHash = result.magnetHash
-                    newBookmark.magnetLink = result.magnetLink
-                    newBookmark.seeders = result.seeders
-                    newBookmark.leechers = result.leechers
+                        // When the entity is deleted, let other instances know to remove that reference
+                        NotificationCenter.default.post(name: .didDeleteBookmark, object: existingBookmark)
+                    } label: {
+                        Text("Remove bookmark")
+                        Image(systemName: "bookmark.slash.fill")
+                    }
+                } else {
+                    Button {
+                        let newBookmark = Bookmark(context: backgroundContext)
+                        newBookmark.title = result.title
+                        newBookmark.source = result.source
+                        newBookmark.magnetHash = result.magnetHash
+                        newBookmark.magnetLink = result.magnetLink
+                        newBookmark.seeders = result.seeders
+                        newBookmark.leechers = result.leechers
 
-                    existingBookmark = newBookmark
+                        existingBookmark = newBookmark
 
-                    PersistenceController.shared.save(backgroundContext)
-                } label: {
-                    Text("Bookmark")
-                    Image(systemName: "bookmark")
+                        PersistenceController.shared.save(backgroundContext)
+                    } label: {
+                        Text("Bookmark")
+                        Image(systemName: "bookmark")
+                    }
                 }
             }
         }
@@ -106,8 +108,13 @@ struct SearchResultButtonView: View {
                 AlertButton(role: .cancel)
             ]
         )
-        .onReceive(NotificationCenter.default.publisher(for: .didDeleteBookmark)) { _ in
-            existingBookmark = nil
+        .onReceive(NotificationCenter.default.publisher(for: .didDeleteBookmark)) { notification in
+            // If the instance contains the deleted bookmark, remove it.
+            if let deletedBookmark = notification.object as? Bookmark,
+                let bookmark = existingBookmark,
+                deletedBookmark.objectID == bookmark.objectID {
+                existingBookmark = nil
+            }
         }
         .onAppear {
             // Only run a exists request if a bookmark isn't passed to the view
