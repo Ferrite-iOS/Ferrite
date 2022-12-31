@@ -72,7 +72,7 @@ struct ContentView: View {
                 SearchResultsView()
             }
             .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(navModel.isEditingSearch || navModel.isSearching ? .inline : .automatic)
+            .navigationBarTitleDisplayMode(navModel.isSearching ? .inline : .large)
             .navigationSearchBar {
                 SearchBar("Search",
                           text: $scrapingModel.searchText,
