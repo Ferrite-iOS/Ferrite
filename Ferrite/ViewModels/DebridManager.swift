@@ -50,6 +50,11 @@ public class DebridManager: ObservableObject {
     var selectedRealDebridFile: RealDebrid.IAFile?
     var selectedRealDebridID: String?
 
+    // RealDebrid cloud variables
+    @Published var realDebridCloudTorrents: [RealDebrid.UserTorrentsResponse] = []
+    @Published var realDebridCloudDownloads: [RealDebrid.UserDownloadsResponse] = []
+    var realDebridCloudTTL: Double = 0.0
+
     // AllDebrid auth variables
     @Published var allDebridAuthProcessing: Bool = false
 
@@ -107,6 +112,30 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    // Cleans all cached IA values in the event of a full IA refresh
+    public func clearIAValues() {
+        realDebridIAValues = []
+        allDebridIAValues = []
+        premiumizeIAValues = []
+    }
+
+    // Clears all selected files and items
+    public func clearSelectedDebridItems() {
+        switch selectedDebridType {
+        case .realDebrid:
+            selectedRealDebridFile = nil
+            selectedRealDebridItem = nil
+        case .allDebrid:
+            selectedAllDebridFile = nil
+            selectedAllDebridItem = nil
+        case .premiumize:
+            selectedPremiumizeFile = nil
+            selectedPremiumizeItem = nil
+        case .none:
+            break
+        }
+    }
+
     // Common function to populate hashes for debrid services
     public func populateDebridIA(_ resultMagnets: [Magnet]) async {
         do {
@@ -153,7 +182,16 @@ public class DebridManager: ObservableObject {
                 }
 
                 if enabledDebrids.contains(.premiumize) {
-                    let availableMagnets = try await premiumize.divideCacheRequests(magnets: sendMagnets)
+                    // Only strip magnets that don't have an associated link for PM
+                    let strippedResultMagnets: [Magnet] = resultMagnets.compactMap {
+                        if let magnetLink = $0.link {
+                            return Magnet(link: magnetLink, hash: $0.hash)
+                        } else {
+                            return nil
+                        }
+                    }
+
+                    let availableMagnets = try await premiumize.divideCacheRequests(magnets: strippedResultMagnets)
 
                     // Split DDL requests into chunks of 10
                     for chunk in availableMagnets.chunked(into: 10) {
@@ -174,15 +212,15 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    // Common function to match search results with a provided debrid service
-    public func matchSearchResult(result: SearchResult?) -> IAStatus {
-        guard let result else {
+    // Common function to match a magnet hash with a provided debrid service
+    public func matchMagnetHash(_ magnetHash: String?) -> IAStatus {
+        guard let magnetHash else {
             return .none
         }
 
         switch selectedDebridType {
         case .realDebrid:
-            guard let realDebridMatch = realDebridIAValues.first(where: { result.magnetHash == $0.hash }) else {
+            guard let realDebridMatch = realDebridIAValues.first(where: { magnetHash == $0.hash }) else {
                 return .none
             }
 
@@ -192,7 +230,7 @@ public class DebridManager: ObservableObject {
                 return .partial
             }
         case .allDebrid:
-            guard let allDebridMatch = allDebridIAValues.first(where: { result.magnetHash == $0.hash }) else {
+            guard let allDebridMatch = allDebridIAValues.first(where: { magnetHash == $0.hash }) else {
                 return .none
             }
 
@@ -202,7 +240,7 @@ public class DebridManager: ObservableObject {
                 return .full
             }
         case .premiumize:
-            guard let premiumizeMatch = premiumizeIAValues.first(where: { result.magnetHash == $0.hash }) else {
+            guard let premiumizeMatch = premiumizeIAValues.first(where: { magnetHash == $0.hash }) else {
                 return .none
             }
 
@@ -216,8 +254,8 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    public func selectDebridResult(result: SearchResult) -> Bool {
-        guard let magnetHash = result.magnetHash else {
+    public func selectDebridResult(magnetHash: String?) -> Bool {
+        guard let magnetHash = magnetHash else {
             toastModel?.updateToastDescription("Could not find the torrent magnet hash")
             return false
         }
@@ -429,7 +467,7 @@ public class DebridManager: ObservableObject {
     // MARK: - Debrid fetch UI linked functions
 
     // Common function to delegate what debrid service to fetch from
-    public func fetchDebridDownload(searchResult: SearchResult) async {
+    public func fetchDebridDownload(magnetLink: String?) async {
         defer {
             currentDebridTask = nil
             showLoadingProgress = false
@@ -437,21 +475,11 @@ public class DebridManager: ObservableObject {
 
         showLoadingProgress = true
 
-        // Premiumize doesn't need a magnet link
-        guard searchResult.magnetLink != nil || selectedDebridType == .premiumize else {
-            toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
-            print("Debrid error: Invalid magnet link")
-
-            return
-        }
-
-        // Force unwrap is OK for debrid types that aren't ignored since the magnet link was already checked
-        // Do not force unwrap for Premiumize!
         switch selectedDebridType {
         case .realDebrid:
-            await fetchRdDownload(magnetLink: searchResult.magnetLink!)
+            await fetchRdDownload(magnetLink: magnetLink)
         case .allDebrid:
-            await fetchAdDownload(magnetLink: searchResult.magnetLink!)
+            await fetchAdDownload(magnetLink: magnetLink)
         case .premiumize:
             fetchPmDownload()
         case .none:
@@ -459,37 +487,31 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    func fetchRdDownload(magnetLink: String) async {
+    func fetchRdDownload(magnetLink: String?) async {
         do {
-            var fileIds: [Int] = []
-
-            if let iaFile = selectedRealDebridFile {
-                guard let iaBatchFromFile = selectedRealDebridItem?.batches[safe: iaFile.batchIndex] else {
-                    return
-                }
-
-                fileIds = iaBatchFromFile.files.map(\.id)
-            }
+            // Bypass the TTL since a download needs to be queried
+            await fetchRdCloud(bypassTTL: true)
 
             // If there's an existing torrent, check for a download link. Otherwise check for an unrestrict link
-            let existingTorrents = try await realDebrid.userTorrents().filter { $0.hash == selectedRealDebridItem?.hash }
+            let existingTorrents = realDebridCloudTorrents.filter { $0.hash == selectedRealDebridItem?.hash && $0.status == "downloaded" }
 
             // If the links match from a user's downloads, no need to re-run a download
             if let existingTorrent = existingTorrents[safe: 0],
                let torrentLink = existingTorrent.links[safe: selectedRealDebridFile?.batchFileIndex ?? 0]
             {
-                let existingLinks = try await realDebrid.userDownloads().filter { $0.link == torrentLink }
-                if let existingLink = existingLinks[safe: 0]?.download {
-                    downloadUrl = existingLink
-                } else {
-                    let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: torrentLink)
-
-                    downloadUrl = downloadLink
-                }
-
-            } else {
+                try await checkRdUserDownloads(userTorrentLink: torrentLink)
+            } else if let magnetLink = magnetLink {
                 // Add a magnet after all the cache checks fail
                 selectedRealDebridID = try await realDebrid.addMagnet(magnetLink: magnetLink)
+
+                var fileIds: [Int] = []
+                if let iaFile = selectedRealDebridFile {
+                    guard let iaBatchFromFile = selectedRealDebridItem?.batches[safe: iaFile.batchIndex] else {
+                        return
+                    }
+
+                    fileIds = iaBatchFromFile.files.map(\.id)
+                }
 
                 if let realDebridId = selectedRealDebridID {
                     try await realDebrid.selectFiles(debridID: realDebridId, fileIds: fileIds)
@@ -504,6 +526,9 @@ public class DebridManager: ObservableObject {
                 } else {
                     toastModel?.updateToastDescription("Could not cache this torrent. Aborting.")
                 }
+            } else {
+                toastModel?.updateToastDescription("Could not fetch your file from RealDebrid's cache or API")
+                print("RealDebrid error: No magnet link or cached file found")
             }
         } catch {
             switch error {
@@ -528,6 +553,21 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    // Refreshes torrents and downloads from a RD user's account
+    public func fetchRdCloud(bypassTTL: Bool = false) async {
+        if bypassTTL || Date().timeIntervalSince1970 > realDebridCloudTTL {
+            do {
+                realDebridCloudTorrents = try await realDebrid.userTorrents()
+                realDebridCloudDownloads = try await realDebrid.userDownloads()
+
+                // 5 minutes
+                realDebridCloudTTL = Date().timeIntervalSince1970 + 300
+            } catch {
+                toastModel?.updateToastDescription("RealDebrid cloud fetch error: \(error)")
+            }
+        }
+    }
+
     func deleteRdTorrent() async {
         if let realDebridId = selectedRealDebridID {
             try? await realDebrid.deleteTorrent(debridID: realDebridId)
@@ -536,7 +576,25 @@ public class DebridManager: ObservableObject {
         selectedRealDebridID = nil
     }
 
-    func fetchAdDownload(magnetLink: String) async {
+    func checkRdUserDownloads(userTorrentLink: String) async throws {
+        let existingLinks = realDebridCloudDownloads.filter { $0.link == userTorrentLink }
+        if let existingLink = existingLinks[safe: 0]?.download {
+            downloadUrl = existingLink
+        } else {
+            let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: userTorrentLink)
+
+            downloadUrl = downloadLink
+        }
+    }
+
+    func fetchAdDownload(magnetLink: String?) async {
+        guard let magnetLink = magnetLink else {
+            toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
+            print("AllDebrid error: Invalid magnet link")
+
+            return
+        }
+
         do {
             let magnetID = try await allDebrid.addMagnet(magnetLink: magnetLink)
             let lockedLink = try await allDebrid.fetchMagnetStatus(

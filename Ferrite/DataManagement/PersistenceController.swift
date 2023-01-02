@@ -112,9 +112,11 @@ struct PersistenceController {
         newBookmark.magnetLink = bookmarkJson.magnetLink
         newBookmark.seeders = bookmarkJson.seeders
         newBookmark.leechers = bookmarkJson.leechers
+
+        save(backgroundContext)
     }
 
-    func createHistory(entryJson: HistoryEntryJson, date: Double?) {
+    func createHistory(_ entryJson: HistoryEntryJson, date: Double? = nil) {
         let historyDate = date.map { Date(timeIntervalSince1970: $0) } ?? Date()
         let historyDateString = DateFormatter.historyDateFormatter.string(from: historyDate)
 
@@ -153,6 +155,8 @@ struct PersistenceController {
 
         newHistoryEntry.parentHistory?.dateString = historyDateString
         newHistoryEntry.parentHistory?.date = historyDate
+
+        save(backgroundContext)
     }
 
     func getHistoryPredicate(range: HistoryDeleteRange) -> NSPredicate? {

@@ -26,10 +26,10 @@ struct HistoryJson: Codable {
 }
 
 struct HistoryEntryJson: Codable {
-    let name: String
-    let subName: String?
-    let url: String
-    let timeStamp: Double?
+    var name: String? = nil
+    var subName: String? = nil
+    var url: String? = nil
+    var timeStamp: Double? = nil
     let source: String?
 }
 

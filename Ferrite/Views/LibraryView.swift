@@ -11,9 +11,11 @@ struct LibraryView: View {
     enum LibraryPickerSegment {
         case bookmarks
         case history
+        case debridCloud
     }
 
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var debridManager: DebridManager
 
     @FetchRequest(
         entity: Bookmark.entity(),
@@ -40,6 +42,10 @@ struct LibraryView: View {
                 Picker("Segments", selection: $selectedSegment) {
                     Text("Bookmarks").tag(LibraryPickerSegment.bookmarks)
                     Text("History").tag(LibraryPickerSegment.history)
+
+                    if !debridManager.enabledDebrids.isEmpty {
+                        Text("Cloud").tag(LibraryPickerSegment.debridCloud)
+                    }
                 }
                 .pickerStyle(.segmented)
                 .padding()
@@ -49,6 +55,8 @@ struct LibraryView: View {
                     BookmarksView(bookmarks: bookmarks)
                 case .history:
                     HistoryView(history: history)
+                case .debridCloud:
+                    DebridCloudView()
                 }
 
                 Spacer()
@@ -63,6 +71,10 @@ struct LibraryView: View {
                     if history.isEmpty {
                         EmptyInstructionView(title: "No History", message: "Start watching to build history")
                     }
+                case .debridCloud:
+                    if debridManager.selectedDebridType != .realDebrid {
+                        EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
+                    }
                 }
             }
             .navigationTitle("Library")
@@ -72,7 +84,7 @@ struct LibraryView: View {
                         EditButton()
 
                         switch selectedSegment {
-                        case .bookmarks:
+                        case .bookmarks, .debridCloud:
                             DebridChoiceView()
                         case .history:
                             HistoryActionsView()

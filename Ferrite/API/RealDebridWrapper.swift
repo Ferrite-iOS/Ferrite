@@ -358,4 +358,11 @@ public class RealDebrid {
 
         return rawResponse
     }
+
+    public func deleteDownload(debridID: String) async throws {
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/downloads/delete/\(debridID)")!)
+        request.httpMethod = "DELETE"
+
+        try await performRequest(request: &request, requestName: #function)
+    }
 }

@@ -87,12 +87,12 @@ struct ContentView: View {
                                   await scrapingModel.scanSources(sources: sources)
 
                                   if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {
-                                      debridManager.realDebridIAValues = []
-                                      debridManager.allDebridIAValues = []
+                                      debridManager.clearIAValues()
 
+                                      // Remove magnets that don't have a hash
                                       let magnets = scrapingModel.searchResults.compactMap {
-                                          if let magnetLink = $0.magnetLink, let magnetHash = $0.magnetHash {
-                                              return Magnet(link: magnetLink, hash: magnetHash)
+                                          if let magnetHash = $0.magnetHash {
+                                              return Magnet(link: $0.magnetLink, hash: magnetHash)
                                           } else {
                                               return nil
                                           }

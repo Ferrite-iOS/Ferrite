@@ -33,6 +33,9 @@ class NavigationViewModel: ObservableObject {
     @Published var isSearching: Bool = false
 
     @Published var selectedSearchResult: SearchResult?
+    @Published var selectedMagnetLink: String?
+    @Published var selectedHistoryInfo: HistoryEntryJson?
+    @Published var resultFromCloud: Bool = false
 
     // For giving information in magnet choice sheet
     @Published var selectedTitle: String = ""
@@ -124,6 +127,7 @@ class NavigationViewModel: ObservableObject {
         }
     }
 
+    /*
     public func addToHistory(name: String?, source: String?, url: String?, subName: String? = nil) {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
@@ -141,4 +145,5 @@ class NavigationViewModel: ObservableObject {
 
         PersistenceController.shared.save(backgroundContext)
     }
+     */
 }

@@ -58,7 +58,8 @@ struct BatchChoiceView: View {
 
                         Task {
                             try? await Task.sleep(seconds: 1)
-                            debridManager.selectedRealDebridItem = nil
+
+                            debridManager.clearSelectedDebridItems()
                         }
                     }
                 }
@@ -68,36 +69,22 @@ struct BatchChoiceView: View {
 
     // Common function to communicate betwen VMs and queue/display a download
     func queueCommonDownload(fileName: String) {
-        if let searchResult = navModel.selectedSearchResult {
-            debridManager.currentDebridTask = Task {
-                await debridManager.fetchDebridDownload(searchResult: searchResult)
+        debridManager.currentDebridTask = Task {
+            await debridManager.fetchDebridDownload(magnetLink: navModel.resultFromCloud ? nil : navModel.selectedMagnetLink)
 
-                if !debridManager.downloadUrl.isEmpty {
-                    try? await Task.sleep(seconds: 1)
-                    navModel.selectedBatchTitle = fileName
-                    navModel.addToHistory(
-                        name: searchResult.title,
-                        source: searchResult.source,
-                        url: debridManager.downloadUrl,
-                        subName: fileName
-                    )
-                    navModel.runDebridAction(urlString: debridManager.downloadUrl)
+            if !debridManager.downloadUrl.isEmpty {
+                try? await Task.sleep(seconds: 1)
+                navModel.selectedBatchTitle = fileName
+
+                if var selectedHistoryInfo = navModel.selectedHistoryInfo {
+                    selectedHistoryInfo.url = debridManager.downloadUrl
+                    PersistenceController.shared.createHistory(selectedHistoryInfo)
                 }
 
-                switch debridManager.selectedDebridType {
-                case .realDebrid:
-                    debridManager.selectedRealDebridFile = nil
-                    debridManager.selectedRealDebridItem = nil
-                case .allDebrid:
-                    debridManager.selectedAllDebridFile = nil
-                    debridManager.selectedAllDebridItem = nil
-                case .premiumize:
-                    debridManager.selectedPremiumizeFile = nil
-                    debridManager.selectedPremiumizeItem = nil
-                case .none:
-                    break
-                }
+                navModel.runDebridAction(urlString: debridManager.downloadUrl)
             }
+
+            debridManager.clearSelectedDebridItems()
         }
 
         navModel.currentChoiceSheet = nil

@@ -123,7 +123,7 @@ public class BackupManager: ObservableObject {
             if let storedHistories = backup.history {
                 for storedHistory in storedHistories {
                     for storedEntry in storedHistory.entries {
-                        PersistenceController.shared.createHistory(entryJson: storedEntry, date: storedHistory.date)
+                        PersistenceController.shared.createHistory(storedEntry, date: storedHistory.date)
                     }
                 }
             }

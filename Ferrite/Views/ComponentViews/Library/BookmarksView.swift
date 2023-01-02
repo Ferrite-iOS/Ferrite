@@ -31,7 +31,7 @@ struct BookmarksView: View {
                             if let bookmark = bookmarks[safe: index] {
                                 PersistenceController.shared.delete(bookmark, context: backgroundContext)
 
-                                NotificationCenter.default.post(name: .didDeleteBookmark, object: nil)
+                                NotificationCenter.default.post(name: .didDeleteBookmark, object: bookmark)
                             }
                         }
                     }
@@ -55,8 +55,8 @@ struct BookmarksView: View {
             if debridManager.enabledDebrids.count > 0 {
                 viewTask = Task {
                     let magnets = bookmarks.compactMap {
-                        if let magnetLink = $0.magnetLink, let magnetHash = $0.magnetHash {
-                            return Magnet(link: magnetLink, hash: magnetHash)
+                        if let magnetHash = $0.magnetHash {
+                            return Magnet(link: $0.magnetLink, hash: magnetHash)
                         } else {
                             return nil
                         }

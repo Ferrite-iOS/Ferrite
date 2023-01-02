@@ -150,7 +150,7 @@ public extension RealDebrid {
         let bytes, selected: Int
     }
 
-    struct UserTorrentsResponse: Codable, Sendable {
+    struct UserTorrentsResponse: Codable, Hashable, Sendable {
         let id, filename, hash: String
         let bytes: Int
         let host: String
@@ -183,7 +183,7 @@ public extension RealDebrid {
 
     // MARK: - User downloads list
 
-    struct UserDownloadsResponse: Codable, Sendable {
+    struct UserDownloadsResponse: Codable, Hashable, Sendable {
         let id, filename: String
         let mimeType: String?
         let filesize: Int

@@ -14,6 +14,8 @@
 		0C0D50E7288DFF850035ECC8 /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* SourcesView.swift */; };
 		0C10848B28BD9A38008F0BA6 /* SettingsAppVersionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */; };
 		0C12D43D28CC332A000195BF /* HistoryButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C12D43C28CC332A000195BF /* HistoryButtonView.swift */; };
+		0C2886D22960AC2800D6FC16 /* DebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */; };
+		0C2886D72960C50900D6FC16 /* RealDebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */; };
 		0C31133C28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C31133A28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift */; };
 		0C31133D28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C31133B28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift */; };
 		0C32FB532890D19D002BD219 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB522890D19D002BD219 /* AboutView.swift */; };
@@ -122,6 +124,8 @@
 		0C0D50E6288DFF850035ECC8 /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
 		0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppVersionView.swift; sourceTree = "<group>"; };
 		0C12D43C28CC332A000195BF /* HistoryButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryButtonView.swift; sourceTree = "<group>"; };
+		0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridCloudView.swift; sourceTree = "<group>"; };
+		0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealDebridCloudView.swift; sourceTree = "<group>"; };
 		0C31133A28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceJsonParser+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C31133B28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceJsonParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C32FB522890D19D002BD219 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -306,6 +310,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		0C2886D52960C4F800D6FC16 /* Cloud */ = {
+			isa = PBXGroup;
+			children = (
+				0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */,
+			);
+			path = Cloud;
+			sourceTree = "<group>";
+		};
 		0C44E2A628D4DDC6007711AE /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -482,7 +494,9 @@
 		0CA3B23528C265FD00616D3A /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				0C2886D52960C4F800D6FC16 /* Cloud */,
 				0CA3B23828C2660D00616D3A /* BookmarksView.swift */,
+				0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */,
 				0CA3B23628C2660700616D3A /* HistoryView.swift */,
 				0CD4CAC528C980EB0046E1DC /* HistoryActionsView.swift */,
 				0C12D43C28CC332A000195BF /* HistoryButtonView.swift */,
@@ -651,6 +665,7 @@
 				0CA429F828C5098D000D0610 /* DateFormatter.swift in Sources */,
 				0CE66B3A28E640D200F69346 /* Backport.swift in Sources */,
 				0C42B5962932F2D5008057A0 /* DebridChoiceView.swift in Sources */,
+				0C2886D72960C50900D6FC16 /* RealDebridCloudView.swift in Sources */,
 				0C84F4872895BFED0074B7C9 /* SourceList+CoreDataProperties.swift in Sources */,
 				0C794B6B289DACF100DD1CC8 /* SourceCatalogButtonView.swift in Sources */,
 				0C54D36428C5086E00BFEEE2 /* History+CoreDataProperties.swift in Sources */,
@@ -722,6 +737,7 @@
 				0C391ECB28CAA44B009F1CA1 /* AlertButton.swift in Sources */,
 				0C7C128628DAA3CD00381CD1 /* URL.swift in Sources */,
 				0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */,
+				0C2886D22960AC2800D6FC16 /* DebridCloudView.swift in Sources */,
 				0CA148EB288903F000DE2211 /* SearchResultsView.swift in Sources */,
 				0CA148D7288903F000DE2211 /* LoginWebView.swift in Sources */,
 				0CA148E0288903F000DE2211 /* FerriteApp.swift in Sources */,

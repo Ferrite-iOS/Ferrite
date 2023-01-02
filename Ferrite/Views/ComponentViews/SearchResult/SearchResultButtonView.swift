@@ -24,15 +24,23 @@ struct SearchResultButtonView: View {
             if debridManager.currentDebridTask == nil {
                 navModel.selectedSearchResult = result
                 navModel.selectedTitle = result.title ?? ""
+                navModel.resultFromCloud = false
 
-                switch debridManager.matchSearchResult(result: result) {
+                switch debridManager.matchMagnetHash(result.magnetHash) {
                 case .full:
-                    if debridManager.selectDebridResult(result: result) {
+                    if debridManager.selectDebridResult(magnetHash: result.magnetHash) {
                         debridManager.currentDebridTask = Task {
-                            await debridManager.fetchDebridDownload(searchResult: result)
+                            await debridManager.fetchDebridDownload(magnetLink: result.magnetLink)
 
                             if !debridManager.downloadUrl.isEmpty {
-                                navModel.addToHistory(name: result.title, source: result.source, url: debridManager.downloadUrl)
+                                PersistenceController.shared.createHistory(
+                                    HistoryEntryJson(
+                                        name: result.title,
+                                        url: debridManager.downloadUrl,
+                                        source: result.source
+                                    )
+                                )
+                                
                                 navModel.runDebridAction(urlString: debridManager.downloadUrl)
 
                                 if navModel.currentChoiceSheet != .magnet {
@@ -42,11 +50,18 @@ struct SearchResultButtonView: View {
                         }
                     }
                 case .partial:
-                    if debridManager.selectDebridResult(result: result) {
+                    if debridManager.selectDebridResult(magnetHash: result.magnetHash) {
                         navModel.currentChoiceSheet = .batch
                     }
                 case .none:
-                    navModel.addToHistory(name: result.title, source: result.source, url: result.magnetLink)
+                    PersistenceController.shared.createHistory(
+                        HistoryEntryJson(
+                            name: result.title,
+                            url: result.magnetLink,
+                            source: result.source
+                        )
+                    )
+
                     navModel.runMagnetAction(magnetString: result.magnetLink)
                 }
             }

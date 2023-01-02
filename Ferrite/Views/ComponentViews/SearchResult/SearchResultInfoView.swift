@@ -30,17 +30,7 @@ struct SearchResultInfoView: View {
                 Text(size)
             }
 
-            if debridManager.selectedDebridType == .realDebrid {
-                DebridLabelView(result: result, debridAbbreviation: "RD")
-            }
-
-            if debridManager.selectedDebridType == .allDebrid {
-                DebridLabelView(result: result, debridAbbreviation: "AD")
-            }
-
-            if debridManager.selectedDebridType == .premiumize {
-                DebridLabelView(result: result, debridAbbreviation: "PM")
-            }
+            DebridLabelView(magnetHash: result.magnetHash)
         }
         .font(.caption)
     }

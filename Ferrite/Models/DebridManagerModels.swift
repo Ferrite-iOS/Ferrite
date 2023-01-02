@@ -36,6 +36,6 @@ public enum DebridType: Int, Codable, Hashable, CaseIterable {
 
 // Wrapper struct for magnet links to contain both the link and hash for easy access
 public struct Magnet: Codable, Hashable, Sendable {
-    let link: String
+    let link: String?
     let hash: String
 }

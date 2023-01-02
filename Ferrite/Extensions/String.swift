@@ -4,12 +4,21 @@
 //
 //  Created by Brian Dashore on 8/31/22.
 //
-//  From https://stackoverflow.com/a/59307884
 //
 
 import Foundation
 
 extension String {
+    // From https://www.hackingwithswift.com/example-code/strings/how-to-capitalize-the-first-letter-of-a-string
+    func capitalizingFirstLetter() -> String {
+        return prefix(1).capitalized + dropFirst()
+    }
+
+    mutating func capitalizeFirstLetter() {
+        self = self.capitalizingFirstLetter()
+    }
+
+    //  From https://stackoverflow.com/a/59307884
     private func compare(toVersion targetVersion: String) -> ComparisonResult {
         let versionDelimiter = "."
         var result: ComparisonResult = .orderedSame
