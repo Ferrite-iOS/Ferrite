@@ -38,14 +38,7 @@ struct RealDebridCloudView: View {
                     for index in offsets {
                         if let downloadResponse = debridManager.realDebridCloudDownloads[safe: index] {
                             Task {
-                                do {
-                                    try await debridManager.realDebrid.deleteDownload(debridID: downloadResponse.id)
-
-                                    // Bypass TTL to get current RD values
-                                    await debridManager.fetchRdCloud(bypassTTL: true)
-                                } catch {
-                                    print(error)
-                                }
+                                await debridManager.deleteRdDownload(downloadID: downloadResponse.id)
                             }
                         }
                     }
@@ -111,14 +104,7 @@ struct RealDebridCloudView: View {
                     for index in offsets {
                         if let torrentResponse = debridManager.realDebridCloudTorrents[safe: index] {
                             Task {
-                                do {
-                                    try await debridManager.realDebrid.deleteTorrent(debridID: torrentResponse.id)
-
-                                    // Bypass TTL to get current RD values
-                                    await debridManager.fetchRdCloud(bypassTTL: true)
-                                } catch {
-                                    print(error)
-                                }
+                                await debridManager.deleteRdTorrent(torrentID: torrentResponse.id)
                             }
                         }
                     }

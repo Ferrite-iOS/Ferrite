@@ -100,6 +100,7 @@
 		0CA3FB2028B91D9500FA10A8 /* IndeterminateProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA3FB1F28B91D9500FA10A8 /* IndeterminateProgressView.swift */; };
 		0CA429F828C5098D000D0610 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA429F728C5098D000D0610 /* DateFormatter.swift */; };
 		0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 0CAF1C7A286F5C8600296F86 /* SwiftSoup */; };
+		0CAF9319296399190050812A /* PremiumizeCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAF9318296399190050812A /* PremiumizeCloudView.swift */; };
 		0CB6516328C5A57300DCA721 /* ConditionalId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516228C5A57300DCA721 /* ConditionalId.swift */; };
 		0CB6516528C5A5D700DCA721 /* InlinedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516428C5A5D700DCA721 /* InlinedList.swift */; };
 		0CB6516828C5A5EC00DCA721 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 0CB6516728C5A5EC00DCA721 /* Introspect */; };
@@ -205,6 +206,7 @@
 		0CA3FB1F28B91D9500FA10A8 /* IndeterminateProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndeterminateProgressView.swift; sourceTree = "<group>"; };
 		0CA429F728C5098D000D0610 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		0CAF1C68286F5C0E00296F86 /* Ferrite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ferrite.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CAF9318296399190050812A /* PremiumizeCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumizeCloudView.swift; sourceTree = "<group>"; };
 		0CB6516228C5A57300DCA721 /* ConditionalId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalId.swift; sourceTree = "<group>"; };
 		0CB6516428C5A5D700DCA721 /* InlinedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlinedList.swift; sourceTree = "<group>"; };
 		0CB6516928C5B4A600DCA721 /* InlineHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineHeader.swift; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 			isa = PBXGroup;
 			children = (
 				0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */,
+				0CAF9318296399190050812A /* PremiumizeCloudView.swift */,
 			);
 			path = Cloud;
 			sourceTree = "<group>";
@@ -679,6 +682,7 @@
 				0CD72E17293D9928001A7EA4 /* Array.swift in Sources */,
 				0C44E2A828D4DDDC007711AE /* Application.swift in Sources */,
 				0C7ED14128D61BBA009E29AD /* BackupModels.swift in Sources */,
+				0CAF9319296399190050812A /* PremiumizeCloudView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0C95D8D828A55B03005E22B3 /* DefaultActionsPickerViews.swift in Sources */,
 				0C44E2AF28D52E8A007711AE /* BackupsView.swift in Sources */,

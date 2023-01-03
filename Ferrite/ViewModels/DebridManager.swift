@@ -73,6 +73,10 @@ public class DebridManager: ObservableObject {
     var selectedPremiumizeItem: Premiumize.IA?
     var selectedPremiumizeFile: Premiumize.IAFile?
 
+    // Premiumize cloud variables
+    @Published var premiumizeCloudItems: [Premiumize.UserItem] = []
+    var premiumizeCloudTTL: Double = 0.0
+
     init() {
         if let rawDebridList = UserDefaults.standard.string(forKey: "Debrid.EnabledArray"),
            let serializedDebridList = Set<DebridType>(rawValue: rawDebridList)
@@ -481,7 +485,7 @@ public class DebridManager: ObservableObject {
         case .allDebrid:
             await fetchAdDownload(magnetLink: magnetLink)
         case .premiumize:
-            fetchPmDownload()
+            await fetchPmDownload()
         case .none:
             break
         }
@@ -544,7 +548,7 @@ public class DebridManager: ObservableObject {
                     toastModel?.updateToastDescription("RealDebrid download error: \(error)")
                 }
 
-                await deleteRdTorrent()
+                await deleteRdTorrent(torrentID: selectedRealDebridID)
             }
 
             showLoadingProgress = false
@@ -564,16 +568,36 @@ public class DebridManager: ObservableObject {
                 realDebridCloudTTL = Date().timeIntervalSince1970 + 300
             } catch {
                 toastModel?.updateToastDescription("RealDebrid cloud fetch error: \(error)")
+                print("RealDebrid cloud fetch error: \(error)")
             }
         }
     }
 
-    func deleteRdTorrent() async {
-        if let realDebridId = selectedRealDebridID {
-            try? await realDebrid.deleteTorrent(debridID: realDebridId)
-        }
+    func deleteRdDownload(downloadID: String) async {
+        do {
+            try await realDebrid.deleteDownload(debridID: downloadID)
 
-        selectedRealDebridID = nil
+            // Bypass TTL to get current RD values
+            await fetchRdCloud(bypassTTL: true)
+        } catch {
+            toastModel?.updateToastDescription("RealDebrid download delete error: \(error)")
+            print("RealDebrid download delete error: \(error)")
+        }
+    }
+
+    func deleteRdTorrent(torrentID: String? = nil) async {
+        do {
+            if let torrentID = torrentID {
+                try await realDebrid.deleteTorrent(debridID: torrentID)
+            } else if let selectedTorrentID = selectedRealDebridID {
+                try await realDebrid.deleteTorrent(debridID: selectedTorrentID)
+            } else {
+                throw RealDebrid.RDError.FailedRequest(description: "No torrent ID was provided")
+            }
+        } catch {
+            toastModel?.updateToastDescription("RealDebrid torrent delete error: \(error)")
+            print("RealDebrid torrent delete error: \(error)")
+        }
     }
 
     func checkRdUserDownloads(userTorrentLink: String) async throws {
@@ -615,21 +639,53 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    func fetchPmDownload() {
-        guard let premiumizeItem = selectedPremiumizeItem else {
-            toastModel?.updateToastDescription("Could not run your action because the result is invalid")
-            print("Premiumize download error: Invalid selected Premiumize item")
-
-            return
+    func fetchPmDownload(cloudItemId: String? = nil) async {
+        do {
+            if let cloudItemId = cloudItemId {
+                downloadUrl = try await premiumize.itemDetails(itemID: cloudItemId).link
+            } else if let premiumizeFile = selectedPremiumizeFile {
+                downloadUrl = premiumizeFile.streamUrlString
+            } else if
+                let premiumizeItem = selectedPremiumizeItem,
+                let firstFile = premiumizeItem.files[safe: 0]
+            {
+                downloadUrl = firstFile.streamUrlString
+            } else {
+                throw Premiumize.PMError.FailedRequest(description: "There were no items or files found!")
+            }
+        } catch {
+            toastModel?.updateToastDescription("Premiumize download error: \(error)")
+            print("Premiumize download error: \(error)")
         }
+    }
 
-        if let premiumizeFile = selectedPremiumizeFile {
-            downloadUrl = premiumizeFile.streamUrlString
-        } else if let firstFile = premiumizeItem.files[safe: 0] {
-            downloadUrl = firstFile.streamUrlString
-        } else {
-            toastModel?.updateToastDescription("Could not run your action because the result could not be found")
-            print("Premiumize download error: Could not find the selected Premiumize file")
+    // Refreshes items and fetches from a PM user account
+    public func fetchPmCloud(bypassTTL: Bool = false) async {
+        if bypassTTL || Date().timeIntervalSince1970 > premiumizeCloudTTL {
+            do {
+                let userItems = try await premiumize.userItems()
+                withAnimation {
+                    premiumizeCloudItems = userItems
+                }
+
+                // 5 minutes
+                premiumizeCloudTTL = Date().timeIntervalSince1970 + 300
+            } catch {
+                toastModel?.updateToastDescription("Premiumize cloud fetch error: \(error)")
+                print("Premiumize cloud fetch error: \(error)")
+            }
+        }
+    }
+
+    public func deletePmItem(id: String) async {
+        do {
+            try await premiumize.deleteItem(itemID: id)
+
+            // Bypass TTL to get current RD values
+            await fetchPmCloud(bypassTTL: true)
+        } catch {
+            toastModel?.updateToastDescription("Premiumize cloud delete error: \(error)")
+            print("Premiumize cloud delete error: \(error)")
         }
     }
 }

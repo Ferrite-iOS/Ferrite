@@ -72,7 +72,7 @@ struct LibraryView: View {
                         EmptyInstructionView(title: "No History", message: "Start watching to build history")
                     }
                 case .debridCloud:
-                    if debridManager.selectedDebridType != .realDebrid {
+                    if debridManager.selectedDebridType == nil || debridManager.selectedDebridType == .allDebrid {
                         EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
                     }
                 }

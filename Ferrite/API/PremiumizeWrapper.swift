@@ -71,7 +71,7 @@ public class Premiumize {
             return data
         } else if response.statusCode == 401 {
             deleteTokens()
-            throw PMError.FailedRequest(description: "The request \(requestName) failed because you were unauthorized. Please relogin to AllDebrid in Settings.")
+            throw PMError.FailedRequest(description: "The request \(requestName) failed because you were unauthorized. Please relogin to Premiumize in Settings.")
         } else {
             throw PMError.FailedRequest(description: "The request \(requestName) failed with status code \(response.statusCode).")
         }
@@ -176,5 +176,59 @@ public class Premiumize {
         } else {
             throw PMError.EmptyData
         }
+    }
+
+    func createTransfer(magnetLink: String) async throws {
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/transfer/create")!)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        var bodyComponents = URLComponents()
+        bodyComponents.queryItems = [URLQueryItem(name: "src", value: magnetLink)]
+
+        request.httpBody = bodyComponents.query?.data(using: .utf8)
+
+        try await performRequest(request: &request, requestName: #function)
+    }
+
+    func userItems() async throws -> [UserItem] {
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/item/listall")!)
+
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode(AllItemsResponse.self, from: data)
+
+        if rawResponse.files.isEmpty {
+            throw PMError.EmptyData
+        }
+
+        return rawResponse.files
+    }
+
+    func itemDetails(itemID: String) async throws -> ItemDetailsResponse {
+        var urlComponents = URLComponents(string: "\(baseApiUrl)/item/details")!
+        urlComponents.queryItems = [URLQueryItem(name: "id", value: itemID)]
+        guard let url = urlComponents.url else {
+            throw PMError.InvalidUrl
+        }
+
+        var request = URLRequest(url: url)
+
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode(ItemDetailsResponse.self, from: data)
+
+        return rawResponse
+    }
+
+    func deleteItem(itemID: String) async throws {
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/item/delete")!)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        var bodyComponents = URLComponents()
+        bodyComponents.queryItems = [URLQueryItem(name: "id", value: itemID)]
+
+        request.httpBody = bodyComponents.query?.data(using: .utf8)
+
+        try await performRequest(request: &request, requestName: #function)
     }
 }

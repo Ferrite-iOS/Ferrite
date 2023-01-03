@@ -39,7 +39,7 @@ public extension Premiumize {
         let filesize: Int
     }
 
-    // MARK: - Content
+    // MARK: Content
 
     struct DDLData: Codable {
         let path: String
@@ -64,5 +64,39 @@ public extension Premiumize {
     struct IAFile: Codable, Hashable {
         let name: String
         let streamUrlString: String
+    }
+
+    // MARK: - AllItemsResponse (listall endpoint)
+    struct AllItemsResponse: Codable {
+        let status: String
+        let files: [UserItem]
+    }
+
+    // MARK: User Items
+    // Abridged for required parameters
+    struct UserItem: Codable {
+        let id: String
+        let name: String
+        let mimeType: String
+
+        enum CodingKeys: String, CodingKey {
+            case id, name
+            case mimeType = "mime_type"
+        }
+    }
+
+    // MARK: - ItemDetailsResponse
+
+    // Abridged for required parameters
+    struct ItemDetailsResponse: Codable {
+        let id: String
+        let name: String
+        let link: String
+        let mimeType: String
+
+        enum CodingKeys: String, CodingKey {
+            case id, name, link
+            case mimeType = "mime_type"
+        }
     }
 }

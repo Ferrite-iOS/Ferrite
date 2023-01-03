@@ -6,21 +6,28 @@
 //
 
 import SwiftUI
+import SwiftUIX
 
 struct DebridCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
 
     var body: some View {
-        List {
-            switch debridManager.selectedDebridType {
-            case .realDebrid:
-                RealDebridCloudView()
-            case .allDebrid, .premiumize, .none:
-                EmptyView()
+        NavView {
+            VStack {
+                List {
+                    switch debridManager.selectedDebridType {
+                    case .realDebrid:
+                        RealDebridCloudView()
+                    case .premiumize:
+                        PremiumizeCloudView()
+                    case .allDebrid, .none:
+                        EmptyView()
+                    }
+                }
+                .inlinedList()
+                .listStyle(.grouped)
             }
         }
-        .inlinedList()
-        .listStyle(.insetGrouped)
     }
 }
 
