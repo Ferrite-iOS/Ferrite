@@ -653,6 +653,11 @@ public class DebridManager: ObservableObject {
             } else {
                 throw Premiumize.PMError.FailedRequest(description: "There were no items or files found!")
             }
+
+            // Add a PM transfer if the item exists
+            if let premiumizeItem = selectedPremiumizeItem {
+                try await premiumize.createTransfer(magnet: premiumizeItem.magnet)
+            }
         } catch {
             toastModel?.updateToastDescription("Premiumize download error: \(error)")
             print("Premiumize download error: \(error)")
