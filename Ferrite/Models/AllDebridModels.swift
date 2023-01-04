@@ -145,7 +145,7 @@ public extension AllDebrid {
     // MARK: - InstantAvailablity client side structures
 
     struct IA: Codable, Hashable {
-        let hash: String
+        let magnet: Magnet
         let expiryTimeStamp: Double
         var files: [IAFile]
     }

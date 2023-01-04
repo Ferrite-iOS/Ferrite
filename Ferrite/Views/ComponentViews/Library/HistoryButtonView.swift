@@ -30,7 +30,7 @@ struct HistoryButtonView: View {
                         }
                     }
                 } else {
-                    navModel.runMagnetAction(magnetString: url)
+                    navModel.runMagnetAction(magnet: Magnet(hash: nil, link: url))
                 }
             } else {
                 toastModel.updateToastDescription("URL invalid. Cannot load this history entry. Please delete it.")

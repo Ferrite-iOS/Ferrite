@@ -11,7 +11,7 @@ struct DebridLabelView: View {
     @EnvironmentObject var debridManager: DebridManager
 
     @State var cloudLinks: [String] = []
-    var magnetHash: String?
+    var magnet: Magnet?
 
     var body: some View {
         if let selectedDebridType = debridManager.selectedDebridType {
@@ -20,8 +20,8 @@ struct DebridLabelView: View {
                 .padding(2)
                 .background {
                     Group {
-                        if cloudLinks.isEmpty {
-                            switch debridManager.matchMagnetHash(magnetHash) {
+                        if let magnet, cloudLinks.isEmpty {
+                            switch debridManager.matchMagnetHash(magnet) {
                             case .full:
                                 Color.green
                             case .partial:

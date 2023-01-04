@@ -74,7 +74,7 @@ struct MagnetChoiceView: View {
                 if !navModel.resultFromCloud {
                     Section(header: "Magnet options") {
                         ListRowButtonView("Copy magnet", systemImage: "doc.on.doc.fill") {
-                            UIPasteboard.general.string = navModel.selectedMagnetLink
+                            UIPasteboard.general.string = navModel.selectedMagnet?.link
                             showMagnetCopyAlert.toggle()
                         }
                         .backport.alert(
@@ -85,7 +85,7 @@ struct MagnetChoiceView: View {
                         )
 
                         ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
-                            if let magnetLink = navModel.selectedMagnetLink,
+                            if let magnetLink = navModel.selectedMagnet?.link,
                                let url = URL(string: magnetLink)
                             {
                                 navModel.activityItems = [url]
@@ -94,7 +94,7 @@ struct MagnetChoiceView: View {
                         }
 
                         ListRowButtonView("Open in WebTor", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runMagnetAction(magnetString: navModel.selectedMagnetLink, .webtor)
+                            navModel.runMagnetAction(magnet: navModel.selectedMagnet, .webtor)
                         }
                     }
                 }

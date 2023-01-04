@@ -353,7 +353,7 @@ class ScrapingViewModel: ObservableObject {
                             source: source,
                             existingSearchResult: searchResult
                         ),
-                        let magnetLink = newSearchResult.magnetLink,
+                        let magnetLink = newSearchResult.magnet.link,
                         magnetLink.starts(with: "magnet:"),
                         !tempResults.contains(newSearchResult)
                     {
@@ -362,7 +362,7 @@ class ScrapingViewModel: ObservableObject {
                 }
             } else if
                 let searchResult,
-                let magnetLink = searchResult.magnetLink,
+                let magnetLink = searchResult.magnet.link,
                 magnetLink.starts(with: "magnet:"),
                 !tempResults.contains(searchResult)
             {
@@ -374,18 +374,16 @@ class ScrapingViewModel: ObservableObject {
     }
 
     public func parseJsonResult(_ result: JSON, jsonParser: SourceJsonParser, source: Source, existingSearchResult: SearchResult? = nil) -> SearchResult? {
-        var magnetHash: String? = existingSearchResult?.magnetHash
-
+        var magnetHash: String? = existingSearchResult?.magnet.hash
         if let magnetHashParser = jsonParser.magnetHash {
             let rawHash = result[magnetHashParser.query.components(separatedBy: ".")].rawValue
 
             if !(rawHash is NSNull) {
-                magnetHash = fetchMagnetHash(existingHash: String(describing: rawHash))
+                magnetHash = String(describing: rawHash)
             }
         }
 
         var title: String? = existingSearchResult?.title
-
         if let titleParser = jsonParser.title {
             if let existingTitle = existingSearchResult?.title,
                let discriminatorQuery = titleParser.discriminator
@@ -401,21 +399,13 @@ class ScrapingViewModel: ObservableObject {
             }
         }
 
-        var link: String? = existingSearchResult?.magnetLink
-
-        if let magnetLinkParser = jsonParser.magnetLink, existingSearchResult?.magnetLink == nil {
+        var link: String? = existingSearchResult?.magnet.link
+        if let magnetLinkParser = jsonParser.magnetLink, link == nil {
             let rawLink = result[magnetLinkParser.query.components(separatedBy: ".")].rawValue
             link = rawLink is NSNull ? nil : String(describing: rawLink)
-        } else if let magnetHash {
-            link = generateMagnetLink(magnetHash: magnetHash, title: title, trackers: source.trackers)
-        }
-
-        if magnetHash == nil, let href = link {
-            magnetHash = fetchMagnetHash(magnetLink: href)
         }
 
         var size: String? = existingSearchResult?.size
-
         if let sizeParser = jsonParser.size, existingSearchResult?.size == nil {
             let rawSize = result[sizeParser.query.components(separatedBy: ".")].rawValue
             size = rawSize is NSNull ? nil : String(describing: rawSize)
@@ -444,8 +434,7 @@ class ScrapingViewModel: ObservableObject {
             title: title,
             source: source.name,
             size: size,
-            magnetLink: link,
-            magnetHash: magnetHash,
+            magnet: Magnet(hash: magnetHash, link: link, title: title, trackers: source.trackers),
             seeders: seeders,
             leechers: leechers
         )
@@ -476,15 +465,13 @@ class ScrapingViewModel: ObservableObject {
             // Parse magnet link or translate hash
             var magnetHash: String?
             if let magnetHashParser = rssParser.magnetHash {
-                let tempHash = try? runRssComplexQuery(
+                magnetHash = try? runRssComplexQuery(
                     item: item,
                     query: magnetHashParser.query,
                     attribute: magnetHashParser.attribute,
                     discriminator: magnetHashParser.discriminator,
                     regexString: magnetHashParser.regex
                 )
-
-                magnetHash = fetchMagnetHash(existingHash: tempHash)
             }
 
             var title: String?
@@ -507,18 +494,12 @@ class ScrapingViewModel: ObservableObject {
                     discriminator: magnetLinkParser.discriminator,
                     regexString: magnetLinkParser.regex
                 )
-            } else if let magnetHash {
-                link = generateMagnetLink(magnetHash: magnetHash, title: title, trackers: source.trackers)
             } else {
                 continue
             }
 
             guard let href = link, href.starts(with: "magnet:") else {
                 continue
-            }
-
-            if magnetHash == nil {
-                magnetHash = fetchMagnetHash(magnetLink: href)
             }
 
             var size: String?
@@ -564,8 +545,7 @@ class ScrapingViewModel: ObservableObject {
                 title: title ?? "No title",
                 source: source.name,
                 size: size ?? "",
-                magnetLink: href,
-                magnetHash: magnetHash,
+                magnet: Magnet(hash: magnetHash, link: href, title: title, trackers: source.trackers),
                 seeders: seeders,
                 leechers: leechers
             )
@@ -673,9 +653,6 @@ class ScrapingViewModel: ObservableObject {
                     continue
                 }
 
-                // Fetches the magnet hash
-                let magnetHash = fetchMagnetHash(magnetLink: href)
-
                 // Fetches the episode/movie title
                 var title: String?
                 if let titleParser = htmlParser.title {
@@ -743,8 +720,7 @@ class ScrapingViewModel: ObservableObject {
                     title: title ?? "No title",
                     source: source.name,
                     size: size ?? "",
-                    magnetLink: href,
-                    magnetHash: magnetHash,
+                    magnet: Magnet(hash: nil, link: href),
                     seeders: seeders,
                     leechers: leechers
                 )
@@ -786,31 +762,6 @@ class ScrapingViewModel: ObservableObject {
         }
     }
 
-    // Fetches and possibly converts the magnet hash value to sha1
-    public func fetchMagnetHash(magnetLink: String? = nil, existingHash: String? = nil) -> String? {
-        var magnetHash: String
-
-        if let existingHash {
-            magnetHash = existingHash
-        } else if
-            let magnetLink,
-            let firstSplit = magnetLink.split(separator: ":")[safe: 3],
-            let tempHash = firstSplit.split(separator: "&")[safe: 0]
-        {
-            magnetHash = String(tempHash)
-        } else {
-            return nil
-        }
-
-        // Is this a Base32hex hash?
-        if magnetHash.count == 32 {
-            let decryptedMagnetHash = base32DecodeToData(String(magnetHash))
-            return decryptedMagnetHash?.hexEncodedString()
-        } else {
-            return String(magnetHash).lowercased()
-        }
-    }
-
     func parseSizeString(sizeString: String) -> String? {
         // Test if the string can be a full integer
         guard let size = Int(sizeString) else {
@@ -831,28 +782,6 @@ class ScrapingViewModel: ObservableObject {
         } else {
             return nil
         }
-    }
-
-    public func generateMagnetLink(magnetHash: String, title: String?, trackers: [String]?) -> String {
-        var magnetLinkArray = ["magnet:?xt=urn:btih:"]
-
-        magnetLinkArray.append(magnetHash)
-
-        if let title, let encodedTitle = title.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) {
-            magnetLinkArray.append("&dn=\(encodedTitle)")
-        }
-
-        if let trackers {
-            for trackerUrl in trackers {
-                if URL(string: trackerUrl) != nil,
-                   let encodedUrlString = trackerUrl.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
-                {
-                    magnetLinkArray.append("&tr=\(encodedUrlString)")
-                }
-            }
-        }
-
-        return magnetLinkArray.joined()
     }
 
     func cleanApiCreds(api: SourceApi) async {

@@ -22,15 +22,15 @@ struct SearchResultButtonView: View {
     var body: some View {
         Button {
             if debridManager.currentDebridTask == nil {
-                navModel.selectedSearchResult = result
+                navModel.selectedMagnet = result.magnet
                 navModel.selectedTitle = result.title ?? ""
                 navModel.resultFromCloud = false
 
-                switch debridManager.matchMagnetHash(result.magnetHash) {
+                switch debridManager.matchMagnetHash(result.magnet) {
                 case .full:
-                    if debridManager.selectDebridResult(magnetHash: result.magnetHash) {
+                    if debridManager.selectDebridResult(magnet: result.magnet) {
                         debridManager.currentDebridTask = Task {
-                            await debridManager.fetchDebridDownload(magnetLink: result.magnetLink)
+                            await debridManager.fetchDebridDownload(magnet: result.magnet)
 
                             if !debridManager.downloadUrl.isEmpty {
                                 PersistenceController.shared.createHistory(
@@ -50,19 +50,19 @@ struct SearchResultButtonView: View {
                         }
                     }
                 case .partial:
-                    if debridManager.selectDebridResult(magnetHash: result.magnetHash) {
+                    if debridManager.selectDebridResult(magnet: result.magnet) {
                         navModel.currentChoiceSheet = .batch
                     }
                 case .none:
                     PersistenceController.shared.createHistory(
                         HistoryEntryJson(
                             name: result.title,
-                            url: result.magnetLink,
+                            url: result.magnet.link,
                             source: result.source
                         )
                     )
 
-                    navModel.runMagnetAction(magnetString: result.magnetLink)
+                    navModel.runMagnetAction(magnet: result.magnet)
                 }
             }
         } label: {
@@ -95,8 +95,8 @@ struct SearchResultButtonView: View {
                         let newBookmark = Bookmark(context: backgroundContext)
                         newBookmark.title = result.title
                         newBookmark.source = result.source
-                        newBookmark.magnetHash = result.magnetHash
-                        newBookmark.magnetLink = result.magnetLink
+                        newBookmark.magnetHash = result.magnet.hash
+                        newBookmark.magnetLink = result.magnet.link
                         newBookmark.seeders = result.seeders
                         newBookmark.leechers = result.leechers
 
@@ -139,8 +139,8 @@ struct SearchResultButtonView: View {
                     format: "title == %@ AND source == %@ AND magnetLink == %@ AND magnetHash = %@",
                     result.title ?? "",
                     result.source,
-                    result.magnetLink ?? "",
-                    result.magnetHash ?? ""
+                    result.magnet.link ?? "",
+                    result.magnet.hash ?? ""
                 )
                 bookmarkRequest.fetchLimit = 1
 

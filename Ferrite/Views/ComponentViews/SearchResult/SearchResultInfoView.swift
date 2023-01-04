@@ -30,7 +30,7 @@ struct SearchResultInfoView: View {
                 Text(size)
             }
 
-            DebridLabelView(magnetHash: result.magnetHash)
+            DebridLabelView(magnet: result.magnet)
         }
         .font(.caption)
     }

@@ -8,6 +8,9 @@
 import Foundation
 
 public class BackupManager: ObservableObject {
+    // Constant variable for backup versions
+    let latestBackupVersion: Int = 1
+
     var toastModel: ToastViewModel?
 
     @Published var showRestoreAlert = false
@@ -18,7 +21,7 @@ public class BackupManager: ObservableObject {
     @Published var selectedBackupUrl: URL?
 
     func createBackup() {
-        var backup = Backup()
+        var backup = Backup(version: latestBackupVersion)
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         let bookmarkRequest = Bookmark.fetchRequest()

@@ -32,8 +32,7 @@ class NavigationViewModel: ObservableObject {
     @Published var isEditingSearch: Bool = false
     @Published var isSearching: Bool = false
 
-    @Published var selectedSearchResult: SearchResult?
-    @Published var selectedMagnetLink: String?
+    @Published var selectedMagnet: Magnet?
     @Published var selectedHistoryInfo: HistoryEntryJson?
     @Published var resultFromCloud: Bool = false
 
@@ -96,15 +95,17 @@ class NavigationViewModel: ObservableObject {
         }
     }
 
-    public func runMagnetAction(magnetString: String?, _ action: DefaultMagnetActionType? = nil) {
-        let selectedAction = action ?? defaultMagnetAction
-
-        guard let magnetLink = magnetString else {
+    public func runMagnetAction(magnet: Magnet?, _ action: DefaultMagnetActionType? = nil) {
+        // Fall back to selected magnet if the provided magnet is nil
+        let magnet = magnet ?? selectedMagnet
+        guard let magnetLink = magnet?.link else {
             toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
             print("Magnet action error: The magnet link is invalid.")
 
             return
         }
+
+        let selectedAction = action ?? defaultMagnetAction
 
         switch selectedAction {
         case .none:
@@ -126,24 +127,4 @@ class NavigationViewModel: ObservableObject {
             }
         }
     }
-
-    /*
-    public func addToHistory(name: String?, source: String?, url: String?, subName: String? = nil) {
-        let backgroundContext = PersistenceController.shared.backgroundContext
-
-        // The timeStamp and date are nil because the create function will make them automatically
-        PersistenceController.shared.createHistory(
-            entryJson: HistoryEntryJson(
-                name: name ?? "",
-                subName: subName,
-                url: url ?? "",
-                timeStamp: nil,
-                source: source
-            ),
-            date: nil
-        )
-
-        PersistenceController.shared.save(backgroundContext)
-    }
-     */
 }

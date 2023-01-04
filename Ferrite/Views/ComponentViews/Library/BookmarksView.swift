@@ -56,7 +56,7 @@ struct BookmarksView: View {
                 viewTask = Task {
                     let magnets = bookmarks.compactMap {
                         if let magnetHash = $0.magnetHash {
-                            return Magnet(link: $0.magnetLink, hash: magnetHash)
+                            return Magnet(hash: magnetHash, link: $0.magnetLink)
                         } else {
                             return nil
                         }

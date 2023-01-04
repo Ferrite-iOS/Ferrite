@@ -148,21 +148,21 @@ public class DebridManager: ObservableObject {
             // If a hash isn't found in the IA, update it
             // If the hash is expired, remove it and update it
             let sendMagnets = resultMagnets.filter { magnet in
-                if let IAIndex = realDebridIAValues.firstIndex(where: { $0.hash == magnet.hash }), enabledDebrids.contains(.realDebrid) {
+                if let IAIndex = realDebridIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.realDebrid) {
                     if now.timeIntervalSince1970 > realDebridIAValues[IAIndex].expiryTimeStamp {
                         realDebridIAValues.remove(at: IAIndex)
                         return true
                     } else {
                         return false
                     }
-                } else if let IAIndex = allDebridIAValues.firstIndex(where: { $0.hash == magnet.hash }), enabledDebrids.contains(.allDebrid) {
+                } else if let IAIndex = allDebridIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.allDebrid) {
                     if now.timeIntervalSince1970 > allDebridIAValues[IAIndex].expiryTimeStamp {
                         allDebridIAValues.remove(at: IAIndex)
                         return true
                     } else {
                         return false
                     }
-                } else if let IAIndex = premiumizeIAValues.firstIndex(where: { $0.hash == magnet.hash }), enabledDebrids.contains(.premiumize) {
+                } else if let IAIndex = premiumizeIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.premiumize) {
                     if now.timeIntervalSince1970 > premiumizeIAValues[IAIndex].expiryTimeStamp {
                         premiumizeIAValues.remove(at: IAIndex)
                         return true
@@ -189,7 +189,7 @@ public class DebridManager: ObservableObject {
                     // Only strip magnets that don't have an associated link for PM
                     let strippedResultMagnets: [Magnet] = resultMagnets.compactMap {
                         if let magnetLink = $0.link {
-                            return Magnet(link: magnetLink, hash: $0.hash)
+                            return Magnet(hash: $0.hash, link: magnetLink)
                         } else {
                             return nil
                         }
@@ -217,14 +217,14 @@ public class DebridManager: ObservableObject {
     }
 
     // Common function to match a magnet hash with a provided debrid service
-    public func matchMagnetHash(_ magnetHash: String?) -> IAStatus {
-        guard let magnetHash else {
+    public func matchMagnetHash(_ magnet: Magnet) -> IAStatus {
+        guard let magnetHash = magnet.hash else {
             return .none
         }
 
         switch selectedDebridType {
         case .realDebrid:
-            guard let realDebridMatch = realDebridIAValues.first(where: { magnetHash == $0.hash }) else {
+            guard let realDebridMatch = realDebridIAValues.first(where: { magnetHash == $0.magnet.hash }) else {
                 return .none
             }
 
@@ -234,7 +234,7 @@ public class DebridManager: ObservableObject {
                 return .partial
             }
         case .allDebrid:
-            guard let allDebridMatch = allDebridIAValues.first(where: { magnetHash == $0.hash }) else {
+            guard let allDebridMatch = allDebridIAValues.first(where: { magnetHash == $0.magnet.hash }) else {
                 return .none
             }
 
@@ -244,7 +244,7 @@ public class DebridManager: ObservableObject {
                 return .full
             }
         case .premiumize:
-            guard let premiumizeMatch = premiumizeIAValues.first(where: { magnetHash == $0.hash }) else {
+            guard let premiumizeMatch = premiumizeIAValues.first(where: { magnetHash == $0.magnet.hash }) else {
                 return .none
             }
 
@@ -258,15 +258,15 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    public func selectDebridResult(magnetHash: String?) -> Bool {
-        guard let magnetHash = magnetHash else {
+    public func selectDebridResult(magnet: Magnet) -> Bool {
+        guard let magnetHash = magnet.hash else {
             toastModel?.updateToastDescription("Could not find the torrent magnet hash")
             return false
         }
 
         switch selectedDebridType {
         case .realDebrid:
-            if let realDebridItem = realDebridIAValues.first(where: { magnetHash == $0.hash }) {
+            if let realDebridItem = realDebridIAValues.first(where: { magnetHash == $0.magnet.hash }) {
                 selectedRealDebridItem = realDebridItem
                 return true
             } else {
@@ -274,7 +274,7 @@ public class DebridManager: ObservableObject {
                 return false
             }
         case .allDebrid:
-            if let allDebridItem = allDebridIAValues.first(where: { magnetHash == $0.hash }) {
+            if let allDebridItem = allDebridIAValues.first(where: { magnetHash == $0.magnet.hash }) {
                 selectedAllDebridItem = allDebridItem
                 return true
             } else {
@@ -282,7 +282,7 @@ public class DebridManager: ObservableObject {
                 return false
             }
         case .premiumize:
-            if let premiumizeItem = premiumizeIAValues.first(where: { magnetHash == $0.hash }) {
+            if let premiumizeItem = premiumizeIAValues.first(where: { magnetHash == $0.magnet.hash }) {
                 selectedPremiumizeItem = premiumizeItem
                 return true
             } else {
@@ -471,7 +471,7 @@ public class DebridManager: ObservableObject {
     // MARK: - Debrid fetch UI linked functions
 
     // Common function to delegate what debrid service to fetch from
-    public func fetchDebridDownload(magnetLink: String?) async {
+    public func fetchDebridDownload(magnet: Magnet?) async {
         defer {
             currentDebridTask = nil
             showLoadingProgress = false
@@ -481,9 +481,9 @@ public class DebridManager: ObservableObject {
 
         switch selectedDebridType {
         case .realDebrid:
-            await fetchRdDownload(magnetLink: magnetLink)
+            await fetchRdDownload(magnet: magnet)
         case .allDebrid:
-            await fetchAdDownload(magnetLink: magnetLink)
+            await fetchAdDownload(magnet: magnet)
         case .premiumize:
             await fetchPmDownload()
         case .none:
@@ -491,22 +491,22 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    func fetchRdDownload(magnetLink: String?) async {
+    func fetchRdDownload(magnet: Magnet?) async {
         do {
             // Bypass the TTL since a download needs to be queried
             await fetchRdCloud(bypassTTL: true)
 
             // If there's an existing torrent, check for a download link. Otherwise check for an unrestrict link
-            let existingTorrents = realDebridCloudTorrents.filter { $0.hash == selectedRealDebridItem?.hash && $0.status == "downloaded" }
+            let existingTorrents = realDebridCloudTorrents.filter { $0.hash == selectedRealDebridItem?.magnet.hash && $0.status == "downloaded" }
 
             // If the links match from a user's downloads, no need to re-run a download
             if let existingTorrent = existingTorrents[safe: 0],
                let torrentLink = existingTorrent.links[safe: selectedRealDebridFile?.batchFileIndex ?? 0]
             {
                 try await checkRdUserDownloads(userTorrentLink: torrentLink)
-            } else if let magnetLink = magnetLink {
+            } else if let magnet {
                 // Add a magnet after all the cache checks fail
-                selectedRealDebridID = try await realDebrid.addMagnet(magnetLink: magnetLink)
+                selectedRealDebridID = try await realDebrid.addMagnet(magnet: magnet)
 
                 var fileIds: [Int] = []
                 if let iaFile = selectedRealDebridFile {
@@ -611,16 +611,16 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    func fetchAdDownload(magnetLink: String?) async {
-        guard let magnetLink = magnetLink else {
-            toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
-            print("AllDebrid error: Invalid magnet link")
+    func fetchAdDownload(magnet: Magnet?) async {
+        guard let magnet else {
+            toastModel?.updateToastDescription("Could not run your action because the magnet is invalid.")
+            print("AllDebrid error: Invalid magnet")
 
             return
         }
 
         do {
-            let magnetID = try await allDebrid.addMagnet(magnetLink: magnetLink)
+            let magnetID = try await allDebrid.addMagnet(magnet: magnet)
             let lockedLink = try await allDebrid.fetchMagnetStatus(
                 magnetId: magnetID,
                 selectedIndex: selectedAllDebridFile?.id ?? 0

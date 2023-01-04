@@ -91,8 +91,8 @@ struct ContentView: View {
 
                                       // Remove magnets that don't have a hash
                                       let magnets = scrapingModel.searchResults.compactMap {
-                                          if let magnetHash = $0.magnetHash {
-                                              return Magnet(link: $0.magnetLink, hash: magnetHash)
+                                          if let magnetHash = $0.magnet.hash {
+                                              return Magnet(hash: magnetHash, link: $0.magnet.link)
                                           } else {
                                               return nil
                                           }

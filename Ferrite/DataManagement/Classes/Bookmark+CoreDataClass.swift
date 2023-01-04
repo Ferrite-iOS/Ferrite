@@ -16,8 +16,7 @@ public class Bookmark: NSManagedObject {
             title: title,
             source: source,
             size: size,
-            magnetLink: magnetLink,
-            magnetHash: magnetHash,
+            magnet: Magnet(hash: magnetHash, link: magnetLink),
             seeders: seeders,
             leechers: leechers
         )

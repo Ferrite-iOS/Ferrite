@@ -11,8 +11,7 @@ public struct SearchResult: Codable, Hashable, Sendable {
     let title: String?
     let source: String
     let size: String?
-    let magnetLink: String?
-    let magnetHash: String?
+    let magnet: Magnet
     let seeders: String?
     let leechers: String?
 }

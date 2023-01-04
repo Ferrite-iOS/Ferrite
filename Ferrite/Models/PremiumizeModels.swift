@@ -56,7 +56,7 @@ public extension Premiumize {
     // MARK: - InstantAvailability client side structures
 
     struct IA: Codable, Hashable {
-        let hash: String
+        let magnet: Magnet
         let expiryTimeStamp: Double
         let files: [IAFile]
     }

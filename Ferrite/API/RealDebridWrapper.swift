@@ -188,7 +188,7 @@ public class RealDebrid {
     // Currently does not work for batch links
     public func instantAvailability(magnets: [Magnet]) async throws -> [IA] {
         var availableHashes: [RealDebrid.IA] = []
-        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnets.map(\.hash).joined(separator: "/"))")!)
+        var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/instantAvailability/\(magnets.compactMap(\.hash).joined(separator: "/"))")!)
 
         let data = try await performRequest(request: &request, requestName: #function)
 
@@ -241,7 +241,7 @@ public class RealDebrid {
                 // TTL: 5 minutes
                 availableHashes.append(
                     RealDebrid.IA(
-                        hash: hash,
+                        magnet: Magnet(hash: hash, link: nil),
                         expiryTimeStamp: Date().timeIntervalSince1970 + 300,
                         files: files,
                         batches: batches
@@ -250,7 +250,7 @@ public class RealDebrid {
             } else {
                 availableHashes.append(
                     RealDebrid.IA(
-                        hash: hash,
+                        magnet: Magnet(hash: hash, link: nil),
                         expiryTimeStamp: Date().timeIntervalSince1970 + 300
                     )
                 )
@@ -261,7 +261,11 @@ public class RealDebrid {
     }
 
     // Adds a magnet link to the user's RD account
-    public func addMagnet(magnetLink: String) async throws -> String {
+    public func addMagnet(magnet: Magnet) async throws -> String {
+        guard let magnetLink = magnet.link else {
+            throw RDError.FailedRequest(description: "The magnet link is invalid")
+        }
+
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/torrents/addMagnet")!)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")

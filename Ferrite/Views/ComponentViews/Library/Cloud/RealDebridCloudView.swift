@@ -20,12 +20,12 @@ struct RealDebridCloudView: View {
                     Button(downloadResponse.filename) {
                         navModel.resultFromCloud = true
                         navModel.selectedTitle = downloadResponse.filename
-                        debridManager.downloadUrl = downloadResponse.link
+                        debridManager.downloadUrl = downloadResponse.download
 
                         PersistenceController.shared.createHistory(
                             HistoryEntryJson(
                                 name: downloadResponse.filename,
-                                url: downloadResponse.link,
+                                url: downloadResponse.download,
                                 source: DebridType.realDebrid.toString()
                             )
                         )
@@ -73,9 +73,10 @@ struct RealDebridCloudView: View {
                                     }
                                 } else {
                                     debridManager.clearIAValues()
-                                    await debridManager.populateDebridIA([Magnet(link: nil, hash: torrentResponse.hash)])
+                                    let magnet = Magnet(hash: torrentResponse.hash, link: nil)
+                                    await debridManager.populateDebridIA([magnet])
 
-                                    if debridManager.selectDebridResult(magnetHash: torrentResponse.hash) {
+                                    if debridManager.selectDebridResult(magnet: magnet) {
                                         navModel.selectedHistoryInfo = historyInfo
                                         navModel.currentChoiceSheet = .batch
                                     }

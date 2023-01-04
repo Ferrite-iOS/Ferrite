@@ -148,6 +148,10 @@ public class Premiumize {
 
     // Grabs DDL links
     func fetchDDL(magnet: Magnet) async throws -> IA {
+        if magnet.hash == nil {
+            throw PMError.EmptyData
+        }
+
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/transfer/directdl")!)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -169,7 +173,7 @@ public class Premiumize {
             }
 
             return IA(
-                hash: magnet.hash,
+                magnet: magnet,
                 expiryTimeStamp: Date().timeIntervalSince1970 + 300,
                 files: files
             )
@@ -178,7 +182,11 @@ public class Premiumize {
         }
     }
 
-    func createTransfer(magnetLink: String) async throws {
+    func createTransfer(magnet: Magnet) async throws {
+        guard let magnetLink = magnet.link else {
+            throw PMError.FailedRequest(description: "The magnet link is invalid")
+        }
+
         var request = URLRequest(url: URL(string: "\(baseApiUrl)/transfer/create")!)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")

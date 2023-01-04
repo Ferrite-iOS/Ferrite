@@ -125,7 +125,11 @@ public class AllDebrid {
     }
 
     // Adds a magnet link to the user's AD account
-    public func addMagnet(magnetLink: String) async throws -> Int {
+    public func addMagnet(magnet: Magnet) async throws -> Int {
+        guard let magnetLink = magnet.link else {
+            throw ADError.FailedRequest(description: "The magnet link is invalid")
+        }
+
         var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/magnet/upload"))
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -192,7 +196,7 @@ public class AllDebrid {
             }
 
             return IA(
-                hash: magnetResp.hash,
+                magnet: Magnet(hash: magnetResp.hash, link: magnetResp.magnet),
                 expiryTimeStamp: Date().timeIntervalSince1970 + 300,
                 files: files
             )
