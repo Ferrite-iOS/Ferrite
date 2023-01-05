@@ -116,6 +116,21 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    // Wrapper function to match error descriptions
+    // Error can be suppressed to end user but must be printed in logs
+    func sendDebridError(_ error: Error, prefix: String, presentError: Bool = true, cancelString: String? = nil) async  {
+        let error = error as NSError
+        if presentError {
+            if let cancelString, error.code == -999 {
+                toastModel?.updateToastDescription(cancelString, newToastType: .info)
+            } else if error.code != -999 {
+                toastModel?.updateToastDescription("\(prefix): \(error)")
+            }
+        }
+
+        print("\(prefix): \(error)")
+    }
+
     // Cleans all cached IA values in the event of a full IA refresh
     public func clearIAValues() {
         realDebridIAValues = []
@@ -206,13 +221,7 @@ public class DebridManager: ObservableObject {
                 }
             }
         } catch {
-            let error = error as NSError
-
-            if error.code != -999 {
-                toastModel?.updateToastDescription("Hash population error: \(error)")
-            }
-
-            print("Hash population error: \(error)")
+            await sendDebridError(error, prefix: "Hash population error")
         }
     }
 
@@ -313,7 +322,6 @@ public class DebridManager: ObservableObject {
     // Callback to finish debrid auth since functions can be split
     func completeDebridAuth(_ debridType: DebridType, success: Bool = true) {
         if enabledDebrids.count == 1, success {
-            print("Enabled debrids is 1!")
             selectedDebridType = enabledDebrids.first
         }
 
@@ -358,11 +366,9 @@ public class DebridManager: ObservableObject {
 
             return true
         } catch {
-            toastModel?.updateToastDescription("RealDebrid authentication error: \(error)")
+            await sendDebridError(error, prefix: "RealDebrid authentication error")
+
             realDebrid.authTask?.cancel()
-
-            print("RealDebrid authentication error: \(error)")
-
             return false
         }
     }
@@ -381,11 +387,9 @@ public class DebridManager: ObservableObject {
 
             return true
         } catch {
-            toastModel?.updateToastDescription("AllDebrid authentication error: \(error)")
+            await sendDebridError(error, prefix: "AllDebrid authentication error")
+
             allDebrid.authTask?.cancel()
-
-            print("AllDebrid authentication error: \(error)")
-
             return false
         }
     }
@@ -397,15 +401,14 @@ public class DebridManager: ObservableObject {
 
             validateAuthUrl(tempAuthUrl, useAuthSession: true)
         } catch {
-            toastModel?.updateToastDescription("Premiumize authentication error: \(error)")
-            completeDebridAuth(.premiumize, success: false)
+            await sendDebridError(error, prefix: "Premiumize authentication error")
 
-            print("Premiumize authentication error (auth): \(error)")
+            completeDebridAuth(.premiumize, success: false)
         }
     }
 
     // Currently handles Premiumize callback
-    public func handleCallback(url: URL?, error: Error?) {
+    public func handleCallback(url: URL?, error: Error?) async {
         do {
             if let error {
                 throw Premiumize.PMError.AuthQuery(description: "OAuth callback Error: \(error)")
@@ -419,10 +422,9 @@ public class DebridManager: ObservableObject {
                 throw Premiumize.PMError.AuthQuery(description: "The callback URL was invalid")
             }
         } catch {
-            toastModel?.updateToastDescription("Premiumize authentication error: \(error)")
-            completeDebridAuth(.premiumize, success: false)
+            await sendDebridError(error, prefix: "Premiumize authentication error (callback)")
 
-            print("Premiumize authentication error (callback): \(error)")
+            completeDebridAuth(.premiumize, success: false)
         }
     }
 
@@ -450,9 +452,7 @@ public class DebridManager: ObservableObject {
             try await realDebrid.deleteTokens()
             enabledDebrids.remove(.realDebrid)
         } catch {
-            toastModel?.updateToastDescription("RealDebrid logout error: \(error)")
-
-            print("RealDebrid logout error: \(error)")
+            await sendDebridError(error, prefix: "RealDebrid logout error")
         }
     }
 
@@ -539,21 +539,12 @@ public class DebridManager: ObservableObject {
             case RealDebrid.RDError.EmptyTorrents:
                 showDeleteAlert.toggle()
             default:
-                let error = error as NSError
+                await sendDebridError(error, prefix: "RealDebrid download error", cancelString: "Download cancelled")
 
-                switch error.code {
-                case -999:
-                    toastModel?.updateToastDescription("Download cancelled", newToastType: .info)
-                default:
-                    toastModel?.updateToastDescription("RealDebrid download error: \(error)")
-                }
-
-                await deleteRdTorrent(torrentID: selectedRealDebridID)
+                await deleteRdTorrent(torrentID: selectedRealDebridID, presentError: false)
             }
 
             showLoadingProgress = false
-
-            print("RealDebrid download error: \(error)")
         }
     }
 
@@ -567,8 +558,7 @@ public class DebridManager: ObservableObject {
                 // 5 minutes
                 realDebridCloudTTL = Date().timeIntervalSince1970 + 300
             } catch {
-                toastModel?.updateToastDescription("RealDebrid cloud fetch error: \(error)")
-                print("RealDebrid cloud fetch error: \(error)")
+                await sendDebridError(error, prefix: "RealDebrid cloud fetch error")
             }
         }
     }
@@ -580,12 +570,11 @@ public class DebridManager: ObservableObject {
             // Bypass TTL to get current RD values
             await fetchRdCloud(bypassTTL: true)
         } catch {
-            toastModel?.updateToastDescription("RealDebrid download delete error: \(error)")
-            print("RealDebrid download delete error: \(error)")
+            await sendDebridError(error, prefix: "RealDebrid download delete error")
         }
     }
 
-    func deleteRdTorrent(torrentID: String? = nil) async {
+    func deleteRdTorrent(torrentID: String? = nil, presentError: Bool = true) async {
         do {
             if let torrentID = torrentID {
                 try await realDebrid.deleteTorrent(debridID: torrentID)
@@ -595,8 +584,7 @@ public class DebridManager: ObservableObject {
                 throw RealDebrid.RDError.FailedRequest(description: "No torrent ID was provided")
             }
         } catch {
-            toastModel?.updateToastDescription("RealDebrid torrent delete error: \(error)")
-            print("RealDebrid torrent delete error: \(error)")
+            await sendDebridError(error, prefix: "RealDebrid torrent delete error", presentError: presentError)
         }
     }
 
@@ -629,13 +617,7 @@ public class DebridManager: ObservableObject {
 
             downloadUrl = unlockedLink
         } catch {
-            let error = error as NSError
-            switch error.code {
-            case -999:
-                toastModel?.updateToastDescription("Download cancelled", newToastType: .info)
-            default:
-                toastModel?.updateToastDescription("AllDebrid download error: \(error)")
-            }
+            await sendDebridError(error, prefix: "AllDebrid download error", cancelString: "Download cancelled")
         }
     }
 
@@ -659,8 +641,7 @@ public class DebridManager: ObservableObject {
                 try await premiumize.createTransfer(magnet: premiumizeItem.magnet)
             }
         } catch {
-            toastModel?.updateToastDescription("Premiumize download error: \(error)")
-            print("Premiumize download error: \(error)")
+            await sendDebridError(error, prefix: "Premiumize download error", cancelString: "Download or transfer cancelled")
         }
     }
 
@@ -676,8 +657,10 @@ public class DebridManager: ObservableObject {
                 // 5 minutes
                 premiumizeCloudTTL = Date().timeIntervalSince1970 + 300
             } catch {
-                toastModel?.updateToastDescription("Premiumize cloud fetch error: \(error)")
-                print("Premiumize cloud fetch error: \(error)")
+                let error = error as NSError
+                if error.code != -999 {
+                    await sendDebridError(error, prefix: "Premiumize cloud fetch error")
+                }
             }
         }
     }
@@ -689,8 +672,7 @@ public class DebridManager: ObservableObject {
             // Bypass TTL to get current RD values
             await fetchPmCloud(bypassTTL: true)
         } catch {
-            toastModel?.updateToastDescription("Premiumize cloud delete error: \(error)")
-            print("Premiumize cloud delete error: \(error)")
+            await sendDebridError(error, prefix: "Premiumize cloud delete error")
         }
     }
 }

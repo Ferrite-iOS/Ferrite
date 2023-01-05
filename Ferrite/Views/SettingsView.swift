@@ -157,7 +157,9 @@ struct SettingsView: View {
                     url: debridManager.authUrl ?? URL(string: "https://google.com")!,
                     callbackURLScheme: "ferrite"
                 ) { callbackURL, error in
-                    debridManager.handleCallback(url: callbackURL, error: error)
+                    Task {
+                        await debridManager.handleCallback(url: callbackURL, error: error)
+                    }
                 }
                 .prefersEphemeralWebBrowserSession(false)
             }
