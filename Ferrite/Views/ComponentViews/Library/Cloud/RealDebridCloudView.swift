@@ -48,27 +48,24 @@ struct RealDebridCloudView: View {
             DisclosureGroup("Torrents") {
                 ForEach(debridManager.realDebridCloudTorrents, id: \.self) { torrentResponse in
                     Button {
-                        Task {
-                            if torrentResponse.status == "downloaded" && !torrentResponse.links.isEmpty {
-                                navModel.resultFromCloud = true
-                                navModel.selectedTitle = torrentResponse.filename
+                        if torrentResponse.status == "downloaded" && !torrentResponse.links.isEmpty {
+                            navModel.resultFromCloud = true
+                            navModel.selectedTitle = torrentResponse.filename
 
-                                var historyInfo = HistoryEntryJson(
-                                    name: torrentResponse.filename,
-                                    source: DebridType.realDebrid.toString()
-                                )
+                            var historyInfo = HistoryEntryJson(
+                                name: torrentResponse.filename,
+                                source: DebridType.realDebrid.toString()
+                            )
 
+                            Task {
                                 if torrentResponse.links.count == 1 {
-                                    if let downloadLink = torrentResponse.links[safe: 0] {
-                                        do {
-                                            try await debridManager.checkRdUserDownloads(userTorrentLink: downloadLink)
-                                            navModel.selectedTitle = torrentResponse.filename
-                                            historyInfo.url = downloadLink
-
+                                    if let torrentLink = torrentResponse.links[safe: 0] {
+                                        await debridManager.fetchDebridDownload(magnet: nil, cloudInfo: torrentLink)
+                                        if !debridManager.downloadUrl.isEmpty {
+                                            historyInfo.url = debridManager.downloadUrl
                                             PersistenceController.shared.createHistory(historyInfo)
-                                            navModel.currentChoiceSheet = .magnet
-                                        } catch {
-                                            debridManager.toastModel?.updateToastDescription("RealDebrid cloud fetch error: \(error)")
+
+                                            navModel.runDebridAction(urlString: debridManager.downloadUrl)
                                         }
                                     }
                                 } else {

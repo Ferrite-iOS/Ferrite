@@ -51,6 +51,10 @@ struct SearchResultButtonView: View {
                     }
                 case .partial:
                     if debridManager.selectDebridResult(magnet: result.magnet) {
+                        navModel.selectedHistoryInfo = HistoryEntryJson(
+                            name: result.title,
+                            source: result.source
+                        )
                         navModel.currentChoiceSheet = .batch
                     }
                 case .none:

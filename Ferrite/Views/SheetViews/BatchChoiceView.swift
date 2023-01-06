@@ -78,6 +78,7 @@ struct BatchChoiceView: View {
 
                 if var selectedHistoryInfo = navModel.selectedHistoryInfo {
                     selectedHistoryInfo.url = debridManager.downloadUrl
+                    selectedHistoryInfo.subName = fileName
                     PersistenceController.shared.createHistory(selectedHistoryInfo)
                 }
 

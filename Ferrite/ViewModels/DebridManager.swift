@@ -64,6 +64,10 @@ public class DebridManager: ObservableObject {
     var selectedAllDebridItem: AllDebrid.IA?
     var selectedAllDebridFile: AllDebrid.IAFile?
 
+    // AllDebrid cloud variables
+    @Published var allDebridCloudMagnets: [AllDebrid.MagnetStatusData] = []
+    var allDebridCloudTTL: Double = 0.0
+
     // Premiumize auth variables
     @Published var premiumizeAuthProcessing: Bool = false
 
@@ -471,7 +475,8 @@ public class DebridManager: ObservableObject {
     // MARK: - Debrid fetch UI linked functions
 
     // Common function to delegate what debrid service to fetch from
-    public func fetchDebridDownload(magnet: Magnet?) async {
+    // Cloudinfo is used for any extra information provided by debrid cloud
+    public func fetchDebridDownload(magnet: Magnet?, cloudInfo: String? = nil) async {
         defer {
             currentDebridTask = nil
             showLoadingProgress = false
@@ -481,29 +486,35 @@ public class DebridManager: ObservableObject {
 
         switch selectedDebridType {
         case .realDebrid:
-            await fetchRdDownload(magnet: magnet)
+            await fetchRdDownload(magnet: magnet, existingLink: cloudInfo)
         case .allDebrid:
-            await fetchAdDownload(magnet: magnet)
+            await fetchAdDownload(magnet: magnet, existingLockedLink: cloudInfo)
         case .premiumize:
-            await fetchPmDownload()
+            await fetchPmDownload(cloudItemId: cloudInfo)
         case .none:
             break
         }
     }
 
-    func fetchRdDownload(magnet: Magnet?) async {
-        do {
-            // Bypass the TTL since a download needs to be queried
+    func fetchRdDownload(magnet: Magnet?, existingLink: String?) async {
+        // If an existing link is passed in args, set it to that. Otherwise, find one from RD cloud.
+        let torrentLink: String?
+        if let existingLink {
+            torrentLink = existingLink
+        } else {
+            // Bypass the TTL for up to date information
             await fetchRdCloud(bypassTTL: true)
 
-            // If there's an existing torrent, check for a download link. Otherwise check for an unrestrict link
-            let existingTorrents = realDebridCloudTorrents.filter { $0.hash == selectedRealDebridItem?.magnet.hash && $0.status == "downloaded" }
+            let existingTorrent = realDebridCloudTorrents.first { $0.hash == selectedRealDebridItem?.magnet.hash && $0.status == "downloaded" }
+            torrentLink = existingTorrent?.links[safe: selectedRealDebridFile?.batchFileIndex ?? 0]
+        }
 
+        do {
             // If the links match from a user's downloads, no need to re-run a download
-            if let existingTorrent = existingTorrents[safe: 0],
-               let torrentLink = existingTorrent.links[safe: selectedRealDebridFile?.batchFileIndex ?? 0]
+            if let torrentLink,
+               let downloadLink = await checkRdUserDownloads(userTorrentLink: torrentLink)
             {
-                try await checkRdUserDownloads(userTorrentLink: torrentLink)
+                downloadUrl = downloadLink
             } else if let magnet {
                 // Add a magnet after all the cache checks fail
                 selectedRealDebridID = try await realDebrid.addMagnet(magnet: magnet)
@@ -531,8 +542,7 @@ public class DebridManager: ObservableObject {
                     toastModel?.updateToastDescription("Could not cache this torrent. Aborting.")
                 }
             } else {
-                toastModel?.updateToastDescription("Could not fetch your file from RealDebrid's cache or API")
-                print("RealDebrid error: No magnet link or cached file found")
+                throw RealDebrid.RDError.FailedRequest(description: "Could not fetch your file from RealDebrid's cache or API")
             }
         } catch {
             switch error {
@@ -588,42 +598,81 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    func checkRdUserDownloads(userTorrentLink: String) async throws {
-        let existingLinks = realDebridCloudDownloads.filter { $0.link == userTorrentLink }
-        if let existingLink = existingLinks[safe: 0]?.download {
-            downloadUrl = existingLink
-        } else {
-            let downloadLink = try await realDebrid.unrestrictLink(debridDownloadLink: userTorrentLink)
+    func checkRdUserDownloads(userTorrentLink: String) async -> String? {
+        do {
+            let existingLinks = realDebridCloudDownloads.first { $0.link == userTorrentLink }
+            if let existingLink = existingLinks?.download {
+                return existingLink
+            } else {
+                return try await realDebrid.unrestrictLink(debridDownloadLink: userTorrentLink)
+            }
+        } catch {
+            await sendDebridError(error, prefix: "RealDebrid download check error")
 
-            downloadUrl = downloadLink
+            return nil
         }
     }
 
-    func fetchAdDownload(magnet: Magnet?) async {
-        guard let magnet else {
-            toastModel?.updateToastDescription("Could not run your action because the magnet is invalid.")
-            print("AllDebrid error: Invalid magnet")
+    func fetchAdDownload(magnet: Magnet?, existingLockedLink: String?) async {
+        // If an existing link is passed in args, set it to that. Otherwise, find one from AD cloud.
+        let lockedLink: String?
+        if let existingLockedLink {
+            lockedLink = existingLockedLink
+        } else {
+            // Bypass the TTL for up to date information
+            await fetchAdCloud(bypassTTL: true)
 
-            return
+            let existingMagnet = allDebridCloudMagnets.first { $0.hash == selectedAllDebridItem?.magnet.hash && $0.status == "Ready" }
+            lockedLink = existingMagnet?.links[safe: selectedAllDebridFile?.id ?? 0]?.link
         }
 
         do {
-            let magnetID = try await allDebrid.addMagnet(magnet: magnet)
-            let lockedLink = try await allDebrid.fetchMagnetStatus(
-                magnetId: magnetID,
-                selectedIndex: selectedAllDebridFile?.id ?? 0
-            )
-            let unlockedLink = try await allDebrid.unlockLink(lockedLink: lockedLink)
+            if let lockedLink {
+                downloadUrl = try await allDebrid.unlockLink(lockedLink: lockedLink)
+            } else if let magnet {
+                let magnetID = try await allDebrid.addMagnet(magnet: magnet)
+                let lockedLink = try await allDebrid.fetchMagnetStatus(
+                    magnetId: magnetID,
+                    selectedIndex: selectedAllDebridFile?.id ?? 0
+                )
 
-            downloadUrl = unlockedLink
+                downloadUrl = try await allDebrid.unlockLink(lockedLink: lockedLink)
+            } else {
+                throw AllDebrid.ADError.FailedRequest(description: "Could not fetch your file from AllDebrid's cache or API")
+            }
         } catch {
             await sendDebridError(error, prefix: "AllDebrid download error", cancelString: "Download cancelled")
         }
     }
 
+    // Refreshes torrents and downloads from a RD user's account
+    public func fetchAdCloud(bypassTTL: Bool = false) async {
+        if bypassTTL || Date().timeIntervalSince1970 > allDebridCloudTTL {
+            do {
+                allDebridCloudMagnets = try await allDebrid.userMagnets()
+                realDebridCloudDownloads = try await realDebrid.userDownloads()
+
+                // 5 minutes
+                allDebridCloudTTL = Date().timeIntervalSince1970 + 300
+            } catch {
+                await sendDebridError(error, prefix: "AlLDebrid cloud fetch error")
+            }
+        }
+    }
+
+    func deleteAdMagnet(magnetId: Int) async {
+        do {
+            try await allDebrid.deleteMagnet(magnetId: magnetId)
+
+            await fetchAdCloud(bypassTTL: true)
+        } catch {
+            await sendDebridError(error, prefix: "AllDebrid delete error")
+        }
+    }
+
     func fetchPmDownload(cloudItemId: String? = nil) async {
         do {
-            if let cloudItemId = cloudItemId {
+            if let cloudItemId {
                 downloadUrl = try await premiumize.itemDetails(itemID: cloudItemId).link
             } else if let premiumizeFile = selectedPremiumizeFile {
                 downloadUrl = premiumizeFile.streamUrlString

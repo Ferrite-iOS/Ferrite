@@ -21,7 +21,6 @@ public class AllDebrid {
     // Fetches information for PIN auth
     public func getPinInfo() async throws -> PinResponse {
         let url = try buildRequestURL(urlString: "\(baseApiUrl)/pin/get")
-        print("Auth URL: \(url)")
         let request = URLRequest(url: url)
 
         do {
@@ -161,11 +160,33 @@ public class AllDebrid {
         let rawResponse = try jsonDecoder.decode(ADResponse<MagnetStatusResponse>.self, from: data).data
 
         // Better to fetch no link at all than the wrong link
-        if let linkWrapper = rawResponse.magnets.links[safe: selectedIndex ?? -1] {
+        if let linkWrapper = rawResponse.magnets[safe: 0]?.links[safe: selectedIndex ?? -1] {
             return linkWrapper.link
         } else {
             throw ADError.EmptyTorrents
         }
+    }
+
+    public func userMagnets() async throws -> [MagnetStatusData] {
+        var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/magnet/status"))
+
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode(ADResponse<MagnetStatusResponse>.self, from: data).data
+
+        if rawResponse.magnets.isEmpty {
+            throw ADError.EmptyData
+        } else {
+            return rawResponse.magnets
+        }
+    }
+
+    public func deleteMagnet(magnetId: Int) async throws {
+        let queryItems = [
+            URLQueryItem(name: "id", value: String(magnetId))
+        ]
+        var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/magnet/delete", queryItems: queryItems))
+
+        try await performRequest(request: &request, requestName: #function)
     }
 
     public func unlockLink(lockedLink: String) async throws -> String {
@@ -173,7 +194,6 @@ public class AllDebrid {
             URLQueryItem(name: "link", value: lockedLink)
         ]
         var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/link/unlock", queryItems: queryItems))
-        print(request)
 
         let data = try await performRequest(request: &request, requestName: #function)
         let rawResponse = try jsonDecoder.decode(ADResponse<UnlockLinkResponse>.self, from: data).data

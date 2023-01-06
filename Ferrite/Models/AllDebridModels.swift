@@ -83,12 +83,24 @@ public extension AllDebrid {
     // MARK: - MagnetStatusResponse
 
     struct MagnetStatusResponse: Codable {
-        let magnets: MagnetStatusData
+        let magnets: [MagnetStatusData]
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            if let data = try? container.decode(MagnetStatusData.self, forKey: .magnets) {
+                self.magnets = [data]
+            } else if let data = try? container.decode([MagnetStatusData].self, forKey: .magnets) {
+                self.magnets = data
+            } else {
+                self.magnets = []
+            }
+        }
     }
 
     // MARK: - MagnetStatusData
 
-    internal struct MagnetStatusData: Codable {
+    struct MagnetStatusData: Codable {
         let id: Int
         let filename: String
         let size: Int

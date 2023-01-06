@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct DebridCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
@@ -20,7 +19,9 @@ struct DebridCloudView: View {
                         RealDebridCloudView()
                     case .premiumize:
                         PremiumizeCloudView()
-                    case .allDebrid, .none:
+                    case .allDebrid:
+                        AllDebridCloudView()
+                    case .none:
                         EmptyView()
                     }
                 }

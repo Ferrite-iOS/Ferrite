@@ -14,8 +14,6 @@ struct PremiumizeCloudView: View {
 
     @State private var viewTask: Task<Void, Never>?
 
-    @State private var searchText: String = ""
-
     var body: some View {
         DisclosureGroup("Items") {
             ForEach(debridManager.premiumizeCloudItems, id: \.id) { item in
@@ -24,14 +22,14 @@ struct PremiumizeCloudView: View {
                         navModel.resultFromCloud = true
                         navModel.selectedTitle = item.name
 
-                        await debridManager.fetchPmDownload(cloudItemId: item.id)
+                        await debridManager.fetchDebridDownload(magnet: nil, cloudInfo: item.id)
 
                         if !debridManager.downloadUrl.isEmpty {
                             PersistenceController.shared.createHistory(
                                 HistoryEntryJson(
                                     name: item.name,
                                     url: debridManager.downloadUrl,
-                                    source: "Premiumize"
+                                    source: DebridType.premiumize.toString()
                                 )
                             )
 

@@ -161,7 +161,7 @@ struct SettingsView: View {
                         await debridManager.handleCallback(url: callbackURL, error: error)
                     }
                 }
-                .prefersEphemeralWebBrowserSession(false)
+                .prefersEphemeralWebBrowserSession(true)
             }
             .navigationTitle("Settings")
         }
