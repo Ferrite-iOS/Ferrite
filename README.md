@@ -14,27 +14,39 @@ Finding shows and movies is usually pretty easy because there are many websites 
 
 However, the main problem is that these websites tend to suck in terms of UI or finding media to watch. Ferrite aims to provide a better UI to search and find the media you want.
 
-I also wanted to support the use of RealDebrid since there aren't any (free) options on iOS that have support for this service.
+I also wanted to support the use of debrid services since there aren't any (free) options on iOS that have support for this service.
 
 ## What iOS versions are supported?
 
-iOS 14 and up. I was able to successfully backport the app!
+- v0.7 and up: iOS 15 and up
+
+- v0.6.x and lower: iOS 14 and up
 
 ## Planned features
 
-- Website API support in sources: This allows for website APIs to be used in Ferrite sources which is quicker than scraping or RSS parsing
+More of these can be found in [issues](https://github.com/bdashore3/Ferrite/issues), but here is a small snippet:
+
+- A decentralized actions API: Allows for playback on other devices
+
+- More involved search filtering
+
+- Companion apps for playback on other devices
 
 ## Downloads
 
 Ferrite will only exist as an ipa. There are and will never be any plans to release on TestFlight or the App Store. Ipa builds are automatically built and are provided in Github actions artifacts.
 
+## Plugins/Sources
+
+Sources are not provided by the application. They must be found from external means or you can make them yourself using the [wiki](https://github.com/bdashore3/Ferrite/wiki). Various communities have created sources for Ferrite and they can be imported in the app with ease.
+
 ## Building from source
 
-Xcode 14 must be used since Ferrite requires some iOS 16 APIs that are not present in Xcode 13. Please make sure you have the right Xcode or download the beta xip from Apple's developer website.
+Xcode 14 must be used.
 
-There is currently one branch in the repository:
+There are currently two branches in the repository:
 
-- default: The current working branch. This will change in the future once a stable version is released.
+- default: A snapshot of the latest stable build. Tags can also be used for older versions.
 - next: The development branch. Nightlies are automatically built here.
 
 ## Nightly builds
