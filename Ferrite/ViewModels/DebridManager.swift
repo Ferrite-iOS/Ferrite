@@ -544,6 +544,9 @@ public class DebridManager: ObservableObject {
             } else {
                 throw RealDebrid.RDError.FailedRequest(description: "Could not fetch your file from RealDebrid's cache or API")
             }
+
+            // Fetch one more time to add updated data into the RD cloud cache
+            await fetchRdCloud(bypassTTL: true)
         } catch {
             switch error {
             case RealDebrid.RDError.EmptyTorrents:
@@ -640,6 +643,9 @@ public class DebridManager: ObservableObject {
             } else {
                 throw AllDebrid.ADError.FailedRequest(description: "Could not fetch your file from AllDebrid's cache or API")
             }
+
+            // Fetch one more time to add updated data into the AD cloud cache
+            await fetchAdCloud(bypassTTL: true)
         } catch {
             await sendDebridError(error, prefix: "AllDebrid download error", cancelString: "Download cancelled")
         }
@@ -650,7 +656,6 @@ public class DebridManager: ObservableObject {
         if bypassTTL || Date().timeIntervalSince1970 > allDebridCloudTTL {
             do {
                 allDebridCloudMagnets = try await allDebrid.userMagnets()
-                realDebridCloudDownloads = try await realDebrid.userDownloads()
 
                 // 5 minutes
                 allDebridCloudTTL = Date().timeIntervalSince1970 + 300
@@ -684,6 +689,9 @@ public class DebridManager: ObservableObject {
             } else {
                 throw Premiumize.PMError.FailedRequest(description: "There were no items or files found!")
             }
+
+            // Fetch one more time to add updated data into the PM cloud cache
+            await fetchPmCloud(bypassTTL: true)
 
             // Add a PM transfer if the item exists
             if let premiumizeItem = selectedPremiumizeItem {

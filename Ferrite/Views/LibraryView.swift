@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIX
 
 struct LibraryView: View {
     enum LibraryPickerSegment {
@@ -19,9 +20,7 @@ struct LibraryView: View {
 
     @FetchRequest(
         entity: Bookmark.entity(),
-        sortDescriptors: [
-            NSSortDescriptor(keyPath: \Bookmark.orderNum, ascending: true)
-        ]
+        sortDescriptors: []
     ) var bookmarks: FetchedResults<Bookmark>
 
     @FetchRequest(
@@ -31,10 +30,14 @@ struct LibraryView: View {
         ]
     ) var history: FetchedResults<History>
 
-    @State private var historyEmpty = true
+    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
     @State private var selectedSegment: LibraryPickerSegment = .bookmarks
     @State private var editMode: EditMode = .inactive
+
+    @State private var searchText: String = ""
+    @State private var isEditingSearch = false
+    @State private var isSearching = false
 
     var body: some View {
         NavView {
@@ -48,18 +51,33 @@ struct LibraryView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                .padding()
+                .padding(.horizontal)
+                .padding(.vertical, 5)
 
                 switch selectedSegment {
                 case .bookmarks:
-                    BookmarksView(bookmarks: bookmarks)
+                    BookmarksView(searchText: $searchText)
                 case .history:
-                    HistoryView(history: history)
+                    HistoryView(history: history, searchText: $searchText)
                 case .debridCloud:
-                    DebridCloudView()
+                    DebridCloudView(searchText: $searchText)
                 }
 
                 Spacer()
+            }
+            .navigationSearchBar {
+                SearchBar("Search", text: $searchText, isEditing: $isEditingSearch, onCommit: {
+                    isSearching = true
+                })
+                .showsCancelButton(isEditingSearch || isSearching)
+                .onCancel {
+                    searchText = ""
+                    isSearching = false
+                }
+            }
+            .introspectSearchController { searchController in
+                searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
+                searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
             }
             .overlay {
                 switch selectedSegment {
@@ -80,7 +98,8 @@ struct LibraryView: View {
             .navigationTitle("Library")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack {
+                    HStack(spacing: Application.shared.osVersion.majorVersion > 14 ? 10 : 18) {
+                        Spacer()
                         EditButton()
 
                         switch selectedSegment {
@@ -90,6 +109,7 @@ struct LibraryView: View {
                             HistoryActionsView()
                         }
                     }
+                    .animation(.none)
                 }
             }
             .environment(\.editMode, $editMode)

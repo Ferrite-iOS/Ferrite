@@ -19,6 +19,8 @@ struct ContentView: View {
         sortDescriptors: []
     ) var sources: FetchedResults<Source>
 
+    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
+
     @State private var selectedSource: Source? {
         didSet {
             scrapingModel.filteredSource = selectedSource
@@ -72,7 +74,9 @@ struct ContentView: View {
                 SearchResultsView()
             }
             .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(navModel.isSearching ? .inline : .large)
+            .navigationBarTitleDisplayMode(
+                navModel.isSearching && Application.shared.osVersion.majorVersion > 14 ? .inline : .large
+            )
             .navigationSearchBar {
                 SearchBar("Search",
                           text: $scrapingModel.searchText,
@@ -114,8 +118,8 @@ struct ContentView: View {
             }
             .introspectSearchController { searchController in
                 searchController.hidesNavigationBarDuringPresentation = false
-                searchController.searchBar.autocorrectionType = .no
-                searchController.searchBar.autocapitalizationType = .none
+                searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
+                searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
             }
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {

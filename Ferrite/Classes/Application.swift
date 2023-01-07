@@ -32,4 +32,6 @@ public class Application {
         }
         #endif
     }
+
+    let osVersion: OperatingSystemVersion = ProcessInfo().operatingSystemVersion
 }

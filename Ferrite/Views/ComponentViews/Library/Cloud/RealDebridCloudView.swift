@@ -11,12 +11,16 @@ struct RealDebridCloudView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
 
+    @Binding var searchText: String
+
     @State private var viewTask: Task<Void, Never>?
 
     var body: some View {
         Group {
             DisclosureGroup("Downloads") {
-                ForEach(debridManager.realDebridCloudDownloads, id: \.self) { downloadResponse in
+                ForEach(debridManager.realDebridCloudDownloads.filter {
+                    searchText.isEmpty ? true : $0.filename.lowercased().contains(searchText.lowercased())
+                }, id: \.self) { downloadResponse in
                     Button(downloadResponse.filename) {
                         navModel.resultFromCloud = true
                         navModel.selectedTitle = downloadResponse.filename
@@ -46,7 +50,9 @@ struct RealDebridCloudView: View {
             }
 
             DisclosureGroup("Torrents") {
-                ForEach(debridManager.realDebridCloudTorrents, id: \.self) { torrentResponse in
+                ForEach(debridManager.realDebridCloudTorrents.filter {
+                    searchText.isEmpty ? true : $0.filename.lowercased().contains(searchText.lowercased())
+                }, id: \.self) { torrentResponse in
                     Button {
                         if torrentResponse.status == "downloaded" && !torrentResponse.links.isEmpty {
                             navModel.resultFromCloud = true
@@ -69,8 +75,9 @@ struct RealDebridCloudView: View {
                                         }
                                     }
                                 } else {
-                                    debridManager.clearIAValues()
                                     let magnet = Magnet(hash: torrentResponse.hash, link: nil)
+
+                                    // Do not clear old IA values
                                     await debridManager.populateDebridIA([magnet])
 
                                     if debridManager.selectDebridResult(magnet: magnet) {
@@ -117,11 +124,5 @@ struct RealDebridCloudView: View {
         .onDisappear {
             viewTask?.cancel()
         }
-    }
-}
-
-struct RealDebridCloudView_Previews: PreviewProvider {
-    static var previews: some View {
-        RealDebridCloudView()
     }
 }

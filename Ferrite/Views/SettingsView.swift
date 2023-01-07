@@ -15,6 +15,8 @@ struct SettingsView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
+    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
+
     @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
 
     @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
@@ -73,6 +75,12 @@ struct SettingsView: View {
                             Text(debridManager.enabledDebrids.contains(.premiumize) ? "Logout" : (debridManager.premiumizeAuthProcessing ? "Processing" : "Login"))
                                 .foregroundColor(debridManager.enabledDebrids.contains(.premiumize) ? .red : .blue)
                         }
+                    }
+                }
+
+                Section(header: Text("Behavior")) {
+                    Toggle(isOn: $autocorrectSearch) {
+                        Text("Autocorrect search")
                     }
                 }
 

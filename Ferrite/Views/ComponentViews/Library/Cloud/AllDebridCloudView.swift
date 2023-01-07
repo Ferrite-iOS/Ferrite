@@ -11,11 +11,15 @@ struct AllDebridCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
 
+    @Binding var searchText: String
+
     @State private var viewTask: Task<Void, Never>?
 
     var body: some View {
         DisclosureGroup("Magnets") {
-            ForEach(debridManager.allDebridCloudMagnets, id: \.id) { magnet in
+            ForEach(debridManager.allDebridCloudMagnets.filter {
+                searchText.isEmpty ? true : $0.filename.lowercased().contains(searchText.lowercased())
+            }, id: \.id) { magnet in
                 Button {
                     if magnet.status == "Ready" && !magnet.links.isEmpty {
                         navModel.resultFromCloud = true
@@ -38,8 +42,9 @@ struct AllDebridCloudView: View {
                                     }
                                 }
                             } else {
-                                debridManager.clearIAValues()
                                 let magnet = Magnet(hash: magnet.hash, link: nil)
+
+                                // Do not clear old IA values
                                 await debridManager.populateDebridIA([magnet])
 
                                 if debridManager.selectDebridResult(magnet: magnet) {
@@ -83,11 +88,5 @@ struct AllDebridCloudView: View {
         .onDisappear {
             viewTask?.cancel()
         }
-    }
-}
-
-struct AllDebridCloudView_Previews: PreviewProvider {
-    static var previews: some View {
-        AllDebridCloudView()
     }
 }

@@ -10,30 +10,21 @@ import SwiftUI
 struct DebridCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
 
+    @Binding var searchText: String
+
     var body: some View {
-        NavView {
-            VStack {
-                List {
-                    switch debridManager.selectedDebridType {
-                    case .realDebrid:
-                        RealDebridCloudView()
-                    case .premiumize:
-                        PremiumizeCloudView()
-                    case .allDebrid:
-                        AllDebridCloudView()
-                    case .none:
-                        EmptyView()
-                    }
-                }
-                .inlinedList()
-                .listStyle(.grouped)
+        List {
+            switch debridManager.selectedDebridType {
+            case .realDebrid:
+                RealDebridCloudView(searchText: $searchText)
+            case .premiumize:
+                PremiumizeCloudView(searchText: $searchText)
+            case .allDebrid:
+                AllDebridCloudView(searchText: $searchText)
+            case .none:
+                EmptyView()
             }
         }
-    }
-}
-
-struct DebridCloudView_Previews: PreviewProvider {
-    static var previews: some View {
-        DebridCloudView()
+        .listStyle(.plain)
     }
 }

@@ -15,13 +15,11 @@ struct SourcesView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
-    @FetchRequest(
-        entity: Source.entity(),
-        sortDescriptors: []
-    ) var sources: FetchedResults<Source>
+    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
     @State private var checkedForSources = false
-    @State private var isEditing = false
+    @State private var isEditingSearch = false
+    @State private var isSearching = false
 
     @State private var viewTask: Task<Void, Never>? = nil
     @State private var searchText: String = ""
@@ -35,7 +33,7 @@ struct SourcesView: View {
                 ZStack {
                     if !checkedForSources {
                         ProgressView()
-                    } else if sources.isEmpty, sourceManager.availableSources.isEmpty {
+                    } else if installedSources.isEmpty, sourceManager.availableSources.isEmpty {
                         EmptyInstructionView(title: "No Sources", message: "Add a source list in Settings")
                     } else {
                         List {
@@ -119,11 +117,18 @@ struct SourcesView: View {
                 }
                 .navigationTitle("Sources")
                 .navigationSearchBar {
-                    SearchBar("Search", text: $searchText, isEditing: $isEditing)
-                        .showsCancelButton(isEditing)
-                        .onCancel {
-                            searchText = ""
-                        }
+                    SearchBar("Search", text: $searchText, isEditing: $isEditingSearch, onCommit: {
+                        isSearching = true
+                    })
+                    .showsCancelButton(isEditingSearch || isSearching)
+                    .onCancel {
+                        searchText = ""
+                        isSearching = false
+                    }
+                }
+                .introspectSearchController { searchController in
+                    searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
+                    searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
                 }
             }
         }

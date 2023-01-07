@@ -36,7 +36,7 @@ struct HistoryButtonView: View {
                 toastModel.updateToastDescription("URL invalid. Cannot load this history entry. Please delete it.")
             }
         } label: {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading) {
                     Text(entry.name ?? "Unknown title")
                         .font(entry.subName == nil ? .body : .subheadline)

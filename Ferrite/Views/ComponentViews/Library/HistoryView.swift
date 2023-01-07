@@ -10,44 +10,89 @@ import SwiftUI
 struct HistoryView: View {
     @EnvironmentObject var navModel: NavigationViewModel
 
-    let backgroundContext = PersistenceController.shared.backgroundContext
-
     var history: FetchedResults<History>
-    var formatter: DateFormatter = .init()
 
-    @State private var historyIndex = 0
+    @Binding var searchText: String
 
-    init(history: FetchedResults<History>) {
-        self.history = history
-
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-    }
-
-    func groupedEntries(_ result: FetchedResults<History>) -> [[History]] {
-        Dictionary(grouping: result) { (element: History) in
-            element.dateString ?? ""
-        }.values.sorted { $0[0].date ?? Date() > $1[0].date ?? Date() }
-    }
+    @State private var historyPredicate: NSPredicate?
 
     var body: some View {
-        if !history.isEmpty {
+        DynamicFetchRequest(predicate: historyPredicate) { (allEntries: FetchedResults<HistoryEntry>) in
             List {
-                ForEach(groupedEntries(history), id: \.self) { (section: [History]) in
-                    Section(header: Text(formatter.string(from: section[0].date ?? Date()))) {
-                        ForEach(section, id: \.self) { history in
-                            ForEach(history.entryArray) { entry in
-                                HistoryButtonView(entry: entry)
-                            }
-                            .onDelete { offsets in
-                                removeEntry(at: offsets, from: history)
-                            }
-                        }
+                if !history.isEmpty {
+                    ForEach(groupedHistory(history), id: \.self) { historyGroup in
+                        HistorySectionView(allEntries: allEntries, historyGroup: historyGroup)
                     }
                 }
             }
             .listStyle(.insetGrouped)
         }
+        .onAppear {
+            applyPredicate()
+        }
+        .onChange(of: searchText) { _ in
+            applyPredicate()
+        }
+    }
+
+    func applyPredicate() {
+        if searchText.isEmpty {
+            historyPredicate = nil
+        } else {
+            let namePredicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText.lowercased())
+            let subNamePredicate = NSPredicate(format: "subName CONTAINS[cd] %@", searchText.lowercased())
+            historyPredicate = NSCompoundPredicate(type: .or, subpredicates: [namePredicate, subNamePredicate])
+        }
+    }
+
+    func groupedHistory(_ result: FetchedResults<History>) -> [[History]] {
+        return Dictionary(grouping: result) { (element: History) in
+            element.dateString ?? ""
+        }
+        .values
+        .sorted { $0[0].date ?? Date() > $1[0].date ?? Date() }
+    }
+}
+
+struct HistorySectionView: View {
+    let backgroundContext = PersistenceController.shared.backgroundContext
+
+    var formatter: DateFormatter = .init()
+    var allEntries: FetchedResults<HistoryEntry>
+    var historyGroup: [History]
+
+    init(allEntries: FetchedResults<HistoryEntry>, historyGroup: [History]) {
+        self.allEntries = allEntries
+        self.historyGroup = historyGroup
+
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+    }
+
+    var body: some View {
+        if compareGroup(historyGroup) > 0 {
+            Section(header: Text(formatter.string(from: historyGroup[0].date ?? Date()))) {
+                ForEach(historyGroup, id: \.self) { history in
+                    ForEach(history.entryArray.filter { allEntries.contains($0) }, id: \.self) { entry in
+                        HistoryButtonView(entry: entry)
+                    }
+                    .onDelete { offsets in
+                        removeEntry(at: offsets, from: history)
+                    }
+                }
+            }
+        }
+    }
+
+    func compareGroup(_ group: [History]) -> Int {
+        var totalCount = 0
+        for history in group {
+            totalCount += history.entryArray.reduce(0, { result, item in
+                result + (allEntries.contains { $0.name == item.name || (item.subName.map { return !$0.isEmpty } ?? false && $0.subName == item.subName) } ? 1 : 0)
+            })
+        }
+
+        return totalCount
     }
 
     func removeEntry(at offsets: IndexSet, from history: History) {

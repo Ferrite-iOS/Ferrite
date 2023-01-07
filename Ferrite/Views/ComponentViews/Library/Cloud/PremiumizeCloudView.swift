@@ -12,11 +12,15 @@ struct PremiumizeCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
 
+    @Binding var searchText: String
+
     @State private var viewTask: Task<Void, Never>?
 
     var body: some View {
         DisclosureGroup("Items") {
-            ForEach(debridManager.premiumizeCloudItems, id: \.id) { item in
+            ForEach(debridManager.premiumizeCloudItems.filter {
+                searchText.isEmpty ? true : $0.name.lowercased().contains(searchText.lowercased())
+            }, id: \.id) { item in
                 Button(item.name) {
                     Task {
                         navModel.resultFromCloud = true
@@ -58,11 +62,5 @@ struct PremiumizeCloudView: View {
         .onDisappear {
             viewTask?.cancel()
         }
-    }
-}
-
-struct PremiumizeCloudView_Previews: PreviewProvider {
-    static var previews: some View {
-        PremiumizeCloudView()
     }
 }
