@@ -122,7 +122,7 @@ public class DebridManager: ObservableObject {
 
     // Wrapper function to match error descriptions
     // Error can be suppressed to end user but must be printed in logs
-    func sendDebridError(_ error: Error, prefix: String, presentError: Bool = true, cancelString: String? = nil) async  {
+    func sendDebridError(_ error: Error, prefix: String, presentError: Bool = true, cancelString: String? = nil) async {
         let error = error as NSError
         if presentError {
             if let cancelString, error.code == -999 {
@@ -589,7 +589,7 @@ public class DebridManager: ObservableObject {
 
     func deleteRdTorrent(torrentID: String? = nil, presentError: Bool = true) async {
         do {
-            if let torrentID = torrentID {
+            if let torrentID {
                 try await realDebrid.deleteTorrent(debridID: torrentID)
             } else if let selectedTorrentID = selectedRealDebridID {
                 try await realDebrid.deleteTorrent(debridID: selectedTorrentID)

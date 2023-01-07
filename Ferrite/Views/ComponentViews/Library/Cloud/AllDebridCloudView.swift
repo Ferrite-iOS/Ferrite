@@ -21,7 +21,7 @@ struct AllDebridCloudView: View {
                 searchText.isEmpty ? true : $0.filename.lowercased().contains(searchText.lowercased())
             }, id: \.id) { magnet in
                 Button {
-                    if magnet.status == "Ready" && !magnet.links.isEmpty {
+                    if magnet.status == "Ready", !magnet.links.isEmpty {
                         navModel.resultFromCloud = true
                         navModel.selectedTitle = magnet.filename
 

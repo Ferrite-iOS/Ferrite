@@ -40,7 +40,7 @@ struct SearchResultButtonView: View {
                                         source: result.source
                                     )
                                 )
-                                
+
                                 navModel.runDebridAction(urlString: debridManager.downloadUrl)
 
                                 if navModel.currentChoiceSheet != .magnet {
@@ -130,8 +130,9 @@ struct SearchResultButtonView: View {
         .onReceive(NotificationCenter.default.publisher(for: .didDeleteBookmark)) { notification in
             // If the instance contains the deleted bookmark, remove it.
             if let deletedBookmark = notification.object as? Bookmark,
-                let bookmark = existingBookmark,
-                deletedBookmark.objectID == bookmark.objectID {
+               let bookmark = existingBookmark,
+               deletedBookmark.objectID == bookmark.objectID
+            {
                 existingBookmark = nil
             }
         }

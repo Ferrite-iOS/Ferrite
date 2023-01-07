@@ -67,12 +67,14 @@ public extension Premiumize {
     }
 
     // MARK: - AllItemsResponse (listall endpoint)
+
     struct AllItemsResponse: Codable {
         let status: String
         let files: [UserItem]
     }
 
     // MARK: User Items
+
     // Abridged for required parameters
     struct UserItem: Codable {
         let id: String

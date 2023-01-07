@@ -54,7 +54,7 @@ struct RealDebridCloudView: View {
                     searchText.isEmpty ? true : $0.filename.lowercased().contains(searchText.lowercased())
                 }, id: \.self) { torrentResponse in
                     Button {
-                        if torrentResponse.status == "downloaded" && !torrentResponse.links.isEmpty {
+                        if torrentResponse.status == "downloaded", !torrentResponse.links.isEmpty {
                             navModel.resultFromCloud = true
                             navModel.selectedTitle = torrentResponse.filename
 

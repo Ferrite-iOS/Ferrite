@@ -46,7 +46,7 @@ struct HistoryView: View {
     }
 
     func groupedHistory(_ result: FetchedResults<History>) -> [[History]] {
-        return Dictionary(grouping: result) { (element: History) in
+        Dictionary(grouping: result) { (element: History) in
             element.dateString ?? ""
         }
         .values
@@ -87,9 +87,9 @@ struct HistorySectionView: View {
     func compareGroup(_ group: [History]) -> Int {
         var totalCount = 0
         for history in group {
-            totalCount += history.entryArray.reduce(0, { result, item in
-                result + (allEntries.contains { $0.name == item.name || (item.subName.map { return !$0.isEmpty } ?? false && $0.subName == item.subName) } ? 1 : 0)
-            })
+            totalCount += history.entryArray.reduce(0) { result, item in
+                result + (allEntries.contains { $0.name == item.name || (item.subName.map { !$0.isEmpty } ?? false && $0.subName == item.subName) } ? 1 : 0)
+            }
         }
 
         return totalCount

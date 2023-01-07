@@ -89,11 +89,11 @@ public extension AllDebrid {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
             if let data = try? container.decode(MagnetStatusData.self, forKey: .magnets) {
-                self.magnets = [data]
+                magnets = [data]
             } else if let data = try? container.decode([MagnetStatusData].self, forKey: .magnets) {
-                self.magnets = data
+                magnets = data
             } else {
-                self.magnets = []
+                magnets = []
             }
         }
     }

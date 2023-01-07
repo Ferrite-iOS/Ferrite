@@ -5,8 +5,8 @@
 //  Created by Brian Dashore on 11/27/22.
 //
 
-import Foundation
 import Base32
+import Foundation
 
 // MARK: - Universal IA enum (IA = InstantAvailability)
 
@@ -41,10 +41,10 @@ public struct Magnet: Codable, Hashable, Sendable {
     var link: String?
 
     init(hash: String?, link: String?, title: String? = nil, trackers: [String]? = nil) {
-        if let hash = hash, link == nil {
+        if let hash, link == nil {
             self.hash = parseHash(hash)
             self.link = generateLink(hash: hash, title: title, trackers: trackers)
-        } else if let link = link, hash == nil {
+        } else if let link, hash == nil {
             self.link = link
             self.hash = parseHash(extractHash(link: link))
         } else {

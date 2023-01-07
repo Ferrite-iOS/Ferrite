@@ -31,20 +31,20 @@ struct BookmarksView: View {
                         for index in offsets {
                             if let bookmark = bookmarks[safe: index] {
                                 PersistenceController.shared.delete(bookmark, context: backgroundContext)
-                                
+
                                 NotificationCenter.default.post(name: .didDeleteBookmark, object: bookmark)
                             }
                         }
                     }
                     .onMove { source, destination in
                         var changedBookmarks = bookmarks.map { $0 }
-                        
+
                         changedBookmarks.move(fromOffsets: source, toOffset: destination)
-                        
+
                         for reverseIndex in stride(from: changedBookmarks.count - 1, through: 0, by: -1) {
                             changedBookmarks[reverseIndex].orderNum = Int16(reverseIndex)
                         }
-                        
+
                         PersistenceController.shared.save()
                     }
                 }

@@ -60,7 +60,7 @@ struct SourceSettingsView: View {
             .onDisappear {
                 PersistenceController.shared.save()
             }
-            .navigationTitle("Source settings")
+            .navigationTitle("Source Settings")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
