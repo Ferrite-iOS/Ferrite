@@ -21,7 +21,10 @@ struct BookmarksView: View {
     @State private var bookmarkPredicate: NSPredicate?
 
     var body: some View {
-        DynamicFetchRequest(predicate: bookmarkPredicate) { (bookmarks: FetchedResults<Bookmark>) in
+        DynamicFetchRequest(
+            predicate: bookmarkPredicate,
+            sortDescriptors: [NSSortDescriptor(keyPath: \Bookmark.orderNum, ascending: true)]
+        ) { (bookmarks: FetchedResults<Bookmark>) in
             List {
                 if !bookmarks.isEmpty {
                     ForEach(bookmarks, id: \.self) { bookmark in
