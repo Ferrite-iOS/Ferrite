@@ -118,10 +118,7 @@ struct MainView: View {
             title: "Backup restored",
             message: backupManager.backupSourceNames.isEmpty ?
                 "No sources need to be reinstalled" :
-                "Reinstall sources: \(backupManager.backupSourceNames.joined(separator: ", "))",
-            buttons: [
-                .init("OK") {}
-            ]
+                "Reinstall sources: \(backupManager.backupSourceNames.joined(separator: ", "))"
         )
         // Updater alert
         .backport.alert(
@@ -129,14 +126,14 @@ struct MainView: View {
             title: "Update available",
             message: "Ferrite \(releaseVersionString) can be downloaded. \n\n This alert can be disabled in Settings.",
             buttons: [
-                AlertButton("Download") {
+                .init("Download") {
                     guard let releaseUrl = URL(string: releaseUrlString) else {
                         return
                     }
 
                     UIApplication.shared.open(releaseUrl)
                 },
-                AlertButton(role: .cancel)
+                .init(role: .cancel)
             ]
         )
         .overlay {

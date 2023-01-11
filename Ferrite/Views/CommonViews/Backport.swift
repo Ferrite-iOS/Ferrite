@@ -20,7 +20,7 @@ extension View {
 }
 
 extension Backport where Content: View {
-    @ViewBuilder func alert(isPresented: Binding<Bool>, title: String, message: String?, buttons: [AlertButton]) -> some View {
+    @ViewBuilder func alert(isPresented: Binding<Bool>, title: String, message: String?, buttons: [AlertButton] = []) -> some View {
         if #available(iOS 15, *) {
             content
                 .alert(
@@ -55,7 +55,7 @@ extension Backport where Content: View {
                                 return Alert(
                                     title: Text(title),
                                     message: message.map { Text($0) } ?? nil,
-                                    dismissButton: buttons[0].toActionButton()
+                                    dismissButton: buttons[safe: 0].map { $0.toActionButton() } ?? .cancel()
                                 )
                             }
                         }

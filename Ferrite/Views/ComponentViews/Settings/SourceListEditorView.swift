@@ -35,8 +35,7 @@ struct SourceListEditorView: View {
             .backport.alert(
                 isPresented: $sourceManager.showUrlErrorAlert,
                 title: "Error",
-                message: sourceManager.urlErrorAlertText,
-                buttons: [AlertButton("OK")]
+                message: sourceManager.urlErrorAlertText
             )
             .navigationTitle("Editing source list")
             .navigationBarTitleDisplayMode(.inline)

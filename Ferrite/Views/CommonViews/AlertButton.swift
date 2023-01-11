@@ -29,9 +29,9 @@ struct AlertButton: Identifiable {
     }
 
     // Used for buttons with no action
-    init(_ label: String = "Cancel", role: Role? = nil) {
+    init(_ label: String? = nil, role: Role? = nil) {
         id = UUID()
-        self.label = label
+        self.label = label ?? (role == .cancel ? "Cancel" : "OK")
         action = {}
         self.role = role
     }
