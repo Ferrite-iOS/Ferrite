@@ -46,8 +46,8 @@
 		0C50055B2992BA6A0064606A /* PluginTag+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5005592992BA6A0064606A /* PluginTag+CoreDataProperties.swift */; };
 		0C54D36328C5086E00BFEEE2 /* History+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C54D36128C5086E00BFEEE2 /* History+CoreDataClass.swift */; };
 		0C54D36428C5086E00BFEEE2 /* History+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C54D36228C5086E00BFEEE2 /* History+CoreDataProperties.swift */; };
-		0C572D4C2993FC2A003EEC05 /* OnAppearHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4B2993FC2A003EEC05 /* OnAppearHandler.swift */; };
-		0C572D4E299403B7003EEC05 /* DidAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4D299403B7003EEC05 /* DidAppearModifier.swift */; };
+		0C572D4C2993FC2A003EEC05 /* ViewDidAppearHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4B2993FC2A003EEC05 /* ViewDidAppearHandler.swift */; };
+		0C572D4E299403B7003EEC05 /* ViewDidAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4D299403B7003EEC05 /* ViewDidAppearModifier.swift */; };
 		0C57D4CC289032ED008534E8 /* SearchResultInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C57D4CB289032ED008534E8 /* SearchResultInfoView.swift */; };
 		0C5FCB05296744F300849E87 /* AllDebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5FCB04296744F300849E87 /* AllDebridCloudView.swift */; };
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
@@ -169,8 +169,8 @@
 		0C5005592992BA6A0064606A /* PluginTag+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PluginTag+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C54D36128C5086E00BFEEE2 /* History+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C54D36228C5086E00BFEEE2 /* History+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		0C572D4B2993FC2A003EEC05 /* OnAppearHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnAppearHandler.swift; sourceTree = "<group>"; };
-		0C572D4D299403B7003EEC05 /* DidAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidAppearModifier.swift; sourceTree = "<group>"; };
+		0C572D4B2993FC2A003EEC05 /* ViewDidAppearHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidAppearHandler.swift; sourceTree = "<group>"; };
+		0C572D4D299403B7003EEC05 /* ViewDidAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidAppearModifier.swift; sourceTree = "<group>"; };
 		0C57D4CB289032ED008534E8 /* SearchResultInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultInfoView.swift; sourceTree = "<group>"; };
 		0C5FCB04296744F300849E87 /* AllDebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDebridCloudView.swift; sourceTree = "<group>"; };
 		0C68134F28BC1A2D00FAD890 /* GithubWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubWrapper.swift; sourceTree = "<group>"; };
@@ -380,7 +380,7 @@
 				0CD5E78828CD932B001BF684 /* DisabledAppearance.swift */,
 				0CBAB83528D12ED500AC903E /* DisableInteraction.swift */,
 				0CB6516428C5A5D700DCA721 /* InlinedList.swift */,
-				0C572D4D299403B7003EEC05 /* DidAppearModifier.swift */,
+				0C572D4D299403B7003EEC05 /* ViewDidAppearModifier.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -531,7 +531,7 @@
 			isa = PBXGroup;
 			children = (
 				0CA148CE288903F000DE2211 /* WebView.swift */,
-				0C572D4B2993FC2A003EEC05 /* OnAppearHandler.swift */,
+				0C572D4B2993FC2A003EEC05 /* ViewDidAppearHandler.swift */,
 			);
 			path = RepresentableViews;
 			sourceTree = "<group>";
@@ -745,7 +745,7 @@
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CC389532970AD900066D06F /* Action+CoreDataClass.swift in Sources */,
 				0C03EB72296F619900162E9A /* PluginList+CoreDataProperties.swift in Sources */,
-				0C572D4C2993FC2A003EEC05 /* OnAppearHandler.swift in Sources */,
+				0C572D4C2993FC2A003EEC05 /* ViewDidAppearHandler.swift in Sources */,
 				0C95D8D828A55B03005E22B3 /* DefaultActionsPickerViews.swift in Sources */,
 				0C44E2AF28D52E8A007711AE /* BackupsView.swift in Sources */,
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
@@ -795,7 +795,7 @@
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,
 				0CA148E8288903F000DE2211 /* RealDebridWrapper.swift in Sources */,
 				0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */,
-				0C572D4E299403B7003EEC05 /* DidAppearModifier.swift in Sources */,
+				0C572D4E299403B7003EEC05 /* ViewDidAppearModifier.swift in Sources */,
 				0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */,
 				0C54D36328C5086E00BFEEE2 /* History+CoreDataClass.swift in Sources */,
 				0CBAB83628D12ED500AC903E /* DisableInteraction.swift in Sources */,

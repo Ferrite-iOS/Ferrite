@@ -32,7 +32,7 @@ struct PluginListEditorView: View {
                     .autocapitalization(.none)
                     .conditionalId(sourceUrlSet)
             }
-            .onAppear {
+            .backport.onAppear {
                 pluginListUrl = selectedPluginList?.urlString ?? ""
                 sourceUrlSet = true
             }

@@ -30,7 +30,7 @@ struct SettingsAppVersionView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .onAppear {
+        .backport.onAppear {
             viewTask = Task {
                 do {
                     if let fetchedReleases = try await Github().fetchReleases() {

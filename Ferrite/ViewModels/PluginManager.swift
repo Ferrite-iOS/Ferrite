@@ -81,7 +81,11 @@ public class PluginManager: ObservableObject {
                 }
             }
         } catch {
-            toastModel?.updateToastDescription("Plugin fetch error: \(error)")
+            let error = error as NSError
+            if error.code != -999 {
+                toastModel?.updateToastDescription("Plugin fetch error: \(error)")
+            }
+
             print("Plugin fetch error: \(error)")
         }
     }

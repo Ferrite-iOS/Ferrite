@@ -161,8 +161,10 @@ public class BackupManager: ObservableObject {
                 }
             }
 
-            if let storedLists = backup.sourceLists, (backup.version == 1) {
-                // Only present in v1 backups
+            let version = backup.version ?? -1
+
+            if let storedLists = backup.sourceLists, version < 2 {
+                // Only present in v1 or no version backups
                 for list in storedLists {
                     try await pluginManager.addPluginList(list.urlString, existingPluginList: nil)
                 }

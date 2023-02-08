@@ -55,7 +55,7 @@ struct PremiumizeCloudView: View {
                 }
             }
         }
-        .onAppear {
+        .backport.onAppear {
             viewTask = Task {
                 await debridManager.fetchPmCloud()
             }

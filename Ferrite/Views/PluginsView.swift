@@ -75,7 +75,7 @@ struct PluginsView: View {
                     ProgressView()
                 }
             }
-            .onAppear {
+            .backport.onAppear {
                 viewTask = Task {
                     await pluginManager.fetchPluginsFromUrl()
                     checkedForPlugins = true

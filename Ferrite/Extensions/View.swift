@@ -56,4 +56,8 @@ extension View {
     func inlinedList() -> some View {
         modifier(InlinedList())
     }
+
+    func viewDidAppear(_ callback: @escaping () -> Void) -> some View {
+        modifier(ViewDidAppearModifier(callback: callback))
+    }
 }

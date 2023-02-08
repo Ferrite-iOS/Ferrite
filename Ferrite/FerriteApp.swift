@@ -21,7 +21,7 @@ struct FerriteApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
-                .onAppear {
+                .backport.onAppear {
                     scrapingModel.toastModel = toastModel
                     debridManager.toastModel = toastModel
                     pluginManager.toastModel = toastModel

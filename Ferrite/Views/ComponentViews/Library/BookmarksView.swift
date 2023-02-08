@@ -54,7 +54,7 @@ struct BookmarksView: View {
             }
             .inlinedList()
             .listStyle(.insetGrouped)
-            .onAppear {
+            .backport.onAppear {
                 if debridManager.enabledDebrids.count > 0 {
                     viewTask = Task {
                         let magnets = bookmarks.compactMap {
@@ -72,7 +72,7 @@ struct BookmarksView: View {
                 viewTask?.cancel()
             }
         }
-        .onAppear {
+        .backport.onAppear {
             applyPredicate()
         }
         .onChange(of: searchText) { _ in

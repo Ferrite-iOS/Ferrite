@@ -27,7 +27,7 @@ struct HistoryView: View {
             }
             .listStyle(.insetGrouped)
         }
-        .onAppear {
+        .backport.onAppear {
             applyPredicate()
         }
         .onChange(of: searchText) { _ in

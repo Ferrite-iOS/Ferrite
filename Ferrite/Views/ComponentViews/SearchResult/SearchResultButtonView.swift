@@ -138,7 +138,7 @@ struct SearchResultButtonView: View {
                 existingBookmark = nil
             }
         }
-        .onAppear {
+        .backport.onAppear {
             // Only run a exists request if a bookmark isn't passed to the view
             if existingBookmark == nil, !runOnce {
                 let bookmarkRequest = Bookmark.fetchRequest()

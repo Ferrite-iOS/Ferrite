@@ -97,7 +97,7 @@ struct SourceSettingsBaseUrlView: View {
                 }
             })
             .keyboardType(.URL)
-            .onAppear {
+            .backport.onAppear {
                 tempBaseUrl = selectedSource.baseUrl ?? ""
             }
         }
@@ -127,7 +127,7 @@ struct SourceSettingsApiView: View {
                     }
                 })
                 .autocapitalization(.none)
-                .onAppear {
+                .backport.onAppear {
                     tempClientId = clientId.value ?? ""
                 }
             }
@@ -140,7 +140,7 @@ struct SourceSettingsApiView: View {
                     }
                 })
                 .autocapitalization(.none)
-                .onAppear {
+                .backport.onAppear {
                     tempClientSecret = clientSecret.value ?? ""
                 }
             }

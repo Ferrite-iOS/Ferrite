@@ -64,7 +64,7 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
                         .environmentObject(navModel)
                 }
             }
-            .onAppear {
+            .backport.onAppear {
                 filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(installedPlugins: installedPlugins, searchText: searchText)
                 filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(installedPlugins: installedPlugins, searchText: searchText)
             }

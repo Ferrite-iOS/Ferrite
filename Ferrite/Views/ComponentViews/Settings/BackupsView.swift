@@ -48,7 +48,7 @@ struct BackupsView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .onAppear {
+        .backport.onAppear {
             backupManager.backupUrls = FileManager.default.appDirectory
                 .appendingPathComponent("Backups", isDirectory: true).contentsByDateAdded
         }

@@ -20,7 +20,12 @@ extension View {
 }
 
 extension Backport where Content: View {
-    @ViewBuilder func alert(isPresented: Binding<Bool>, title: String, message: String?, buttons: [AlertButton] = []) -> some View {
+    @ViewBuilder func alert(
+        isPresented: Binding<Bool>,
+        title: String,
+        message: String?,
+        buttons: [AlertButton] = []
+    ) -> some View {
         if #available(iOS 15, *) {
             content
                 .alert(
@@ -63,7 +68,11 @@ extension Backport where Content: View {
         }
     }
 
-    @ViewBuilder func confirmationDialog(isPresented: Binding<Bool>, title: String, message: String?, buttons: [AlertButton]) -> some View {
+    @ViewBuilder func confirmationDialog(
+        isPresented: Binding<Bool>,
+        title: String, message: String?,
+        buttons: [AlertButton]
+    ) -> some View {
         if #available(iOS 15, *) {
             content
                 .confirmationDialog(
@@ -98,6 +107,20 @@ extension Backport where Content: View {
         } else {
             content
                 .accentColor(color)
+        }
+    }
+
+    @ViewBuilder func onAppear(callback: @escaping () -> Void) -> some View {
+        if #available(iOS 15, *) {
+            content
+                .onAppear {
+                    callback()
+                }
+        } else {
+            content
+                .viewDidAppear {
+                    callback()
+                }
         }
     }
 }

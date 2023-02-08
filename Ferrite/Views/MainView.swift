@@ -72,7 +72,7 @@ struct MainView: View {
                 }
             }
         }
-        .onAppear {
+        .backport.onAppear {
             if autoUpdateNotifs {
                 viewTask = Task {
                     do {
