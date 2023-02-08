@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D49" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Action" representedClassName="Action" syncable="YES">
+        <attribute name="author" attributeType="String" defaultValueString=""/>
+        <attribute name="deeplink" optional="YES" attributeType="String"/>
+        <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="listId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="requires" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <attribute name="version" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="PluginTag" inverseName="parentAction" inverseEntity="PluginTag"/>
+    </entity>
+    <entity name="Bookmark" representedClassName="Bookmark" syncable="YES">
+        <attribute name="leechers" optional="YES" attributeType="String"/>
+        <attribute name="magnetHash" optional="YES" attributeType="String"/>
+        <attribute name="magnetLink" optional="YES" attributeType="String"/>
+        <attribute name="orderNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="seeders" optional="YES" attributeType="String"/>
+        <attribute name="size" optional="YES" attributeType="String"/>
+        <attribute name="source" attributeType="String" defaultValueString=""/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="History" representedClassName="History" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dateString" optional="YES" attributeType="String"/>
+        <relationship name="entries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="HistoryEntry" inverseName="parentHistory" inverseEntity="HistoryEntry"/>
+    </entity>
+    <entity name="HistoryEntry" representedClassName="HistoryEntry" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="source" optional="YES" attributeType="String"/>
+        <attribute name="subName" optional="YES" attributeType="String"/>
+        <attribute name="timeStamp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="parentHistory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="History" inverseName="entries" inverseEntity="History"/>
+    </entity>
+    <entity name="PluginList" representedClassName="PluginList" syncable="YES">
+        <attribute name="author" attributeType="String" defaultValueString=""/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="urlString" attributeType="String" defaultValueString=""/>
+    </entity>
+    <entity name="PluginTag" representedClassName="PluginTag" syncable="YES">
+        <attribute name="colorHex" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <relationship name="parentAction" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Action" inverseName="tags" inverseEntity="Action"/>
+        <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="tags" inverseEntity="Source"/>
+    </entity>
+    <entity name="Source" representedClassName="Source" syncable="YES">
+        <attribute name="author" attributeType="String" defaultValueString=""/>
+        <attribute name="baseUrl" optional="YES" attributeType="String"/>
+        <attribute name="dynamicBaseUrl" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="fallbackUrls" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="listId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="preferredParser" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trackers" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <attribute name="version" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="api" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceApi" inverseName="parentSource" inverseEntity="SourceApi"/>
+        <relationship name="htmlParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceHtmlParser" inverseName="parentSource" inverseEntity="SourceHtmlParser"/>
+        <relationship name="jsonParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceJsonParser" inverseName="parentSource" inverseEntity="SourceJsonParser"/>
+        <relationship name="rssParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceRssParser" inverseName="parentSource" inverseEntity="SourceRssParser"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="PluginTag" inverseName="parentSource" inverseEntity="PluginTag"/>
+    </entity>
+    <entity name="SourceApi" representedClassName="SourceApi" syncable="YES" codeGenerationType="class">
+        <attribute name="apiUrl" optional="YES" attributeType="String"/>
+        <relationship name="clientId" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceApiClientId" inverseName="parentApi" inverseEntity="SourceApiClientId"/>
+        <relationship name="clientSecret" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceApiClientSecret" inverseName="parentApi" inverseEntity="SourceApiClientSecret"/>
+        <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="api" inverseEntity="Source"/>
+    </entity>
+    <entity name="SourceApiClientId" representedClassName="SourceApiClientId" parentEntity="SourceApiCredential" syncable="YES" codeGenerationType="class">
+        <relationship name="parentApi" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceApi" inverseName="clientId" inverseEntity="SourceApi"/>
+    </entity>
+    <entity name="SourceApiClientSecret" representedClassName="SourceApiClientSecret" parentEntity="SourceApiCredential" syncable="YES" codeGenerationType="class">
+        <relationship name="parentApi" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceApi" inverseName="clientSecret" inverseEntity="SourceApi"/>
+    </entity>
+    <entity name="SourceApiCredential" representedClassName="SourceApiCredential" isAbstract="YES" syncable="YES" codeGenerationType="class">
+        <attribute name="dynamic" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="expiryLength" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="query" optional="YES" attributeType="String"/>
+        <attribute name="responseType" optional="YES" attributeType="String"/>
+        <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="urlString" optional="YES" attributeType="String"/>
+        <attribute name="value" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="SourceComplexQuery" representedClassName="SourceComplexQuery" isAbstract="YES" syncable="YES">
+        <attribute name="attribute" attributeType="String" defaultValueString="text"/>
+        <attribute name="discriminator" optional="YES" attributeType="String"/>
+        <attribute name="query" attributeType="String" defaultValueString=""/>
+        <attribute name="regex" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="SourceHtmlParser" representedClassName="SourceHtmlParser" syncable="YES">
+        <attribute name="rows" attributeType="String" defaultValueString=""/>
+        <attribute name="searchUrl" attributeType="String" defaultValueString=""/>
+        <relationship name="magnetHash" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetHash" inverseName="parentHtmlParser" inverseEntity="SourceMagnetHash"/>
+        <relationship name="magnetLink" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetLink" inverseName="parentHtmlParser" inverseEntity="SourceMagnetLink"/>
+        <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="htmlParser" inverseEntity="Source"/>
+        <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSeedLeech" inverseName="parentHtmlParser" inverseEntity="SourceSeedLeech"/>
+        <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentHtmlParser" inverseEntity="SourceSize"/>
+        <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentHtmlParser" inverseEntity="SourceTitle"/>
+    </entity>
+    <entity name="SourceJsonParser" representedClassName="SourceJsonParser" syncable="YES">
+        <attribute name="results" optional="YES" attributeType="String" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <attribute name="searchUrl" optional="YES" attributeType="String"/>
+        <attribute name="subResults" optional="YES" attributeType="String"/>
+        <relationship name="magnetHash" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetHash" inverseName="parentJsonParser" inverseEntity="SourceMagnetHash"/>
+        <relationship name="magnetLink" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetLink" inverseName="parentJsonParser" inverseEntity="SourceMagnetLink"/>
+        <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="jsonParser" inverseEntity="Source"/>
+        <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSeedLeech" inverseName="parentJsonParser" inverseEntity="SourceSeedLeech"/>
+        <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentJsonParser" inverseEntity="SourceSize"/>
+        <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentJsonParser" inverseEntity="SourceTitle"/>
+    </entity>
+    <entity name="SourceMagnetHash" representedClassName="SourceMagnetHash" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="magnetHash" inverseEntity="SourceHtmlParser"/>
+        <relationship name="parentJsonParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceJsonParser" inverseName="magnetHash" inverseEntity="SourceJsonParser"/>
+        <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="magnetHash" inverseEntity="SourceRssParser"/>
+    </entity>
+    <entity name="SourceMagnetLink" representedClassName="SourceMagnetLink" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <attribute name="externalLinkQuery" optional="YES" attributeType="String"/>
+        <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="magnetLink" inverseEntity="SourceHtmlParser"/>
+        <relationship name="parentJsonParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceJsonParser" inverseName="magnetLink" inverseEntity="SourceJsonParser"/>
+        <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="magnetLink" inverseEntity="SourceRssParser"/>
+    </entity>
+    <entity name="SourceRssParser" representedClassName="SourceRssParser" syncable="YES">
+        <attribute name="items" attributeType="String" defaultValueString=""/>
+        <attribute name="rssUrl" optional="YES" attributeType="String"/>
+        <attribute name="searchUrl" attributeType="String" defaultValueString=""/>
+        <relationship name="magnetHash" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetHash" inverseName="parentRssParser" inverseEntity="SourceMagnetHash"/>
+        <relationship name="magnetLink" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetLink" inverseName="parentRssParser" inverseEntity="SourceMagnetLink"/>
+        <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="rssParser" inverseEntity="Source"/>
+        <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSeedLeech" inverseName="parentRssParser" inverseEntity="SourceSeedLeech"/>
+        <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentRssParser" inverseEntity="SourceSize"/>
+        <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentRssParser" inverseEntity="SourceTitle"/>
+    </entity>
+    <entity name="SourceSeedLeech" representedClassName="SourceSeedLeech" syncable="YES">
+        <attribute name="attribute" attributeType="String" defaultValueString=""/>
+        <attribute name="combined" optional="YES" attributeType="String"/>
+        <attribute name="discriminator" optional="YES" attributeType="String"/>
+        <attribute name="leecherRegex" optional="YES" attributeType="String"/>
+        <attribute name="leechers" optional="YES" attributeType="String"/>
+        <attribute name="seederRegex" optional="YES" attributeType="String"/>
+        <attribute name="seeders" optional="YES" attributeType="String"/>
+        <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="seedLeech" inverseEntity="SourceHtmlParser"/>
+        <relationship name="parentJsonParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceJsonParser" inverseName="seedLeech" inverseEntity="SourceJsonParser"/>
+        <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="seedLeech" inverseEntity="SourceRssParser"/>
+    </entity>
+    <entity name="SourceSize" representedClassName="SourceSize" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="size" inverseEntity="SourceHtmlParser"/>
+        <relationship name="parentJsonParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceJsonParser" inverseName="size" inverseEntity="SourceJsonParser"/>
+        <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="size" inverseEntity="SourceRssParser"/>
+    </entity>
+    <entity name="SourceTitle" representedClassName="SourceTitle" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="title" inverseEntity="SourceHtmlParser"/>
+        <relationship name="parentJsonParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceJsonParser" inverseName="title" inverseEntity="SourceJsonParser"/>
+        <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="title" inverseEntity="SourceRssParser"/>
+    </entity>
+</model>

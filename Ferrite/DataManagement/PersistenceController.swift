@@ -91,7 +91,7 @@ struct PersistenceController {
         save()
     }
 
-    func createBookmark(_ bookmarkJson: BookmarkJson) {
+    func createBookmark(_ bookmarkJson: BookmarkJson, performSave: Bool) {
         let bookmarkRequest = Bookmark.fetchRequest()
         bookmarkRequest.predicate = NSPredicate(
             format: "source == %@ AND title == %@ AND magnetLink == %@",
@@ -113,32 +113,31 @@ struct PersistenceController {
         newBookmark.seeders = bookmarkJson.seeders
         newBookmark.leechers = bookmarkJson.leechers
 
-        save(backgroundContext)
+        if performSave {
+            save(backgroundContext)
+        }
     }
 
-    func createHistory(_ entryJson: HistoryEntryJson, date: Double? = nil) {
+    func createHistory(_ entryJson: HistoryEntryJson, performSave: Bool, isBackup: Bool = false, date: Double? = nil) {
         let historyDate = date.map { Date(timeIntervalSince1970: $0) } ?? Date()
         let historyDateString = DateFormatter.historyDateFormatter.string(from: historyDate)
 
-        let newHistoryEntry = HistoryEntry(context: backgroundContext)
-
-        newHistoryEntry.source = entryJson.source
-        newHistoryEntry.name = entryJson.name
-        newHistoryEntry.url = entryJson.url
-        newHistoryEntry.subName = entryJson.subName
-        newHistoryEntry.timeStamp = entryJson.timeStamp ?? Date().timeIntervalSince1970
-
         let historyRequest = History.fetchRequest()
         historyRequest.predicate = NSPredicate(format: "dateString = %@", historyDateString)
+        var existingHistory: History?
 
-        // Safely add entries to a parent history if it exists
         if var histories = try? backgroundContext.fetch(historyRequest) {
             for (i, history) in histories.enumerated() {
-                let existingEntries = history.entryArray.filter { $0.url == newHistoryEntry.url && $0.name == newHistoryEntry.name }
+                let existingEntries = history.entryArray.filter { $0.url == entryJson.url && $0.name == entryJson.name }
 
+                // Maybe add !isBackup here
                 if !existingEntries.isEmpty {
-                    for entry in existingEntries {
-                        PersistenceController.shared.delete(entry, context: backgroundContext)
+                    if isBackup {
+                        continue
+                    } else {
+                        for entry in existingEntries {
+                            PersistenceController.shared.delete(entry, context: backgroundContext)
+                        }
                     }
                 }
 
@@ -148,15 +147,24 @@ struct PersistenceController {
                 }
             }
 
-            newHistoryEntry.parentHistory = histories.first ?? History(context: backgroundContext)
-        } else {
-            newHistoryEntry.parentHistory = History(context: backgroundContext)
+            existingHistory = histories.first
         }
 
+        let newHistoryEntry = HistoryEntry(context: backgroundContext)
+
+        newHistoryEntry.source = entryJson.source
+        newHistoryEntry.name = entryJson.name
+        newHistoryEntry.url = entryJson.url
+        newHistoryEntry.subName = entryJson.subName
+        newHistoryEntry.timeStamp = entryJson.timeStamp ?? Date().timeIntervalSince1970
+
+        newHistoryEntry.parentHistory = existingHistory ?? History(context: backgroundContext)
         newHistoryEntry.parentHistory?.dateString = historyDateString
         newHistoryEntry.parentHistory?.date = historyDate
 
-        save(backgroundContext)
+        if performSave {
+            save(backgroundContext)
+        }
     }
 
     func getHistoryPredicate(range: HistoryDeleteRange) -> NSPredicate? {
@@ -200,8 +208,7 @@ struct PersistenceController {
         return predicate
     }
 
-    // Always use the background context to batch delete
-    // Merge changes into both contexts to update views
+    // Wrapper to batch delete history objects
     func batchDeleteHistory(range: HistoryDeleteRange) throws {
         let predicate = getHistoryPredicate(range: range)
 
@@ -213,6 +220,13 @@ struct PersistenceController {
             throw HistoryDeleteError.noDate("No history date range was provided and you weren't trying to clear everything! Try relaunching the app?")
         }
 
+        try batchDelete("History", predicate: predicate)
+    }
+
+    // Always use the background context to batch delete
+    // Merge changes into both contexts to update views
+    func batchDelete(_ entity: String, predicate: NSPredicate? = nil) throws {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
         batchDeleteRequest.resultType = .resultTypeObjectIDs

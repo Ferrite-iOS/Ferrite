@@ -24,7 +24,7 @@ struct DynamicFetchRequest<T: NSManagedObject, Content: View>: View {
          sortDescriptors: [NSSortDescriptor] = [],
          @ViewBuilder content: @escaping (FetchedResults<T>) -> Content)
     {
-        _fetchRequest = FetchRequest<T>(sortDescriptors: sortDescriptors, predicate: predicate)
+        _fetchRequest = FetchRequest<T>(entity: T.entity(), sortDescriptors: sortDescriptors, predicate: predicate)
         self.content = content
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 enum ViewTab {
     case search
-    case sources
+    case plugins
     case settings
     case library
 }
@@ -56,7 +56,6 @@ class NavigationViewModel: ObservableObject {
     var selectedSource: Source?
 
     @Published var showSourceListEditor: Bool = false
-    var selectedSourceList: SourceList?
 
     @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
     @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none

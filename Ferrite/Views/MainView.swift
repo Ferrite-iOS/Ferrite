@@ -14,6 +14,7 @@ struct MainView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var backupManager: BackupManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
 
@@ -36,11 +37,11 @@ struct MainView: View {
                 }
                 .tag(ViewTab.library)
 
-            SourcesView()
+            PluginsView()
                 .tabItem {
-                    Label("Sources", systemImage: "doc.text")
+                    Label("Plugins", systemImage: "doc.text")
                 }
-                .tag(ViewTab.sources)
+                .tag(ViewTab.plugins)
 
             SettingsView()
                 .tabItem {
@@ -51,10 +52,12 @@ struct MainView: View {
         .sheet(item: $navModel.currentChoiceSheet) { item in
             switch item {
             case .magnet:
-                MagnetChoiceView()
+                ActionChoiceView()
                     .environmentObject(debridManager)
                     .environmentObject(scrapingModel)
                     .environmentObject(navModel)
+                    .environmentObject(pluginManager)
+                    .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
             case .batch:
                 BatchChoiceView()
                     .environmentObject(debridManager)
@@ -101,30 +104,42 @@ struct MainView: View {
                 backupManager.showRestoreAlert.toggle()
             }
         }
-        // Global alerts for backups
-        .backport.alert(
+        // Global alerts and dialogs for backups
+        .backport.confirmationDialog(
             isPresented: $backupManager.showRestoreAlert,
             title: "Restore backup?",
-            message: "Restoring this backup will merge all your data!",
+            message:
+                "Merge (preferred): Will merge your current data with the backup \n\n" +
+                "Overwrite: Will delete and replace all your data \n\n" +
+                "If Merge causes app instability, uninstall Ferrite and use the Overwrite option.",
             buttons: [
-                .init("Restore", role: .destructive) {
-                    backupManager.restoreBackup()
+                .init("Merge", role: .destructive) {
+                    Task {
+                        await backupManager.restoreBackup(pluginManager: pluginManager, doOverwrite: false)
+                    }
                 },
-                .init(role: .cancel)
+                .init("Overwrite", role: .destructive) {
+                    Task {
+                        await backupManager.restoreBackup(pluginManager: pluginManager, doOverwrite: true)
+                    }
+                }
             ]
         )
         .backport.alert(
             isPresented: $backupManager.showRestoreCompletedAlert,
             title: "Backup restored",
-            message: backupManager.backupSourceNames.isEmpty ?
-                "No sources need to be reinstalled" :
-                "Reinstall sources: \(backupManager.backupSourceNames.joined(separator: ", "))"
+            message: backupManager.restoreCompletedMessage.joined(separator: " \n\n"),
+            buttons: [
+                .init("OK") {
+                    backupManager.restoreCompletedMessage = []
+                }
+            ]
         )
         // Updater alert
         .backport.alert(
             isPresented: $showUpdateAlert,
             title: "Update available",
-            message: "Ferrite \(releaseVersionString) can be downloaded. \n\n This alert can be disabled in Settings.",
+            message: "Ferrite \(releaseVersionString) can be downloaded. \n\nThis alert can be disabled in Settings.",
             buttons: [
                 .init("Download") {
                     guard let releaseUrl = URL(string: releaseUrlString) else {

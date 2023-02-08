@@ -10,15 +10,4 @@ import CoreData
 import Foundation
 
 @objc(Bookmark)
-public class Bookmark: NSManagedObject {
-    func toSearchResult() -> SearchResult {
-        SearchResult(
-            title: title,
-            source: source,
-            size: size,
-            magnet: Magnet(hash: magnetHash, link: magnetLink),
-            seeders: seeders,
-            leechers: leechers
-        )
-    }
-}
+public class Bookmark: NSManagedObject {}

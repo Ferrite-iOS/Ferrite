@@ -12,7 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
-    @EnvironmentObject var sourceManager: SourceManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     @FetchRequest(
         entity: Source.entity(),
@@ -87,7 +87,7 @@ struct ContentView: View {
                                   navModel.isSearching = true
                                   navModel.showSearchProgress = true
 
-                                  let sources = sourceManager.fetchInstalledSources()
+                                  let sources = pluginManager.fetchInstalledSources()
                                   await scrapingModel.scanSources(sources: sources)
 
                                   if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {

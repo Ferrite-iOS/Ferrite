@@ -38,7 +38,8 @@ struct SearchResultButtonView: View {
                                         name: result.title,
                                         url: debridManager.downloadUrl,
                                         source: result.source
-                                    )
+                                    ),
+                                    performSave: true
                                 )
 
                                 navModel.runDebridAction(urlString: debridManager.downloadUrl)
@@ -63,7 +64,8 @@ struct SearchResultButtonView: View {
                             name: result.title,
                             url: result.magnet.link,
                             source: result.source
-                        )
+                        ),
+                        performSave: true
                     )
 
                     navModel.runMagnetAction(magnet: result.magnet)

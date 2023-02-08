@@ -1,5 +1,5 @@
 //
-//  Source+CoreDataProperties.swift
+//  Action+CoreDataProperties.swift
 //  Ferrite
 //
 //  Created by Brian Dashore on 2/6/23.
@@ -10,36 +10,29 @@ import Foundation
 import CoreData
 
 
-extension Source {
+extension Action {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Source> {
-        return NSFetchRequest<Source>(entityName: "Source")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Action> {
+        return NSFetchRequest<Action>(entityName: "Action")
     }
 
     @NSManaged public var id: UUID
-    @NSManaged public var baseUrl: String?
-    @NSManaged public var fallbackUrls: [String]?
-    @NSManaged public var dynamicBaseUrl: Bool
-    @NSManaged public var enabled: Bool
-    @NSManaged public var name: String
-    @NSManaged public var author: String
     @NSManaged public var listId: UUID?
-    @NSManaged public var preferredParser: Int16
+    @NSManaged public var name: String
+    @NSManaged public var deeplink: String?
     @NSManaged public var version: Int16
-    @NSManaged public var htmlParser: SourceHtmlParser?
-    @NSManaged public var rssParser: SourceRssParser?
-    @NSManaged public var jsonParser: SourceJsonParser?
-    @NSManaged public var api: SourceApi?
-    @NSManaged public var trackers: [String]?
+    @NSManaged public var requires: [String]
+    @NSManaged public var author: String
+    @NSManaged public var enabled: Bool
     @NSManaged public var tags: NSOrderedSet?
 
     public func getTags() -> [PluginTagJson] {
-        return tagArray.map { $0.toJson() }
+        return requires.map { PluginTagJson(name: $0, colorHex: nil) } + tagArray.map { $0.toJson() }
     }
 }
 
 // MARK: Generated accessors for tags
-extension Source {
+extension Action {
 
     @objc(insertObject:inTagsAtIndex:)
     @NSManaged public func insertIntoTags(_ value: PluginTag, at idx: Int)
@@ -73,6 +66,6 @@ extension Source {
 
 }
 
-extension Source : Identifiable {
+extension Action : Identifiable {
 
 }

@@ -77,4 +77,12 @@ struct HistoryButtonView: View {
         .backport.tint(.primary)
         .disableInteraction(navModel.currentChoiceSheet != nil)
     }
+
+    func getTagColor() -> Color {
+        if let url = entry.url, url.starts(with: "https://") {
+            return Color.green
+        } else {
+            return Color.red
+        }
+    }
 }

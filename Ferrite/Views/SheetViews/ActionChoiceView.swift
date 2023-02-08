@@ -8,14 +8,18 @@
 import SwiftUI
 import SwiftUIX
 
-struct MagnetChoiceView: View {
+struct ActionChoiceView: View {
     @Environment(\.presentationMode) var presentationMode
 
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var pluginManager: PluginManager
 
-    @AppStorage("RealDebrid.Enabled") var realDebridEnabled = false
+    @FetchRequest(
+        entity: Action.entity(),
+        sortDescriptors: []
+    ) var actions: FetchedResults<Action>
 
     @State private var showLinkCopyAlert = false
     @State private var showMagnetCopyAlert = false
@@ -39,16 +43,12 @@ struct MagnetChoiceView: View {
 
                 if !debridManager.downloadUrl.isEmpty {
                     Section(header: "Debrid options") {
-                        ListRowButtonView("Play on Outplayer", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(urlString: debridManager.downloadUrl, .outplayer)
-                        }
-
-                        ListRowButtonView("Play on VLC", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(urlString: debridManager.downloadUrl, .vlc)
-                        }
-
-                        ListRowButtonView("Play on Infuse", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runDebridAction(urlString: debridManager.downloadUrl, .infuse)
+                        ForEach(actions, id: \.id) { action in
+                            if action.requires.contains(ActionRequirement.debrid.rawValue) {
+                                ListRowButtonView(action.name, systemImage: "arrow.up.forward.app.fill") {
+                                    pluginManager.runDeeplinkAction(action, urlString: debridManager.downloadUrl)
+                                }
+                            }
                         }
 
                         ListRowButtonView("Copy download URL", systemImage: "doc.on.doc.fill") {
@@ -73,6 +73,14 @@ struct MagnetChoiceView: View {
 
                 if !navModel.resultFromCloud {
                     Section(header: "Magnet options") {
+                        ForEach(actions, id: \.id) { action in
+                            if action.requires.contains(ActionRequirement.magnet.rawValue) {
+                                ListRowButtonView(action.name, systemImage: "arrow.up.forward.app.fill") {
+                                    pluginManager.runDeeplinkAction(action, urlString: navModel.selectedMagnet?.link)
+                                }
+                            }
+                        }
+
                         ListRowButtonView("Copy magnet", systemImage: "doc.on.doc.fill") {
                             UIPasteboard.general.string = navModel.selectedMagnet?.link
                             showMagnetCopyAlert.toggle()
@@ -91,10 +99,6 @@ struct MagnetChoiceView: View {
                                 navModel.activityItems = [url]
                                 navModel.showLocalActivitySheet.toggle()
                             }
-                        }
-
-                        ListRowButtonView("Open in WebTor", systemImage: "arrow.up.forward.app.fill") {
-                            navModel.runMagnetAction(magnet: navModel.selectedMagnet, .webtor)
                         }
                     }
                 }
@@ -131,8 +135,8 @@ struct MagnetChoiceView: View {
     }
 }
 
-struct MagnetChoiceView_Previews: PreviewProvider {
+struct ActionChoiceView_Previews: PreviewProvider {
     static var previews: some View {
-        MagnetChoiceView()
+        ActionChoiceView()
     }
 }

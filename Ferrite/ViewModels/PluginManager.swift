@@ -5,27 +5,28 @@
 //  Created by Brian Dashore on 7/25/22.
 //
 
-import CoreData
 import Foundation
 import SwiftUI
 
-public class SourceManager: ObservableObject {
+public class PluginManager: ObservableObject {
     var toastModel: ToastViewModel?
 
     @Published var availableSources: [SourceJson] = []
-
-    var urlErrorAlertText = ""
-    @Published var showUrlErrorAlert = false
+    @Published var availableActions: [ActionJson] = []
 
     @MainActor
-    public func fetchSourcesFromUrl() async {
-        let sourceListRequest = SourceList.fetchRequest()
+    public func fetchPluginsFromUrl() async {
+        let pluginListRequest = PluginList.fetchRequest()
         do {
-            let sourceLists = try PersistenceController.shared.backgroundContext.fetch(sourceListRequest)
-            var tempAvailableSources: [SourceJson] = []
+            let pluginLists = try PersistenceController.shared.backgroundContext.fetch(pluginListRequest)
 
-            for sourceList in sourceLists {
-                guard let url = URL(string: sourceList.urlString) else {
+            if pluginLists.isEmpty {
+                availableSources = []
+                availableActions = []
+            }
+
+            for pluginList in pluginLists {
+                guard let url = URL(string: pluginList.urlString) else {
                     return
                 }
 
@@ -33,39 +34,107 @@ public class SourceManager: ObservableObject {
                 let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
 
                 let (data, _) = try await URLSession.shared.data(for: request)
-                let sourceResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
+                let pluginResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
 
-                for var source in sourceResponse.sources {
-                    // If there is a minVersion, check and see if the source is valid
-                    if checkAppVersion(minVersion: source.minVersion) {
-                        source.author = sourceList.author
-                        source.listId = sourceList.id
+                if let sources = pluginResponse.sources {
+                    // Faster and more performant to map instead of a for loop
+                    availableSources = sources.compactMap { inputJson in
+                        if checkAppVersion(minVersion: inputJson.minVersion) {
+                            return SourceJson(
+                                name: inputJson.name,
+                                version: inputJson.version,
+                                minVersion: inputJson.minVersion,
+                                baseUrl: inputJson.baseUrl,
+                                fallbackUrls: inputJson.fallbackUrls,
+                                trackers: inputJson.trackers,
+                                api: inputJson.api,
+                                jsonParser: inputJson.jsonParser,
+                                rssParser: inputJson.rssParser,
+                                htmlParser: inputJson.htmlParser,
+                                author: pluginList.author,
+                                listId: pluginList.id,
+                                tags: inputJson.tags
+                            )
+                        } else {
+                            return nil
+                        }
+                    }
+                }
 
-                        tempAvailableSources.append(source)
+                if let actions = pluginResponse.actions {
+                    availableActions = actions.compactMap { inputJson in
+                        if checkAppVersion(minVersion: inputJson.minVersion) {
+                            return ActionJson(
+                                name: inputJson.name,
+                                version: inputJson.version,
+                                minVersion: inputJson.minVersion,
+                                requires: inputJson.requires,
+                                deeplink: inputJson.deeplink,
+                                author: pluginList.author,
+                                listId: pluginList.id,
+                                tags: inputJson.tags
+                            )
+                        } else {
+                            return nil
+                        }
                     }
                 }
             }
-
-            availableSources = tempAvailableSources
         } catch {
-            print(error)
+            toastModel?.updateToastDescription("Plugin fetch error: \(error)")
+            print("Plugin fetch error: \(error)")
         }
     }
 
-    func fetchUpdatedSources(installedSources: FetchedResults<Source>) -> [SourceJson] {
-        var updatedSources: [SourceJson] = []
+    // Check if underlying type is Source or Action
+    func fetchFilteredPlugins<P: Plugin, PJ: PluginJson>(installedPlugins: FetchedResults<P>, searchText: String) -> [PJ] {
+        let availablePlugins: [PJ] = fetchCastedPlugins(PJ.self)
 
-        for source in installedSources {
-            if let availableSource = availableSources.first(where: {
-                source.listId == $0.listId && source.name == $0.name && source.author == $0.author
+        return availablePlugins
+            .filter { availablePlugin in
+                let pluginExists = installedPlugins.contains(where: {
+                    availablePlugin.name == $0.name &&
+                    availablePlugin.listId == $0.listId &&
+                    availablePlugin.author == $0.author
+                })
+
+                if searchText.isEmpty {
+                    return !pluginExists
+                } else {
+                    return !pluginExists && availablePlugin.name.lowercased().contains(searchText.lowercased())
+                }
+            }
+    }
+
+    func fetchUpdatedPlugins<P: Plugin, PJ: PluginJson>(installedPlugins: FetchedResults<P>, searchText: String) -> [PJ] {
+        var updatedPlugins: [PJ] = []
+        let availablePlugins: [PJ] = fetchCastedPlugins(PJ.self)
+
+        for plugin in installedPlugins {
+            if let availablePlugin = availablePlugins.first(where: {
+                plugin.listId == $0.listId && plugin.name == $0.name && plugin.author == $0.author
             }),
-                availableSource.version > source.version
+                availablePlugin.version > plugin.version
             {
-                updatedSources.append(availableSource)
+                updatedPlugins.append(availablePlugin)
             }
         }
 
-        return updatedSources
+        return updatedPlugins
+            .filter {
+                searchText.isEmpty ? true : $0.name.lowercased().contains(searchText.lowercased())
+            }
+    }
+
+    func fetchCastedPlugins<PJ: PluginJson>(_ forType: PJ.Type) -> [PJ] {
+        switch String(describing: PJ.self) {
+        case "SourceJson":
+            return availableSources as? [PJ] ?? []
+        case "ActionJson":
+            return availableActions as? [PJ] ?? []
+        default:
+            return []
+        }
     }
 
     // Checks if the current app version is supported by the source
@@ -89,7 +158,98 @@ public class SourceManager: ObservableObject {
         }
     }
 
-    public func installSource(sourceJson: SourceJson, doUpsert: Bool = false) async {
+    // The iOS version of Ferrite only runs deeplink actions
+    @MainActor
+    public func runDeeplinkAction(_ action: Action, urlString: String?) {
+        guard let deeplink = action.deeplink, let urlString else {
+            toastModel?.updateToastDescription("Could not run action: \(action.name) since there is no deeplink to execute. Contact the action dev!")
+            print("Could not run action: \(action.name) since there is no deeplink to execute.")
+
+            return
+        }
+
+        let playbackUrl = URL(string: deeplink.replacingOccurrences(of: "{link}", with: urlString))
+
+        if let playbackUrl {
+            UIApplication.shared.open(playbackUrl)
+        } else {
+            toastModel?.updateToastDescription("Could not run action: \(action.name) because the created deeplink was invalid. Contact the action dev!")
+            print("Could not run action: \(action.name) because the created deeplink (\(String(describing: playbackUrl))) was invalid")
+        }
+    }
+
+    public func installAction(actionJson: ActionJson?, doUpsert: Bool = false) async {
+        guard let actionJson else {
+            await toastModel?.updateToastDescription("Action addition error: No action present. Contact the app dev!")
+            return
+        }
+
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        if actionJson.requires.count < 1 {
+            await toastModel?.updateToastDescription("Action addition error: actions must require an input. Please contact the action dev!")
+            print("Action name \(actionJson.name) does not have a requires parameter")
+            
+            return
+        }
+
+        guard let deeplink = actionJson.deeplink else {
+            await toastModel?.updateToastDescription("Action addition error: only deeplink actions can be added to Ferrite iOS. Please contact the action dev!")
+            print("Action name \(actionJson.name) did not have a deeplink")
+
+            return
+        }
+
+        let existingActionRequest = Action.fetchRequest()
+        existingActionRequest.predicate = NSPredicate(format: "name == %@", actionJson.name)
+        existingActionRequest.fetchLimit = 1
+
+        if let existingAction = try? backgroundContext.fetch(existingActionRequest).first {
+            if doUpsert {
+                PersistenceController.shared.delete(existingAction, context: backgroundContext)
+            } else {
+                await toastModel?.updateToastDescription("Could not install action with name \(actionJson.name) because it is already installed")
+                print("Action name \(actionJson.name) already exists in user's DB")
+
+                return
+            }
+        }
+
+        let newAction = Action(context: backgroundContext)
+        newAction.id = UUID()
+        newAction.name = actionJson.name
+        newAction.version = actionJson.version
+        newAction.author = actionJson.author ?? "Unknown"
+        newAction.listId = actionJson.listId
+        newAction.requires = actionJson.requires.map { $0.rawValue }
+        newAction.enabled = true
+
+        if let jsonTags = actionJson.tags {
+            for tag in jsonTags {
+                let newTag = PluginTag(context: backgroundContext)
+                newTag.name = tag.name
+                newTag.colorHex = tag.colorHex
+
+                newTag.parentAction = newAction
+            }
+        }
+
+        newAction.deeplink = deeplink
+
+        do {
+            try backgroundContext.save()
+        } catch {
+            await toastModel?.updateToastDescription("Action addition error: \(error)")
+            print("Action addition error: \(error)")
+        }
+    }
+
+    public func installSource(sourceJson: SourceJson?, doUpsert: Bool = false) async {
+        guard let sourceJson else {
+            await toastModel?.updateToastDescription("Source addition error: No source present. Contact the app dev!")
+            return
+        }
+
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         // If there's no base URL and it isn't dynamic, return before any transactions occur
@@ -97,8 +257,8 @@ public class SourceManager: ObservableObject {
 
         if !dynamicBaseUrl, sourceJson.baseUrl == nil {
             await toastModel?.updateToastDescription("Not adding this source because base URL parameters are malformed. Please contact the source dev.")
-
-            print("Not adding this source because base URL parameters are malformed")
+            print("Not adding source \(sourceJson.name) because base URL parameters are malformed")
+    
             return
         }
 
@@ -112,6 +272,8 @@ public class SourceManager: ObservableObject {
                 PersistenceController.shared.delete(existingSource, context: backgroundContext)
             } else {
                 await toastModel?.updateToastDescription("Could not install source with name \(sourceJson.name) because it is already installed.")
+                print("Source name \(sourceJson.name) already exists")
+
                 return
             }
         }
@@ -126,6 +288,16 @@ public class SourceManager: ObservableObject {
         newSource.author = sourceJson.author ?? "Unknown"
         newSource.listId = sourceJson.listId
         newSource.trackers = sourceJson.trackers
+
+        if let jsonTags = sourceJson.tags {
+            for tag in jsonTags {
+                let newTag = PluginTag(context: backgroundContext)
+                newTag.name = tag.name
+                newTag.colorHex = tag.colorHex
+
+                newTag.parentSource = newSource
+            }
+        }
 
         if let sourceApiJson = sourceJson.api {
             addSourceApi(newSource: newSource, apiJson: sourceApiJson)
@@ -159,7 +331,8 @@ public class SourceManager: ObservableObject {
         do {
             try backgroundContext.save()
         } catch {
-            await toastModel?.updateToastDescription(error.localizedDescription)
+            await toastModel?.updateToastDescription("Source addition error: \(error)")
+            print("Source addition error: \(error)")
         }
     }
 
@@ -370,57 +543,44 @@ public class SourceManager: ObservableObject {
         newSource.htmlParser = newSourceHtmlParser
     }
 
-    @MainActor
-    public func addSourceList(sourceUrl: String, existingSourceList: SourceList?) async -> Bool {
+    // Adds a plugin list
+    // Can move this to PersistenceController if needed
+    public func addPluginList(_ url: String, isSheet: Bool = false, existingPluginList: PluginList? = nil) async throws {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        if sourceUrl.isEmpty || URL(string: sourceUrl) == nil {
-            urlErrorAlertText = "The provided source list is invalid. Please check if the URL is formatted properly."
-            showUrlErrorAlert.toggle()
-
-            return false
+        if url.isEmpty || URL(string: url) == nil {
+            throw PluginManagerError.ListAddition(description: "The provided source list is invalid. Please check if the URL is formatted properly.")
         }
 
-        do {
-            let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: sourceUrl)!))
-            let rawResponse = try JSONDecoder().decode(SourceListJson.self, from: data)
+        let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: url)!))
+        let rawResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
 
-            if let existingSourceList {
-                existingSourceList.urlString = sourceUrl
-                existingSourceList.name = rawResponse.name
-                existingSourceList.author = rawResponse.author
+        if let existingPluginList {
+            existingPluginList.urlString = url
+            existingPluginList.name = rawResponse.name
+            existingPluginList.author = rawResponse.author
 
-                try PersistenceController.shared.container.viewContext.save()
-            } else {
-                let sourceListRequest = SourceList.fetchRequest()
-                let urlPredicate = NSPredicate(format: "urlString == %@", sourceUrl)
-                let infoPredicate = NSPredicate(format: "author == %@ AND name == %@", rawResponse.author, rawResponse.name)
-                sourceListRequest.predicate = NSCompoundPredicate(type: .or, subpredicates: [urlPredicate, infoPredicate])
-                sourceListRequest.fetchLimit = 1
+            try PersistenceController.shared.container.viewContext.save()
+        } else {
+            let pluginListRequest = PluginList.fetchRequest()
+            let urlPredicate = NSPredicate(format: "urlString == %@", url)
+            let infoPredicate = NSPredicate(format: "author == %@ AND name == %@", rawResponse.author, rawResponse.name)
+            pluginListRequest.predicate = NSCompoundPredicate(type: .or, subpredicates: [urlPredicate, infoPredicate])
+            pluginListRequest.fetchLimit = 1
 
-                if (try? backgroundContext.fetch(sourceListRequest).first) != nil {
-                    urlErrorAlertText = "An existing source with this information was found. Please try editing the source list instead."
-                    showUrlErrorAlert.toggle()
-
-                    return false
-                }
-
-                let newSourceUrl = SourceList(context: backgroundContext)
-                newSourceUrl.id = UUID()
-                newSourceUrl.urlString = sourceUrl
-                newSourceUrl.name = rawResponse.name
-                newSourceUrl.author = rawResponse.author
-
-                try backgroundContext.save()
+            if let existingPluginList = try? backgroundContext.fetch(pluginListRequest).first, !isSheet {
+                PersistenceController.shared.delete(existingPluginList, context: backgroundContext)
+            } else if isSheet {
+                throw PluginManagerError.ListAddition(description: "An existing plugin list with this information was found. Please try editing an existing plugin list instead.")
             }
 
-            return true
-        } catch {
-            print(error)
-            urlErrorAlertText = error.localizedDescription
-            showUrlErrorAlert.toggle()
+            let newPluginList = PluginList(context: backgroundContext)
+            newPluginList.id = UUID()
+            newPluginList.urlString = url
+            newPluginList.name = rawResponse.name
+            newPluginList.author = rawResponse.author
 
-            return false
+            try backgroundContext.save()
         }
     }
 }

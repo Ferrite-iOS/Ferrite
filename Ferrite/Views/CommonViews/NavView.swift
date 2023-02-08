@@ -11,19 +11,16 @@
 import SwiftUI
 
 struct NavView<Content: View>: View {
-    let content: () -> Content
-    init(@ViewBuilder _ content: @escaping () -> Content) {
-        self.content = content
-    }
+    @ViewBuilder var content: Content
 
     var body: some View {
         if #available(iOS 16, *) {
             NavigationStack {
-                content()
+                content
             }
         } else {
             NavigationView {
-                content()
+                content
             }
             .navigationViewStyle(.stack)
         }

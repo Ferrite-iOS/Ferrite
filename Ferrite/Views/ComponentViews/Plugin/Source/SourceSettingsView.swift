@@ -17,28 +17,34 @@ struct SourceSettingsView: View {
             List {
                 if let selectedSource = navModel.selectedSource {
                     Section(header: InlineHeader("Info")) {
-                        VStack(alignment: .leading, spacing: 5) {
-                            HStack {
-                                Text(selectedSource.name)
+                        VStack(alignment: .leading) {
+                            VStack(alignment: .leading, spacing: 5) {
+                                HStack {
+                                    Text(selectedSource.name)
 
-                                Text("v\(selectedSource.version)")
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Text("by \(selectedSource.author)")
-                                .foregroundColor(.secondary)
-
-                            Group {
-                                Text("ID: \(selectedSource.id)")
-
-                                if let listId = selectedSource.listId {
-                                    Text("List ID: \(listId)")
-                                } else {
-                                    Text("No list ID found. This source should be removed.")
+                                    Text("v\(selectedSource.version)")
+                                        .foregroundColor(.secondary)
                                 }
+
+                                Text("by \(selectedSource.author)")
+                                    .foregroundColor(.secondary)
+
+                                Group {
+                                    Text("ID: \(selectedSource.id)")
+
+                                    if let listId = selectedSource.listId {
+                                        Text("List ID: \(listId)")
+                                    } else {
+                                        Text("No list ID found. This source should be removed.")
+                                    }
+                                }
+                                .foregroundColor(.secondary)
+                                .font(.caption)
                             }
-                            .foregroundColor(.secondary)
-                            .font(.caption)
+
+                            if let tags = selectedSource.getTags(), !tags.isEmpty {
+                                PluginTagsView(tags: tags)
+                            }
                         }
                         .padding(.vertical, 2)
                     }

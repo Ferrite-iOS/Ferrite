@@ -34,7 +34,8 @@ struct PremiumizeCloudView: View {
                                     name: item.name,
                                     url: debridManager.downloadUrl,
                                     source: DebridType.premiumize.toString()
-                                )
+                                ),
+                                performSave: true
                             )
 
                             navModel.runDebridAction(urlString: debridManager.downloadUrl)

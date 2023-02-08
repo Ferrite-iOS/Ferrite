@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var debridManager: DebridManager
-    @EnvironmentObject var sourceManager: SourceManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
@@ -84,8 +84,8 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: Text("Source management")) {
-                    NavigationLink("Source lists", destination: SettingsSourceListView())
+                Section(header: Text("Plugin management")) {
+                    NavigationLink("Plugin lists", destination: SettingsPluginListView())
                 }
 
                 Section(header: Text("Default actions")) {

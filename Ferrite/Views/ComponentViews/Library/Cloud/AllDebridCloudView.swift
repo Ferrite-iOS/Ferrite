@@ -37,7 +37,7 @@ struct AllDebridCloudView: View {
 
                                     if !debridManager.downloadUrl.isEmpty {
                                         historyInfo.url = debridManager.downloadUrl
-                                        PersistenceController.shared.createHistory(historyInfo)
+                                        PersistenceController.shared.createHistory(historyInfo, performSave: true)
                                         navModel.runDebridAction(urlString: debridManager.downloadUrl)
                                     }
                                 }

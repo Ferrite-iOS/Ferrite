@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SourceCatalogButtonView: View {
-    @EnvironmentObject var sourceManager: SourceManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     let availableSource: SourceJson
 
@@ -29,7 +29,7 @@ struct SourceCatalogButtonView: View {
 
             Button("Install") {
                 Task {
-                    await sourceManager.installSource(sourceJson: availableSource)
+                    await pluginManager.installSource(sourceJson: availableSource)
                 }
             }
         }

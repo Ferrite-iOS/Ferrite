@@ -57,7 +57,9 @@ struct BackupsView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    backupManager.createBackup()
+                    Task {
+                        await backupManager.createBackup()
+                    }
                 } label: {
                     Image(systemName: "plus")
                 }

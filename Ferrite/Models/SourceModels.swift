@@ -12,26 +12,28 @@ public enum ApiCredentialResponseType: String, Codable, Hashable, Sendable {
     case text
 }
 
-public struct SourceListJson: Codable, Sendable {
-    let name: String
-    let author: String
-    var sources: [SourceJson]
-}
-
-public struct SourceJson: Codable, Hashable, Sendable {
-    let name: String
-    let version: Int16
+public struct SourceJson: Codable, Hashable, Sendable, PluginJson {
+    public let name: String
+    public let version: Int16
     let minVersion: String?
     let baseUrl: String?
     let fallbackUrls: [String]?
     var dynamicBaseUrl: Bool?
-    var author: String?
-    var listId: UUID?
     let trackers: [String]?
     let api: SourceApiJson?
     let jsonParser: SourceJsonParserJson?
     let rssParser: SourceRssParserJson?
     let htmlParser: SourceHtmlParserJson?
+    public var author: String?
+    public var listId: UUID?
+    public var tags: [PluginTagJson]?
+}
+
+extension SourceJson {
+    // Fetches all tags without optional requirement
+    public func getTags() -> [PluginTagJson] {
+        return tags ?? []
+    }
 }
 
 public enum SourcePreferredParser: Int16, CaseIterable, Sendable {

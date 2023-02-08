@@ -7,37 +7,41 @@
 
 import SwiftUI
 
-struct SourceListEditorView: View {
+struct PluginListEditorView: View {
     @Environment(\.presentationMode) var presentationMode
 
     @EnvironmentObject var navModel: NavigationViewModel
-    @EnvironmentObject var sourceManager: SourceManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
-    @State private var sourceUrlSet = false
+    @State var selectedPluginList: PluginList?
 
-    @State private var sourceUrl: String = ""
+    @State private var sourceUrlSet = false
+    @State private var showUrlErrorAlert = false
+
+    @State private var pluginListUrl: String = ""
+    @State private var urlErrorAlertText: String = ""
 
     var body: some View {
         NavView {
             Form {
-                TextField("Enter URL", text: $sourceUrl)
+                TextField("Enter URL", text: $pluginListUrl)
                     .disableAutocorrection(true)
                     .keyboardType(.URL)
                     .autocapitalization(.none)
                     .conditionalId(sourceUrlSet)
             }
             .onAppear {
-                sourceUrl = navModel.selectedSourceList?.urlString ?? ""
+                pluginListUrl = selectedPluginList?.urlString ?? ""
                 sourceUrlSet = true
             }
             .backport.alert(
-                isPresented: $sourceManager.showUrlErrorAlert,
+                isPresented: $showUrlErrorAlert,
                 title: "Error",
-                message: sourceManager.urlErrorAlertText
+                message: urlErrorAlertText
             )
-            .navigationTitle("Editing source list")
+            .navigationTitle("Editing Plugin List")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -49,25 +53,23 @@ struct SourceListEditorView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         Task {
-                            if await sourceManager.addSourceList(
-                                sourceUrl: sourceUrl,
-                                existingSourceList: navModel.selectedSourceList
-                            ) {
+                            do {
+                                try await pluginManager.addPluginList(pluginListUrl, existingPluginList: selectedPluginList)
                                 presentationMode.wrappedValue.dismiss()
+                            } catch {
+                                urlErrorAlertText = error.localizedDescription
+                                showUrlErrorAlert.toggle()
                             }
                         }
                     }
                 }
             }
-            .onDisappear {
-                navModel.selectedSourceList = nil
-            }
         }
     }
 }
 
-struct SourceListEditorView_Previews: PreviewProvider {
+struct PluginListEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        SourceListEditorView()
+        PluginListEditorView()
     }
 }

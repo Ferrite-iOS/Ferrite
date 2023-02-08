@@ -22,6 +22,17 @@ public extension Bookmark {
     @NSManaged var source: String
     @NSManaged var title: String?
     @NSManaged var orderNum: Int16
+
+    func toSearchResult() -> SearchResult {
+        SearchResult(
+            title: title,
+            source: source,
+            size: size,
+            magnet: Magnet(hash: magnetHash, link: magnetLink),
+            seeders: seeders,
+            leechers: leechers
+        )
+    }
 }
 
 extension Bookmark: Identifiable {}

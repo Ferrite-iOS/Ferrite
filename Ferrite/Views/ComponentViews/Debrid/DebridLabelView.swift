@@ -15,31 +15,31 @@ struct DebridLabelView: View {
 
     var body: some View {
         if let selectedDebridType = debridManager.selectedDebridType {
-            Text(selectedDebridType.toString(abbreviated: true))
-                .fontWeight(.bold)
-                .padding(2)
-                .background {
-                    Group {
-                        if let magnet, cloudLinks.isEmpty {
-                            switch debridManager.matchMagnetHash(magnet) {
-                            case .full:
-                                Color.green
-                            case .partial:
-                                Color.orange
-                            case .none:
-                                Color.red
-                            }
-                        } else if cloudLinks.count == 1 {
-                            Color.green
-                        } else if cloudLinks.count > 1 {
-                            Color.orange
-                        } else {
-                            Color.red
-                        }
-                    }
-                    .cornerRadius(4)
-                    .opacity(0.5)
-                }
+            Tag(
+                name: selectedDebridType.toString(abbreviated: true),
+                color: getTagColor(),
+                horizontalPadding: 5,
+                verticalPadding: 3
+            )
+        }
+    }
+
+    func getTagColor() -> Color {
+        if let magnet, cloudLinks.isEmpty {
+            switch debridManager.matchMagnetHash(magnet) {
+            case .full:
+                return Color.green
+            case .partial:
+                return Color.orange
+            case .none:
+                return Color.red
+            }
+        } else if cloudLinks.count == 1 {
+            return Color.green
+        } else if cloudLinks.count > 1 {
+            return Color.orange
+        } else {
+            return Color.red
         }
     }
 }

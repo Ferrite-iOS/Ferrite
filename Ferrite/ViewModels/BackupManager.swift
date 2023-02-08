@@ -9,18 +9,33 @@ import Foundation
 
 public class BackupManager: ObservableObject {
     // Constant variable for backup versions
-    let latestBackupVersion: Int = 1
+    let latestBackupVersion: Int = 2
 
     var toastModel: ToastViewModel?
 
     @Published var showRestoreAlert = false
     @Published var showRestoreCompletedAlert = false
+    @Published var restoreCompletedMessage: [String] = []
 
     @Published var backupUrls: [URL] = []
-    @Published var backupSourceNames: [String] = []
     @Published var selectedBackupUrl: URL?
 
-    func createBackup() {
+    @MainActor
+    func updateRestoreCompletedMessage(newString: String) {
+        restoreCompletedMessage.append(newString)
+    }
+
+    @MainActor
+    func toggleRestoreCompletedAlert() {
+        showRestoreCompletedAlert.toggle()
+    }
+
+    @MainActor
+    func updateBackupUrls(newUrl: URL) {
+        backupUrls.append(newUrl)
+    }
+
+    func createBackup() async {
         var backup = Backup(version: latestBackupVersion)
         let backgroundContext = PersistenceController.shared.backgroundContext
 
@@ -71,16 +86,14 @@ public class BackupManager: ObservableObject {
             backup.sourceNames = sources.map(\.name)
         }
 
-        let sourceListRequest = SourceList.fetchRequest()
-        if let sourceLists = try? backgroundContext.fetch(sourceListRequest) {
-            backup.sourceLists = sourceLists.map {
-                SourceListBackupJson(
-                    name: $0.name,
-                    author: $0.author,
-                    id: $0.id.uuidString,
-                    urlString: $0.urlString
-                )
-            }
+        let actionRequest = Action.fetchRequest()
+        if let actions = try? backgroundContext.fetch(actionRequest) {
+            backup.actionNames = actions.map(\.name)
+        }
+
+        let pluginListRequest = PluginList.fetchRequest()
+        if let pluginLists = try? backgroundContext.fetch(pluginListRequest) {
+            backup.pluginListUrls = pluginLists.map(\.urlString)
         }
 
         do {
@@ -94,18 +107,20 @@ public class BackupManager: ObservableObject {
             let writeUrl = backupsPath.appendingPathComponent("Ferrite-backup-\(snapshot).feb")
 
             try encodedJson.write(to: writeUrl)
-            backupUrls.append(writeUrl)
+
+            await updateBackupUrls(newUrl: writeUrl)
         } catch {
-            print(error)
+            await toastModel?.updateToastDescription("Backup error: \(error)")
+            print("Backup error: \(error)")
         }
     }
 
     // Backup is in local documents directory, so no need to restore it from the shared URL
-    func restoreBackup() {
+    // Pass the pluginManager reference since it's not used throughout the class like toastModel
+    func restoreBackup(pluginManager: PluginManager, doOverwrite: Bool) async {
         guard let backupUrl = selectedBackupUrl else {
-            Task {
-                await toastModel?.updateToastDescription("Could not find the selected backup in the local directory.")
-            }
+            await toastModel?.updateToastDescription("Could not find the selected backup in the local directory.")
+            print("Backup restore error: Could not find backup in app directory.")
 
             return
         }
@@ -113,64 +128,72 @@ public class BackupManager: ObservableObject {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         do {
+            // Delete all relevant entities to prevent issues with restoration if overwrite is selected
+            if doOverwrite {
+                try PersistenceController.shared.batchDelete("Bookmark")
+                try PersistenceController.shared.batchDelete("History")
+                try PersistenceController.shared.batchDelete("HistoryEntry")
+                try PersistenceController.shared.batchDelete("PluginList")
+                try PersistenceController.shared.batchDelete("Source")
+                try PersistenceController.shared.batchDelete("Action")
+            }
+
             let file = try Data(contentsOf: backupUrl)
 
             let backup = try JSONDecoder().decode(Backup.self, from: file)
 
             if let bookmarks = backup.bookmarks {
                 for bookmark in bookmarks {
-                    PersistenceController.shared.createBookmark(bookmark)
+                    PersistenceController.shared.createBookmark(bookmark, performSave: false)
                 }
             }
 
             if let storedHistories = backup.history {
                 for storedHistory in storedHistories {
                     for storedEntry in storedHistory.entries {
-                        PersistenceController.shared.createHistory(storedEntry, date: storedHistory.date)
+                        PersistenceController.shared.createHistory(
+                            storedEntry,
+                            performSave: false,
+                            isBackup: true,
+                            date: storedHistory.date
+                        )
                     }
                 }
             }
 
-            if let storedLists = backup.sourceLists {
+            if let storedLists = backup.sourceLists, (backup.version == 1) {
+                // Only present in v1 backups
                 for list in storedLists {
-                    let sourceListRequest = SourceList.fetchRequest()
-                    let urlPredicate = NSPredicate(format: "urlString == %@", list.urlString)
-                    let infoPredicate = NSPredicate(format: "author == %@ AND name == %@", list.author, list.name)
-                    sourceListRequest.predicate = NSCompoundPredicate(type: .or, subpredicates: [urlPredicate, infoPredicate])
-                    sourceListRequest.fetchLimit = 1
-
-                    if (try? backgroundContext.fetch(sourceListRequest).first) != nil {
-                        continue
-                    }
-
-                    let newSourceList = SourceList(context: backgroundContext)
-                    newSourceList.name = list.name
-                    newSourceList.urlString = list.urlString
-                    newSourceList.id = UUID(uuidString: list.id) ?? UUID()
-                    newSourceList.author = list.author
+                    try await pluginManager.addPluginList(list.urlString, existingPluginList: nil)
+                }
+            } else if let pluginListUrls = backup.pluginListUrls {
+                // v2 and up
+                for listUrl in pluginListUrls {
+                    try await pluginManager.addPluginList(listUrl, existingPluginList: nil)
                 }
             }
 
-            backupSourceNames = backup.sourceNames ?? []
+            if let sourceNames = backup.sourceNames {
+                await updateRestoreCompletedMessage(newString: sourceNames.isEmpty ? "No sources need to be reinstalled" : "Reinstall sources: \(sourceNames.joined(separator: ", "))")
+            }
+
+            if let actionNames = backup.actionNames {
+                await updateRestoreCompletedMessage(newString: actionNames.isEmpty ? "No actions need to be reinstalled" : "Reinstall actions: \(actionNames.joined(separator: ", "))")
+            }
 
             PersistenceController.shared.save(backgroundContext)
 
             // if iOS 14 is available, sleep to prevent any issues with alerts
             if #available(iOS 15, *) {
-                showRestoreCompletedAlert.toggle()
+                await toggleRestoreCompletedAlert()
             } else {
-                Task {
-                    try? await Task.sleep(seconds: 0.1)
+                try? await Task.sleep(seconds: 0.1)
 
-                    Task { @MainActor in
-                        showRestoreCompletedAlert.toggle()
-                    }
-                }
+                await toggleRestoreCompletedAlert()
             }
         } catch {
-            Task {
-                await toastModel?.updateToastDescription("Backup restore: \(error)")
-            }
+            await toastModel?.updateToastDescription("Backup restore error: \(error)")
+            print("Backup restore error: \(error)")
         }
     }
 
@@ -187,7 +210,8 @@ public class BackupManager: ObservableObject {
             }
         } catch {
             Task {
-                await toastModel?.updateToastDescription("Backup removal: \(error)")
+                await toastModel?.updateToastDescription("Backup removal error: \(error)")
+                print("Backup removal error: \(error)")
             }
         }
     }

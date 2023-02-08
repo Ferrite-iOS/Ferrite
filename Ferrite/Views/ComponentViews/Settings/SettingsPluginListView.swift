@@ -7,40 +7,40 @@
 
 import SwiftUI
 
-struct SettingsSourceListView: View {
+struct SettingsPluginListView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @EnvironmentObject var navModel: NavigationViewModel
 
     @FetchRequest(
-        entity: SourceList.entity(),
+        entity: PluginList.entity(),
         sortDescriptors: []
-    ) var sourceLists: FetchedResults<SourceList>
+    ) var pluginLists: FetchedResults<PluginList>
 
     @State private var presentSourceSheet = false
-    @State private var selectedSourceList: SourceList?
+    @State private var selectedPluginList: PluginList?
 
     var body: some View {
         ZStack {
-            if sourceLists.isEmpty {
+            if pluginLists.isEmpty {
                 EmptyInstructionView(title: "No Lists", message: "Add a source list using the + button in the top-right")
             } else {
                 List {
-                    ForEach(sourceLists, id: \.self) { sourceList in
+                    ForEach(pluginLists, id: \.self) { pluginList in
                         VStack(alignment: .leading, spacing: 5) {
-                            Text(sourceList.name)
+                            Text(pluginList.name)
 
-                            Text(sourceList.author)
+                            Text(pluginList.author)
                                 .foregroundColor(.gray)
 
-                            Text("ID: \(sourceList.id)")
+                            Text("ID: \(pluginList.id)")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
                         .padding(.vertical, 2)
                         .contextMenu {
                             Button {
-                                navModel.selectedSourceList = sourceList
+                                selectedPluginList = pluginList
                                 presentSourceSheet.toggle()
                             } label: {
                                 Text("Edit")
@@ -49,14 +49,14 @@ struct SettingsSourceListView: View {
 
                             if #available(iOS 15.0, *) {
                                 Button(role: .destructive) {
-                                    PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                                    PersistenceController.shared.delete(pluginList, context: backgroundContext)
                                 } label: {
                                     Text("Remove")
                                     Image(systemName: "trash")
                                 }
                             } else {
                                 Button {
-                                    PersistenceController.shared.delete(sourceList, context: backgroundContext)
+                                    PersistenceController.shared.delete(pluginList, context: backgroundContext)
                                 } label: {
                                     Text("Remove")
                                     Image(systemName: "trash")
@@ -66,7 +66,7 @@ struct SettingsSourceListView: View {
                     }
                     .onDelete { offsets in
                         for index in offsets {
-                            if let list = sourceLists[safe: index] {
+                            if let list = pluginLists[safe: index] {
                                 PersistenceController.shared.delete(list, context: backgroundContext)
                             }
                         }
@@ -78,13 +78,13 @@ struct SettingsSourceListView: View {
         }
         .sheet(isPresented: $presentSourceSheet) {
             if #available(iOS 16, *) {
-                SourceListEditorView()
+                PluginListEditorView(selectedPluginList: selectedPluginList)
                     .presentationDetents([.medium])
             } else {
-                SourceListEditorView()
+                PluginListEditorView(selectedPluginList: selectedPluginList)
             }
         }
-        .navigationTitle("Source Lists")
+        .navigationTitle("Plugin Lists")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -98,8 +98,8 @@ struct SettingsSourceListView: View {
     }
 }
 
-struct SettingsSourceListView_Previews: PreviewProvider {
+struct SettingsPluginListView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsSourceListView()
+        SettingsPluginListView()
     }
 }

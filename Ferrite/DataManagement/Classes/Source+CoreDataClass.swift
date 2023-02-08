@@ -10,4 +10,4 @@ import CoreData
 import Foundation
 
 @objc(Source)
-public class Source: NSManagedObject {}
+public class Source: NSManagedObject, Plugin {}

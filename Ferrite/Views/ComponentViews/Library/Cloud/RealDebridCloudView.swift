@@ -31,7 +31,8 @@ struct RealDebridCloudView: View {
                                 name: downloadResponse.filename,
                                 url: downloadResponse.download,
                                 source: DebridType.realDebrid.toString()
-                            )
+                            ),
+                            performSave: true
                         )
 
                         navModel.runDebridAction(urlString: debridManager.downloadUrl)
@@ -69,7 +70,7 @@ struct RealDebridCloudView: View {
                                         await debridManager.fetchDebridDownload(magnet: nil, cloudInfo: torrentLink)
                                         if !debridManager.downloadUrl.isEmpty {
                                             historyInfo.url = debridManager.downloadUrl
-                                            PersistenceController.shared.createHistory(historyInfo)
+                                            PersistenceController.shared.createHistory(historyInfo, performSave: true)
 
                                             navModel.runDebridAction(urlString: debridManager.downloadUrl)
                                         }

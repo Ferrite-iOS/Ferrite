@@ -12,7 +12,11 @@ public struct Backup: Codable {
     var bookmarks: [BookmarkJson]?
     var history: [HistoryJson]?
     var sourceNames: [String]?
-    var sourceLists: [SourceListBackupJson]?
+    var actionNames: [String]?
+    var pluginListUrls: [String]?
+
+    // MARK: Remove once v1 backups are unsupported
+    var sourceLists: [PluginListBackupJson]?
 }
 
 // MARK: - CoreData translation
@@ -43,8 +47,8 @@ struct HistoryEntryJson: Codable {
     let source: String?
 }
 
-// Differs from SourceListJson
-struct SourceListBackupJson: Codable {
+// Differs from PluginListJson
+struct PluginListBackupJson: Codable {
     let name: String
     let author: String
     let id: String
