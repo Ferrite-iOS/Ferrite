@@ -20,10 +20,9 @@ public class PluginManager: ObservableObject {
         do {
             let pluginLists = try PersistenceController.shared.backgroundContext.fetch(pluginListRequest)
 
-            if pluginLists.isEmpty {
-                availableSources = []
-                availableActions = []
-            }
+            // Clean availablePlugin arrays for repopulation
+            availableSources = []
+            availableActions = []
 
             for pluginList in pluginLists {
                 guard let url = URL(string: pluginList.urlString) else {
@@ -38,7 +37,7 @@ public class PluginManager: ObservableObject {
 
                 if let sources = pluginResponse.sources {
                     // Faster and more performant to map instead of a for loop
-                    availableSources = sources.compactMap { inputJson in
+                    availableSources += sources.compactMap { inputJson in
                         if checkAppVersion(minVersion: inputJson.minVersion) {
                             return SourceJson(
                                 name: inputJson.name,
@@ -62,7 +61,7 @@ public class PluginManager: ObservableObject {
                 }
 
                 if let actions = pluginResponse.actions {
-                    availableActions = actions.compactMap { inputJson in
+                    availableActions += actions.compactMap { inputJson in
                         if checkAppVersion(minVersion: inputJson.minVersion) {
                             return ActionJson(
                                 name: inputJson.name,
