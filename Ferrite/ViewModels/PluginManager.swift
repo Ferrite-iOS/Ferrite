@@ -45,6 +45,7 @@ public class PluginManager: ObservableObject {
                                 minVersion: inputJson.minVersion,
                                 baseUrl: inputJson.baseUrl,
                                 fallbackUrls: inputJson.fallbackUrls,
+                                dynamicBaseUrl: inputJson.dynamicBaseUrl,
                                 trackers: inputJson.trackers,
                                 api: inputJson.api,
                                 jsonParser: inputJson.jsonParser,
@@ -257,7 +258,6 @@ public class PluginManager: ObservableObject {
 
         // If there's no base URL and it isn't dynamic, return before any transactions occur
         let dynamicBaseUrl = sourceJson.dynamicBaseUrl ?? false
-
         if !dynamicBaseUrl, sourceJson.baseUrl == nil {
             await toastModel?.updateToastDescription("Not adding this source because base URL parameters are malformed. Please contact the source dev.")
             print("Not adding source \(sourceJson.name) because base URL parameters are malformed")
@@ -401,6 +401,15 @@ public class PluginManager: ObservableObject {
             newSourceJsonParser.magnetHash = newSourceMagnetHash
         }
 
+        if let subNameJson = jsonParserJson.subName {
+            let newSourceSubName = SourceSubName(context: backgroundContext)
+            newSourceSubName.query = subNameJson.query
+            newSourceSubName.attribute = subNameJson.query
+            newSourceSubName.discriminator = subNameJson.discriminator
+
+            newSourceJsonParser.subName = newSourceSubName
+        }
+
         if let titleJson = jsonParserJson.title {
             let newSourceTitle = SourceTitle(context: backgroundContext)
             newSourceTitle.query = titleJson.query
@@ -448,6 +457,7 @@ public class PluginManager: ObservableObject {
             newSourceMagnetLink.query = magnetLinkJson.query
             newSourceMagnetLink.attribute = magnetLinkJson.attribute ?? "text"
             newSourceMagnetLink.discriminator = magnetLinkJson.discriminator
+            newSourceMagnetLink.regex = magnetLinkJson.regex
 
             newSourceRssParser.magnetLink = newSourceMagnetLink
         }
@@ -457,8 +467,19 @@ public class PluginManager: ObservableObject {
             newSourceMagnetHash.query = magnetHashJson.query
             newSourceMagnetHash.attribute = magnetHashJson.attribute ?? "text"
             newSourceMagnetHash.discriminator = magnetHashJson.discriminator
+            newSourceMagnetHash.regex = magnetHashJson.regex
 
             newSourceRssParser.magnetHash = newSourceMagnetHash
+        }
+
+        if let subNameJson = rssParserJson.subName {
+            let newSourceSubName = SourceSubName(context: backgroundContext)
+            newSourceSubName.query = subNameJson.query
+            newSourceSubName.attribute = subNameJson.attribute ?? "text"
+            newSourceSubName.discriminator = subNameJson.discriminator
+            newSourceSubName.regex = subNameJson.regex
+
+            newSourceRssParser.subName = newSourceSubName
         }
 
         if let titleJson = rssParserJson.title {
@@ -466,6 +487,7 @@ public class PluginManager: ObservableObject {
             newSourceTitle.query = titleJson.query
             newSourceTitle.attribute = titleJson.attribute ?? "text"
             newSourceTitle.discriminator = titleJson.discriminator
+            newSourceTitle.regex = titleJson.regex
 
             newSourceRssParser.title = newSourceTitle
         }
@@ -475,6 +497,7 @@ public class PluginManager: ObservableObject {
             newSourceSize.query = sizeJson.query
             newSourceSize.attribute = sizeJson.attribute ?? "text"
             newSourceSize.discriminator = sizeJson.discriminator
+            newSourceSize.regex = sizeJson.regex
 
             newSourceRssParser.size = newSourceSize
         }
@@ -501,6 +524,15 @@ public class PluginManager: ObservableObject {
         let newSourceHtmlParser = SourceHtmlParser(context: backgroundContext)
         newSourceHtmlParser.searchUrl = htmlParserJson.searchUrl
         newSourceHtmlParser.rows = htmlParserJson.rows
+
+        if let subNameJson = htmlParserJson.subName {
+            let newSourceSubName = SourceSubName(context: backgroundContext)
+            newSourceSubName.query = subNameJson.query
+            newSourceSubName.attribute = subNameJson.attribute ?? "text"
+            newSourceSubName.regex = subNameJson.regex
+
+            newSourceHtmlParser.subName = newSourceSubName
+        }
 
         // Adds a title complex query if present
         if let titleJson = htmlParserJson.title {

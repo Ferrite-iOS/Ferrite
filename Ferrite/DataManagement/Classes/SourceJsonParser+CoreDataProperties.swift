@@ -23,6 +23,7 @@ public extension SourceJsonParser {
     @NSManaged var seedLeech: SourceSeedLeech?
     @NSManaged var size: SourceSize?
     @NSManaged var title: SourceTitle?
+    @NSManaged var subName: SourceSubName?
 }
 
 extension SourceJsonParser: Identifiable {}

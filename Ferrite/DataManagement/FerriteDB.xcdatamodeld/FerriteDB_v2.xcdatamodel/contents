@@ -99,6 +99,7 @@
         <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="htmlParser" inverseEntity="Source"/>
         <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSeedLeech" inverseName="parentHtmlParser" inverseEntity="SourceSeedLeech"/>
         <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentHtmlParser" inverseEntity="SourceSize"/>
+        <relationship name="subName" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceSubName" inverseName="parentHtmlParser" inverseEntity="SourceSubName"/>
         <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentHtmlParser" inverseEntity="SourceTitle"/>
     </entity>
     <entity name="SourceJsonParser" representedClassName="SourceJsonParser" syncable="YES">
@@ -110,6 +111,7 @@
         <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="jsonParser" inverseEntity="Source"/>
         <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSeedLeech" inverseName="parentJsonParser" inverseEntity="SourceSeedLeech"/>
         <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentJsonParser" inverseEntity="SourceSize"/>
+        <relationship name="subName" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceSubName" inverseName="parentJsonParser" inverseEntity="SourceSubName"/>
         <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentJsonParser" inverseEntity="SourceTitle"/>
     </entity>
     <entity name="SourceMagnetHash" representedClassName="SourceMagnetHash" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
@@ -132,6 +134,7 @@
         <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="rssParser" inverseEntity="Source"/>
         <relationship name="seedLeech" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSeedLeech" inverseName="parentRssParser" inverseEntity="SourceSeedLeech"/>
         <relationship name="size" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceSize" inverseName="parentRssParser" inverseEntity="SourceSize"/>
+        <relationship name="subName" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceSubName" inverseName="parentRssParser" inverseEntity="SourceSubName"/>
         <relationship name="title" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceTitle" inverseName="parentRssParser" inverseEntity="SourceTitle"/>
     </entity>
     <entity name="SourceSeedLeech" representedClassName="SourceSeedLeech" syncable="YES">
@@ -150,6 +153,11 @@
         <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="size" inverseEntity="SourceHtmlParser"/>
         <relationship name="parentJsonParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceJsonParser" inverseName="size" inverseEntity="SourceJsonParser"/>
         <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="size" inverseEntity="SourceRssParser"/>
+    </entity>
+    <entity name="SourceSubName" representedClassName="SourceSubName" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
+        <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="subName" inverseEntity="SourceHtmlParser"/>
+        <relationship name="parentJsonParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceJsonParser" inverseName="subName" inverseEntity="SourceJsonParser"/>
+        <relationship name="parentRssParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceRssParser" inverseName="subName" inverseEntity="SourceRssParser"/>
     </entity>
     <entity name="SourceTitle" representedClassName="SourceTitle" parentEntity="SourceComplexQuery" syncable="YES" codeGenerationType="class">
         <relationship name="parentHtmlParser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SourceHtmlParser" inverseName="title" inverseEntity="SourceHtmlParser"/>

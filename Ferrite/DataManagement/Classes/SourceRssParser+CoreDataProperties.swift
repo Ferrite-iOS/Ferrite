@@ -23,6 +23,7 @@ public extension SourceRssParser {
     @NSManaged var seedLeech: SourceSeedLeech?
     @NSManaged var size: SourceSize?
     @NSManaged var title: SourceTitle?
+    @NSManaged var subName: SourceSubName?
 }
 
 extension SourceRssParser: Identifiable {}

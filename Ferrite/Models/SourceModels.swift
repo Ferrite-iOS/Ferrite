@@ -18,7 +18,7 @@ public struct SourceJson: Codable, Hashable, Sendable, PluginJson {
     let minVersion: String?
     let baseUrl: String?
     let fallbackUrls: [String]?
-    var dynamicBaseUrl: Bool?
+    let dynamicBaseUrl: Bool?
     let trackers: [String]?
     let api: SourceApiJson?
     let jsonParser: SourceJsonParserJson?
@@ -62,10 +62,11 @@ public struct SourceJsonParserJson: Codable, Hashable, Sendable {
     let searchUrl: String
     let results: String?
     let subResults: String?
-    let magnetHash: SouceComplexQueryJson?
-    let magnetLink: SouceComplexQueryJson?
-    let title: SouceComplexQueryJson?
-    let size: SouceComplexQueryJson?
+    let magnetHash: SourceComplexQueryJson?
+    let magnetLink: SourceComplexQueryJson?
+    let subName: SourceComplexQueryJson?
+    let title: SourceComplexQueryJson?
+    let size: SourceComplexQueryJson?
     let sl: SourceSLJson?
 }
 
@@ -73,10 +74,11 @@ public struct SourceRssParserJson: Codable, Hashable, Sendable {
     let rssUrl: String?
     let searchUrl: String
     let items: String
-    let magnetHash: SouceComplexQueryJson?
-    let magnetLink: SouceComplexQueryJson?
-    let title: SouceComplexQueryJson?
-    let size: SouceComplexQueryJson?
+    let magnetHash: SourceComplexQueryJson?
+    let magnetLink: SourceComplexQueryJson?
+    let subName: SourceComplexQueryJson?
+    let title: SourceComplexQueryJson?
+    let size: SourceComplexQueryJson?
     let sl: SourceSLJson?
 }
 
@@ -84,12 +86,13 @@ public struct SourceHtmlParserJson: Codable, Hashable, Sendable {
     let searchUrl: String
     let rows: String
     let magnet: SourceMagnetJson
-    let title: SouceComplexQueryJson?
-    let size: SouceComplexQueryJson?
+    let subName: SourceComplexQueryJson?
+    let title: SourceComplexQueryJson?
+    let size: SourceComplexQueryJson?
     let sl: SourceSLJson?
 }
 
-public struct SouceComplexQueryJson: Codable, Hashable, Sendable {
+public struct SourceComplexQueryJson: Codable, Hashable, Sendable {
     let query: String
     let discriminator: String?
     let attribute: String?

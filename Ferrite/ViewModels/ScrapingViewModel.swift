@@ -399,6 +399,12 @@ class ScrapingViewModel: ObservableObject {
             }
         }
 
+        var subName: String?
+        if let subNameParser = jsonParser.subName {
+            let rawSubName = result[subNameParser.query.components(separatedBy: ".")].rawValue
+            subName = rawSubName is NSNull ? nil : String(describing: rawSubName)
+        }
+
         var link: String? = existingSearchResult?.magnet.link
         if let magnetLinkParser = jsonParser.magnetLink, link == nil {
             let rawLink = result[magnetLinkParser.query.components(separatedBy: ".")].rawValue
@@ -432,7 +438,7 @@ class ScrapingViewModel: ObservableObject {
 
         let result = SearchResult(
             title: title,
-            source: source.name,
+            source: subName.map { "\(source.name) - \($0)" } ?? source.name,
             size: size,
             magnet: Magnet(hash: magnetHash, link: link, title: title, trackers: source.trackers),
             seeders: seeders,
@@ -474,6 +480,18 @@ class ScrapingViewModel: ObservableObject {
                 )
             }
 
+            // Fetches the subName for the source if there is one
+            var subName: String?
+            if let subNameParser = rssParser.subName {
+                subName = try? runRssComplexQuery(
+                    item: item,
+                    query: subNameParser.query,
+                    attribute: subNameParser.attribute,
+                    discriminator: subNameParser.discriminator,
+                    regexString: subNameParser.regex
+                )
+            }
+
             var title: String?
             if let titleParser = rssParser.title {
                 title = try? runRssComplexQuery(
@@ -485,9 +503,9 @@ class ScrapingViewModel: ObservableObject {
                 )
             }
 
-            var link: String?
+            var href: String?
             if let magnetLinkParser = rssParser.magnetLink {
-                link = try? runRssComplexQuery(
+                href = try? runRssComplexQuery(
                     item: item,
                     query: magnetLinkParser.query,
                     attribute: magnetLinkParser.attribute,
@@ -495,10 +513,6 @@ class ScrapingViewModel: ObservableObject {
                     regexString: magnetLinkParser.regex
                 )
             } else {
-                continue
-            }
-
-            guard let href = link, href.starts(with: "magnet:") else {
                 continue
             }
 
@@ -543,7 +557,7 @@ class ScrapingViewModel: ObservableObject {
 
             let result = SearchResult(
                 title: title ?? "No title",
-                source: source.name,
+                source: subName.map { "\(source.name) - \($0)" } ?? source.name,
                 size: size ?? "",
                 magnet: Magnet(hash: magnetHash, link: href, title: title, trackers: source.trackers),
                 seeders: seeders,
@@ -649,10 +663,6 @@ class ScrapingViewModel: ObservableObject {
                     href = link
                 }
 
-                if !href.starts(with: "magnet:") {
-                    continue
-                }
-
                 // Fetches the episode/movie title
                 var title: String?
                 if let titleParser = htmlParser.title {
@@ -664,8 +674,17 @@ class ScrapingViewModel: ObservableObject {
                     )
                 }
 
-                // Fetches the torrent's size
-                // TODO: Add int translation
+                var subName: String?
+                if let subNameParser = htmlParser.subName {
+                    subName = try? runHtmlComplexQuery(
+                        row: row,
+                        query: subNameParser.query,
+                        attribute: subNameParser.attribute,
+                        regexString: subNameParser.regex
+                    )
+                }
+
+                // Fetches the size
                 var size: String?
                 if let sizeParser = htmlParser.size {
                     size = try? runHtmlComplexQuery(
@@ -718,7 +737,7 @@ class ScrapingViewModel: ObservableObject {
 
                 let result = SearchResult(
                     title: title ?? "No title",
-                    source: source.name,
+                    source: subName.map { "\(source.name) - \($0)" } ?? source.name,
                     size: size ?? "",
                     magnet: Magnet(hash: nil, link: href),
                     seeders: seeders,
