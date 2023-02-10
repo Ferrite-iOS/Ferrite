@@ -14,118 +14,56 @@ struct ContentView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var pluginManager: PluginManager
 
-    @FetchRequest(
-        entity: Source.entity(),
-        sortDescriptors: []
-    ) var sources: FetchedResults<Source>
-
-    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
-
-    @State private var selectedSource: Source? {
-        didSet {
-            scrapingModel.filteredSource = selectedSource
-        }
-    }
-
     var body: some View {
         NavView {
-            VStack(spacing: 10) {
-                HStack(spacing: 6) {
-                    Text("Filter")
-                        .foregroundColor(.secondary)
+            SearchResultsView()
+                .listStyle(.insetGrouped)
+                .navigationTitle("Search")
+                .navigationSearchBar {
+                    SearchBar("Search",
+                              text: $scrapingModel.searchText,
+                              isEditing: $navModel.isEditingSearch,
+                              onCommit: {
+                                  scrapingModel.searchResults = []
+                                  scrapingModel.runningSearchTask = Task {
+                                      navModel.isSearching = true
+                                      navModel.showSearchProgress = true
 
-                    Menu {
-                        Button {
-                            selectedSource = nil
-                        } label: {
-                            Text("None")
+                                      let sources = pluginManager.fetchInstalledSources()
+                                      await scrapingModel.scanSources(sources: sources)
 
-                            if selectedSource == nil {
-                                Image(systemName: "checkmark")
-                            }
-                        }
+                                      if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {
+                                          debridManager.clearIAValues()
 
-                        ForEach(sources, id: \.self) { source in
-                            if let name = source.name, source.enabled {
-                                Button {
-                                    selectedSource = source
-                                } label: {
-                                    if selectedSource == source {
-                                        Label(name, systemImage: "checkmark")
-                                    } else {
-                                        Text(name)
-                                    }
-                                }
-                            }
-                        }
-                    } label: {
-                        Text(selectedSource?.name ?? "Source")
-                            .padding(.trailing, -3)
-                        Image(systemName: "chevron.down")
-                    }
-                    .foregroundColor(.primary)
-                    .animation(.none)
-
-                    Spacer()
-                }
-                .padding(.vertical, 5)
-                .padding(.horizontal, 20)
-
-                SearchResultsView()
-            }
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(
-                navModel.isSearching && Application.shared.osVersion.majorVersion > 14 ? .inline : .large
-            )
-            .navigationSearchBar {
-                SearchBar("Search",
-                          text: $scrapingModel.searchText,
-                          isEditing: $navModel.isEditingSearch,
-                          onCommit: {
-                              scrapingModel.searchResults = []
-                              scrapingModel.runningSearchTask = Task {
-                                  navModel.isSearching = true
-                                  navModel.showSearchProgress = true
-
-                                  let sources = pluginManager.fetchInstalledSources()
-                                  await scrapingModel.scanSources(sources: sources)
-
-                                  if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {
-                                      debridManager.clearIAValues()
-
-                                      // Remove magnets that don't have a hash
-                                      let magnets = scrapingModel.searchResults.compactMap {
-                                          if let magnetHash = $0.magnet.hash {
-                                              return Magnet(hash: magnetHash, link: $0.magnet.link)
-                                          } else {
-                                              return nil
+                                          // Remove magnets that don't have a hash
+                                          let magnets = scrapingModel.searchResults.compactMap {
+                                              if let magnetHash = $0.magnet.hash {
+                                                  return Magnet(hash: magnetHash, link: $0.magnet.link)
+                                              } else {
+                                                  return nil
+                                              }
                                           }
+                                          await debridManager.populateDebridIA(magnets)
                                       }
-                                      await debridManager.populateDebridIA(magnets)
-                                  }
 
-                                  navModel.showSearchProgress = false
+                                      navModel.showSearchProgress = false
+                                  }
+                              })
+                              .showsCancelButton(navModel.isEditingSearch || navModel.isSearching)
+                              .onCancel {
+                                  scrapingModel.searchResults = []
+                                  scrapingModel.runningSearchTask?.cancel()
+                                  scrapingModel.runningSearchTask = nil
+                                  navModel.isSearching = false
+                                  scrapingModel.searchText = ""
                               }
-                          })
-                          .showsCancelButton(navModel.isEditingSearch || navModel.isSearching)
-                          .onCancel {
-                              scrapingModel.searchResults = []
-                              scrapingModel.runningSearchTask?.cancel()
-                              scrapingModel.runningSearchTask = nil
-                              navModel.isSearching = false
-                              scrapingModel.searchText = ""
-                          }
-            }
-            .introspectSearchController { searchController in
-                searchController.hidesNavigationBarDuringPresentation = false
-                searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
-                searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    DebridChoiceView()
                 }
-            }
+                .navigationSearchBarHiddenWhenScrolling(false)
+                .searchAppearance {
+                    SearchFilterHeaderView()
+                        .environmentObject(scrapingModel)
+                        .environmentObject(debridManager)
+                }
         }
     }
 }

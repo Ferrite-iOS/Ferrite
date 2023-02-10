@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-enum ViewTab {
-    case search
-    case plugins
-    case settings
-    case library
-}
-
 @MainActor
 class NavigationViewModel: ObservableObject {
     var toastModel: ToastViewModel?
@@ -27,6 +20,24 @@ class NavigationViewModel: ObservableObject {
         case magnet
         case batch
         case activity
+    }
+
+    enum ViewTab {
+        case search
+        case plugins
+        case settings
+        case library
+    }
+
+    enum LibraryPickerSegment {
+        case bookmarks
+        case history
+        case debridCloud
+    }
+
+    enum PluginPickerSegment {
+        case sources
+        case actions
     }
 
     @Published var isEditingSearch: Bool = false
@@ -57,10 +68,16 @@ class NavigationViewModel: ObservableObject {
 
     @Published var showSourceListEditor: Bool = false
 
+    @Published var libraryPickerSelection: LibraryPickerSegment = .bookmarks
+    @Published var pluginPickerSelection: PluginPickerSegment = .sources
+
     @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
     @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none
 
+    // TODO: Fix for new Actions API
     public func runDebridAction(urlString: String, _ action: DefaultDebridActionType? = nil) {
+        currentChoiceSheet = .magnet
+        /*
         let selectedAction = action ?? defaultDebridAction
 
         switch selectedAction {
@@ -92,10 +109,14 @@ class NavigationViewModel: ObservableObject {
                 toastModel?.updateToastDescription("Could not create object for sharing")
             }
         }
+         */
     }
 
+    // TODO: Fix for new Actions API
     public func runMagnetAction(magnet: Magnet?, _ action: DefaultMagnetActionType? = nil) {
+        currentChoiceSheet = .magnet
         // Fall back to selected magnet if the provided magnet is nil
+        /*
         let magnet = magnet ?? selectedMagnet
         guard let magnetLink = magnet?.link else {
             toastModel?.updateToastDescription("Could not run your action because the magnet link is invalid.")
@@ -125,5 +146,6 @@ class NavigationViewModel: ObservableObject {
                 toastModel?.updateToastDescription("Could not create object for sharing")
             }
         }
+         */
     }
 }

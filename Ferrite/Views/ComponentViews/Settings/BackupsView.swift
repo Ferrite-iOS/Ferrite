@@ -44,7 +44,7 @@ struct BackupsView: View {
                         }
                     }
                 }
-                .inlinedList()
+                .inlinedList(inset: -20)
                 .listStyle(.insetGrouped)
             }
         }

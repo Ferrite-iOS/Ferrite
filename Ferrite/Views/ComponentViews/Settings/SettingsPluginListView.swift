@@ -73,7 +73,7 @@ struct SettingsPluginListView: View {
                     }
                 }
                 .listStyle(.insetGrouped)
-                .inlinedList()
+                .inlinedList(inset: -20)
             }
         }
         .sheet(isPresented: $presentSourceSheet) {

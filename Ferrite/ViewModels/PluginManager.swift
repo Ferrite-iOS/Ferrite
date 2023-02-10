@@ -87,7 +87,7 @@ public class PluginManager: ObservableObject {
             }
 
             print("Plugin fetch error: \(error)")
-        }
+        }    
     }
 
     // Check if underlying type is Source or Action

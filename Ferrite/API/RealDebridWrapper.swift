@@ -18,6 +18,16 @@ public class RealDebrid {
 
     var authTask: Task<Void, Error>?
 
+    @MainActor
+    func setUserDefaultsValue(_ value: Any, forKey: String) {
+        UserDefaults.standard.set(value, forKey: forKey)
+    }
+
+    @MainActor
+    func removeUserDefaultsValue(forKey: String) {
+        UserDefaults.standard.removeObject(forKey: forKey)
+    }
+
     // Fetches the device code from RD
     public func getVerificationInfo() async throws -> DeviceCodeResponse {
         var urlComponents = URLComponents(string: "\(baseAuthUrl)/device/code")!
@@ -72,7 +82,7 @@ public class RealDebrid {
 
                 // If there's a client ID from the response, end the task successfully
                 if let clientId = rawResponse?.clientID, let clientSecret = rawResponse?.clientSecret {
-                    UserDefaults.standard.set(clientId, forKey: "RealDebrid.ClientId")
+                    await setUserDefaultsValue(clientId, forKey: "RealDebrid.ClientId")
                     keychain.set(clientSecret, forKey: "RealDebrid.ClientSecret")
 
                     try await getTokens(deviceCode: deviceCode)
@@ -124,7 +134,7 @@ public class RealDebrid {
         keychain.set(rawResponse.refreshToken, forKey: "RealDebrid.RefreshToken")
 
         let accessTimestamp = Date().timeIntervalSince1970 + Double(rawResponse.expiresIn)
-        UserDefaults.standard.set(accessTimestamp, forKey: "RealDebrid.AccessTokenStamp")
+        await setUserDefaultsValue(accessTimestamp, forKey: "RealDebrid.AccessTokenStamp")
     }
 
     public func fetchToken() async -> String? {
@@ -147,8 +157,8 @@ public class RealDebrid {
     public func deleteTokens() async throws {
         keychain.delete("RealDebrid.RefreshToken")
         keychain.delete("RealDebrid.ClientSecret")
-        UserDefaults.standard.removeObject(forKey: "RealDebrid.ClientId")
-        UserDefaults.standard.removeObject(forKey: "RealDebrid.AccessTokenStamp")
+        await removeUserDefaultsValue(forKey: "RealDebrid.ClientId")
+        await removeUserDefaultsValue(forKey: "RealDebrid.AccessTokenStamp")
 
         // Run the request, doesn't matter if it fails
         if let token = keychain.get("RealDebrid.AccessToken") {

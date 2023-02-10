@@ -29,25 +29,25 @@ struct MainView: View {
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
                 }
-                .tag(ViewTab.search)
+                .tag(NavigationViewModel.ViewTab.search)
 
             LibraryView()
                 .tabItem {
                     Label("Library", systemImage: "book.closed")
                 }
-                .tag(ViewTab.library)
+                .tag(NavigationViewModel.ViewTab.library)
 
             PluginsView()
                 .tabItem {
                     Label("Plugins", systemImage: "doc.text")
                 }
-                .tag(ViewTab.plugins)
+                .tag(NavigationViewModel.ViewTab.plugins)
 
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
-                .tag(ViewTab.settings)
+                .tag(NavigationViewModel.ViewTab.settings)
         }
         .sheet(item: $navModel.currentChoiceSheet) { item in
             switch item {

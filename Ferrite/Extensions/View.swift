@@ -9,30 +9,6 @@ import Introspect
 import SwiftUI
 
 extension View {
-    // MARK: Custom introspect functions
-
-    func introspectCollectionView(customize: @escaping (UICollectionView) -> Void) -> some View {
-        inject(UIKitIntrospectionView(
-            selector: { introspectionView in
-                guard let viewHost = Introspect.findViewHost(from: introspectionView) else {
-                    return nil
-                }
-                return Introspect.previousSibling(containing: UICollectionView.self, from: viewHost)
-            },
-            customize: customize
-        ))
-    }
-
-    // From https://github.com/siteline/SwiftUI-Introspect/pull/129
-    public func introspectSearchController(customize: @escaping (UISearchController) -> Void) -> some View {
-        introspectNavigationController { navigationController in
-            let navigationBar = navigationController.navigationBar
-            if let searchController = navigationBar.topItem?.searchController {
-                customize(searchController)
-            }
-        }
-    }
-
     // MARK: Modifiers
 
     func conditionalContextMenu(id: some Hashable,
@@ -53,11 +29,19 @@ extension View {
         modifier(DisableInteraction(disabled: disabled))
     }
 
-    func inlinedList() -> some View {
-        modifier(InlinedList())
+    func inlinedList(inset: CGFloat) -> some View {
+        modifier(InlinedList(inset: inset))
     }
 
     func viewDidAppear(_ callback: @escaping () -> Void) -> some View {
         modifier(ViewDidAppearModifier(callback: callback))
+    }
+
+    func searchAppearance<Content: View>(_ content: Content) -> some View {
+        modifier(SearchAppearance(hostingContent: content))
+    }
+
+    func searchAppearance<Content: View>(_ content: @escaping () -> Content) -> some View {
+        modifier(SearchAppearance(hostingContent: content()))
     }
 }

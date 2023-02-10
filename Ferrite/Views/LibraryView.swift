@@ -9,14 +9,8 @@ import SwiftUI
 import SwiftUIX
 
 struct LibraryView: View {
-    enum LibraryPickerSegment {
-        case bookmarks
-        case history
-        case debridCloud
-    }
-
-    @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var navModel: NavigationViewModel
 
     @FetchRequest(
         entity: Bookmark.entity(),
@@ -32,7 +26,6 @@ struct LibraryView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
-    @State private var selectedSegment: LibraryPickerSegment = .bookmarks
     @State private var editMode: EditMode = .inactive
 
     @State private var searchText: String = ""
@@ -41,20 +34,8 @@ struct LibraryView: View {
 
     var body: some View {
         NavView {
-            VStack {
-                Picker("Segments", selection: $selectedSegment) {
-                    Text("Bookmarks").tag(LibraryPickerSegment.bookmarks)
-                    Text("History").tag(LibraryPickerSegment.history)
-
-                    if !debridManager.enabledDebrids.isEmpty {
-                        Text("Cloud").tag(LibraryPickerSegment.debridCloud)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.vertical, 5)
-
-                switch selectedSegment {
+            ZStack {
+                switch navModel.libraryPickerSelection {
                 case .bookmarks:
                     BookmarksView(searchText: $searchText)
                 case .history:
@@ -62,8 +43,27 @@ struct LibraryView: View {
                 case .debridCloud:
                     DebridCloudView(searchText: $searchText)
                 }
+            }
+            .navigationTitle("Library")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack(spacing: Application.shared.osVersion.majorVersion > 14 ? 10 : 18) {
+                        Spacer()
+                        EditButton()
 
-                Spacer()
+                        switch navModel.libraryPickerSelection {
+                        case .bookmarks, .debridCloud:
+                            DebridPickerView() {
+                                Text(debridManager.selectedDebridType?.toString(abbreviated: true) ?? "Debrid")
+                            }
+                            .transaction {
+                                $0.animation = .none
+                            }
+                        case .history:
+                            HistoryActionsView()
+                        }
+                    }
+                }
             }
             .navigationSearchBar {
                 SearchBar("Search", text: $searchText, isEditing: $isEditingSearch, onCommit: {
@@ -75,46 +75,31 @@ struct LibraryView: View {
                     isSearching = false
                 }
             }
-            .introspectSearchController { searchController in
-                searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
-                searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
-            }
-            .overlay {
-                switch selectedSegment {
-                case .bookmarks:
-                    if bookmarks.isEmpty {
-                        EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
-                    }
-                case .history:
-                    if history.isEmpty {
-                        EmptyInstructionView(title: "No History", message: "Start watching to build history")
-                    }
-                case .debridCloud:
-                    if debridManager.selectedDebridType == nil {
-                        EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
-                    }
-                }
-            }
-            .navigationTitle("Library")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: Application.shared.osVersion.majorVersion > 14 ? 10 : 18) {
-                        Spacer()
-                        EditButton()
-
-                        switch selectedSegment {
-                        case .bookmarks, .debridCloud:
-                            DebridChoiceView()
-                        case .history:
-                            HistoryActionsView()
-                        }
-                    }
-                    .animation(.none)
-                }
+            .navigationSearchBarHiddenWhenScrolling(false)
+            .searchAppearance {
+                LibraryPickerView()
+                    .environmentObject(debridManager)
+                    .environmentObject(navModel)
             }
             .environment(\.editMode, $editMode)
         }
-        .onChange(of: selectedSegment) { _ in
+        .overlay {
+            switch navModel.libraryPickerSelection {
+            case .bookmarks:
+                if bookmarks.isEmpty {
+                    EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
+                }
+            case .history:
+                if history.isEmpty {
+                    EmptyInstructionView(title: "No History", message: "Start watching to build history")
+                }
+            case .debridCloud:
+                if debridManager.selectedDebridType == nil {
+                    EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
+                }
+            }
+        }
+        .onChange(of: navModel.libraryPickerSelection) { _ in
             editMode = .inactive
         }
         .onDisappear {

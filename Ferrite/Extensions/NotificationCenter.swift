@@ -11,4 +11,8 @@ extension Notification.Name {
     static var didDeleteBookmark: Notification.Name {
         Notification.Name("Deleted bookmark")
     }
+
+    static var didDeletePlugin: Notification.Name {
+        Notification.Name("Deleted plugin")
+    }
 }

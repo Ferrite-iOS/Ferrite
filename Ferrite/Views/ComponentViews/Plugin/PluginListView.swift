@@ -57,6 +57,7 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
                     }
                 }
             }
+            .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 0 : -25)
             .listStyle(.insetGrouped)
             .sheet(isPresented: $navModel.showSourceSettings) {
                 if String(describing: P.self) == "Source" {
@@ -70,8 +71,10 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
             }
             .onChange(of: searchText) { _ in
                 sourcePredicate = searchText.isEmpty ? nil : NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+                filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(installedPlugins: installedPlugins, searchText: searchText)
+                filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(installedPlugins: installedPlugins, searchText: searchText)
             }
-            .onReceive(installedPlugins.publisher.count()) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .didDeletePlugin)) { _ in
                 filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(installedPlugins: installedPlugins, searchText: searchText)
                 filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(installedPlugins: installedPlugins, searchText: searchText)
             }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Introspect
 
 public struct Backport<Content> {
     public let content: Content
@@ -121,6 +122,19 @@ extension Backport where Content: View {
                 .viewDidAppear {
                     callback()
                 }
+        }
+    }
+
+    @ViewBuilder func introspectSearchController(customize: @escaping (UISearchController) -> ()) -> some View {
+        if #available(iOS 15, *) {
+            content.introspectSearchController(customize: customize)
+        } else {
+            content.introspectNavigationController { navigationController in
+                let navigationBar = navigationController.navigationBar
+                if let searchController = navigationBar.topItem?.searchController {
+                    customize(searchController)
+                }
+            }
         }
     }
 }

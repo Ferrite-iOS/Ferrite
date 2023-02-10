@@ -48,7 +48,7 @@ struct BatchChoiceView: View {
             }
             .backport.tint(.primary)
             .listStyle(.insetGrouped)
-            .inlinedList()
+            .inlinedList(inset: -20)
             .navigationTitle("Select a file")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -82,7 +82,7 @@ struct BatchChoiceView: View {
                     PersistenceController.shared.createHistory(selectedHistoryInfo, performSave: true)
                 }
 
-                navModel.runDebridAction(urlString: debridManager.downloadUrl)
+                navModel.runDebridAction(urlString: debridManager.downloadUrl, nil)
             }
 
             debridManager.clearSelectedDebridItems()

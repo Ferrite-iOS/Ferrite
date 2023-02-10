@@ -7,15 +7,17 @@
 
 import SwiftUI
 
-struct DebridChoiceView: View {
+struct DebridPickerView<Content: View>: View {
     @EnvironmentObject var debridManager: DebridManager
+
+    @ViewBuilder var label: Content
 
     var body: some View {
         Menu {
             Picker("", selection: $debridManager.selectedDebridType) {
                 Text("None")
                     .tag(nil as DebridType?)
-
+                
                 ForEach(DebridType.allCases, id: \.self) { (debridType: DebridType) in
                     if debridManager.enabledDebrids.contains(debridType) {
                         Text(debridType.toString())
@@ -24,14 +26,7 @@ struct DebridChoiceView: View {
                 }
             }
         } label: {
-            Text(debridManager.selectedDebridType?.toString(abbreviated: true) ?? "Debrid")
+            label
         }
-        .animation(.none)
-    }
-}
-
-struct DebridChoiceView_Previews: PreviewProvider {
-    static var previews: some View {
-        DebridChoiceView()
     }
 }

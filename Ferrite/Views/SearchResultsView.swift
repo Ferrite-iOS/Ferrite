@@ -21,7 +21,7 @@ struct SearchResultsView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .inlinedList()
+        .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 20 : -20)
         .overlay {
             if scrapingModel.searchResults.isEmpty {
                 if navModel.showSearchProgress {

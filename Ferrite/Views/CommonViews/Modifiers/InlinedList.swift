@@ -12,16 +12,18 @@ import Introspect
 import SwiftUI
 
 struct InlinedList: ViewModifier {
+    let inset: CGFloat
+
     func body(content: Content) -> some View {
         if #available(iOS 16, *) {
             content
                 .introspectCollectionView { collectionView in
-                    collectionView.contentInset.top = -20
+                    collectionView.contentInset.top = inset
                 }
         } else {
             content
                 .introspectTableView { tableView in
-                    tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 20))
+                    tableView.contentInset.top = inset
                 }
         }
     }
