@@ -78,17 +78,17 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: Text("Behavior")) {
+                Section(header: InlineHeader("Behavior")) {
                     Toggle(isOn: $autocorrectSearch) {
                         Text("Autocorrect search")
                     }
                 }
 
-                Section(header: Text("Plugin management")) {
+                Section(header: InlineHeader("Plugin management")) {
                     NavigationLink("Plugin lists", destination: SettingsPluginListView())
                 }
 
-                Section(header: Text("Default actions")) {
+                Section(header: InlineHeader("Default actions")) {
                     if debridManager.enabledDebrids.count > 0 {
                         NavigationLink(
                             destination: DebridActionPickerView(),
@@ -138,20 +138,20 @@ struct SettingsView: View {
                     )
                 }
 
-                Section(header: Text("Backups")) {
+                Section(header: InlineHeader("Backups")) {
                     NavigationLink(destination: BackupsView()) {
                         Text("Backups")
                     }
                 }
 
-                Section(header: Text("Updates")) {
+                Section(header: InlineHeader("Updates")) {
                     Toggle(isOn: $autoUpdateNotifs) {
                         Text("Show update alerts")
                     }
                     NavigationLink("Version history", destination: SettingsAppVersionView())
                 }
 
-                Section(header: Text("Information")) {
+                Section(header: InlineHeader("Information")) {
                     ListRowLinkView(text: "Donate", link: "https://ko-fi.com/kingbri")
                     ListRowLinkView(text: "Report issues", link: "https://github.com/bdashore3/Ferrite/issues")
                     NavigationLink("About", destination: AboutView())

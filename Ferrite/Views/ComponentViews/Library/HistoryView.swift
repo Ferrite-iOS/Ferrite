@@ -71,7 +71,7 @@ struct HistorySectionView: View {
 
     var body: some View {
         if compareGroup(historyGroup) > 0 {
-            Section(header: Text(formatter.string(from: historyGroup[0].date ?? Date()))) {
+            Section(header: InlineHeader(formatter.string(from: historyGroup[0].date ?? Date()))) {
                 ForEach(historyGroup, id: \.self) { history in
                     ForEach(history.entryArray.filter { allEntries.contains($0) }, id: \.self) { entry in
                         HistoryButtonView(entry: entry)

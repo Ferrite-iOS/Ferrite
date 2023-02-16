@@ -57,7 +57,7 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
                     }
                 }
             }
-            .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 0 : -25)
+            .inlinedList(inset: 0)
             .listStyle(.insetGrouped)
             .sheet(isPresented: $navModel.showSourceSettings) {
                 if String(describing: P.self) == "Source" {
