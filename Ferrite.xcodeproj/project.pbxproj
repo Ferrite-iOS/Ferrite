@@ -116,6 +116,7 @@
 		0CB6516528C5A5D700DCA721 /* InlinedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516428C5A5D700DCA721 /* InlinedList.swift */; };
 		0CB6516A28C5B4A600DCA721 /* InlineHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516928C5B4A600DCA721 /* InlineHeader.swift */; };
 		0CBAB83628D12ED500AC903E /* DisableInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBAB83528D12ED500AC903E /* DisableInteraction.swift */; };
+		0CBC07C8299F2E0300F78723 /* Introspect-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 0CBC07C7299F2E0300F78723 /* Introspect-Static */; };
 		0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */; };
 		0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */; };
 		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
@@ -130,7 +131,6 @@
 		0CDDDE052935235E006810B1 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = 0CDDDE042935235E006810B1 /* BetterSafariView */; };
 		0CE1C4182981E8D700418F20 /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE1C4172981E8D700418F20 /* Plugin.swift */; };
 		0CE66B3A28E640D200F69346 /* Backport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CE66B3928E640D200F69346 /* Backport.swift */; };
-		0CEC8AAC299B03E5007BFE8F /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 0CEC8AAB299B03E5007BFE8F /* Introspect */; };
 		0CEC8AAE299B31B6007BFE8F /* SearchFilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEC8AAD299B31B6007BFE8F /* SearchFilterHeaderView.swift */; };
 		0CEC8AB2299B3B57007BFE8F /* LibraryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEC8AB1299B3B57007BFE8F /* LibraryPickerView.swift */; };
 /* End PBXBuildFile section */
@@ -265,11 +265,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C7506D728B1AC9A008BEE38 /* SwiftyJSON in Frameworks */,
+				0CBC07C8299F2E0300F78723 /* Introspect-Static in Frameworks */,
 				0C64A4B4288903680079976D /* Base32 in Frameworks */,
 				0C4CFC462897030D00AD9FAD /* Regex in Frameworks */,
 				0C7376F028A97D1400D60918 /* SwiftUIX in Frameworks */,
 				0C64A4B7288903880079976D /* KeychainSwift in Frameworks */,
-				0CEC8AAC299B03E5007BFE8F /* Introspect in Frameworks */,
 				0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */,
 				0CDDDE052935235E006810B1 /* BetterSafariView in Frameworks */,
 			);
@@ -629,7 +629,7 @@
 				0C7376EF28A97D1400D60918 /* SwiftUIX */,
 				0C7506D628B1AC9A008BEE38 /* SwiftyJSON */,
 				0CDDDE042935235E006810B1 /* BetterSafariView */,
-				0CEC8AAB299B03E5007BFE8F /* Introspect */,
+				0CBC07C7299F2E0300F78723 /* Introspect-Static */,
 			);
 			productName = Torrenter;
 			productReference = 0CAF1C68286F5C0E00296F86 /* Ferrite.app */;
@@ -667,7 +667,7 @@
 				0C7376EE28A97D1400D60918 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 				0C7506D528B1AC9A008BEE38 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				0CDDDE032935235E006810B1 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
-				0CEC8AAA299B03E5007BFE8F /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				0CBC07C6299F2E0200F78723 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = 0CAF1C69286F5C0E00296F86 /* Products */;
 			projectDirPath = "";
@@ -1096,19 +1096,19 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		0CBC07C6299F2E0200F78723 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = exactVersion;
+				version = 0.2.1;
+			};
+		};
 		0CDDDE032935235E006810B1 /* XCRemoteSwiftPackageReference "BetterSafariView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stleamist/BetterSafariView";
 			requirement = {
 				branch = main;
-				kind = branch;
-			};
-		};
-		0CEC8AAA299B03E5007BFE8F /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect/";
-			requirement = {
-				branch = master;
 				kind = branch;
 			};
 		};
@@ -1145,15 +1145,15 @@
 			package = 0CAF1C79286F5C8600296F86 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
 		};
+		0CBC07C7299F2E0300F78723 /* Introspect-Static */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0CBC07C6299F2E0200F78723 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = "Introspect-Static";
+		};
 		0CDDDE042935235E006810B1 /* BetterSafariView */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0CDDDE032935235E006810B1 /* XCRemoteSwiftPackageReference "BetterSafariView" */;
 			productName = BetterSafariView;
-		};
-		0CEC8AAB299B03E5007BFE8F /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0CEC8AAA299B03E5007BFE8F /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
 		};
 /* End XCSwiftPackageProductDependency section */
 
