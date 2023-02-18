@@ -11,7 +11,7 @@
 import Introspect
 import SwiftUI
 
-struct InlinedList: ViewModifier {
+struct InlinedListModifier: ViewModifier {
     let inset: CGFloat
 
     func body(content: Content) -> some View {

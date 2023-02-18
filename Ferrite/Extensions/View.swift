@@ -14,34 +14,34 @@ extension View {
     func conditionalContextMenu(id: some Hashable,
                                 @ViewBuilder _ internalContent: @escaping () -> some View) -> some View
     {
-        modifier(ConditionalContextMenu(internalContent, id: id))
+        modifier(ConditionalContextMenuModifier(internalContent, id: id))
     }
 
     func conditionalId(_ id: some Hashable) -> some View {
-        modifier(ConditionalId(id: id))
+        modifier(ConditionalIdModifier(id: id))
     }
 
     func disabledAppearance(_ disabled: Bool, dimmedOpacity: Double? = nil, animation: Animation? = nil) -> some View {
-        modifier(DisabledAppearance(disabled: disabled, dimmedOpacity: dimmedOpacity, animation: animation))
+        modifier(DisabledAppearanceModifier(disabled: disabled, dimmedOpacity: dimmedOpacity, animation: animation))
     }
 
     func disableInteraction(_ disabled: Bool) -> some View {
-        modifier(DisableInteraction(disabled: disabled))
+        modifier(DisableInteractionModifier(disabled: disabled))
     }
 
     func inlinedList(inset: CGFloat) -> some View {
-        modifier(InlinedList(inset: inset))
+        modifier(InlinedListModifier(inset: inset))
     }
 
     func viewDidAppear(_ callback: @escaping () -> Void) -> some View {
         modifier(ViewDidAppearModifier(callback: callback))
     }
 
-    func searchAppearance<Content: View>(_ content: Content) -> some View {
-        modifier(SearchAppearance(hostingContent: content))
+    func customScopeBar<Content: View>(_ content: Content) -> some View {
+        modifier(CustomScopeBarModifier(hostingContent: content))
     }
 
-    func searchAppearance<Content: View>(_ content: @escaping () -> Content) -> some View {
-        modifier(SearchAppearance(hostingContent: content()))
+    func customScopeBar<Content: View>(_ content: @escaping () -> Content) -> some View {
+        modifier(CustomScopeBarModifier(hostingContent: content()))
     }
 }

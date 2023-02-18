@@ -10,7 +10,7 @@
 
 import SwiftUI
 
-struct ConditionalContextMenu<InternalContent: View, ID: Hashable>: ViewModifier {
+struct ConditionalContextMenuModifier<InternalContent: View, ID: Hashable>: ViewModifier {
     let internalContent: () -> InternalContent
     let id: ID
 

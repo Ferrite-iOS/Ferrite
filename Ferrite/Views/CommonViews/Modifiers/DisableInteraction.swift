@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct DisableInteraction: ViewModifier {
+struct DisableInteractionModifier: ViewModifier {
     let disabled: Bool
 
     func body(content: Content) -> some View {

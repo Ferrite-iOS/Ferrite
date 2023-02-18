@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct DisabledAppearance: ViewModifier {
+struct DisabledAppearanceModifier: ViewModifier {
     let disabled: Bool
     let dimmedOpacity: Double?
     let animation: Animation?

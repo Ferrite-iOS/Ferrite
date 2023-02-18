@@ -35,6 +35,7 @@
 		0C42B5962932F2D5008057A0 /* DebridPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C42B5952932F2D5008057A0 /* DebridPickerView.swift */; };
 		0C42B5982932F6DD008057A0 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C42B5972932F6DD008057A0 /* Set.swift */; };
 		0C445C62293F9A0B0060744D /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C445C61293F9A0B0060744D /* Bundle.swift */; };
+		0C448BE929A135F100F4E266 /* Introspect-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 0C448BE829A135F100F4E266 /* Introspect-Static */; };
 		0C44E2A828D4DDDC007711AE /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C44E2A728D4DDDC007711AE /* Application.swift */; };
 		0C44E2AD28D51C63007711AE /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C44E2AC28D51C63007711AE /* BackupManager.swift */; };
 		0C44E2AF28D52E8A007711AE /* BackupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C44E2AE28D52E8A007711AE /* BackupsView.swift */; };
@@ -48,7 +49,7 @@
 		0C54D36328C5086E00BFEEE2 /* History+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C54D36128C5086E00BFEEE2 /* History+CoreDataClass.swift */; };
 		0C54D36428C5086E00BFEEE2 /* History+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C54D36228C5086E00BFEEE2 /* History+CoreDataProperties.swift */; };
 		0C572D4C2993FC2A003EEC05 /* ViewDidAppearHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4B2993FC2A003EEC05 /* ViewDidAppearHandler.swift */; };
-		0C572D4E299403B7003EEC05 /* ViewDidAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4D299403B7003EEC05 /* ViewDidAppearModifier.swift */; };
+		0C572D4E299403B7003EEC05 /* ViewDidAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4D299403B7003EEC05 /* ViewDidAppear.swift */; };
 		0C57D4CC289032ED008534E8 /* SearchResultInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C57D4CB289032ED008534E8 /* SearchResultInfoView.swift */; };
 		0C5FCB05296744F300849E87 /* AllDebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5FCB04296744F300849E87 /* AllDebridCloudView.swift */; };
 		0C64A4B4288903680079976D /* Base32 in Frameworks */ = {isa = PBXBuildFile; productRef = 0C64A4B3288903680079976D /* Base32 */; };
@@ -116,7 +117,6 @@
 		0CB6516528C5A5D700DCA721 /* InlinedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516428C5A5D700DCA721 /* InlinedList.swift */; };
 		0CB6516A28C5B4A600DCA721 /* InlineHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516928C5B4A600DCA721 /* InlineHeader.swift */; };
 		0CBAB83628D12ED500AC903E /* DisableInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBAB83528D12ED500AC903E /* DisableInteraction.swift */; };
-		0CBC07C8299F2E0300F78723 /* Introspect-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 0CBC07C7299F2E0300F78723 /* Introspect-Static */; };
 		0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FC288D914F0054BE44 /* BatchChoiceView.swift */; };
 		0CBC76FF288DAAD00054BE44 /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC76FE288DAAD00054BE44 /* NavigationViewModel.swift */; };
 		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
@@ -124,7 +124,7 @@
 		0CC389542970AD900066D06F /* Action+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC389522970AD900066D06F /* Action+CoreDataProperties.swift */; };
 		0CD4CAC628C980EB0046E1DC /* HistoryActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD4CAC528C980EB0046E1DC /* HistoryActionsView.swift */; };
 		0CD5E78928CD932B001BF684 /* DisabledAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD5E78828CD932B001BF684 /* DisabledAppearance.swift */; };
-		0CD5F1FB299BEFBE00476DDB /* SearchAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD5F1FA299BEFBE00476DDB /* SearchAppearance.swift */; };
+		0CD5F1FB299BEFBE00476DDB /* CustomScopeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD5F1FA299BEFBE00476DDB /* CustomScopeBar.swift */; };
 		0CD5F1FD299C083B00476DDB /* PluginPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD5F1FC299C083B00476DDB /* PluginPickerView.swift */; };
 		0CD72E17293D9928001A7EA4 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD72E16293D9928001A7EA4 /* Array.swift */; };
 		0CDCB91828C662640098B513 /* EmptyInstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDCB91728C662640098B513 /* EmptyInstructionView.swift */; };
@@ -177,7 +177,7 @@
 		0C54D36128C5086E00BFEEE2 /* History+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C54D36228C5086E00BFEEE2 /* History+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C572D4B2993FC2A003EEC05 /* ViewDidAppearHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidAppearHandler.swift; sourceTree = "<group>"; };
-		0C572D4D299403B7003EEC05 /* ViewDidAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidAppearModifier.swift; sourceTree = "<group>"; };
+		0C572D4D299403B7003EEC05 /* ViewDidAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidAppear.swift; sourceTree = "<group>"; };
 		0C57D4CB289032ED008534E8 /* SearchResultInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultInfoView.swift; sourceTree = "<group>"; };
 		0C5FCB04296744F300849E87 /* AllDebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDebridCloudView.swift; sourceTree = "<group>"; };
 		0C68134F28BC1A2D00FAD890 /* GithubWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubWrapper.swift; sourceTree = "<group>"; };
@@ -249,7 +249,7 @@
 		0CC6E4D428A45BA000AF2BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0CD4CAC528C980EB0046E1DC /* HistoryActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryActionsView.swift; sourceTree = "<group>"; };
 		0CD5E78828CD932B001BF684 /* DisabledAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledAppearance.swift; sourceTree = "<group>"; };
-		0CD5F1FA299BEFBE00476DDB /* SearchAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAppearance.swift; sourceTree = "<group>"; };
+		0CD5F1FA299BEFBE00476DDB /* CustomScopeBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScopeBar.swift; sourceTree = "<group>"; };
 		0CD5F1FC299C083B00476DDB /* PluginPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginPickerView.swift; sourceTree = "<group>"; };
 		0CD72E16293D9928001A7EA4 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		0CDCB91728C662640098B513 /* EmptyInstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyInstructionView.swift; sourceTree = "<group>"; };
@@ -265,7 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C7506D728B1AC9A008BEE38 /* SwiftyJSON in Frameworks */,
-				0CBC07C8299F2E0300F78723 /* Introspect-Static in Frameworks */,
+				0C448BE929A135F100F4E266 /* Introspect-Static in Frameworks */,
 				0C64A4B4288903680079976D /* Base32 in Frameworks */,
 				0C4CFC462897030D00AD9FAD /* Regex in Frameworks */,
 				0C7376F028A97D1400D60918 /* SwiftUIX in Frameworks */,
@@ -393,8 +393,8 @@
 				0CD5E78828CD932B001BF684 /* DisabledAppearance.swift */,
 				0CBAB83528D12ED500AC903E /* DisableInteraction.swift */,
 				0CB6516428C5A5D700DCA721 /* InlinedList.swift */,
-				0CD5F1FA299BEFBE00476DDB /* SearchAppearance.swift */,
-				0C572D4D299403B7003EEC05 /* ViewDidAppearModifier.swift */,
+				0CD5F1FA299BEFBE00476DDB /* CustomScopeBar.swift */,
+				0C572D4D299403B7003EEC05 /* ViewDidAppear.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -629,7 +629,7 @@
 				0C7376EF28A97D1400D60918 /* SwiftUIX */,
 				0C7506D628B1AC9A008BEE38 /* SwiftyJSON */,
 				0CDDDE042935235E006810B1 /* BetterSafariView */,
-				0CBC07C7299F2E0300F78723 /* Introspect-Static */,
+				0C448BE829A135F100F4E266 /* Introspect-Static */,
 			);
 			productName = Torrenter;
 			productReference = 0CAF1C68286F5C0E00296F86 /* Ferrite.app */;
@@ -667,7 +667,7 @@
 				0C7376EE28A97D1400D60918 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 				0C7506D528B1AC9A008BEE38 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				0CDDDE032935235E006810B1 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
-				0CBC07C6299F2E0200F78723 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				0C448BE729A135F100F4E266 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = 0CAF1C69286F5C0E00296F86 /* Products */;
 			projectDirPath = "";
@@ -757,7 +757,7 @@
 				0C0D50E7288DFF850035ECC8 /* PluginListView.swift in Sources */,
 				0CA3B23428C2658700616D3A /* LibraryView.swift in Sources */,
 				0CD72E17293D9928001A7EA4 /* Array.swift in Sources */,
-				0CD5F1FB299BEFBE00476DDB /* SearchAppearance.swift in Sources */,
+				0CD5F1FB299BEFBE00476DDB /* CustomScopeBar.swift in Sources */,
 				0C44E2A828D4DDDC007711AE /* Application.swift in Sources */,
 				0CC389542970AD900066D06F /* Action+CoreDataProperties.swift in Sources */,
 				0C7ED14128D61BBA009E29AD /* BackupModels.swift in Sources */,
@@ -816,7 +816,7 @@
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,
 				0CA148E8288903F000DE2211 /* RealDebridWrapper.swift in Sources */,
 				0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */,
-				0C572D4E299403B7003EEC05 /* ViewDidAppearModifier.swift in Sources */,
+				0C572D4E299403B7003EEC05 /* ViewDidAppear.swift in Sources */,
 				0CA148E5288903F000DE2211 /* DebridManager.swift in Sources */,
 				0C54D36328C5086E00BFEEE2 /* History+CoreDataClass.swift in Sources */,
 				0CBAB83628D12ED500AC903E /* DisableInteraction.swift in Sources */,
@@ -1048,6 +1048,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0C448BE729A135F100F4E266 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect/";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.2;
+			};
+		};
 		0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/Regex";
@@ -1096,14 +1104,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		0CBC07C6299F2E0200F78723 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
-			requirement = {
-				kind = exactVersion;
-				version = 0.2.1;
-			};
-		};
 		0CDDDE032935235E006810B1 /* XCRemoteSwiftPackageReference "BetterSafariView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stleamist/BetterSafariView";
@@ -1115,6 +1115,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0C448BE829A135F100F4E266 /* Introspect-Static */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0C448BE729A135F100F4E266 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = "Introspect-Static";
+		};
 		0C4CFC452897030D00AD9FAD /* Regex */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */;
@@ -1144,11 +1149,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0CAF1C79286F5C8600296F86 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
-		};
-		0CBC07C7299F2E0300F78723 /* Introspect-Static */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0CBC07C6299F2E0200F78723 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = "Introspect-Static";
 		};
 		0CDDDE042935235E006810B1 /* BetterSafariView */ = {
 			isa = XCSwiftPackageProductDependency;

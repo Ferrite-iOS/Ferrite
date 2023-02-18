@@ -8,21 +8,22 @@
 import SwiftUI
 import Introspect
 
-struct SearchAppearance<V: View>: ViewModifier {
+struct CustomScopeBarModifier<V: View>: ViewModifier {
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
     let hostingContent: V
-    let hostingController: UIHostingController<V>
+    @State private var hostingController: UIHostingController<V>?
 
     init(hostingContent: V) {
         self.hostingContent = hostingContent
-        hostingController = UIHostingController(rootView: hostingContent)
     }
 
     func body(content: Content) -> some View {
         if #available(iOS 15, *) {
             content
                 .backport.introspectSearchController { searchController in
+                    guard hostingController == nil else { return }
+
                     searchController.hidesNavigationBarDuringPresentation = true
                     searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
                     searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
@@ -30,6 +31,7 @@ struct SearchAppearance<V: View>: ViewModifier {
                     searchController.searchBar.scopeButtonTitles = [""]
                     (searchController.searchBar.value(forKey: "_scopeBar") as? UIView)?.isHidden = true
 
+                    let hostingController = UIHostingController(rootView: hostingContent)
                     hostingController.view.translatesAutoresizingMaskIntoConstraints = false
                     hostingController.view.backgroundColor = .clear
 
@@ -43,6 +45,8 @@ struct SearchAppearance<V: View>: ViewModifier {
                         hostingController.view.topAnchor.constraint(equalTo: containerView.topAnchor),
                         hostingController.view.heightAnchor.constraint(equalTo: containerView.heightAnchor)
                     ])
+
+                    self.hostingController = hostingController
                 }
                 .introspectNavigationController { navigationController in
                     navigationController.navigationBar.prefersLargeTitles = true

@@ -76,7 +76,7 @@ struct LibraryView: View {
                 }
             }
             .navigationSearchBarHiddenWhenScrolling(false)
-            .searchAppearance {
+            .customScopeBar {
                 LibraryPickerView()
                     .environmentObject(debridManager)
                     .environmentObject(navModel)

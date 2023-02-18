@@ -59,7 +59,7 @@ struct ContentView: View {
                               }
                 }
                 .navigationSearchBarHiddenWhenScrolling(false)
-                .searchAppearance {
+                .customScopeBar {
                     SearchFilterHeaderView()
                         .environmentObject(scrapingModel)
                         .environmentObject(debridManager)

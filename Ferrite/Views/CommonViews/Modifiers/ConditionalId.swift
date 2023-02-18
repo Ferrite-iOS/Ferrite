@@ -10,7 +10,7 @@
 
 import SwiftUI
 
-struct ConditionalId<ID: Hashable>: ViewModifier {
+struct ConditionalIdModifier<ID: Hashable>: ViewModifier {
     let id: ID
 
     func body(content: Content) -> some View {
