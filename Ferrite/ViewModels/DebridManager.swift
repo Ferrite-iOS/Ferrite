@@ -19,7 +19,6 @@ public class DebridManager: ObservableObject {
     // UI Variables
     @Published var showWebView: Bool = false
     @Published var showAuthSession: Bool = false
-    @Published var showLoadingProgress: Bool = false
 
     // Service agnostic variables
     @Published var enabledDebrids: Set<DebridType> = [] {
@@ -50,6 +49,7 @@ public class DebridManager: ObservableObject {
     var selectedRealDebridFile: RealDebrid.IAFile?
     var selectedRealDebridID: String?
 
+    // TODO: Maybe make these generic?
     // RealDebrid cloud variables
     @Published var realDebridCloudTorrents: [RealDebrid.UserTorrentsResponse] = []
     @Published var realDebridCloudDownloads: [RealDebrid.UserDownloadsResponse] = []
@@ -479,10 +479,13 @@ public class DebridManager: ObservableObject {
     public func fetchDebridDownload(magnet: Magnet?, cloudInfo: String? = nil) async {
         defer {
             currentDebridTask = nil
-            showLoadingProgress = false
+            toastModel?.hideIndeterminateToast()
         }
 
-        showLoadingProgress = true
+        toastModel?.updateIndeterminateToast("Loading content", cancelAction: {
+            self.currentDebridTask?.cancel()
+            self.currentDebridTask = nil
+        })
 
         switch selectedDebridType {
         case .realDebrid:
@@ -557,7 +560,7 @@ public class DebridManager: ObservableObject {
                 await deleteRdTorrent(torrentID: selectedRealDebridID, presentError: false)
             }
 
-            showLoadingProgress = false
+            toastModel?.hideIndeterminateToast()
         }
     }
 

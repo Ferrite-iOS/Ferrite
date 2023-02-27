@@ -18,13 +18,23 @@ class ScrapingViewModel: ObservableObject {
 
     var runningSearchTask: Task<Void, Error>?
     @Published var searchResults: [SearchResult] = []
-    @Published var searchText: String = ""
     @Published var filteredSource: Source?
     @Published var currentSourceName: String?
 
+    // Only add results with valid magnet hashes to the search results array
     @MainActor
     func updateSearchResults(newResults: [SearchResult]) {
-        searchResults = newResults
+        searchResults += newResults.filter { $0.magnet.hash != nil }
+    }
+
+    @MainActor
+    func clearSearchResults() {
+        searchResults = []
+    }
+
+    func cancelCurrentTask() {
+        runningSearchTask?.cancel()
+        runningSearchTask = nil
     }
 
     // Utility function to print source specific errors
@@ -38,7 +48,7 @@ class ScrapingViewModel: ObservableObject {
         print(newDescription)
     }
 
-    public func scanSources(sources: [Source]) async {
+    public func scanSources(sources: [Source], searchText: String) async {
         if sources.isEmpty {
             await toastModel?.updateToastDescription("There are no sources to search!", newToastType: .info)
 
@@ -46,13 +56,20 @@ class ScrapingViewModel: ObservableObject {
             return
         }
 
-        var tempResults: [SearchResult] = []
+        await clearSearchResults()
+
+        await toastModel?.updateIndeterminateToast("Loading", cancelAction: {
+            self.cancelCurrentTask()
+        })
 
         for source in sources {
+            // If the search is cancelled, return
+            if let runningSearchTask, runningSearchTask.isCancelled {
+                return
+            }
+
             if source.enabled {
-                Task { @MainActor in
-                    currentSourceName = source.name
-                }
+                await toastModel?.updateIndeterminateToast("Loading \(source.name)", cancelAction: nil)
 
                 guard let baseUrl = source.baseUrl else {
                     await toastModel?.updateToastDescription("The base URL could not be found for source \(source.name)")
@@ -86,7 +103,7 @@ class ScrapingViewModel: ObservableObject {
                            let html = String(data: data, encoding: .utf8)
                         {
                             let sourceResults = await scrapeHtml(source: source, baseUrl: baseUrl, html: html)
-                            tempResults += sourceResults
+                            await updateSearchResults(newResults: sourceResults)
                         }
                     }
                 case .rss:
@@ -111,7 +128,7 @@ class ScrapingViewModel: ObservableObject {
                            let rss = String(data: data, encoding: .utf8)
                         {
                             let sourceResults = await scrapeRss(source: source, rss: rss)
-                            tempResults += sourceResults
+                            await updateSearchResults(newResults: sourceResults)
                         }
                     }
                 case .siteApi:
@@ -155,7 +172,7 @@ class ScrapingViewModel: ObservableObject {
 
                         if let data {
                             let sourceResults = await scrapeJson(source: source, jsonData: data)
-                            tempResults += sourceResults
+                            await updateSearchResults(newResults: sourceResults)
                         }
                     }
                 case .none:
@@ -164,12 +181,10 @@ class ScrapingViewModel: ObservableObject {
             }
         }
 
-        // If the task is cancelled, return
+        // If the search is cancelled, return
         if let searchTask = runningSearchTask, searchTask.isCancelled {
             return
         }
-
-        await updateSearchResults(newResults: tempResults)
     }
 
     // Checks the base URL for any website data then iterates through the fallback URLs

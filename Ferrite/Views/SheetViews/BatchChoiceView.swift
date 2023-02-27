@@ -14,6 +14,7 @@ struct BatchChoiceView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
+    // TODO: Make this generic for IA(?) and add searchbar
     var body: some View {
         NavView {
             List {

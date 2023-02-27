@@ -40,9 +40,6 @@ class NavigationViewModel: ObservableObject {
         case actions
     }
 
-    @Published var isEditingSearch: Bool = false
-    @Published var isSearching: Bool = false
-
     @Published var selectedMagnet: Magnet?
     @Published var selectedHistoryInfo: HistoryEntryJson?
     @Published var resultFromCloud: Bool = false
@@ -60,7 +57,6 @@ class NavigationViewModel: ObservableObject {
     @Published var showLocalActivitySheet = false
 
     @Published var selectedTab: ViewTab = .search
-    @Published var showSearchProgress: Bool = false
 
     // Used between SourceListView and SourceSettingsView
     @Published var showSourceSettings: Bool = false

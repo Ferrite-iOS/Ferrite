@@ -35,12 +35,34 @@ class ToastViewModel: ObservableObject {
 
     @Published var showToast: Bool = false
 
+    @Published var indeterminateToastDescription: String? = nil
+    @Published var indeterminateCancelAction: (() -> ())? = nil
+    @Published var showIndeterminateToast: Bool = false
+
     public func updateToastDescription(_ description: String, newToastType: ToastType? = nil) {
         if let newToastType {
             toastType = newToastType
         }
 
         toastDescription = description
+    }
+
+    public func updateIndeterminateToast(_ description: String, cancelAction: (() -> ())?) {
+        indeterminateToastDescription = description
+
+        if let cancelAction {
+            indeterminateCancelAction = cancelAction
+        }
+
+        if !showIndeterminateToast {
+            showIndeterminateToast = true
+        }
+    }
+
+    public func hideIndeterminateToast() {
+        showIndeterminateToast = false
+        indeterminateToastDescription = ""
+        indeterminateCancelAction = nil
     }
 
     // Default the toast type to error since the majority of toasts are errors

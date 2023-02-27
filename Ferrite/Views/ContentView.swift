@@ -13,57 +13,89 @@ struct ContentView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var pluginManager: PluginManager
+    @EnvironmentObject var toastModel: ToastViewModel
+
+    @State private var isEditingSearch = false
+    @State private var isSearching = false
+    @State private var searchText: String = ""
 
     var body: some View {
         NavView {
-            SearchResultsView()
-                .listStyle(.insetGrouped)
-                .navigationTitle("Search")
-                .navigationSearchBar {
-                    SearchBar("Search",
-                              text: $scrapingModel.searchText,
-                              isEditing: $navModel.isEditingSearch,
-                              onCommit: {
-                                  scrapingModel.searchResults = []
-                                  scrapingModel.runningSearchTask = Task {
-                                      navModel.isSearching = true
-                                      navModel.showSearchProgress = true
-
-                                      let sources = pluginManager.fetchInstalledSources()
-                                      await scrapingModel.scanSources(sources: sources)
-
-                                      if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {
-                                          debridManager.clearIAValues()
-
-                                          // Remove magnets that don't have a hash
-                                          let magnets = scrapingModel.searchResults.compactMap {
-                                              if let magnetHash = $0.magnet.hash {
-                                                  return Magnet(hash: magnetHash, link: $0.magnet.link)
-                                              } else {
-                                                  return nil
-                                              }
-                                          }
-                                          await debridManager.populateDebridIA(magnets)
-                                      }
-
-                                      navModel.showSearchProgress = false
-                                  }
-                              })
-                              .showsCancelButton(navModel.isEditingSearch || navModel.isSearching)
-                              .onCancel {
-                                  scrapingModel.searchResults = []
-                                  scrapingModel.runningSearchTask?.cancel()
-                                  scrapingModel.runningSearchTask = nil
-                                  navModel.isSearching = false
-                                  scrapingModel.searchText = ""
-                              }
+            List {
+                ForEach(scrapingModel.searchResults, id: \.self) { result in
+                    if result.source == scrapingModel.filteredSource?.name || scrapingModel.filteredSource == nil {
+                        SearchResultButtonView(result: result)
+                    }
                 }
-                .navigationSearchBarHiddenWhenScrolling(false)
-                .customScopeBar {
-                    SearchFilterHeaderView()
-                        .environmentObject(scrapingModel)
-                        .environmentObject(debridManager)
+            }
+            .listStyle(.insetGrouped)
+            .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 20 : -20)
+            .overlay {
+                if scrapingModel.searchResults.isEmpty && isSearching && scrapingModel.runningSearchTask == nil {
+                    Text("No results found")
                 }
+            }
+            .onChange(of: scrapingModel.searchResults) { _ in
+                // Cleans up any leftover search results in the event of an abrupt cancellation
+                if !isSearching {
+                    scrapingModel.searchResults = []
+                }
+            }
+            .onChange(of: navModel.selectedTab) { tab in
+                // Cancel the search if tab is switched while search is in progress
+                if tab != .search, scrapingModel.runningSearchTask != nil {
+                    scrapingModel.searchResults = []
+                    scrapingModel.runningSearchTask?.cancel()
+                    scrapingModel.runningSearchTask = nil
+                    isSearching = false
+                    searchText = ""
+                }
+            }
+            .navigationTitle("Search")
+            .navigationSearchBar {
+                SearchBar(
+                    "Search",
+                    text: $searchText,
+                    isEditing: $isEditingSearch,
+                    onCommit: {
+                        if let runningSearchTask = scrapingModel.runningSearchTask, runningSearchTask.isCancelled {
+                            scrapingModel.runningSearchTask = nil
+                            return
+                        }
+
+                        scrapingModel.runningSearchTask = Task {
+                            isSearching = true
+
+                            let sources = pluginManager.fetchInstalledSources()
+                            await scrapingModel.scanSources(sources: sources, searchText: searchText)
+
+                            if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {
+                                debridManager.clearIAValues()
+
+                                let magnets = scrapingModel.searchResults.map(\.magnet)
+                                await debridManager.populateDebridIA(magnets)
+                            }
+
+                            toastModel.hideIndeterminateToast()
+                            scrapingModel.runningSearchTask = nil
+                        }
+                    }
+                )
+                .showsCancelButton(isEditingSearch || isSearching)
+                .onCancel {
+                    scrapingModel.searchResults = []
+                    scrapingModel.runningSearchTask?.cancel()
+                    scrapingModel.runningSearchTask = nil
+                    isSearching = false
+                    searchText = ""
+                }
+            }
+            .navigationSearchBarHiddenWhenScrolling(false)
+        }
+        .customScopeBar {
+            SearchFilterHeaderView()
+                .environmentObject(scrapingModel)
+                .environmentObject(debridManager)
         }
     }
 }

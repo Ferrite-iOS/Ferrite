@@ -171,17 +171,18 @@ struct MainView: View {
                     .cornerRadius(10)
                 }
 
-                if debridManager.showLoadingProgress {
+                if toastModel.showIndeterminateToast {
                     VStack {
-                        Text("Loading content")
+                        Text(toastModel.indeterminateToastDescription ?? "Loading...")
 
                         HStack {
                             IndeterminateProgressView()
 
-                            Button("Cancel") {
-                                debridManager.currentDebridTask?.cancel()
-                                debridManager.currentDebridTask = nil
-                                debridManager.showLoadingProgress = false
+                            if let cancelAction = toastModel.indeterminateCancelAction {
+                                Button("Cancel") {
+                                    cancelAction()
+                                    toastModel.hideIndeterminateToast()
+                                }
                             }
                         }
                     }
@@ -198,7 +199,7 @@ struct MainView: View {
                     .foregroundColor(.clear)
                     .frame(height: 60)
             }
-            .animation(.easeInOut(duration: 0.3), value: toastModel.showToast || debridManager.showLoadingProgress)
+            .animation(.easeInOut(duration: 0.3), value: toastModel.showToast || toastModel.showIndeterminateToast)
         }
     }
 }
