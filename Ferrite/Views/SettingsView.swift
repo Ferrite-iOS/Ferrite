@@ -16,6 +16,7 @@ struct SettingsView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
+    @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText = false
 
     @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
 
@@ -81,6 +82,10 @@ struct SettingsView: View {
                 Section(header: InlineHeader("Behavior")) {
                     Toggle(isOn: $autocorrectSearch) {
                         Text("Autocorrect search")
+                    }
+
+                    Toggle(isOn: $usesRandomSearchText) {
+                        Text("Random searchbar text")
                     }
                 }
 

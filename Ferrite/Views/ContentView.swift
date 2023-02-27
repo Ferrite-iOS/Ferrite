@@ -15,9 +15,22 @@ struct ContentView: View {
     @EnvironmentObject var pluginManager: PluginManager
     @EnvironmentObject var toastModel: ToastViewModel
 
+    @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
+
     @State private var isEditingSearch = false
     @State private var isSearching = false
     @State private var searchText: String = ""
+
+    @State private var lastSearchTextIndex: Int = -1
+    @State private var searchBarText: String = "Search"
+    let searchBarTextArray: [String] = [
+        "What's on your mind?",
+        "Discover something interesting",
+        "Find an engaging show",
+        "Feeling adventurous?",
+        "Look for something new",
+        "The classics are a good idea"
+    ]
 
     var body: some View {
         NavView {
@@ -33,6 +46,11 @@ struct ContentView: View {
             .overlay {
                 if scrapingModel.searchResults.isEmpty && isSearching && scrapingModel.runningSearchTask == nil {
                     Text("No results found")
+                }
+            }
+            .onChange(of: searchText) { newText in
+                if newText.isEmpty && isSearching {
+                    searchBarText = getSearchBarText()
                 }
             }
             .onChange(of: scrapingModel.searchResults) { _ in
@@ -54,7 +72,7 @@ struct ContentView: View {
             .navigationTitle("Search")
             .navigationSearchBar {
                 SearchBar(
-                    "Search",
+                    searchBarText,
                     text: $searchText,
                     isEditing: $isEditingSearch,
                     onCommit: {
@@ -88,6 +106,7 @@ struct ContentView: View {
                     scrapingModel.runningSearchTask = nil
                     isSearching = false
                     searchText = ""
+                    searchBarText = getSearchBarText()
                 }
             }
             .navigationSearchBarHiddenWhenScrolling(false)
@@ -96,6 +115,26 @@ struct ContentView: View {
             SearchFilterHeaderView()
                 .environmentObject(scrapingModel)
                 .environmentObject(debridManager)
+        }
+        .backport.onAppear {
+            searchBarText = getSearchBarText()
+        }
+    }
+
+    // Fetches random searchbar text if enabled, otherwise deinit the last case value
+    func getSearchBarText() -> String {
+        if usesRandomSearchText {
+            let num = Int.random(in: 0..<searchBarTextArray.count - 1)
+            if num == lastSearchTextIndex {
+                lastSearchTextIndex = num + 1
+                return searchBarTextArray[safe: num + 1] ?? "Search"
+            } else {
+                lastSearchTextIndex = num
+                return searchBarTextArray[safe: num] ?? "Search"
+            }
+        } else {
+            lastSearchTextIndex = -1
+            return "Search"
         }
     }
 }
