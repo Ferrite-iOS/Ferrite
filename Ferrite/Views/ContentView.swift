@@ -110,11 +110,11 @@ struct ContentView: View {
                 }
             }
             .navigationSearchBarHiddenWhenScrolling(false)
-        }
-        .customScopeBar {
-            SearchFilterHeaderView()
-                .environmentObject(scrapingModel)
-                .environmentObject(debridManager)
+            .customScopeBar {
+                SearchFilterHeaderView()
+                    .environmentObject(scrapingModel)
+                    .environmentObject(debridManager)
+            }
         }
         .backport.onAppear {
             searchBarText = getSearchBarText()

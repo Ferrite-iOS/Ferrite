@@ -9,24 +9,25 @@ import SwiftUI
 import Introspect
 
 struct CustomScopeBarModifier<V: View>: ViewModifier {
-    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
-
     let hostingContent: V
     @State private var hostingController: UIHostingController<V>?
 
-    init(hostingContent: V) {
-        self.hostingContent = hostingContent
+    // Don't use AppStorage since it causes a view update
+    var autocorrectSearch: Bool {
+        UserDefaults.standard.bool(forKey: "Behavior.AutocorrectSearch")
     }
 
     func body(content: Content) -> some View {
         if #available(iOS 15, *) {
             content
                 .backport.introspectSearchController { searchController in
+                    searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
+                    searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
+
+                    // MARK: One-time setup
                     guard hostingController == nil else { return }
 
                     searchController.hidesNavigationBarDuringPresentation = true
-                    searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
-                    searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
                     searchController.searchBar.showsScopeBar = true
                     searchController.searchBar.scopeButtonTitles = [""]
                     (searchController.searchBar.value(forKey: "_scopeBar") as? UIView)?.isHidden = true

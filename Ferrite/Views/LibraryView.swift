@@ -76,6 +76,11 @@ struct LibraryView: View {
                 }
             }
             .navigationSearchBarHiddenWhenScrolling(false)
+            .customScopeBar {
+                LibraryPickerView()
+                    .environmentObject(debridManager)
+                    .environmentObject(navModel)
+            }
             .environment(\.editMode, $editMode)
         }
         .overlay {
@@ -93,11 +98,6 @@ struct LibraryView: View {
                     EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
                 }
             }
-        }
-        .customScopeBar {
-            LibraryPickerView()
-                .environmentObject(debridManager)
-                .environmentObject(navModel)
         }
         .onChange(of: navModel.libraryPickerSelection) { _ in
             editMode = .inactive

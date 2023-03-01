@@ -66,6 +66,10 @@ struct PluginsView: View {
                 }
             }
             .navigationSearchBarHiddenWhenScrolling(false)
+            .customScopeBar {
+                PluginPickerView()
+                    .environmentObject(navModel)
+            }
         }
         .overlay {
             if checkedForPlugins {
@@ -82,10 +86,6 @@ struct PluginsView: View {
             } else {
                 ProgressView()
             }
-        }
-        .customScopeBar {
-            PluginPickerView()
-                .environmentObject(navModel)
         }
     }
 }
