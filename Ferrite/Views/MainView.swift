@@ -51,7 +51,7 @@ struct MainView: View {
         }
         .sheet(item: $navModel.currentChoiceSheet) { item in
             switch item {
-            case .magnet:
+            case .action:
                 ActionChoiceView()
                     .environmentObject(debridManager)
                     .environmentObject(scrapingModel)
@@ -139,7 +139,9 @@ struct MainView: View {
         .backport.alert(
             isPresented: $showUpdateAlert,
             title: "Update available",
-            message: "Ferrite \(releaseVersionString) can be downloaded. \n\nThis alert can be disabled in Settings.",
+            message:
+                "Ferrite \(releaseVersionString) can be downloaded. \n\n" +
+                "This alert can be disabled in Settings.",
             buttons: [
                 .init("Download") {
                     guard let releaseUrl = URL(string: releaseUrlString) else {

@@ -20,8 +20,11 @@ struct SettingsView: View {
 
     @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
 
-    @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: DefaultDebridActionType = .none
-    @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: DefaultMagnetActionType = .none
+    @AppStorage("Actions.DefaultDebridName") var defaultDebridActionName: String?
+    @AppStorage("Actions.DefaultDebridList") var defaultDebridActionList: String?
+
+    @AppStorage("Actions.DefaultMagnetName") var defaultMagnetActionName: String?
+    @AppStorage("Actions.DefaultMagnetList") var defaultMagnetActionList: String?
 
     var body: some View {
         NavView {
@@ -94,50 +97,40 @@ struct SettingsView: View {
                 }
 
                 Section(header: InlineHeader("Default actions")) {
-                    if debridManager.enabledDebrids.count > 0 {
+                    //if debridManager.enabledDebrids.count > 0 {
                         NavigationLink(
-                            destination: DebridActionPickerView(),
+                            destination: DefaultActionPickerView(
+                                actionRequirement: .debrid,
+                                defaultActionName: $defaultDebridActionName,
+                                defaultActionList: $defaultDebridActionList
+                            ),
                             label: {
                                 HStack {
-                                    Text("Default debrid action")
+                                    Text("Debrid action")
                                     Spacer()
-                                    Group {
-                                        switch defaultDebridAction {
-                                        case .none:
-                                            Text("User choice")
-                                        case .outplayer:
-                                            Text("Outplayer")
-                                        case .vlc:
-                                            Text("VLC")
-                                        case .infuse:
-                                            Text("Infuse")
-                                        case .shareDownload:
-                                            Text("Share")
-                                        }
-                                    }
-                                    .foregroundColor(.gray)
+
+                                    // TODO: Maybe make this check for nil list as well?
+                                    Text(defaultDebridActionName.map { $0 } ?? "User choice")
+                                        .foregroundColor(.secondary)
                                 }
                             }
                         )
-                    }
+                    //}
 
                     NavigationLink(
-                        destination: MagnetActionPickerView(),
+                        destination: DefaultActionPickerView(
+                            actionRequirement: .magnet,
+                            defaultActionName: $defaultMagnetActionName,
+                            defaultActionList: $defaultMagnetActionList
+                        ),
                         label: {
                             HStack {
-                                Text("Default magnet action")
+                                Text("Magnet action")
                                 Spacer()
-                                Group {
-                                    switch defaultMagnetAction {
-                                    case .none:
-                                        Text("User choice")
-                                    case .webtor:
-                                        Text("Webtor")
-                                    case .shareMagnet:
-                                        Text("Share")
-                                    }
-                                }
-                                .foregroundColor(.gray)
+
+                                // TODO: Maybe make this check for nil list as well?
+                                Text(defaultMagnetActionName.map { $0 } ?? "User choice")
+                                    .foregroundColor(.secondary)
                             }
                         }
                     )

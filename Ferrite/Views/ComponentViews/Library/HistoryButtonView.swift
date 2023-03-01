@@ -11,6 +11,7 @@ struct HistoryButtonView: View {
     @EnvironmentObject var toastModel: ToastViewModel
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     let entry: HistoryEntry
 
@@ -23,14 +24,20 @@ struct HistoryButtonView: View {
                 if url.starts(with: "https://") {
                     Task {
                         debridManager.downloadUrl = url
-                        navModel.runDebridAction(urlString: url)
+                        pluginManager.runDebridAction(
+                            urlString: url,
+                            currentChoiceSheet: &navModel.currentChoiceSheet
+                        )
 
-                        if navModel.currentChoiceSheet != .magnet {
+                        if navModel.currentChoiceSheet != .action {
                             debridManager.downloadUrl = ""
                         }
                     }
                 } else {
-                    navModel.runMagnetAction(magnet: Magnet(hash: nil, link: url))
+                    pluginManager.runMagnetAction(
+                        urlString: url,
+                        currentChoiceSheet: &navModel.currentChoiceSheet
+                    )
                 }
             } else {
                 toastModel.updateToastDescription("URL invalid. Cannot load this history entry. Please delete it.")

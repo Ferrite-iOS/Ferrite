@@ -44,6 +44,22 @@ struct LibraryView: View {
                     DebridCloudView(searchText: $searchText)
                 }
             }
+            .overlay {
+                switch navModel.libraryPickerSelection {
+                case .bookmarks:
+                    if bookmarks.isEmpty {
+                        EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
+                    }
+                case .history:
+                    if history.isEmpty {
+                        EmptyInstructionView(title: "No History", message: "Start watching to build history")
+                    }
+                case .debridCloud:
+                    if debridManager.selectedDebridType == nil {
+                        EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
+                    }
+                }
+            }
             .navigationTitle("Library")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -82,22 +98,6 @@ struct LibraryView: View {
                     .environmentObject(navModel)
             }
             .environment(\.editMode, $editMode)
-        }
-        .overlay {
-            switch navModel.libraryPickerSelection {
-            case .bookmarks:
-                if bookmarks.isEmpty {
-                    EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
-                }
-            case .history:
-                if history.isEmpty {
-                    EmptyInstructionView(title: "No History", message: "Start watching to build history")
-                }
-            case .debridCloud:
-                if debridManager.selectedDebridType == nil {
-                    EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
-                }
-            }
         }
         .onChange(of: navModel.libraryPickerSelection) { _ in
             editMode = .inactive

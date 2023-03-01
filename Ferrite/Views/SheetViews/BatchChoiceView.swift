@@ -11,6 +11,7 @@ struct BatchChoiceView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var pluginManager: PluginManager
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
@@ -83,7 +84,10 @@ struct BatchChoiceView: View {
                     PersistenceController.shared.createHistory(selectedHistoryInfo, performSave: true)
                 }
 
-                navModel.runDebridAction(urlString: debridManager.downloadUrl, nil)
+                pluginManager.runDebridAction(
+                    urlString: debridManager.downloadUrl,
+                    currentChoiceSheet: &navModel.currentChoiceSheet
+                )
             }
 
             debridManager.clearSelectedDebridItems()

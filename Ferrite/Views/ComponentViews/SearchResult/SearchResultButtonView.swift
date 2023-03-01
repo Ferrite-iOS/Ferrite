@@ -12,6 +12,7 @@ struct SearchResultButtonView: View {
 
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     var result: SearchResult
 
@@ -42,9 +43,12 @@ struct SearchResultButtonView: View {
                                     performSave: true
                                 )
 
-                                navModel.runDebridAction(urlString: debridManager.downloadUrl)
+                                pluginManager.runDebridAction(
+                                    urlString: debridManager.downloadUrl,
+                                    currentChoiceSheet: &navModel.currentChoiceSheet
+                                )
 
-                                if navModel.currentChoiceSheet != .magnet {
+                                if navModel.currentChoiceSheet != .action {
                                     debridManager.downloadUrl = ""
                                 }
                             }
@@ -68,7 +72,10 @@ struct SearchResultButtonView: View {
                         performSave: true
                     )
 
-                    navModel.runMagnetAction(magnet: result.magnet)
+                    pluginManager.runMagnetAction(
+                        urlString: result.magnet.link,
+                        currentChoiceSheet: &navModel.currentChoiceSheet
+                    )
                 }
             }
         } label: {

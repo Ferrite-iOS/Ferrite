@@ -14,6 +14,8 @@ public class PluginManager: ObservableObject {
     @Published var availableSources: [SourceJson] = []
     @Published var availableActions: [ActionJson] = []
 
+    @Published var showBrokenDefaultActionAlert = false
+
     @MainActor
     public func fetchPluginsFromUrl() async {
         let pluginListRequest = PluginList.fetchRequest()
@@ -159,6 +161,58 @@ public class PluginManager: ObservableObject {
             return sources.compactMap { $0 }
         } else {
             return []
+        }
+    }
+
+    @MainActor
+    public func runDebridAction(urlString: String?, currentChoiceSheet: inout NavigationViewModel.ChoiceSheetType?) {
+        let context = PersistenceController.shared.backgroundContext
+
+        if
+            let defaultDebridActionName = UserDefaults.standard.string(forKey: "Actions.DefaultDebridName"),
+            let defaultDebridActionList = UserDefaults.standard.string(forKey: "Actions.DefaultDebridList")
+        {
+            let actionFetchRequest = Action.fetchRequest()
+            actionFetchRequest.fetchLimit = 1
+            actionFetchRequest.predicate = NSPredicate(format: "name == %@ AND listId == %@", defaultDebridActionName, defaultDebridActionList)
+
+            if let fetchedAction = try? context.fetch(actionFetchRequest).first {
+                runDeeplinkAction(fetchedAction, urlString: urlString)
+            } else {
+                currentChoiceSheet = .action
+                UserDefaults.standard.set(nil, forKey: "Actions.DefaultDebridName")
+                UserDefaults.standard.set(nil, forKey: "Action.DefaultDebridList")
+
+                showBrokenDefaultActionAlert.toggle()
+            }
+        } else {
+            currentChoiceSheet = .action
+        }
+    }
+
+    @MainActor
+    public func runMagnetAction(urlString: String?, currentChoiceSheet: inout NavigationViewModel.ChoiceSheetType?) {
+        let context = PersistenceController.shared.backgroundContext
+
+        if
+            let defaultMagnetActionName = UserDefaults.standard.string(forKey: "Actions.DefaultMagnetName"),
+            let defaultMagnetActionList = UserDefaults.standard.string(forKey: "Actions.DefaultMagnetList")
+        {
+            let actionFetchRequest = Action.fetchRequest()
+            actionFetchRequest.fetchLimit = 1
+            actionFetchRequest.predicate = NSPredicate(format: "name == %@ AND listId == %@", defaultMagnetActionName, defaultMagnetActionList)
+
+            if let fetchedAction = try? context.fetch(actionFetchRequest).first {
+                runDeeplinkAction(fetchedAction, urlString: urlString)
+            } else {
+                currentChoiceSheet = .action
+                UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetName")
+                UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetList")
+
+                showBrokenDefaultActionAlert.toggle()
+            }
+        } else {
+            currentChoiceSheet = .action
         }
     }
 

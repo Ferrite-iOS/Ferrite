@@ -30,12 +30,13 @@ struct SettingsPluginListView: View {
                         VStack(alignment: .leading, spacing: 5) {
                             Text(pluginList.name)
 
-                            Text(pluginList.author)
-                                .foregroundColor(.gray)
+                            Group {
+                                Text(pluginList.author)
 
-                            Text("ID: \(pluginList.id)")
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                                Text("ID: \(pluginList.id)")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.secondary)
                         }
                         .padding(.vertical, 2)
                         .contextMenu {

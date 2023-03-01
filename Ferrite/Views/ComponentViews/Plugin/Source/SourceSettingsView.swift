@@ -12,6 +12,11 @@ struct SourceSettingsView: View {
 
     @EnvironmentObject var navModel: NavigationViewModel
 
+    @FetchRequest(
+        entity: PluginList.entity(),
+        sortDescriptors: []
+    ) var pluginLists: FetchedResults<PluginList>
+
     var body: some View {
         NavView {
             List {
@@ -32,10 +37,12 @@ struct SourceSettingsView: View {
                                 Group {
                                     Text("ID: \(selectedSource.id)")
 
-                                    if let listId = selectedSource.listId {
-                                        Text("List ID: \(listId)")
+                                    if let pluginList = pluginLists.first(where: { $0.id == selectedSource.listId })
+                                    {
+                                        Text("List: \(pluginList.name)")
+                                        Text("List ID: \(pluginList.id.uuidString)")
                                     } else {
-                                        Text("No list ID found. This source should be removed.")
+                                        Text("No plugin list found. This source should be removed.")
                                     }
                                 }
                                 .foregroundColor(.secondary)

@@ -10,6 +10,7 @@ import SwiftUI
 struct RealDebridCloudView: View {
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var pluginManager: PluginManager
 
     @Binding var searchText: String
 
@@ -35,7 +36,10 @@ struct RealDebridCloudView: View {
                             performSave: true
                         )
 
-                        navModel.runDebridAction(urlString: debridManager.downloadUrl)
+                        pluginManager.runDebridAction(
+                            urlString: debridManager.downloadUrl,
+                            currentChoiceSheet: &navModel.currentChoiceSheet
+                        )
                     }
                     .backport.tint(.primary)
                 }
@@ -72,7 +76,10 @@ struct RealDebridCloudView: View {
                                             historyInfo.url = debridManager.downloadUrl
                                             PersistenceController.shared.createHistory(historyInfo, performSave: true)
 
-                                            navModel.runDebridAction(urlString: debridManager.downloadUrl)
+                                            pluginManager.runDebridAction(
+                                                urlString: debridManager.downloadUrl,
+                                                currentChoiceSheet: &navModel.currentChoiceSheet
+                                            )
                                         }
                                     }
                                 } else {

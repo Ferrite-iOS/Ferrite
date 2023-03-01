@@ -10,6 +10,7 @@ import SwiftUI
 struct AllDebridCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var pluginManager: PluginManager
 
     @Binding var searchText: String
 
@@ -38,7 +39,10 @@ struct AllDebridCloudView: View {
                                     if !debridManager.downloadUrl.isEmpty {
                                         historyInfo.url = debridManager.downloadUrl
                                         PersistenceController.shared.createHistory(historyInfo, performSave: true)
-                                        navModel.runDebridAction(urlString: debridManager.downloadUrl)
+                                        pluginManager.runDebridAction(
+                                            urlString: debridManager.downloadUrl,
+                                            currentChoiceSheet: &navModel.currentChoiceSheet
+                                        )
                                     }
                                 }
                             } else {

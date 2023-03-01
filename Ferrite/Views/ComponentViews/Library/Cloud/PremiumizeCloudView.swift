@@ -11,6 +11,7 @@ import SwiftUIX
 struct PremiumizeCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var pluginManager: PluginManager
 
     @Binding var searchText: String
 
@@ -38,7 +39,10 @@ struct PremiumizeCloudView: View {
                                 performSave: true
                             )
 
-                            navModel.runDebridAction(urlString: debridManager.downloadUrl)
+                            pluginManager.runDebridAction(
+                                urlString: debridManager.downloadUrl,
+                                currentChoiceSheet: &navModel.currentChoiceSheet
+                            )
                         }
                     }
                 }
