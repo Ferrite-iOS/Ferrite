@@ -4,7 +4,6 @@
 //
 //  Created by Brian Dashore on 7/24/22.
 //
-
 import SwiftUI
 
 struct PluginListView<P: Plugin, PJ: PluginJson>: View {
@@ -20,14 +19,19 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
     @State private var isEditingSearch = false
     @State private var isSearching = false
 
-    @State private var filteredUpdatedPlugins: [PJ] = []
-    @State private var filteredAvailablePlugins: [PJ] = []
     @State private var sourcePredicate: NSPredicate?
 
     var body: some View {
         DynamicFetchRequest(predicate: sourcePredicate) { (installedPlugins: FetchedResults<P>) in
             List {
-                if !filteredUpdatedPlugins.isEmpty {
+                if
+                    let filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(
+                        forType: PJ.self,
+                        installedPlugins: installedPlugins,
+                        searchText: searchText
+                    ),
+                    !filteredUpdatedPlugins.isEmpty
+                {
                     Section(header: InlineHeader("Updates")) {
                         ForEach(filteredUpdatedPlugins, id: \.self) { (updatedPlugin: PJ) in
                             PluginCatalogButtonView(availablePlugin: updatedPlugin, doUpsert: true)
@@ -43,16 +47,17 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
                     }
                 }
 
-                if !filteredAvailablePlugins.isEmpty {
+                if
+                    let filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(
+                        forType: PJ.self,
+                        installedPlugins: installedPlugins,
+                        searchText: searchText
+                    ),
+                    !filteredAvailablePlugins.isEmpty
+                {
                     Section(header: InlineHeader("Catalog")) {
                         ForEach(filteredAvailablePlugins, id: \.self) { availablePlugin in
-                            if !installedPlugins.contains(where: {
-                                availablePlugin.name == $0.name &&
-                                availablePlugin.listId == $0.listId &&
-                                availablePlugin.author == $0.author
-                            }) {
-                                PluginCatalogButtonView(availablePlugin: availablePlugin, doUpsert: false)
-                            }
+                            PluginCatalogButtonView(availablePlugin: availablePlugin, doUpsert: false)
                         }
                     }
                 }
@@ -65,18 +70,8 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
                         .environmentObject(navModel)
                 }
             }
-            .backport.onAppear {
-                filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(installedPlugins: installedPlugins, searchText: searchText)
-                filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(installedPlugins: installedPlugins, searchText: searchText)
-            }
             .onChange(of: searchText) { _ in
                 sourcePredicate = searchText.isEmpty ? nil : NSPredicate(format: "name CONTAINS[cd] %@", searchText)
-                filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(installedPlugins: installedPlugins, searchText: searchText)
-                filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(installedPlugins: installedPlugins, searchText: searchText)
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .didDeletePlugin)) { _ in
-                filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(installedPlugins: installedPlugins, searchText: searchText)
-                filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(installedPlugins: installedPlugins, searchText: searchText)
             }
         }
     }

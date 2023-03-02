@@ -54,7 +54,6 @@ struct InstalledPluginButtonView<P: Plugin>: View {
             if #available(iOS 15.0, *) {
                 Button(role: .destructive) {
                     PersistenceController.shared.delete(installedPlugin, context: backgroundContext)
-                    NotificationCenter.default.post(name: .didDeletePlugin, object: nil)
                 } label: {
                     Text("Remove")
                     Image(systemName: "trash")
@@ -62,7 +61,6 @@ struct InstalledPluginButtonView<P: Plugin>: View {
             } else {
                 Button {
                     PersistenceController.shared.delete(installedPlugin, context: backgroundContext)
-                    NotificationCenter.default.post(name: .didDeletePlugin, object: nil)
                 } label: {
                     Text("Remove")
                     Image(systemName: "trash")

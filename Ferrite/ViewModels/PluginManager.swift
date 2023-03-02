@@ -89,12 +89,16 @@ public class PluginManager: ObservableObject {
             }
 
             print("Plugin fetch error: \(error)")
-        }    
+        }
     }
 
-    // Check if underlying type is Source or Action
-    func fetchFilteredPlugins<P: Plugin, PJ: PluginJson>(installedPlugins: FetchedResults<P>, searchText: String) -> [PJ] {
-        let availablePlugins: [PJ] = fetchCastedPlugins(PJ.self)
+    // forType required to guide generic inferences
+    func fetchFilteredPlugins<P: Plugin, PJ: PluginJson>(
+        forType: PJ.Type,
+        installedPlugins: FetchedResults<P>,
+        searchText: String
+    ) -> [PJ] {
+        let availablePlugins: [PJ] = fetchCastedPlugins(forType)
 
         return availablePlugins
             .filter { availablePlugin in
@@ -112,13 +116,19 @@ public class PluginManager: ObservableObject {
             }
     }
 
-    func fetchUpdatedPlugins<P: Plugin, PJ: PluginJson>(installedPlugins: FetchedResults<P>, searchText: String) -> [PJ] {
+    func fetchUpdatedPlugins<P: Plugin, PJ: PluginJson>(
+        forType: PJ.Type,
+        installedPlugins: FetchedResults<P>,
+        searchText: String
+    ) -> [PJ] {
         var updatedPlugins: [PJ] = []
-        let availablePlugins: [PJ] = fetchCastedPlugins(PJ.self)
+        let availablePlugins: [PJ] = fetchCastedPlugins(forType)
 
         for plugin in installedPlugins {
             if let availablePlugin = availablePlugins.first(where: {
-                plugin.listId == $0.listId && plugin.name == $0.name && plugin.author == $0.author
+                plugin.listId == $0.listId &&
+                plugin.name == $0.name &&
+                plugin.author == $0.author
             }),
                 availablePlugin.version > plugin.version
             {
