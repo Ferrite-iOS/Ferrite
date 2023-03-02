@@ -5,8 +5,8 @@
 //  Created by Brian Dashore on 2/14/23.
 //
 
-import SwiftUI
 import Introspect
+import SwiftUI
 
 struct CustomScopeBarModifier<V: View>: ViewModifier {
     let hostingContent: V
@@ -25,6 +25,7 @@ struct CustomScopeBarModifier<V: View>: ViewModifier {
                     searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
 
                     // MARK: One-time setup
+
                     guard hostingController == nil else { return }
 
                     searchController.hidesNavigationBarDuringPresentation = true

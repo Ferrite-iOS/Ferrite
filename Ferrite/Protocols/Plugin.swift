@@ -21,7 +21,7 @@ public protocol Plugin: ObservableObject, NSManagedObject {
 
 extension Plugin {
     var tagArray: [PluginTag] {
-        return self.tags?.array as? [PluginTag] ?? []
+        tags?.array as? [PluginTag] ?? []
     }
 }
 

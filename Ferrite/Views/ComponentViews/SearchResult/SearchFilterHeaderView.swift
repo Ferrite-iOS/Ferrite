@@ -37,7 +37,7 @@ struct SearchFilterHeaderView: View {
                 }
                 .id(scrapingModel.filteredSource)
 
-                DebridPickerView() {
+                DebridPickerView {
                     FilterLabelView(name: debridManager.selectedDebridType?.toString() ?? "Debrid")
                 }
                 .id(debridManager.selectedDebridType)

@@ -48,11 +48,11 @@ struct PluginsView: View {
                 if checkedForPlugins {
                     switch navModel.pluginPickerSelection {
                     case .sources:
-                        if sources.isEmpty && pluginManager.availableSources.isEmpty {
+                        if sources.isEmpty, pluginManager.availableSources.isEmpty {
                             EmptyInstructionView(title: "No Sources", message: "Add a plugin list in Settings")
                         }
                     case .actions:
-                        if actions.isEmpty && pluginManager.availableActions.isEmpty {
+                        if actions.isEmpty, pluginManager.availableActions.isEmpty {
                             EmptyInstructionView(title: "No Actions", message: "Add a plugin list in Settings")
                         }
                     }

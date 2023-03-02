@@ -483,7 +483,6 @@ class ScrapingViewModel: ObservableObject {
         }
 
         for item in items {
-            //print(item)
             // Parse magnet link or translate hash
             var magnetHash: String?
             if let magnetHashParser = rssParser.magnetHash {

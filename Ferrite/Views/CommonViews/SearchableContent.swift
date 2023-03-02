@@ -28,7 +28,7 @@ struct SearchableContent<Content: View>: View {
                     lastHeight = newHeight
                 }
                 .transaction {
-                    if geom.size.height != lastHeight && searching {
+                    if geom.size.height != lastHeight, searching {
                         $0.animation = .default.speed(2)
                     }
                 }

@@ -11,7 +11,5 @@ struct LibraryHeaderView: View {
     @EnvironmentObject var debridManager: DebridManager
 
     @Binding var selectedSegment: LibraryPickerSegment
-    var body: some View {
-
-    }
+    var body: some View {}
 }

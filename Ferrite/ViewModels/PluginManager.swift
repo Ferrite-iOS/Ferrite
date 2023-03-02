@@ -93,19 +93,18 @@ public class PluginManager: ObservableObject {
     }
 
     // forType required to guide generic inferences
-    func fetchFilteredPlugins<P: Plugin, PJ: PluginJson>(
-        forType: PJ.Type,
-        installedPlugins: FetchedResults<P>,
-        searchText: String
-    ) -> [PJ] {
+    func fetchFilteredPlugins<PJ: PluginJson>(forType: PJ.Type,
+                                              installedPlugins: FetchedResults<some Plugin>,
+                                              searchText: String) -> [PJ]
+    {
         let availablePlugins: [PJ] = fetchCastedPlugins(forType)
 
         return availablePlugins
             .filter { availablePlugin in
                 let pluginExists = installedPlugins.contains(where: {
                     availablePlugin.name == $0.name &&
-                    availablePlugin.listId == $0.listId &&
-                    availablePlugin.author == $0.author
+                        availablePlugin.listId == $0.listId &&
+                        availablePlugin.author == $0.author
                 })
 
                 if searchText.isEmpty {
@@ -116,19 +115,18 @@ public class PluginManager: ObservableObject {
             }
     }
 
-    func fetchUpdatedPlugins<P: Plugin, PJ: PluginJson>(
-        forType: PJ.Type,
-        installedPlugins: FetchedResults<P>,
-        searchText: String
-    ) -> [PJ] {
+    func fetchUpdatedPlugins<PJ: PluginJson>(forType: PJ.Type,
+                                             installedPlugins: FetchedResults<some Plugin>,
+                                             searchText: String) -> [PJ]
+    {
         var updatedPlugins: [PJ] = []
         let availablePlugins: [PJ] = fetchCastedPlugins(forType)
 
         for plugin in installedPlugins {
             if let availablePlugin = availablePlugins.first(where: {
                 plugin.listId == $0.listId &&
-                plugin.name == $0.name &&
-                plugin.author == $0.author
+                    plugin.name == $0.name &&
+                    plugin.author == $0.author
             }),
                 availablePlugin.version > plugin.version
             {
@@ -257,7 +255,7 @@ public class PluginManager: ObservableObject {
         if actionJson.requires.count < 1 {
             await toastModel?.updateToastDescription("Action addition error: actions must require an input. Please contact the action dev!")
             print("Action name \(actionJson.name) does not have a requires parameter")
-            
+
             return
         }
 
@@ -289,7 +287,7 @@ public class PluginManager: ObservableObject {
         newAction.version = actionJson.version
         newAction.author = actionJson.author ?? "Unknown"
         newAction.listId = actionJson.listId
-        newAction.requires = actionJson.requires.map { $0.rawValue }
+        newAction.requires = actionJson.requires.map(\.rawValue)
         newAction.enabled = true
 
         if let jsonTags = actionJson.tags {
@@ -325,7 +323,7 @@ public class PluginManager: ObservableObject {
         if !dynamicBaseUrl, sourceJson.baseUrl == nil {
             await toastModel?.updateToastDescription("Not adding this source because base URL parameters are malformed. Please contact the source dev.")
             print("Not adding source \(sourceJson.name) because base URL parameters are malformed")
-    
+
             return
         }
 

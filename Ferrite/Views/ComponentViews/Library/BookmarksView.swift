@@ -26,30 +26,30 @@ struct BookmarksView: View {
             sortDescriptors: [NSSortDescriptor(keyPath: \Bookmark.orderNum, ascending: true)]
         ) { (bookmarks: FetchedResults<Bookmark>) in
             List {
-                    if !bookmarks.isEmpty {
-                        ForEach(bookmarks, id: \.self) { bookmark in
-                            SearchResultButtonView(result: bookmark.toSearchResult(), existingBookmark: bookmark)
-                        }
-                        .onDelete { offsets in
-                            for index in offsets {
-                                if let bookmark = bookmarks[safe: index] {
-                                    PersistenceController.shared.delete(bookmark, context: backgroundContext)
-                                    NotificationCenter.default.post(name: .didDeleteBookmark, object: bookmark)
-                                }
+                if !bookmarks.isEmpty {
+                    ForEach(bookmarks, id: \.self) { bookmark in
+                        SearchResultButtonView(result: bookmark.toSearchResult(), existingBookmark: bookmark)
+                    }
+                    .onDelete { offsets in
+                        for index in offsets {
+                            if let bookmark = bookmarks[safe: index] {
+                                PersistenceController.shared.delete(bookmark, context: backgroundContext)
+                                NotificationCenter.default.post(name: .didDeleteBookmark, object: bookmark)
                             }
-                        }
-                        .onMove { source, destination in
-                            var changedBookmarks = bookmarks.map { $0 }
-
-                            changedBookmarks.move(fromOffsets: source, toOffset: destination)
-
-                            for reverseIndex in stride(from: changedBookmarks.count - 1, through: 0, by: -1) {
-                                changedBookmarks[reverseIndex].orderNum = Int16(reverseIndex)
-                            }
-
-                            PersistenceController.shared.save()
                         }
                     }
+                    .onMove { source, destination in
+                        var changedBookmarks = bookmarks.map { $0 }
+
+                        changedBookmarks.move(fromOffsets: source, toOffset: destination)
+
+                        for reverseIndex in stride(from: changedBookmarks.count - 1, through: 0, by: -1) {
+                            changedBookmarks[reverseIndex].orderNum = Int16(reverseIndex)
+                        }
+
+                        PersistenceController.shared.save()
+                    }
+                }
             }
             .listStyle(.insetGrouped)
             .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 15 : -25)

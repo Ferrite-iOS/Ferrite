@@ -24,7 +24,7 @@ struct TestHostingView: View {
                         Text(textName)
                             .opacity(0.6)
                             .foregroundColor(.primary)
-                        
+
                         Image(systemName: "chevron.down")
                             .foregroundColor(.tertiaryLabel)
                     }
@@ -49,7 +49,7 @@ struct TestHostingView: View {
                         Text(secondTextName)
                             .opacity(0.6)
                             .foregroundColor(.primary)
-                        
+
                         Image(systemName: "chevron.down")
                             .foregroundColor(.tertiaryLabel)
                     }

@@ -36,7 +36,7 @@ class ToastViewModel: ObservableObject {
     @Published var showToast: Bool = false
 
     @Published var indeterminateToastDescription: String? = nil
-    @Published var indeterminateCancelAction: (() -> ())? = nil
+    @Published var indeterminateCancelAction: (() -> Void)? = nil
     @Published var showIndeterminateToast: Bool = false
 
     public func updateToastDescription(_ description: String, newToastType: ToastType? = nil) {
@@ -47,7 +47,7 @@ class ToastViewModel: ObservableObject {
         toastDescription = description
     }
 
-    public func updateIndeterminateToast(_ description: String, cancelAction: (() -> ())?) {
+    public func updateIndeterminateToast(_ description: String, cancelAction: (() -> Void)?) {
         indeterminateToastDescription = description
 
         if let cancelAction {

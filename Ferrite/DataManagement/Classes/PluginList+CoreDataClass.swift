@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(PluginList)
-public class PluginList: NSManagedObject {
-
-}
+public class PluginList: NSManagedObject {}

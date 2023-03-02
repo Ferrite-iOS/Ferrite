@@ -5,8 +5,8 @@
 //  Created by Brian Dashore on 9/29/22.
 //
 
-import SwiftUI
 import Introspect
+import SwiftUI
 
 public struct Backport<Content> {
     public let content: Content
@@ -21,12 +21,11 @@ extension View {
 }
 
 extension Backport where Content: View {
-    @ViewBuilder func alert(
-        isPresented: Binding<Bool>,
-        title: String,
-        message: String?,
-        buttons: [AlertButton] = []
-    ) -> some View {
+    @ViewBuilder func alert(isPresented: Binding<Bool>,
+                            title: String,
+                            message: String?,
+                            buttons: [AlertButton] = []) -> some View
+    {
         if #available(iOS 15, *) {
             content
                 .alert(
@@ -69,11 +68,10 @@ extension Backport where Content: View {
         }
     }
 
-    @ViewBuilder func confirmationDialog(
-        isPresented: Binding<Bool>,
-        title: String, message: String?,
-        buttons: [AlertButton]
-    ) -> some View {
+    @ViewBuilder func confirmationDialog(isPresented: Binding<Bool>,
+                                         title: String, message: String?,
+                                         buttons: [AlertButton]) -> some View
+    {
         if #available(iOS 15, *) {
             content
                 .confirmationDialog(
@@ -125,7 +123,7 @@ extension Backport where Content: View {
         }
     }
 
-    @ViewBuilder func introspectSearchController(customize: @escaping (UISearchController) -> ()) -> some View {
+    @ViewBuilder func introspectSearchController(customize: @escaping (UISearchController) -> Void) -> some View {
         if #available(iOS 15, *) {
             content.introspectSearchController(customize: customize)
         } else {

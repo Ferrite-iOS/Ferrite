@@ -29,10 +29,10 @@ public struct SourceJson: Codable, Hashable, Sendable, PluginJson {
     public var tags: [PluginTagJson]?
 }
 
-extension SourceJson {
+public extension SourceJson {
     // Fetches all tags without optional requirement
-    public func getTags() -> [PluginTagJson] {
-        return tags ?? []
+    func getTags() -> [PluginTagJson] {
+        tags ?? []
     }
 }
 

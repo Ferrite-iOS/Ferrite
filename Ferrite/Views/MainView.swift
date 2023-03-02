@@ -109,7 +109,7 @@ struct MainView: View {
             isPresented: $backupManager.showRestoreAlert,
             title: "Restore backup?",
             message:
-                "Merge (preferred): Will merge your current data with the backup \n\n" +
+            "Merge (preferred): Will merge your current data with the backup \n\n" +
                 "Overwrite: Will delete and replace all your data \n\n" +
                 "If Merge causes app instability, uninstall Ferrite and use the Overwrite option.",
             buttons: [
@@ -140,7 +140,7 @@ struct MainView: View {
             isPresented: $showUpdateAlert,
             title: "Update available",
             message:
-                "Ferrite \(releaseVersionString) can be downloaded. \n\n" +
+            "Ferrite \(releaseVersionString) can be downloaded. \n\n" +
                 "This alert can be disabled in Settings.",
             buttons: [
                 .init("Download") {

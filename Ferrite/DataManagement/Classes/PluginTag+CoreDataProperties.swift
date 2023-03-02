@@ -6,26 +6,22 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension PluginTag {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<PluginTag> {
-        return NSFetchRequest<PluginTag>(entityName: "PluginTag")
+public extension PluginTag {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<PluginTag> {
+        NSFetchRequest<PluginTag>(entityName: "PluginTag")
     }
 
-    @NSManaged public var colorHex: String?
-    @NSManaged public var name: String
-    @NSManaged public var parentAction: Action?
-    @NSManaged public var parentSource: Source?
+    @NSManaged var colorHex: String?
+    @NSManaged var name: String
+    @NSManaged var parentAction: Action?
+    @NSManaged var parentSource: Source?
 
-    func toJson() -> PluginTagJson {
-        return PluginTagJson(name: name, colorHex: colorHex)
+    internal func toJson() -> PluginTagJson {
+        PluginTagJson(name: name, colorHex: colorHex)
     }
 }
 
-extension PluginTag : Identifiable {
-
-}
+extension PluginTag: Identifiable {}

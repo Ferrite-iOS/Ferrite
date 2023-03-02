@@ -6,9 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(PluginTag)
-public class PluginTag: NSManagedObject {
-}
+public class PluginTag: NSManagedObject {}

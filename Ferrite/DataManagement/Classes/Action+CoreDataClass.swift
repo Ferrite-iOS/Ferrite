@@ -6,8 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(Action)
 public class Action: NSManagedObject, Plugin {}

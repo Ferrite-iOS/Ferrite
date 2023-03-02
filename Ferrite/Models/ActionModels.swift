@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ActionJson: Codable, Hashable, PluginJson {    
+public struct ActionJson: Codable, Hashable, PluginJson {
     public let name: String
     public let version: Int16
     let minVersion: String?
@@ -18,11 +18,11 @@ public struct ActionJson: Codable, Hashable, PluginJson {
     public var tags: [PluginTagJson]?
 }
 
-extension ActionJson {
+public extension ActionJson {
     // Fetches all tags without optional requirement
     // Avoids the need for extra tag additions in DB
-    public func getTags() -> [PluginTagJson] {
-        return requires.map { PluginTagJson(name: $0.rawValue, colorHex: nil) } + (tags.map { $0 } ?? [])
+    func getTags() -> [PluginTagJson] {
+        requires.map { PluginTagJson(name: $0.rawValue, colorHex: nil) } + (tags.map { $0 } ?? [])
     }
 }
 

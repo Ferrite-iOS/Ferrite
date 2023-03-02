@@ -44,12 +44,12 @@ struct ContentView: View {
             .listStyle(.insetGrouped)
             .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 20 : -20)
             .overlay {
-                if scrapingModel.searchResults.isEmpty && isSearching && scrapingModel.runningSearchTask == nil {
+                if scrapingModel.searchResults.isEmpty, isSearching, scrapingModel.runningSearchTask == nil {
                     Text("No results found")
                 }
             }
             .onChange(of: searchText) { newText in
-                if newText.isEmpty && isSearching {
+                if newText.isEmpty, isSearching {
                     searchBarText = getSearchBarText()
                 }
             }
@@ -124,7 +124,7 @@ struct ContentView: View {
     // Fetches random searchbar text if enabled, otherwise deinit the last case value
     func getSearchBarText() -> String {
         if usesRandomSearchText {
-            let num = Int.random(in: 0..<searchBarTextArray.count - 1)
+            let num = Int.random(in: 0 ..< searchBarTextArray.count - 1)
             if num == lastSearchTextIndex {
                 lastSearchTextIndex = num + 1
                 return searchBarTextArray[safe: num + 1] ?? "Search"

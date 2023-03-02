@@ -17,6 +17,7 @@ public struct Backup: Codable {
     var pluginListUrls: [String]?
 
     // MARK: Remove once v1 backups are unsupported
+
     var sourceLists: [PluginListBackupJson]?
 }
 

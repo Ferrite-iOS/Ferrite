@@ -17,7 +17,7 @@ struct DebridPickerView<Content: View>: View {
             Picker("", selection: $debridManager.selectedDebridType) {
                 Text("None")
                     .tag(nil as DebridType?)
-                
+
                 ForEach(DebridType.allCases, id: \.self) { (debridType: DebridType) in
                     if debridManager.enabledDebrids.contains(debridType) {
                         Text(debridType.toString())

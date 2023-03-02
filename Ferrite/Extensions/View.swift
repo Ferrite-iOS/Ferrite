@@ -37,11 +37,11 @@ extension View {
         modifier(ViewDidAppearModifier(callback: callback))
     }
 
-    func customScopeBar<Content: View>(_ content: Content) -> some View {
+    func customScopeBar(_ content: some View) -> some View {
         modifier(CustomScopeBarModifier(hostingContent: content))
     }
 
-    func customScopeBar<Content: View>(_ content: @escaping () -> Content) -> some View {
+    func customScopeBar(_ content: @escaping () -> some View) -> some View {
         modifier(CustomScopeBarModifier(hostingContent: content()))
     }
 }

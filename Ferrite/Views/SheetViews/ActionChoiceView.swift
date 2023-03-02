@@ -116,7 +116,7 @@ struct ActionChoiceView: View {
                 isPresented: $pluginManager.showBrokenDefaultActionAlert,
                 title: "Action not found",
                 message:
-                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                "The default action could not be run. The action choice sheet has been opened. \n\n" +
                     "Please check your default actions in Settings"
             )
             .onDisappear {

@@ -6,23 +6,18 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension PluginList {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<PluginList> {
-        return NSFetchRequest<PluginList>(entityName: "PluginList")
+public extension PluginList {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<PluginList> {
+        NSFetchRequest<PluginList>(entityName: "PluginList")
     }
 
-    @NSManaged public var author: String
-    @NSManaged public var id: UUID
-    @NSManaged public var name: String
-    @NSManaged public var urlString: String
-
+    @NSManaged var author: String
+    @NSManaged var id: UUID
+    @NSManaged var name: String
+    @NSManaged var urlString: String
 }
 
-extension PluginList : Identifiable {
-
-}
+extension PluginList: Identifiable {}
