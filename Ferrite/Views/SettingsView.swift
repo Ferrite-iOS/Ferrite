@@ -32,55 +32,19 @@ struct SettingsView: View {
         NavView {
             Form {
                 Section(header: InlineHeader("Debrid services")) {
-                    HStack {
-                        Text("RealDebrid")
-                        Spacer()
-                        Button {
-                            Task {
-                                if debridManager.enabledDebrids.contains(.realDebrid) {
-                                    await debridManager.logoutDebrid(debridType: .realDebrid)
-                                } else if !debridManager.realDebridAuthProcessing {
-                                    await debridManager.authenticateDebrid(debridType: .realDebrid)
+                    ForEach(DebridType.allCases, id: \.self) { debridType in
+                        NavigationLink(
+                            destination: SettingsDebridInfoView(
+                                debridType: debridType
+                            ), label: {
+                                HStack {
+                                    Text(debridType.toString())
+                                    Spacer()
+                                    Text(debridManager.enabledDebrids.contains(debridType) ? "Enabled" : "Disabled")
+                                        .foregroundColor(.secondary)
                                 }
                             }
-                        } label: {
-                            Text(debridManager.enabledDebrids.contains(.realDebrid) ? "Logout" : (debridManager.realDebridAuthProcessing ? "Processing" : "Login"))
-                                .foregroundColor(debridManager.enabledDebrids.contains(.realDebrid) ? .red : .blue)
-                        }
-                    }
-
-                    HStack {
-                        Text("AllDebrid")
-                        Spacer()
-                        Button {
-                            Task {
-                                if debridManager.enabledDebrids.contains(.allDebrid) {
-                                    await debridManager.logoutDebrid(debridType: .allDebrid)
-                                } else if !debridManager.allDebridAuthProcessing {
-                                    await debridManager.authenticateDebrid(debridType: .allDebrid)
-                                }
-                            }
-                        } label: {
-                            Text(debridManager.enabledDebrids.contains(.allDebrid) ? "Logout" : (debridManager.allDebridAuthProcessing ? "Processing" : "Login"))
-                                .foregroundColor(debridManager.enabledDebrids.contains(.allDebrid) ? .red : .blue)
-                        }
-                    }
-
-                    HStack {
-                        Text("Premiumize")
-                        Spacer()
-                        Button {
-                            Task {
-                                if debridManager.enabledDebrids.contains(.premiumize) {
-                                    await debridManager.logoutDebrid(debridType: .premiumize)
-                                } else if !debridManager.premiumizeAuthProcessing {
-                                    await debridManager.authenticateDebrid(debridType: .premiumize)
-                                }
-                            }
-                        } label: {
-                            Text(debridManager.enabledDebrids.contains(.premiumize) ? "Logout" : (debridManager.premiumizeAuthProcessing ? "Processing" : "Login"))
-                                .foregroundColor(debridManager.enabledDebrids.contains(.premiumize) ? .red : .blue)
-                        }
+                        )
                     }
                 }
 

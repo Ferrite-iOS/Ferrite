@@ -33,6 +33,17 @@ public enum DebridType: Int, Codable, Hashable, CaseIterable {
             return abbreviated ? "PM" : "Premiumize"
         }
     }
+
+    func website() -> String {
+        switch self {
+        case .realDebrid:
+            return "https://real-debrid.com"
+        case .allDebrid:
+            return "https://alldebrid.com"
+        case .premiumize:
+            return "https://premiumize.me"
+        }
+    }
 }
 
 // Wrapper struct for magnet links to contain both the link and hash for easy access

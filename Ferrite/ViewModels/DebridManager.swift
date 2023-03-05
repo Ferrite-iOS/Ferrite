@@ -323,6 +323,17 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    public func getAuthProcessingBool(debridType: DebridType) -> Bool {
+        switch debridType {
+        case .realDebrid:
+            return realDebridAuthProcessing
+        case .allDebrid:
+            return allDebridAuthProcessing
+        case .premiumize:
+            return premiumizeAuthProcessing
+        }
+    }
+
     // Callback to finish debrid auth since functions can be split
     func completeDebridAuth(_ debridType: DebridType, success: Bool = true) {
         if enabledDebrids.count == 1, success {

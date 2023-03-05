@@ -59,6 +59,7 @@
 		0C6771F629B3B602005D38D2 /* SettingsKodiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6771F529B3B602005D38D2 /* SettingsKodiView.swift */; };
 		0C6771FA29B3D1AE005D38D2 /* KodiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6771F929B3D1AE005D38D2 /* KodiModels.swift */; };
 		0C6771FC29B3E0DB005D38D2 /* HybridSecureField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6771FB29B3E0DB005D38D2 /* HybridSecureField.swift */; };
+		0C6771FE29B521F1005D38D2 /* SettingsDebridInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6771FD29B521F1005D38D2 /* SettingsDebridInfoView.swift */; };
 		0C68135028BC1A2D00FAD890 /* GithubWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68134F28BC1A2D00FAD890 /* GithubWrapper.swift */; };
 		0C68135228BC1A7C00FAD890 /* GithubModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C68135128BC1A7C00FAD890 /* GithubModels.swift */; };
 		0C6C7C9B2931521B002DF910 /* AllDebridWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6C7C9A2931521B002DF910 /* AllDebridWrapper.swift */; };
@@ -186,6 +187,7 @@
 		0C6771F529B3B602005D38D2 /* SettingsKodiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsKodiView.swift; sourceTree = "<group>"; };
 		0C6771F929B3D1AE005D38D2 /* KodiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KodiModels.swift; sourceTree = "<group>"; };
 		0C6771FB29B3E0DB005D38D2 /* HybridSecureField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HybridSecureField.swift; sourceTree = "<group>"; };
+		0C6771FD29B521F1005D38D2 /* SettingsDebridInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebridInfoView.swift; sourceTree = "<group>"; };
 		0C68134F28BC1A2D00FAD890 /* GithubWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubWrapper.swift; sourceTree = "<group>"; };
 		0C68135128BC1A7C00FAD890 /* GithubModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubModels.swift; sourceTree = "<group>"; };
 		0C6C7C9A2931521B002DF910 /* AllDebridWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDebridWrapper.swift; sourceTree = "<group>"; };
@@ -447,6 +449,7 @@
 				0C95D8D728A55B03005E22B3 /* DefaultActionPickerView.swift */,
 				0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */,
 				0C6771F529B3B602005D38D2 /* SettingsKodiView.swift */,
+				0C6771FD29B521F1005D38D2 /* SettingsDebridInfoView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -779,6 +782,7 @@
 				0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */,
 				0C794B69289DACC800DD1CC8 /* InstalledPluginButtonView.swift in Sources */,
 				0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */,
+				0C6771FE29B521F1005D38D2 /* SettingsDebridInfoView.swift in Sources */,
 				0CD4CAC628C980EB0046E1DC /* HistoryActionsView.swift in Sources */,
 				0C422E7E293542EA00486D65 /* PremiumizeWrapper.swift in Sources */,
 				0CA148DD288903F000DE2211 /* ScrapingViewModel.swift in Sources */,
