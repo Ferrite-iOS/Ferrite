@@ -86,7 +86,7 @@ struct BatchChoiceView: View {
 
                 pluginManager.runDebridAction(
                     urlString: debridManager.downloadUrl,
-                    currentChoiceSheet: &navModel.currentChoiceSheet
+                    navModel: navModel
                 )
             }
 

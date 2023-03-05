@@ -21,6 +21,8 @@ struct ActionChoiceView: View {
         sortDescriptors: []
     ) var actions: FetchedResults<Action>
 
+    @AppStorage("ExternalServices.KodiUrl") var kodiUrl: String = ""
+
     @State private var showLinkCopyAlert = false
     @State private var showMagnetCopyAlert = false
 
@@ -47,6 +49,14 @@ struct ActionChoiceView: View {
                             if action.requires.contains(ActionRequirement.debrid.rawValue) {
                                 ListRowButtonView(action.name, systemImage: "arrow.up.forward.app.fill") {
                                     pluginManager.runDeeplinkAction(action, urlString: debridManager.downloadUrl)
+                                }
+                            }
+                        }
+
+                        if !kodiUrl.isEmpty {
+                            ListRowButtonView("Open in Kodi", systemImage: "arrow.up.forward.app.fill") {
+                                Task {
+                                    await pluginManager.sendToKodi(urlString: debridManager.downloadUrl)
                                 }
                             }
                         }
@@ -113,11 +123,14 @@ struct ActionChoiceView: View {
                 }
             }
             .backport.alert(
-                isPresented: $pluginManager.showBrokenDefaultActionAlert,
-                title: "Action not found",
-                message:
-                "The default action could not be run. The action choice sheet has been opened. \n\n" +
-                    "Please check your default actions in Settings"
+                isPresented: $pluginManager.showActionSuccessAlert,
+                title: "Action successful",
+                message: pluginManager.actionSuccessAlertMessage
+            )
+            .backport.alert(
+                isPresented: $pluginManager.showActionErrorAlert,
+                title: "Action error",
+                message: pluginManager.actionErrorAlertMessage
             )
             .onDisappear {
                 debridManager.downloadUrl = ""

@@ -10,11 +10,16 @@ import SwiftUI
 
 public class PluginManager: ObservableObject {
     var toastModel: ToastViewModel?
+    let kodi: Kodi = .init()
 
     @Published var availableSources: [SourceJson] = []
     @Published var availableActions: [ActionJson] = []
 
-    @Published var showBrokenDefaultActionAlert = false
+    @Published var showActionErrorAlert = false
+    @Published var actionErrorAlertMessage: String = ""
+
+    @Published var showActionSuccessAlert = false
+    @Published var actionSuccessAlertMessage: String = ""
 
     @MainActor
     public func fetchPluginsFromUrl() async {
@@ -173,7 +178,7 @@ public class PluginManager: ObservableObject {
     }
 
     @MainActor
-    public func runDebridAction(urlString: String?, currentChoiceSheet: inout NavigationViewModel.ChoiceSheetType?) {
+    public func runDebridAction(urlString: String?, navModel: NavigationViewModel) {
         let context = PersistenceController.shared.backgroundContext
 
         if
@@ -187,19 +192,22 @@ public class PluginManager: ObservableObject {
             if let fetchedAction = try? context.fetch(actionFetchRequest).first {
                 runDeeplinkAction(fetchedAction, urlString: urlString)
             } else {
-                currentChoiceSheet = .action
+                navModel.currentChoiceSheet = .action
                 UserDefaults.standard.set(nil, forKey: "Actions.DefaultDebridName")
                 UserDefaults.standard.set(nil, forKey: "Action.DefaultDebridList")
 
-                showBrokenDefaultActionAlert.toggle()
+                actionErrorAlertMessage =
+                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                    "Please check your default actions in Settings"
+                showActionErrorAlert.toggle()
             }
         } else {
-            currentChoiceSheet = .action
+            navModel.currentChoiceSheet = .action
         }
     }
 
     @MainActor
-    public func runMagnetAction(urlString: String?, currentChoiceSheet: inout NavigationViewModel.ChoiceSheetType?) {
+    public func runMagnetAction(urlString: String?, navModel: NavigationViewModel) {
         let context = PersistenceController.shared.backgroundContext
 
         if
@@ -213,14 +221,17 @@ public class PluginManager: ObservableObject {
             if let fetchedAction = try? context.fetch(actionFetchRequest).first {
                 runDeeplinkAction(fetchedAction, urlString: urlString)
             } else {
-                currentChoiceSheet = .action
+                navModel.currentChoiceSheet = .action
                 UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetName")
                 UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetList")
 
-                showBrokenDefaultActionAlert.toggle()
+                actionErrorAlertMessage =
+                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                    "Please check your default actions in Settings"
+                showActionErrorAlert.toggle()
             }
         } else {
-            currentChoiceSheet = .action
+            navModel.currentChoiceSheet = .action
         }
     }
 
@@ -228,7 +239,9 @@ public class PluginManager: ObservableObject {
     @MainActor
     public func runDeeplinkAction(_ action: Action, urlString: String?) {
         guard let deeplink = action.deeplink, let urlString else {
-            toastModel?.updateToastDescription("Could not run action: \(action.name) since there is no deeplink to execute. Contact the action dev!")
+            actionErrorAlertMessage = "Could not run action: \(action.name) since there is no deeplink to execute. Contact the action dev!"
+            showActionErrorAlert.toggle()
+
             print("Could not run action: \(action.name) since there is no deeplink to execute.")
 
             return
@@ -239,8 +252,34 @@ public class PluginManager: ObservableObject {
         if let playbackUrl {
             UIApplication.shared.open(playbackUrl)
         } else {
-            toastModel?.updateToastDescription("Could not run action: \(action.name) because the created deeplink was invalid. Contact the action dev!")
+            actionErrorAlertMessage = "Could not run action: \(action.name) because the created deeplink was invalid. Contact the action dev!"
+            showActionErrorAlert.toggle()
+
             print("Could not run action: \(action.name) because the created deeplink (\(String(describing: playbackUrl))) was invalid")
+        }
+    }
+
+    @MainActor
+    public func sendToKodi(urlString: String?) async {
+        guard let urlString else {
+            actionErrorAlertMessage = "Could not send URL to Kodi since there is no playback URL to send"
+            showActionErrorAlert.toggle()
+
+            print("Could not send URL to Kodi since there is no playback URL to send")
+
+            return
+        }
+
+        do {
+            try await kodi.sendVideoUrl(urlString: urlString)
+
+            actionSuccessAlertMessage = "Your URL should be playing on Kodi"
+            showActionSuccessAlert.toggle()
+        } catch {
+            actionErrorAlertMessage = "Kodi Error: \(error)"
+            showActionErrorAlert.toggle()
+
+            print("Kodi action error: \(error)")
         }
     }
 

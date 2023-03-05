@@ -133,6 +133,7 @@ struct SourceSettingsApiView: View {
                         clientId.timeStamp = Date()
                     }
                 })
+                .autocorrectionDisabled(true)
                 .autocapitalization(.none)
                 .backport.onAppear {
                     tempClientId = clientId.value ?? ""
@@ -146,6 +147,7 @@ struct SourceSettingsApiView: View {
                         clientSecret.timeStamp = Date()
                     }
                 })
+                .autocorrectionDisabled(true)
                 .autocapitalization(.none)
                 .backport.onAppear {
                     tempClientSecret = clientSecret.value ?? ""

@@ -26,7 +26,7 @@ struct HistoryButtonView: View {
                         debridManager.downloadUrl = url
                         pluginManager.runDebridAction(
                             urlString: url,
-                            currentChoiceSheet: &navModel.currentChoiceSheet
+                            navModel: navModel
                         )
 
                         if navModel.currentChoiceSheet != .action {
@@ -36,7 +36,7 @@ struct HistoryButtonView: View {
                 } else {
                     pluginManager.runMagnetAction(
                         urlString: url,
-                        currentChoiceSheet: &navModel.currentChoiceSheet
+                        navModel: navModel
                     )
                 }
             } else {

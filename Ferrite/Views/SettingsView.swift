@@ -15,6 +15,8 @@ struct SettingsView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
+    @AppStorage("ExternalServices.KodiUrl") var kodiUrl: String = ""
+
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText = false
 
@@ -29,7 +31,7 @@ struct SettingsView: View {
     var body: some View {
         NavView {
             Form {
-                Section(header: InlineHeader("Debrid Services")) {
+                Section(header: InlineHeader("Debrid services")) {
                     HStack {
                         Text("RealDebrid")
                         Spacer()
@@ -80,6 +82,17 @@ struct SettingsView: View {
                                 .foregroundColor(debridManager.enabledDebrids.contains(.premiumize) ? .red : .blue)
                         }
                     }
+                }
+
+                Section(header: InlineHeader("Playback services")) {
+                    NavigationLink(destination: SettingsKodiView(), label: {
+                        HStack {
+                            Text("Kodi")
+                            Spacer()
+                            Text(kodiUrl.isEmpty ? "Disabled" : "Enabled")
+                                .foregroundColor(.secondary)
+                        }
+                    })
                 }
 
                 Section(header: InlineHeader("Behavior")) {

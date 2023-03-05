@@ -38,7 +38,7 @@ struct RealDebridCloudView: View {
 
                         pluginManager.runDebridAction(
                             urlString: debridManager.downloadUrl,
-                            currentChoiceSheet: &navModel.currentChoiceSheet
+                            navModel: navModel
                         )
                     }
                     .backport.tint(.primary)
@@ -78,7 +78,7 @@ struct RealDebridCloudView: View {
 
                                             pluginManager.runDebridAction(
                                                 urlString: debridManager.downloadUrl,
-                                                currentChoiceSheet: &navModel.currentChoiceSheet
+                                                navModel: navModel
                                             )
                                         }
                                     }

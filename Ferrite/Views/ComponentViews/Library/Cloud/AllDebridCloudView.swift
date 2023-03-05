@@ -41,7 +41,7 @@ struct AllDebridCloudView: View {
                                         PersistenceController.shared.createHistory(historyInfo, performSave: true)
                                         pluginManager.runDebridAction(
                                             urlString: debridManager.downloadUrl,
-                                            currentChoiceSheet: &navModel.currentChoiceSheet
+                                            navModel: navModel
                                         )
                                     }
                                 }

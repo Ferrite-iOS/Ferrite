@@ -45,7 +45,7 @@ struct SearchResultButtonView: View {
 
                                 pluginManager.runDebridAction(
                                     urlString: debridManager.downloadUrl,
-                                    currentChoiceSheet: &navModel.currentChoiceSheet
+                                    navModel: navModel
                                 )
 
                                 if navModel.currentChoiceSheet != .action {
@@ -74,7 +74,7 @@ struct SearchResultButtonView: View {
 
                     pluginManager.runMagnetAction(
                         urlString: result.magnet.link,
-                        currentChoiceSheet: &navModel.currentChoiceSheet
+                        navModel: navModel
                     )
                 }
             }
