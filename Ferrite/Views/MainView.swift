@@ -73,7 +73,10 @@ struct MainView: View {
             }
         }
         .backport.onAppear {
-            if autoUpdateNotifs {
+            if
+                autoUpdateNotifs,
+                Application.shared.osVersion.majorVersion >= Application.shared.minVersion.majorVersion
+            {
                 viewTask = Task {
                     do {
                         guard let latestRelease = try await Github().fetchLatestRelease() else {

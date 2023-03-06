@@ -12,6 +12,8 @@ import Foundation
 public class Application {
     static let shared = Application()
 
+    let minVersion = OperatingSystemVersion(majorVersion: 14, minorVersion: 0, patchVersion: 0)
+
     var appVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
     }
