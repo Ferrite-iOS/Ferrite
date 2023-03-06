@@ -51,6 +51,10 @@ struct CustomScopeBarModifier<V: View>: ViewModifier {
                     self.hostingController = hostingController
                 }
                 .introspectNavigationController { navigationController in
+                    if #available(iOS 16, *) {
+                        navigationController.viewControllers.first?.navigationItem.preferredSearchBarPlacement = .stacked
+                    }
+
                     navigationController.navigationBar.prefersLargeTitles = true
                     navigationController.navigationBar.sizeToFit()
                 }
