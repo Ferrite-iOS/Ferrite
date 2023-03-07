@@ -30,7 +30,7 @@ struct SettingsKodiView: View {
                     footer: Text("Enter your Kodi server's http URL here including the port.")
                 ) {
                     TextField("http://...", text: $kodiUrl, onEditingChanged: { isFocused in
-                        if !isFocused && kodiUrl.last == "/" {
+                        if !isFocused, kodiUrl.last == "/" {
                             kodiUrl = String(kodiUrl.dropLast())
                         }
                     })

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DefaultActionPickerView: View {
-    @EnvironmentObject var toastModel: ToastViewModel
+    @EnvironmentObject var logManager: LoggingManager
 
     let actionRequirement: ActionRequirement
     @Binding var defaultActionName: String?
@@ -38,8 +38,8 @@ struct DefaultActionPickerView: View {
                         defaultActionName = action.name
                         defaultActionList = actionListId
                     } else {
-                        toastModel.updateToastDescription(
-                            "Default action error: This action doesn't have a corresponding plugin list! Please uninstall the action"
+                        logManager.error(
+                            "Default action: This action doesn't have a corresponding plugin list! Please uninstall the action"
                         )
                     }
                 } label: {

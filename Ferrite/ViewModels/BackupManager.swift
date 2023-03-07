@@ -11,7 +11,7 @@ public class BackupManager: ObservableObject {
     // Constant variable for backup versions
     let latestBackupVersion: Int = 2
 
-    var toastModel: ToastViewModel?
+    var logManager: LoggingManager?
 
     @Published var showRestoreAlert = false
     @Published var showRestoreCompletedAlert = false
@@ -110,17 +110,18 @@ public class BackupManager: ObservableObject {
 
             await updateBackupUrls(newUrl: writeUrl)
         } catch {
-            await toastModel?.updateToastDescription("Backup error: \(error)")
-            print("Backup error: \(error)")
+            await logManager?.error("Backup: \(error)")
         }
     }
 
     // Backup is in local documents directory, so no need to restore it from the shared URL
-    // Pass the pluginManager reference since it's not used throughout the class like toastModel
+    // Pass the pluginManager reference since it's not used throughout the class like logManager
     func restoreBackup(pluginManager: PluginManager, doOverwrite: Bool) async {
         guard let backupUrl = selectedBackupUrl else {
-            await toastModel?.updateToastDescription("Could not find the selected backup in the local directory.")
-            print("Backup restore error: Could not find backup in app directory.")
+            await logManager?.error(
+                "Backup restore: Could not find backup in app directory.",
+                description: "Could not find the selected backup in the local directory."
+            )
 
             return
         }
@@ -194,8 +195,10 @@ public class BackupManager: ObservableObject {
                 await toggleRestoreCompletedAlert()
             }
         } catch {
-            await toastModel?.updateToastDescription("Backup restore error: \(error)")
-            print("Backup restore error: \(error)")
+            await logManager?.error(
+                "Backup restore: \(error)",
+                description: "A backup restore error was logged"
+            )
         }
     }
 
@@ -212,8 +215,8 @@ public class BackupManager: ObservableObject {
             }
         } catch {
             Task {
-                await toastModel?.updateToastDescription("Backup removal error: \(error)")
-                print("Backup removal error: \(error)")
+                await logManager?.error("Backup removal: \(error)")
+                print("Backup removal: \(error)")
             }
         }
     }
@@ -242,7 +245,7 @@ public class BackupManager: ObservableObject {
             selectedBackupUrl = localBackupPath
         } catch {
             Task {
-                await toastModel?.updateToastDescription("Backup copy: \(error)")
+                await logManager?.error("Backup copy: \(error)")
             }
         }
     }

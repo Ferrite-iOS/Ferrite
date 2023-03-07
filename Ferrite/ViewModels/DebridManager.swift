@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor
 public class DebridManager: ObservableObject {
     // Linked classes
-    var toastModel: ToastViewModel?
+    var logManager: LoggingManager?
     let realDebrid: RealDebrid = .init()
     let allDebrid: AllDebrid = .init()
     let premiumize: Premiumize = .init()
@@ -122,17 +122,30 @@ public class DebridManager: ObservableObject {
 
     // Wrapper function to match error descriptions
     // Error can be suppressed to end user but must be printed in logs
-    func sendDebridError(_ error: Error, prefix: String, presentError: Bool = true, cancelString: String? = nil) async {
+    func sendDebridError(
+        _ error: Error,
+        prefix: String,
+        presentError: Bool = true,
+        cancelString: String? = nil
+    ) async {
         let error = error as NSError
         if presentError {
-            if let cancelString, error.code == -999 {
-                toastModel?.updateToastDescription(cancelString, newToastType: .info)
-            } else if error.code != -999 {
-                toastModel?.updateToastDescription("\(prefix): \(error)")
+            switch error.code {
+            case -1009:
+                logManager?.info(
+                    "DebridManager: The connection is offline",
+                    description: "The connection is offline"
+                )
+            case -999:
+                if let cancelString {
+                    logManager?.info(cancelString, description: cancelString)
+                } else {
+                    break
+                }
+            default:
+                logManager?.error("\(prefix): \(error)")
             }
         }
-
-        print("\(prefix): \(error)")
     }
 
     // Cleans all cached IA values in the event of a full IA refresh
@@ -273,7 +286,7 @@ public class DebridManager: ObservableObject {
 
     public func selectDebridResult(magnet: Magnet) -> Bool {
         guard let magnetHash = magnet.hash else {
-            toastModel?.updateToastDescription("Could not find the torrent magnet hash")
+            logManager?.error("DebridManager: Could not find the torrent magnet hash")
             return false
         }
 
@@ -283,7 +296,7 @@ public class DebridManager: ObservableObject {
                 selectedRealDebridItem = realDebridItem
                 return true
             } else {
-                toastModel?.updateToastDescription("Could not find the associated RealDebrid entry for magnet hash \(magnetHash)")
+                logManager?.error("DebridManager: Could not find the associated RealDebrid entry for magnet hash \(magnetHash)")
                 return false
             }
         case .allDebrid:
@@ -291,7 +304,7 @@ public class DebridManager: ObservableObject {
                 selectedAllDebridItem = allDebridItem
                 return true
             } else {
-                toastModel?.updateToastDescription("Could not find the associated AllDebrid entry for magnet hash \(magnetHash)")
+                logManager?.error("DebridManager: Could not find the associated AllDebrid entry for magnet hash \(magnetHash)")
                 return false
             }
         case .premiumize:
@@ -299,7 +312,7 @@ public class DebridManager: ObservableObject {
                 selectedPremiumizeItem = premiumizeItem
                 return true
             } else {
-                toastModel?.updateToastDescription("Could not find the associated Premiumize entry for magnet hash \(magnetHash)")
+                logManager?.error("DebridManager: Could not find the associated Premiumize entry for magnet hash \(magnetHash)")
                 return false
             }
         case .none:
@@ -353,7 +366,7 @@ public class DebridManager: ObservableObject {
     // Wrapper function to validate and present an auth URL to the user
     @discardableResult func validateAuthUrl(_ url: URL?, useAuthSession: Bool = false) -> Bool {
         guard let url else {
-            toastModel?.updateToastDescription("Authentication Error: Invalid URL created: \(String(describing: url))")
+            logManager?.error("DebridManager: Authentication: Invalid URL created: \(String(describing: url))")
             return false
         }
 
@@ -475,7 +488,10 @@ public class DebridManager: ObservableObject {
         allDebrid.deleteTokens()
         enabledDebrids.remove(.allDebrid)
 
-        toastModel?.updateToastDescription("Please manually delete the AllDebrid API key", newToastType: .info)
+        logManager?.info(
+            "AllDebrid: Logged out, API key needs to be removed",
+            description: "Please manually delete the AllDebrid API key"
+        )
     }
 
     private func logoutPm() {
@@ -490,10 +506,10 @@ public class DebridManager: ObservableObject {
     public func fetchDebridDownload(magnet: Magnet?, cloudInfo: String? = nil) async {
         defer {
             currentDebridTask = nil
-            toastModel?.hideIndeterminateToast()
+            logManager?.hideIndeterminateToast()
         }
 
-        toastModel?.updateIndeterminateToast("Loading content", cancelAction: {
+        logManager?.updateIndeterminateToast("Loading content", cancelAction: {
             self.currentDebridTask?.cancel()
             self.currentDebridTask = nil
         })
@@ -553,7 +569,10 @@ public class DebridManager: ObservableObject {
 
                     downloadUrl = downloadLink
                 } else {
-                    toastModel?.updateToastDescription("Could not cache this torrent. Aborting.")
+                    logManager?.error(
+                        "RealDebrid: Could not cache torrent with hash \(String(describing: magnet.hash))",
+                        description: "Could not cache this torrent. Aborting."
+                    )
                 }
             } else {
                 throw RealDebrid.RDError.FailedRequest(description: "Could not fetch your file from RealDebrid's cache or API")
@@ -571,7 +590,7 @@ public class DebridManager: ObservableObject {
                 await deleteRdTorrent(torrentID: selectedRealDebridID, presentError: false)
             }
 
-            toastModel?.hideIndeterminateToast()
+            logManager?.hideIndeterminateToast()
         }
     }
 

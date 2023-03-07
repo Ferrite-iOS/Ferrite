@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsAppVersionView: View {
-    @EnvironmentObject var toastModel: ToastViewModel
+    @EnvironmentObject var logManager: LoggingManager
 
     @State private var viewTask: Task<Void, Never>?
     @State private var releases: [Github.Release] = []
@@ -36,10 +36,10 @@ struct SettingsAppVersionView: View {
                     if let fetchedReleases = try await Github().fetchReleases() {
                         releases = fetchedReleases
                     } else {
-                        toastModel.updateToastDescription("Github error: No releases found")
+                        logManager.error("Github: No releases found")
                     }
                 } catch {
-                    toastModel.updateToastDescription("Github error: \(error)")
+                    logManager.error("Github: \(error)")
                 }
 
                 withAnimation {

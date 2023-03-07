@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 public class NavigationViewModel: ObservableObject {
-    var toastModel: ToastViewModel?
+    var logManager: LoggingManager?
 
     // Used between SearchResultsView and MagnetChoiceView
     public enum ChoiceSheetType: Identifiable {

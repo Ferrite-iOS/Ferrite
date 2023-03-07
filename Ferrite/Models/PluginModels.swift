@@ -29,4 +29,9 @@ extension PluginManager {
     enum PluginManagerError: Error {
         case ListAddition(description: String)
     }
+
+    struct AvailablePlugins {
+        let availableSources: [SourceJson]
+        let availableActions: [ActionJson]
+    }
 }

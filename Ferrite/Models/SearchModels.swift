@@ -7,6 +7,7 @@
 
 import Foundation
 
+// A raw search result structure displayed on the UI
 public struct SearchResult: Codable, Hashable, Sendable {
     let title: String?
     let source: String
@@ -14,4 +15,14 @@ public struct SearchResult: Codable, Hashable, Sendable {
     let magnet: Magnet
     let seeders: String?
     let leechers: String?
+}
+
+extension ScrapingViewModel {
+    // Contains both search results and magnet links for scalability
+    struct SearchRequestResult: Sendable {
+        let results: [SearchResult]
+        let magnets: [Magnet]
+    }
+
+    struct ScrapingError: Error {}
 }

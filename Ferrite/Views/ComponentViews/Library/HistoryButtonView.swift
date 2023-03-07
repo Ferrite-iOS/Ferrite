@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HistoryButtonView: View {
-    @EnvironmentObject var toastModel: ToastViewModel
+    @EnvironmentObject var logManager: LoggingManager
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var pluginManager: PluginManager
@@ -40,7 +40,10 @@ struct HistoryButtonView: View {
                     )
                 }
             } else {
-                toastModel.updateToastDescription("URL invalid. Cannot load this history entry. Please delete it.")
+                logManager.error(
+                    "History: URL for name \(String(describing: entry.name)) is invalid",
+                    description: "URL invalid. Cannot load this history entry. Please delete it."
+                )
             }
         } label: {
             VStack(alignment: .leading, spacing: 10) {

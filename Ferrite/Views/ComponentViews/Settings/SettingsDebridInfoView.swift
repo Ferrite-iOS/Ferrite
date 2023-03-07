@@ -38,8 +38,8 @@ struct SettingsDebridInfoView: View {
                     } label: {
                         Text(
                             debridManager.enabledDebrids.contains(debridType)
-                            ? "Logout"
-                            : (debridManager.getAuthProcessingBool(debridType: debridType) ? "Processing" : "Login")
+                                ? "Logout"
+                                : (debridManager.getAuthProcessingBool(debridType: debridType) ? "Processing" : "Login")
                         )
                         .foregroundColor(debridManager.enabledDebrids.contains(debridType) ? .red : .blue)
                     }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HistoryActionsView: View {
-    @EnvironmentObject var toastModel: ToastViewModel
+    @EnvironmentObject var logManager: LoggingManager
 
     @State private var showActionSheet = false
 
@@ -42,7 +42,7 @@ struct HistoryActionsView: View {
         do {
             try PersistenceController.shared.batchDeleteHistory(range: deleteRange)
         } catch {
-            toastModel.updateToastDescription("History delete error: \(error)")
+            logManager.error("History delete error: \(error)")
         }
     }
 }

@@ -28,6 +28,8 @@ struct SettingsView: View {
     @AppStorage("Actions.DefaultMagnetName") var defaultMagnetActionName: String?
     @AppStorage("Actions.DefaultMagnetList") var defaultMagnetActionList: String?
 
+    @AppStorage("Debug.ShowErrorToasts") var showErrorToasts = true
+
     var body: some View {
         NavView {
             Form {
@@ -130,6 +132,11 @@ struct SettingsView: View {
                     ListRowLinkView(text: "Donate", link: "https://ko-fi.com/kingbri")
                     ListRowLinkView(text: "Report issues", link: "https://github.com/bdashore3/Ferrite/issues")
                     NavigationLink("About", destination: AboutView())
+                }
+
+                Section(header: InlineHeader("Debug")) {
+                    NavigationLink("Logs", destination: SettingsLogView())
+                    Toggle("Show error alerts", isOn: $showErrorToasts)
                 }
             }
             .sheet(isPresented: $debridManager.showWebView) {

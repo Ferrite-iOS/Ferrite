@@ -10,7 +10,7 @@ import SwiftUIX
 
 struct MainView: View {
     @EnvironmentObject var navModel: NavigationViewModel
-    @EnvironmentObject var toastModel: ToastViewModel
+    @EnvironmentObject var logManager: LoggingManager
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var backupManager: BackupManager
@@ -77,10 +77,19 @@ struct MainView: View {
                 autoUpdateNotifs,
                 Application.shared.osVersion.majorVersion >= Application.shared.minVersion.majorVersion
             {
+                // MARK: If scope bar duplication happens, this may be the problem
+                logManager.info("Ferrite started")
+
                 viewTask = Task {
+                    // Sleep for 2 seconds to allow for view layout and app init
+                    try? await Task.sleep(seconds: 2)
+
                     do {
                         guard let latestRelease = try await Github().fetchLatestRelease() else {
-                            toastModel.updateToastDescription("Github error: No releases found")
+                            logManager.error(
+                                "Github: No releases found",
+                                description: "Github error: No releases found"
+                            )
                             return
                         }
 
@@ -91,8 +100,22 @@ struct MainView: View {
                             showUpdateAlert.toggle()
                         }
                     } catch {
-                        toastModel.updateToastDescription("Github error: \(error)")
+                        let error = error as NSError
+
+                        if error.code == -1009 {
+                            logManager.info(
+                                "Github: The connection is offline",
+                                description: "The connection is offline"
+                            )
+                        } else {
+                            logManager.error(
+                                "Github: \(error)",
+                                description: "A Github error was logged"
+                            )
+                        }
                     }
+
+                    logManager.info("Github release updates checked")
                 }
             }
         }
@@ -159,13 +182,15 @@ struct MainView: View {
         .overlay {
             VStack {
                 Spacer()
-                if toastModel.showToast {
+                if logManager.showToast {
                     Group {
-                        switch toastModel.toastType {
+                        switch logManager.toastType {
                         case .info:
-                            Text(toastModel.toastDescription ?? "This shouldn't be showing up... Contact the dev!")
+                            Text(logManager.toastDescription ?? "This shouldn't be showing up... Contact the dev!")
+                        case .warn:
+                            Text("Warn: \(logManager.toastDescription ?? "This shouldn't be showing up... Contact the dev!")")
                         case .error:
-                            Text("Error: \(toastModel.toastDescription ?? "This shouldn't be showing up... Contact the dev!")")
+                            Text("Error: \(logManager.toastDescription ?? "This shouldn't be showing up... Contact the dev!")")
                         }
                     }
                     .padding(12)
@@ -176,17 +201,18 @@ struct MainView: View {
                     .cornerRadius(10)
                 }
 
-                if toastModel.showIndeterminateToast {
+                if logManager.showIndeterminateToast {
                     VStack {
-                        Text(toastModel.indeterminateToastDescription ?? "Loading...")
+                        Text(logManager.indeterminateToastDescription ?? "Loading...")
+                            .lineLimit(1)
 
                         HStack {
                             IndeterminateProgressView()
 
-                            if let cancelAction = toastModel.indeterminateCancelAction {
+                            if let cancelAction = logManager.indeterminateCancelAction {
                                 Button("Cancel") {
                                     cancelAction()
-                                    toastModel.hideIndeterminateToast()
+                                    logManager.hideIndeterminateToast()
                                 }
                             }
                         }
@@ -204,7 +230,7 @@ struct MainView: View {
                     .foregroundColor(.clear)
                     .frame(height: 60)
             }
-            .animation(.easeInOut(duration: 0.3), value: toastModel.showToast || toastModel.showIndeterminateToast)
+            .animation(.easeInOut(duration: 0.3), value: logManager.showToast || logManager.showIndeterminateToast)
         }
     }
 }

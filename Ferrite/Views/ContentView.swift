@@ -13,7 +13,7 @@ struct ContentView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var pluginManager: PluginManager
-    @EnvironmentObject var toastModel: ToastViewModel
+    @EnvironmentObject var logManager: LoggingManager
 
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
 
@@ -44,7 +44,11 @@ struct ContentView: View {
             .listStyle(.insetGrouped)
             .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 20 : -20)
             .overlay {
-                if scrapingModel.searchResults.isEmpty, isSearching, scrapingModel.runningSearchTask == nil {
+                if
+                    scrapingModel.searchResults.isEmpty,
+                    isSearching,
+                    scrapingModel.runningSearchTask == nil
+                {
                     Text("No results found")
                 }
             }
@@ -85,16 +89,13 @@ struct ContentView: View {
                             isSearching = true
 
                             let sources = pluginManager.fetchInstalledSources()
-                            await scrapingModel.scanSources(sources: sources, searchText: searchText)
+                            await scrapingModel.scanSources(
+                                sources: sources,
+                                searchText: searchText,
+                                debridManager: debridManager
+                            )
 
-                            if debridManager.enabledDebrids.count > 0, !scrapingModel.searchResults.isEmpty {
-                                debridManager.clearIAValues()
-
-                                let magnets = scrapingModel.searchResults.map(\.magnet)
-                                await debridManager.populateDebridIA(magnets)
-                            }
-
-                            toastModel.hideIndeterminateToast()
+                            logManager.hideIndeterminateToast()
                             scrapingModel.runningSearchTask = nil
                         }
                     }

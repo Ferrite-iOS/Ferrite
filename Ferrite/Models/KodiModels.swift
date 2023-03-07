@@ -16,6 +16,7 @@ extension Kodi {
     }
 
     // MARK: - RPC payload
+
     struct RPCPayload: Encodable {
         let jsonrpc: String = "2.0"
         let id: String = "1"
@@ -24,11 +25,13 @@ extension Kodi {
     }
 
     // MARK: - RPC Params
+
     struct Params: Codable {
         let item: Item
     }
 
     // MARK: - RPC Item
+
     struct Item: Codable {
         let file: String
     }

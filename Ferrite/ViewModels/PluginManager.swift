@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 public class PluginManager: ObservableObject {
-    var toastModel: ToastViewModel?
+    var logManager: LoggingManager?
     let kodi: Kodi = .init()
 
     @Published var availableSources: [SourceJson] = []
@@ -22,79 +22,134 @@ public class PluginManager: ObservableObject {
     @Published var actionSuccessAlertMessage: String = ""
 
     @MainActor
+    func cleanAvailablePlugins() {
+        availableSources = []
+        availableActions = []
+    }
+
+    @MainActor
+    func updateAvailablePlugins(_ newPlugins: AvailablePlugins) {
+        availableSources += newPlugins.availableSources
+        availableActions += newPlugins.availableActions
+    }
+
     public func fetchPluginsFromUrl() async {
         let pluginListRequest = PluginList.fetchRequest()
-        do {
-            let pluginLists = try PersistenceController.shared.backgroundContext.fetch(pluginListRequest)
+        guard let pluginLists = try? PersistenceController.shared.backgroundContext.fetch(pluginListRequest) else {
+            await logManager?.error("PluginManager: No plugin lists found")
+            return
+        }
 
-            // Clean availablePlugin arrays for repopulation
-            availableSources = []
-            availableActions = []
+        // Clean availablePlugin arrays for repopulation
+        await cleanAvailablePlugins()
 
+        await logManager?.info("Starting fetch of plugin lists")
+
+        await withTaskGroup(of: (AvailablePlugins?, String).self) { group in
             for pluginList in pluginLists {
                 guard let url = URL(string: pluginList.urlString) else {
                     return
                 }
 
-                // Always get the up-to-date source list
-                let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+                group.addTask {
+                    var availablePlugins: AvailablePlugins?
 
-                let (data, _) = try await URLSession.shared.data(for: request)
-                let pluginResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
+                    do {
+                        availablePlugins = try await self.fetchPluginList(pluginList: pluginList, url: url)
+                    } catch {
+                        let error = error as NSError
 
-                if let sources = pluginResponse.sources {
-                    // Faster and more performant to map instead of a for loop
-                    availableSources += sources.compactMap { inputJson in
-                        if checkAppVersion(minVersion: inputJson.minVersion) {
-                            return SourceJson(
-                                name: inputJson.name,
-                                version: inputJson.version,
-                                minVersion: inputJson.minVersion,
-                                baseUrl: inputJson.baseUrl,
-                                fallbackUrls: inputJson.fallbackUrls,
-                                dynamicBaseUrl: inputJson.dynamicBaseUrl,
-                                trackers: inputJson.trackers,
-                                api: inputJson.api,
-                                jsonParser: inputJson.jsonParser,
-                                rssParser: inputJson.rssParser,
-                                htmlParser: inputJson.htmlParser,
-                                author: pluginList.author,
-                                listId: pluginList.id,
-                                tags: inputJson.tags
-                            )
-                        } else {
-                            return nil
+                        switch error.code {
+                        case -999:
+                            await self.logManager?.info("PluginManager: \(pluginList.name): List fetch cancelled")
+                        case -1009:
+                            await self.logManager?.info("PluginManager: \(pluginList.name): The connection is offline")
+                        default:
+                            await self.logManager?.error("Plugin fetch: \(pluginList.name): \(error)", showToast: false)
                         }
                     }
-                }
 
-                if let actions = pluginResponse.actions {
-                    availableActions += actions.compactMap { inputJson in
-                        if checkAppVersion(minVersion: inputJson.minVersion) {
-                            return ActionJson(
-                                name: inputJson.name,
-                                version: inputJson.version,
-                                minVersion: inputJson.minVersion,
-                                requires: inputJson.requires,
-                                deeplink: inputJson.deeplink,
-                                author: pluginList.author,
-                                listId: pluginList.id,
-                                tags: inputJson.tags
-                            )
-                        } else {
-                            return nil
-                        }
-                    }
+                    return (availablePlugins, pluginList.name)
                 }
             }
-        } catch {
-            let error = error as NSError
-            if error.code != -999 {
-                toastModel?.updateToastDescription("Plugin fetch error: \(error)")
+
+            var failedLists: [String] = []
+            for await (availablePlugins, pluginListName) in group {
+                if let availablePlugins {
+                    await updateAvailablePlugins(availablePlugins)
+                } else {
+                    failedLists.append(pluginListName)
+                }
             }
 
-            print("Plugin fetch error: \(error)")
+            if !failedLists.isEmpty {
+                let joinedLists = failedLists.joined(separator: ", ")
+                await logManager?.info(
+                    "Plugins: Errors in plugin lists \(joinedLists). See above.",
+                    description: "There were errors in plugin lists \(joinedLists). Check the logs for more details."
+                )
+            }
         }
+
+        await logManager?.info("Plugin list fetch finished")
+    }
+
+    func fetchPluginList(pluginList: PluginList, url: URL) async throws -> AvailablePlugins? {
+        var tempSources: [SourceJson] = []
+        var tempActions: [ActionJson] = []
+
+        // Always get the up-to-date source list
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let pluginResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
+
+        if let sources = pluginResponse.sources {
+            // Faster and more performant to map instead of a for loop
+            tempSources += sources.compactMap { inputJson in
+                if checkAppVersion(minVersion: inputJson.minVersion) {
+                    return SourceJson(
+                        name: inputJson.name,
+                        version: inputJson.version,
+                        minVersion: inputJson.minVersion,
+                        baseUrl: inputJson.baseUrl,
+                        fallbackUrls: inputJson.fallbackUrls,
+                        dynamicBaseUrl: inputJson.dynamicBaseUrl,
+                        trackers: inputJson.trackers,
+                        api: inputJson.api,
+                        jsonParser: inputJson.jsonParser,
+                        rssParser: inputJson.rssParser,
+                        htmlParser: inputJson.htmlParser,
+                        author: pluginList.author,
+                        listId: pluginList.id,
+                        tags: inputJson.tags
+                    )
+                } else {
+                    return nil
+                }
+            }
+        }
+
+        if let actions = pluginResponse.actions {
+            tempActions += actions.compactMap { inputJson in
+                if checkAppVersion(minVersion: inputJson.minVersion) {
+                    return ActionJson(
+                        name: inputJson.name,
+                        version: inputJson.version,
+                        minVersion: inputJson.minVersion,
+                        requires: inputJson.requires,
+                        deeplink: inputJson.deeplink,
+                        author: pluginList.author,
+                        listId: pluginList.id,
+                        tags: inputJson.tags
+                    )
+                } else {
+                    return nil
+                }
+            }
+        }
+
+        return AvailablePlugins(availableSources: tempSources, availableActions: tempActions)
     }
 
     // forType required to guide generic inferences
@@ -285,23 +340,19 @@ public class PluginManager: ObservableObject {
 
     public func installAction(actionJson: ActionJson?, doUpsert: Bool = false) async {
         guard let actionJson else {
-            await toastModel?.updateToastDescription("Action addition error: No action present. Contact the app dev!")
+            await logManager?.error("Action addition: No action present. Contact the app dev!")
             return
         }
 
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         if actionJson.requires.count < 1 {
-            await toastModel?.updateToastDescription("Action addition error: actions must require an input. Please contact the action dev!")
-            print("Action name \(actionJson.name) does not have a requires parameter")
-
+            await logManager?.error("Action addition: actions must require an input. Please contact the action dev!")
             return
         }
 
         guard let deeplink = actionJson.deeplink else {
-            await toastModel?.updateToastDescription("Action addition error: only deeplink actions can be added to Ferrite iOS. Please contact the action dev!")
-            print("Action name \(actionJson.name) did not have a deeplink")
-
+            await logManager?.error("Action addition: only deeplink actions can be added to Ferrite iOS. Please contact the action dev!")
             return
         }
 
@@ -313,8 +364,7 @@ public class PluginManager: ObservableObject {
             if doUpsert {
                 PersistenceController.shared.delete(existingAction, context: backgroundContext)
             } else {
-                await toastModel?.updateToastDescription("Could not install action with name \(actionJson.name) because it is already installed")
-                print("Action name \(actionJson.name) already exists in user's DB")
+                await logManager?.error("Action addition: Could not install action with name \(actionJson.name) because it is already installed")
 
                 return
             }
@@ -344,14 +394,13 @@ public class PluginManager: ObservableObject {
         do {
             try backgroundContext.save()
         } catch {
-            await toastModel?.updateToastDescription("Action addition error: \(error)")
-            print("Action addition error: \(error)")
+            await logManager?.error("Action addition: \(error)")
         }
     }
 
     public func installSource(sourceJson: SourceJson?, doUpsert: Bool = false) async {
         guard let sourceJson else {
-            await toastModel?.updateToastDescription("Source addition error: No source present. Contact the app dev!")
+            await logManager?.error("Source addition: No source present. Contact the app dev!")
             return
         }
 
@@ -360,9 +409,7 @@ public class PluginManager: ObservableObject {
         // If there's no base URL and it isn't dynamic, return before any transactions occur
         let dynamicBaseUrl = sourceJson.dynamicBaseUrl ?? false
         if !dynamicBaseUrl, sourceJson.baseUrl == nil {
-            await toastModel?.updateToastDescription("Not adding this source because base URL parameters are malformed. Please contact the source dev.")
-            print("Not adding source \(sourceJson.name) because base URL parameters are malformed")
-
+            await logManager?.error("Not adding this source because base URL parameters are malformed. Please contact the source dev.")
             return
         }
 
@@ -375,9 +422,7 @@ public class PluginManager: ObservableObject {
             if doUpsert {
                 PersistenceController.shared.delete(existingSource, context: backgroundContext)
             } else {
-                await toastModel?.updateToastDescription("Could not install source with name \(sourceJson.name) because it is already installed.")
-                print("Source name \(sourceJson.name) already exists")
-
+                await logManager?.error("Source addition: Could not install source with name \(sourceJson.name) because it is already installed.")
                 return
             }
         }
@@ -435,8 +480,7 @@ public class PluginManager: ObservableObject {
         do {
             try backgroundContext.save()
         } catch {
-            await toastModel?.updateToastDescription("Source addition error: \(error)")
-            print("Source addition error: \(error)")
+            await logManager?.error("Source addition error: \(error)")
         }
     }
 
