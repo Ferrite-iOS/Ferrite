@@ -9,10 +9,13 @@ import SwiftUI
 
 @MainActor
 class LoggingManager: ObservableObject {
+    let logFormatter = DateFormatter()
+
     struct Log: Hashable {
         let level: LogLevel
         let message: String
         let timeStamp: Date = .init()
+        var isExpanded: Bool = false
 
         func toMessage() -> String {
             "[\(level.rawValue)]: \(message)"
@@ -30,6 +33,7 @@ class LoggingManager: ObservableObject {
     }
 
     @Published var messageArray: [Log] = []
+    @Published var showLogExportedAlert = false
 
     // Toast variables
     @Published var toastDescription: String? = nil {
@@ -57,7 +61,13 @@ class LoggingManager: ObservableObject {
     @Published var indeterminateCancelAction: (() -> Void)? = nil
     @Published var showIndeterminateToast: Bool = false
 
+    init() {
+        logFormatter.dateStyle = .short
+        logFormatter.timeStyle = .long
+    }
+
     // MARK: - Logging functions
+    // TODO: Maybe append to a constant logfile?
 
     public func info(_ message: String,
                      description: String? = nil)
@@ -105,8 +115,13 @@ class LoggingManager: ObservableObject {
         )
 
         // If a task is run in parallel, don't show a toast on error
-        if showToast && showErrorToasts {
-            toastDescription = description.map { $0 } ?? "An error was logged"
+        // Only gate generic error toasts behind the settings option
+        if showToast {
+            if let description {
+                toastDescription = description
+            } else if showErrorToasts {
+                toastDescription = "An error was logged"
+            }
         }
 
         messageArray.append(log)
@@ -132,5 +147,34 @@ class LoggingManager: ObservableObject {
         showIndeterminateToast = false
         indeterminateToastDescription = ""
         indeterminateCancelAction = nil
+    }
+
+    public func exportLogs() {
+        logFormatter.dateFormat = "yyyy-MM-dd-HHmmss"
+        let logFileName = "ferrite_session_\(logFormatter.string(from: Date())).txt"
+        let logFolderPath = FileManager.default.appDirectory.appendingPathComponent("Logs")
+        let logPath = logFolderPath.appendingPathComponent(logFileName)
+
+        logFormatter.dateStyle = .short
+        logFormatter.timeStyle = .long
+        let joinedMessages = messageArray.map { "\(logFormatter.string(from: $0.timeStamp)): \($0.toMessage())" }.joined(separator: "\n")
+
+        do {
+            if FileManager.default.fileExists(atPath: logPath.path) {
+                try FileManager.default.removeItem(at: logPath)
+            } else if !FileManager.default.fileExists(atPath: logFolderPath.path) {
+                try FileManager.default.createDirectory(atPath: logFolderPath.path, withIntermediateDirectories: true, attributes: nil)
+            }
+
+            try joinedMessages.write(to: logPath, atomically: true, encoding: .utf8)
+
+            self.info("Log \(logFileName) was written to path \(logPath.description)")
+            showLogExportedAlert.toggle()
+        } catch {
+            self.error(
+                "Log export for file \(logFileName): \(error)",
+                description: "Exporting your log file failed. Please check the logs page."
+            )
+        }
     }
 }

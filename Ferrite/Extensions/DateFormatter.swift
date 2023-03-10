@@ -7,6 +7,7 @@
 
 import Foundation
 
+// A static DateFormatter is better than initializing new ones
 extension DateFormatter {
     static let historyDateFormatter: DateFormatter = {
         let df = DateFormatter()
