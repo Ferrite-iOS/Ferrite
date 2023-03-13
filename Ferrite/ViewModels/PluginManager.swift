@@ -728,7 +728,7 @@ public class PluginManager: ObservableObject {
     public func addPluginList(_ url: String, isSheet: Bool = false, existingPluginList: PluginList? = nil) async throws {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        if url.isEmpty || URL(string: url) == nil {
+        if url.isEmpty || !url.starts(with: "https://") && !url.starts(with: "http://") {
             throw PluginManagerError.ListAddition(description: "The provided source list is invalid. Please check if the URL is formatted properly.")
         }
 

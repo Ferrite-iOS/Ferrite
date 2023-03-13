@@ -34,6 +34,12 @@
         <attribute name="url" optional="YES" attributeType="String"/>
         <relationship name="parentHistory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="History" inverseName="entries" inverseEntity="History"/>
     </entity>
+    <entity name="KodiServer" representedClassName="KodiServer" syncable="YES">
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="password" optional="YES" attributeType="String"/>
+        <attribute name="urlString" attributeType="String" defaultValueString=""/>
+        <attribute name="username" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="PluginList" representedClassName="PluginList" syncable="YES">
         <attribute name="author" attributeType="String" defaultValueString=""/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>

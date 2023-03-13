@@ -23,6 +23,7 @@ struct ListRowLinkView: View {
             Image(systemName: "arrow.up.forward.app.fill")
                 .foregroundColor(.gray)
         }
+        .padding(.trailing, -5)
     }
 }
 
@@ -50,6 +51,7 @@ struct ListRowButtonView: View {
                     .foregroundColor(.gray)
             }
         }
+        .padding(.trailing, -5)
     }
 }
 
@@ -66,10 +68,10 @@ struct ListRowTextView: View {
 
             if let rightText {
                 Text(rightText)
-            } else {
-                Image(systemName: rightSymbol!)
-                    .foregroundColor(.gray)
+            } else if let rightSymbol {
+                Image(systemName: rightSymbol)
             }
         }
+        .padding(.trailing, -5)
     }
 }

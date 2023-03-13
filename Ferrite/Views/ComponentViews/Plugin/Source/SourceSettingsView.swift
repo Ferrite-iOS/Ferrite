@@ -104,6 +104,8 @@ struct SourceSettingsBaseUrlView: View {
                 }
             })
             .keyboardType(.URL)
+            .autocorrectionDisabled(true)
+            .autocapitalization(.none)
             .backport.onAppear {
                 tempBaseUrl = selectedSource.baseUrl ?? ""
             }

@@ -15,6 +15,11 @@ struct SettingsView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
+    @FetchRequest(
+        entity: KodiServer.entity(),
+        sortDescriptors: []
+    ) var kodiServers: FetchedResults<KodiServer>
+
     @AppStorage("ExternalServices.KodiUrl") var kodiUrl: String = ""
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
@@ -55,7 +60,7 @@ struct SettingsView: View {
                         HStack {
                             Text("Kodi")
                             Spacer()
-                            Text(kodiUrl.isEmpty ? "Disabled" : "Enabled")
+                            Text(kodiServers.isEmpty ? "Disabled" : "Enabled")
                                 .foregroundColor(.secondary)
                         }
                     })

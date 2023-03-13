@@ -9,6 +9,7 @@ import Foundation
 
 extension Kodi {
     enum KodiError: Error {
+        case ServerAddition(description: String)
         case InvalidBaseUrl
         case InvalidPlaybackUrl
         case InvalidPostBody

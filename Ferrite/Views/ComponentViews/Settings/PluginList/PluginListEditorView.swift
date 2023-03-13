@@ -12,16 +12,17 @@ struct PluginListEditorView: View {
 
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var pluginManager: PluginManager
+    @EnvironmentObject var logManager: LoggingManager
 
     let backgroundContext = PersistenceController.shared.backgroundContext
-
-    @State var selectedPluginList: PluginList?
 
     @State private var sourceUrlSet = false
     @State private var showUrlErrorAlert = false
 
     @State private var pluginListUrl: String = ""
     @State private var urlErrorAlertText: String = ""
+
+    @State private var loadedSelectedList = false
 
     var body: some View {
         NavView {
@@ -30,11 +31,13 @@ struct PluginListEditorView: View {
                     .disableAutocorrection(true)
                     .keyboardType(.URL)
                     .autocapitalization(.none)
-                    .conditionalId(sourceUrlSet)
+                    .id(loadedSelectedList)
             }
             .backport.onAppear {
-                pluginListUrl = selectedPluginList?.urlString ?? ""
-                sourceUrlSet = true
+                if let selectedList = navModel.selectedPluginList {
+                    pluginListUrl = selectedList.urlString
+                    loadedSelectedList.toggle()
+                }
             }
             .backport.alert(
                 isPresented: $showUrlErrorAlert,
@@ -54,9 +57,14 @@ struct PluginListEditorView: View {
                     Button("Save") {
                         Task {
                             do {
-                                try await pluginManager.addPluginList(pluginListUrl, existingPluginList: selectedPluginList)
+                                try await pluginManager.addPluginList(
+                                    pluginListUrl,
+                                    existingPluginList: navModel.selectedPluginList
+                                )
+
                                 presentationMode.wrappedValue.dismiss()
                             } catch {
+                                logManager.error("Editing plugin list: \(error)", showToast: false)
                                 urlErrorAlertText = error.localizedDescription
                                 showUrlErrorAlert.toggle()
                             }
@@ -65,11 +73,5 @@ struct PluginListEditorView: View {
                 }
             }
         }
-    }
-}
-
-struct PluginListEditorView_Previews: PreviewProvider {
-    static var previews: some View {
-        PluginListEditorView()
     }
 }

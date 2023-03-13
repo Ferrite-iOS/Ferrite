@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct PluginListView<P: Plugin, PJ: PluginJson>: View {
+struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
     @EnvironmentObject var pluginManager: PluginManager
     @EnvironmentObject var navModel: NavigationViewModel
 
@@ -15,6 +15,7 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
     @Binding var searchText: String
+    @Binding var pluginsEmpty: Bool
 
     @State private var isEditingSearch = false
     @State private var isSearching = false
@@ -70,8 +71,14 @@ struct PluginListView<P: Plugin, PJ: PluginJson>: View {
                         .environmentObject(navModel)
                 }
             }
+            .backport.onAppear {
+                pluginsEmpty = installedPlugins.isEmpty
+            }
             .onChange(of: searchText) { _ in
                 sourcePredicate = searchText.isEmpty ? nil : NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+            }
+            .onChange(of: installedPlugins.count) { newCount in
+                pluginsEmpty = newCount == 0
             }
         }
     }

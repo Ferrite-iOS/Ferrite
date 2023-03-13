@@ -17,8 +17,7 @@ struct SettingsPluginListView: View {
         sortDescriptors: []
     ) var pluginLists: FetchedResults<PluginList>
 
-    @State private var presentSourceSheet = false
-    @State private var selectedPluginList: PluginList?
+    @State private var presentEditSheet = false
 
     var body: some View {
         ZStack {
@@ -29,10 +28,10 @@ struct SettingsPluginListView: View {
                     ForEach(pluginLists, id: \.self) { pluginList in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(pluginList.name)
-
+                            
                             Group {
                                 Text(pluginList.author)
-
+                                
                                 Text("ID: \(pluginList.id)")
                                     .font(.caption)
                             }
@@ -41,13 +40,13 @@ struct SettingsPluginListView: View {
                         .padding(.vertical, 2)
                         .contextMenu {
                             Button {
-                                selectedPluginList = pluginList
-                                presentSourceSheet.toggle()
+                                navModel.selectedPluginList = pluginList
+                                presentEditSheet.toggle()
                             } label: {
                                 Text("Edit")
                                 Image(systemName: "pencil")
                             }
-
+                            
                             if #available(iOS 15.0, *) {
                                 Button(role: .destructive) {
                                     PersistenceController.shared.delete(pluginList, context: backgroundContext)
@@ -77,12 +76,13 @@ struct SettingsPluginListView: View {
                 .inlinedList(inset: -20)
             }
         }
-        .sheet(isPresented: $presentSourceSheet) {
+        .sheet(isPresented: $presentEditSheet) {
             if #available(iOS 16, *) {
-                PluginListEditorView(selectedPluginList: selectedPluginList)
+                PluginListEditorView()
                     .presentationDetents([.medium])
             } else {
-                PluginListEditorView(selectedPluginList: selectedPluginList)
+                PluginListEditorView()
+                    .environmentObject(navModel)
             }
         }
         .navigationTitle("Plugin Lists")
@@ -90,7 +90,8 @@ struct SettingsPluginListView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    presentSourceSheet.toggle()
+                    navModel.selectedPluginList = nil
+                    presentEditSheet.toggle()
                 } label: {
                     Image(systemName: "plus")
                 }

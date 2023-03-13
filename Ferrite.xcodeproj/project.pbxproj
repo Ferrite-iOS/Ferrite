@@ -13,7 +13,7 @@
 		0C0755C6293424A200ECA142 /* DebridLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0755C5293424A200ECA142 /* DebridLabelView.swift */; };
 		0C0755C8293425B500ECA142 /* DebridManagerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0755C7293425B500ECA142 /* DebridManagerModels.swift */; };
 		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
-		0C0D50E7288DFF850035ECC8 /* PluginListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* PluginListView.swift */; };
+		0C0D50E7288DFF850035ECC8 /* PluginAggregateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */; };
 		0C10848B28BD9A38008F0BA6 /* SettingsAppVersionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */; };
 		0C12D43D28CC332A000195BF /* HistoryButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C12D43C28CC332A000195BF /* HistoryButtonView.swift */; };
 		0C2886D22960AC2800D6FC16 /* DebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */; };
@@ -26,6 +26,9 @@
 		0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32FB562890D1F2002BD219 /* ListRowViews.swift */; };
 		0C360C5C28C7DF1400884ED3 /* DynamicFetchRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C360C5B28C7DF1400884ED3 /* DynamicFetchRequest.swift */; };
 		0C391ECB28CAA44B009F1CA1 /* AlertButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C391ECA28CAA44B009F1CA1 /* AlertButton.swift */; };
+		0C3DD43F29B6968D006429DB /* KodiEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3DD43E29B6968D006429DB /* KodiEditorView.swift */; };
+		0C3DD44229B6ACD9006429DB /* KodiServer+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3DD44029B6ACD9006429DB /* KodiServer+CoreDataClass.swift */; };
+		0C3DD44329B6ACD9006429DB /* KodiServer+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3DD44129B6ACD9006429DB /* KodiServer+CoreDataProperties.swift */; };
 		0C3E00D0296F4DB200ECECB2 /* ActionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E00CF296F4DB200ECECB2 /* ActionModels.swift */; };
 		0C3E00D2296F4FD200ECECB2 /* PluginsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E00D1296F4FD200ECECB2 /* PluginsView.swift */; };
 		0C3E00D8296F5B9A00ECECB2 /* PluginModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3E00D7296F5B9A00ECECB2 /* PluginModels.swift */; };
@@ -118,6 +121,7 @@
 		0CA429F828C5098D000D0610 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA429F728C5098D000D0610 /* DateFormatter.swift */; };
 		0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 0CAF1C7A286F5C8600296F86 /* SwiftSoup */; };
 		0CAF9319296399190050812A /* PremiumizeCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAF9318296399190050812A /* PremiumizeCloudView.swift */; };
+		0CB0AB5F29BD2A200015422C /* KodiServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB0AB5E29BD2A200015422C /* KodiServerView.swift */; };
 		0CB6516328C5A57300DCA721 /* ConditionalId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516228C5A57300DCA721 /* ConditionalId.swift */; };
 		0CB6516528C5A5D700DCA721 /* InlinedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516428C5A5D700DCA721 /* InlinedList.swift */; };
 		0CB6516A28C5B4A600DCA721 /* InlineHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB6516928C5B4A600DCA721 /* InlineHeader.swift */; };
@@ -147,7 +151,7 @@
 		0C0755C5293424A200ECA142 /* DebridLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridLabelView.swift; sourceTree = "<group>"; };
 		0C0755C7293425B500ECA142 /* DebridManagerModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridManagerModels.swift; sourceTree = "<group>"; };
 		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
-		0C0D50E6288DFF850035ECC8 /* PluginListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginListView.swift; sourceTree = "<group>"; };
+		0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginAggregateView.swift; sourceTree = "<group>"; };
 		0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppVersionView.swift; sourceTree = "<group>"; };
 		0C12D43C28CC332A000195BF /* HistoryButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryButtonView.swift; sourceTree = "<group>"; };
 		0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridCloudView.swift; sourceTree = "<group>"; };
@@ -159,6 +163,9 @@
 		0C32FB562890D1F2002BD219 /* ListRowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowViews.swift; sourceTree = "<group>"; };
 		0C360C5B28C7DF1400884ED3 /* DynamicFetchRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFetchRequest.swift; sourceTree = "<group>"; };
 		0C391ECA28CAA44B009F1CA1 /* AlertButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertButton.swift; sourceTree = "<group>"; };
+		0C3DD43E29B6968D006429DB /* KodiEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KodiEditorView.swift; sourceTree = "<group>"; };
+		0C3DD44029B6ACD9006429DB /* KodiServer+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KodiServer+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0C3DD44129B6ACD9006429DB /* KodiServer+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KodiServer+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C3E00CF296F4DB200ECECB2 /* ActionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionModels.swift; sourceTree = "<group>"; };
 		0C3E00D1296F4FD200ECECB2 /* PluginsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginsView.swift; sourceTree = "<group>"; };
 		0C3E00D7296F5B9A00ECECB2 /* PluginModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginModels.swift; sourceTree = "<group>"; };
@@ -247,6 +254,7 @@
 		0CA429F728C5098D000D0610 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		0CAF1C68286F5C0E00296F86 /* Ferrite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ferrite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CAF9318296399190050812A /* PremiumizeCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumizeCloudView.swift; sourceTree = "<group>"; };
+		0CB0AB5E29BD2A200015422C /* KodiServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KodiServerView.swift; sourceTree = "<group>"; };
 		0CB6516228C5A57300DCA721 /* ConditionalId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalId.swift; sourceTree = "<group>"; };
 		0CB6516428C5A5D700DCA721 /* InlinedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlinedList.swift; sourceTree = "<group>"; };
 		0CB6516928C5B4A600DCA721 /* InlineHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineHeader.swift; sourceTree = "<group>"; };
@@ -321,6 +329,8 @@
 		0C0D50DE288DF72D0035ECC8 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				0C3DD44029B6ACD9006429DB /* KodiServer+CoreDataClass.swift */,
+				0C3DD44129B6ACD9006429DB /* KodiServer+CoreDataProperties.swift */,
 				0C5005582992BA6A0064606A /* PluginTag+CoreDataClass.swift */,
 				0C5005592992BA6A0064606A /* PluginTag+CoreDataProperties.swift */,
 				0CC389512970AD900066D06F /* Action+CoreDataClass.swift */,
@@ -375,12 +385,31 @@
 			path = Cloud;
 			sourceTree = "<group>";
 		};
+		0C3DD43C29B69664006429DB /* Kodi */ = {
+			isa = PBXGroup;
+			children = (
+				0C6771F529B3B602005D38D2 /* SettingsKodiView.swift */,
+				0C3DD43E29B6968D006429DB /* KodiEditorView.swift */,
+				0CB0AB5E29BD2A200015422C /* KodiServerView.swift */,
+			);
+			path = Kodi;
+			sourceTree = "<group>";
+		};
+		0C3DD43D29B69672006429DB /* PluginList */ = {
+			isa = PBXGroup;
+			children = (
+				0CA05456288EE58200850554 /* SettingsPluginListView.swift */,
+				0CA0545A288EEA4E00850554 /* PluginListEditorView.swift */,
+			);
+			path = PluginList;
+			sourceTree = "<group>";
+		};
 		0C3E00D4296F560800ECECB2 /* Plugin */ = {
 			isa = PBXGroup;
 			children = (
 				0C44E2AA28D4E09B007711AE /* Buttons */,
 				0C794B65289DAC9F00DD1CC8 /* Source */,
-				0C0D50E6288DFF850035ECC8 /* PluginListView.swift */,
+				0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */,
 				0C5005512992B6750064606A /* PluginTagsView.swift */,
 				0CD5F1FC299C083B00476DDB /* PluginPickerView.swift */,
 			);
@@ -448,12 +477,11 @@
 		0CA0545C288F7CB200850554 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				0C3DD43D29B69672006429DB /* PluginList */,
+				0C3DD43C29B69664006429DB /* Kodi */,
 				0C44E2AE28D52E8A007711AE /* BackupsView.swift */,
-				0CA05456288EE58200850554 /* SettingsPluginListView.swift */,
-				0CA0545A288EEA4E00850554 /* PluginListEditorView.swift */,
 				0C95D8D728A55B03005E22B3 /* DefaultActionPickerView.swift */,
 				0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */,
-				0C6771F529B3B602005D38D2 /* SettingsKodiView.swift */,
 				0C6771FD29B521F1005D38D2 /* SettingsDebridInfoView.swift */,
 				0C5708EA29B8F89300BE07F9 /* SettingsLogView.swift */,
 			);
@@ -758,10 +786,12 @@
 				0C360C5C28C7DF1400884ED3 /* DynamicFetchRequest.swift in Sources */,
 				0CA429F828C5098D000D0610 /* DateFormatter.swift in Sources */,
 				0C5005522992B6750064606A /* PluginTagsView.swift in Sources */,
+				0CB0AB5F29BD2A200015422C /* KodiServerView.swift in Sources */,
 				0CE66B3A28E640D200F69346 /* Backport.swift in Sources */,
 				0C5708E929B8E61C00BE07F9 /* Logger.swift in Sources */,
 				0C42B5962932F2D5008057A0 /* DebridPickerView.swift in Sources */,
 				0C2886D72960C50900D6FC16 /* RealDebridCloudView.swift in Sources */,
+				0C3DD44229B6ACD9006429DB /* KodiServer+CoreDataClass.swift in Sources */,
 				0C794B6B289DACF100DD1CC8 /* PluginCatalogButtonView.swift in Sources */,
 				0C54D36428C5086E00BFEEE2 /* History+CoreDataProperties.swift in Sources */,
 				0CA148E9288903F000DE2211 /* MainView.swift in Sources */,
@@ -771,7 +801,7 @@
 				0CA3B23728C2660700616D3A /* HistoryView.swift in Sources */,
 				0C70E40228C3CE9C00A5C72D /* ConditionalContextMenu.swift in Sources */,
 				0C50B7D0299DF63C00A9FA3C /* UIDevice.swift in Sources */,
-				0C0D50E7288DFF850035ECC8 /* PluginListView.swift in Sources */,
+				0C0D50E7288DFF850035ECC8 /* PluginAggregateView.swift in Sources */,
 				0CA3B23428C2658700616D3A /* LibraryView.swift in Sources */,
 				0CD72E17293D9928001A7EA4 /* Array.swift in Sources */,
 				0CD5F1FB299BEFBE00476DDB /* CustomScopeBar.swift in Sources */,
@@ -847,7 +877,9 @@
 				0C32FB572890D1F2002BD219 /* ListRowViews.swift in Sources */,
 				0CEC8AAE299B31B6007BFE8F /* SearchFilterHeaderView.swift in Sources */,
 				0C84F4822895BFED0074B7C9 /* Source+CoreDataClass.swift in Sources */,
+				0C3DD43F29B6968D006429DB /* KodiEditorView.swift in Sources */,
 				0C391ECB28CAA44B009F1CA1 /* AlertButton.swift in Sources */,
+				0C3DD44329B6ACD9006429DB /* KodiServer+CoreDataProperties.swift in Sources */,
 				0C7C128628DAA3CD00381CD1 /* URL.swift in Sources */,
 				0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */,
 				0CD5F1FD299C083B00476DDB /* PluginPickerView.swift in Sources */,

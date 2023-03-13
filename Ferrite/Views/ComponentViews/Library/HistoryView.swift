@@ -10,9 +10,15 @@ import SwiftUI
 struct HistoryView: View {
     @EnvironmentObject var navModel: NavigationViewModel
 
-    var history: FetchedResults<History>
+    @FetchRequest(
+        entity: History.entity(),
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \History.date, ascending: false)
+        ]
+    ) var history: FetchedResults<History>
 
     @Binding var searchText: String
+    @Binding var historyEmpty: Bool
 
     @State private var historyPredicate: NSPredicate?
 
@@ -28,7 +34,11 @@ struct HistoryView: View {
             .listStyle(.insetGrouped)
         }
         .backport.onAppear {
+            historyEmpty = history.isEmpty
             applyPredicate()
+        }
+        .onChange(of: history.count) { newCount in
+            historyEmpty = newCount == 0
         }
         .onChange(of: searchText) { _ in
             applyPredicate()

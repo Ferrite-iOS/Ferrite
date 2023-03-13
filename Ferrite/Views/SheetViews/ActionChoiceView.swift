@@ -21,7 +21,10 @@ struct ActionChoiceView: View {
         sortDescriptors: []
     ) var actions: FetchedResults<Action>
 
-    @AppStorage("ExternalServices.KodiUrl") var kodiUrl: String = ""
+    @FetchRequest(
+        entity: KodiServer.entity(),
+        sortDescriptors: []
+    ) var kodiServers: FetchedResults<KodiServer>
 
     @State private var showLinkCopyAlert = false
     @State private var showMagnetCopyAlert = false
@@ -53,12 +56,20 @@ struct ActionChoiceView: View {
                             }
                         }
 
-                        if !kodiUrl.isEmpty {
-                            ListRowButtonView("Open in Kodi", systemImage: "arrow.up.forward.app.fill") {
-                                Task {
-                                    await pluginManager.sendToKodi(urlString: debridManager.downloadUrl)
+                        if !kodiServers.isEmpty {
+                            DisclosureGroup("Open in Kodi") {
+                                ForEach(kodiServers, id: \.self) { server in
+                                    Button {
+                                        Task {
+                                            await pluginManager.sendToKodi(urlString: debridManager.downloadUrl)
+                                        }
+                                    } label: {
+                                        KodiServerView(server: server)
+                                    }
+                                    .backport.tint(.primary)
                                 }
                             }
+                            .backport.tint(.secondary)
                         }
 
                         ListRowButtonView("Copy download URL", systemImage: "doc.on.doc.fill") {

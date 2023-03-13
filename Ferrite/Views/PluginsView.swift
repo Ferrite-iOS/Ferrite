@@ -12,18 +12,24 @@ struct PluginsView: View {
     @EnvironmentObject var pluginManager: PluginManager
     @EnvironmentObject var navModel: NavigationViewModel
 
+    /*
     @FetchRequest(
         entity: Source.entity(),
         sortDescriptors: []
     ) var sources: FetchedResults<Source>
+     */
 
+    /*
     @FetchRequest(
         entity: Action.entity(),
         sortDescriptors: []
     ) var actions: FetchedResults<Action>
+     */
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
+    @State private var installedSourcesEmpty = false
+    @State private var installedActionsEmpty = false
     @State private var checkedForPlugins = false
 
     @State private var isEditingSearch = false
@@ -38,9 +44,15 @@ struct PluginsView: View {
                 if checkedForPlugins {
                     switch navModel.pluginPickerSelection {
                     case .sources:
-                        PluginListView<Source, SourceJson>(searchText: $searchText)
+                        PluginAggregateView<Source, SourceJson>(
+                            searchText: $searchText,
+                            pluginsEmpty: $installedSourcesEmpty
+                        )
                     case .actions:
-                        PluginListView<Action, ActionJson>(searchText: $searchText)
+                        PluginAggregateView<Action, ActionJson>(
+                            searchText: $searchText,
+                            pluginsEmpty: $installedActionsEmpty
+                        )
                     }
                 }
             }
@@ -48,11 +60,11 @@ struct PluginsView: View {
                 if checkedForPlugins {
                     switch navModel.pluginPickerSelection {
                     case .sources:
-                        if sources.isEmpty, pluginManager.availableSources.isEmpty {
+                        if installedSourcesEmpty, pluginManager.availableSources.isEmpty {
                             EmptyInstructionView(title: "No Sources", message: "Add a plugin list in Settings")
                         }
                     case .actions:
-                        if actions.isEmpty, pluginManager.availableActions.isEmpty {
+                        if installedActionsEmpty, pluginManager.availableActions.isEmpty {
                             EmptyInstructionView(title: "No Actions", message: "Add a plugin list in Settings")
                         }
                     }

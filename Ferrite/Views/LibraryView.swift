@@ -12,17 +12,8 @@ struct LibraryView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
 
-    @FetchRequest(
-        entity: Bookmark.entity(),
-        sortDescriptors: []
-    ) var bookmarks: FetchedResults<Bookmark>
-
-    @FetchRequest(
-        entity: History.entity(),
-        sortDescriptors: [
-            NSSortDescriptor(keyPath: \History.date, ascending: false)
-        ]
-    ) var history: FetchedResults<History>
+    @State private var bookmarksEmpty = false
+    @State private var historyEmpty = false
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
@@ -37,9 +28,9 @@ struct LibraryView: View {
             ZStack {
                 switch navModel.libraryPickerSelection {
                 case .bookmarks:
-                    BookmarksView(searchText: $searchText)
+                    BookmarksView(searchText: $searchText, bookmarksEmpty: $bookmarksEmpty)
                 case .history:
-                    HistoryView(history: history, searchText: $searchText)
+                    HistoryView(searchText: $searchText, historyEmpty: $historyEmpty)
                 case .debridCloud:
                     DebridCloudView(searchText: $searchText)
                 }
@@ -47,11 +38,11 @@ struct LibraryView: View {
             .overlay {
                 switch navModel.libraryPickerSelection {
                 case .bookmarks:
-                    if bookmarks.isEmpty {
+                    if bookmarksEmpty {
                         EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
                     }
                 case .history:
-                    if history.isEmpty {
+                    if historyEmpty {
                         EmptyInstructionView(title: "No History", message: "Start watching to build history")
                     }
                 case .debridCloud:

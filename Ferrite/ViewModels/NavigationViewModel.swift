@@ -58,11 +58,14 @@ public class NavigationViewModel: ObservableObject {
 
     @Published var selectedTab: ViewTab = .search
 
+    // TODO: Maybe move these to their own StateObjects?
     // Used between SourceListView and SourceSettingsView
     @Published var showSourceSettings: Bool = false
     var selectedSource: Source?
 
-    @Published var showSourceListEditor: Bool = false
+    // Used between service views and editor views in Settings
+    @Published var selectedPluginList: PluginList?
+    @Published var selectedKodiServer: KodiServer?
 
     @Published var libraryPickerSelection: LibraryPickerSegment = .bookmarks
     @Published var pluginPickerSelection: PluginPickerSegment = .sources

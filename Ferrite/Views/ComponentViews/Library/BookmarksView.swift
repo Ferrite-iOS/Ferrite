@@ -16,6 +16,7 @@ struct BookmarksView: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
     @Binding var searchText: String
+    @Binding var bookmarksEmpty: Bool
 
     @State private var viewTask: Task<Void, Never>?
     @State private var bookmarkPredicate: NSPredicate?
@@ -54,6 +55,8 @@ struct BookmarksView: View {
             .listStyle(.insetGrouped)
             .inlinedList(inset: Application.shared.osVersion.majorVersion > 14 ? 15 : -25)
             .backport.onAppear {
+                bookmarksEmpty = bookmarks.isEmpty
+
                 if debridManager.enabledDebrids.count > 0 {
                     viewTask = Task {
                         let magnets = bookmarks.compactMap {
@@ -69,6 +72,9 @@ struct BookmarksView: View {
             }
             .onDisappear {
                 viewTask?.cancel()
+            }
+            .onChange(of: bookmarks.count) { newCount in
+                bookmarksEmpty = newCount == 0
             }
         }
         .backport.onAppear {
