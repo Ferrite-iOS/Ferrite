@@ -132,13 +132,17 @@ public class PluginManager: ObservableObject {
 
         if let actions = pluginResponse.actions {
             tempActions += actions.compactMap { inputJson in
-                if checkAppVersion(minVersion: inputJson.minVersion) {
+                if
+                    let deeplink = inputJson.deeplink,
+                    checkAppVersion(minVersion: inputJson.minVersion),
+                    let filteredDeeplinks = getFilteredDeeplinks(deeplink)
+                {
                     return ActionJson(
                         name: inputJson.name,
                         version: inputJson.version,
                         minVersion: inputJson.minVersion,
                         requires: inputJson.requires,
-                        deeplink: inputJson.deeplink,
+                        deeplink: filteredDeeplinks,
                         author: pluginList.author,
                         listId: pluginList.id,
                         tags: inputJson.tags
@@ -152,6 +156,27 @@ public class PluginManager: ObservableObject {
         return AvailablePlugins(availableSources: tempSources, availableActions: tempActions)
     }
 
+    // Checks if a deeplink action is present and if there's a single action for the OS (or fallback)
+    func getFilteredDeeplinks(_ deeplinks: [DeeplinkActionJson]) -> [DeeplinkActionJson]? {
+        let osArray = deeplinks.filter { deeplink in
+            deeplink.os.contains(where: { $0.lowercased() == Application.shared.os.lowercased() })
+        }
+
+        if osArray.count == 1 {
+            return osArray
+        } else {
+            let universalArray = deeplinks.filter { deeplink in
+                deeplink.os.isEmpty
+            }
+
+            if universalArray.count == 1 {
+                return universalArray
+            } else {
+                return nil
+            }
+        }
+    }
+
     // forType required to guide generic inferences
     func fetchFilteredPlugins<PJ: PluginJson>(forType: PJ.Type,
                                               installedPlugins: FetchedResults<some Plugin>,
@@ -163,8 +188,8 @@ public class PluginManager: ObservableObject {
             .filter { availablePlugin in
                 let pluginExists = installedPlugins.contains(where: {
                     availablePlugin.name == $0.name &&
-                        availablePlugin.listId == $0.listId &&
-                        availablePlugin.author == $0.author
+                    availablePlugin.listId == $0.listId &&
+                    availablePlugin.author == $0.author
                 })
 
                 if searchText.isEmpty {
@@ -185,10 +210,10 @@ public class PluginManager: ObservableObject {
         for plugin in installedPlugins {
             if let availablePlugin = availablePlugins.first(where: {
                 plugin.listId == $0.listId &&
-                    plugin.name == $0.name &&
-                    plugin.author == $0.author
+                plugin.name == $0.name &&
+                plugin.author == $0.author
             }),
-                availablePlugin.version > plugin.version
+               availablePlugin.version > plugin.version
             {
                 updatedPlugins.append(availablePlugin)
             }
@@ -252,8 +277,8 @@ public class PluginManager: ObservableObject {
                 UserDefaults.standard.set(nil, forKey: "Action.DefaultDebridList")
 
                 actionErrorAlertMessage =
-                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
-                    "Please check your default actions in Settings"
+                "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                "Please check your default actions in Settings"
                 showActionErrorAlert.toggle()
             }
         } else {
@@ -281,8 +306,8 @@ public class PluginManager: ObservableObject {
                 UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetList")
 
                 actionErrorAlertMessage =
-                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
-                    "Please check your default actions in Settings"
+                "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                "Please check your default actions in Settings"
                 showActionErrorAlert.toggle()
             }
         } else {
@@ -296,9 +321,9 @@ public class PluginManager: ObservableObject {
         guard let deeplink = action.deeplink, let urlString else {
             actionErrorAlertMessage = "Could not run action: \(action.name) since there is no deeplink to execute. Contact the action dev!"
             showActionErrorAlert.toggle()
-
-            print("Could not run action: \(action.name) since there is no deeplink to execute.")
-
+            
+            logManager?.error("Could not run action: \(action.name) since there is no deeplink to execute.")
+            
             return
         }
 
@@ -309,8 +334,8 @@ public class PluginManager: ObservableObject {
         } else {
             actionErrorAlertMessage = "Could not run action: \(action.name) because the created deeplink was invalid. Contact the action dev!"
             showActionErrorAlert.toggle()
-
-            print("Could not run action: \(action.name) because the created deeplink (\(String(describing: playbackUrl))) was invalid")
+            
+            logManager?.error("Could not run action: \(action.name) because the created deeplink (\(String(describing: playbackUrl))) was invalid")
         }
     }
 
@@ -320,7 +345,7 @@ public class PluginManager: ObservableObject {
             actionErrorAlertMessage = "Could not send URL to Kodi since there is no playback URL to send"
             showActionErrorAlert.toggle()
 
-            print("Could not send URL to Kodi since there is no playback URL to send")
+            logManager?.error("Kodi action: Could not send URL to Kodi since there is no playback URL to send")
 
             return
         }
@@ -330,11 +355,13 @@ public class PluginManager: ObservableObject {
 
             actionSuccessAlertMessage = "Your URL should be playing on Kodi"
             showActionSuccessAlert.toggle()
+
+            logManager?.info("URL \(urlString) is playing on Kodi")
         } catch {
             actionErrorAlertMessage = "Kodi Error: \(error)"
             showActionErrorAlert.toggle()
-
-            print("Kodi action error: \(error)")
+            
+            logManager?.error("Kodi action: \(error)")
         }
     }
 
@@ -351,7 +378,7 @@ public class PluginManager: ObservableObject {
             return
         }
 
-        guard let deeplink = actionJson.deeplink else {
+        guard let deeplinks = actionJson.deeplink else {
             await logManager?.error("Action addition: only deeplink actions can be added to Ferrite iOS. Please contact the action dev!")
             return
         }
@@ -389,7 +416,13 @@ public class PluginManager: ObservableObject {
             }
         }
 
-        newAction.deeplink = deeplink
+        // Only one deeplink is left in this action JSON because of the previous filtering logic
+        guard let deeplinkJson = deeplinks.first else {
+            await logManager?.error("Action addition: No deeplink was present in action with name \(actionJson.name). Contact the action dev!")
+
+            return
+        }
+        newAction.deeplink = deeplinkJson.scheme
 
         do {
             try backgroundContext.save()

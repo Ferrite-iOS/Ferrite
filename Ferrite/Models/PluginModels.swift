@@ -28,6 +28,7 @@ public struct PluginTagJson: Codable, Hashable, Sendable {
 extension PluginManager {
     enum PluginManagerError: Error {
         case ListAddition(description: String)
+        case ActionAddition(description: String)
     }
 
     struct AvailablePlugins {

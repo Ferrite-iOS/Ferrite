@@ -12,8 +12,16 @@ import Foundation
 public class Application {
     static let shared = Application()
 
+    // OS name for Plugins to read. Lowercase for ease of use
+    let os = "ios"
+
+    // Minimum OS version that Ferrite runs on
     let minVersion = OperatingSystemVersion(majorVersion: 14, minorVersion: 0, patchVersion: 0)
 
+    // Grabs the current user's OS version
+    let osVersion: OperatingSystemVersion = ProcessInfo().operatingSystemVersion
+
+    // Application version and build variables
     var appVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
     }
@@ -34,6 +42,4 @@ public class Application {
         }
         #endif
     }
-
-    let osVersion: OperatingSystemVersion = ProcessInfo().operatingSystemVersion
 }

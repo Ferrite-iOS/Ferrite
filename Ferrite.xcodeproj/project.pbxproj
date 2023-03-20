@@ -52,7 +52,6 @@
 		0C50B7D0299DF63C00A9FA3C /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C50B7CF299DF63C00A9FA3C /* UIDevice.swift */; };
 		0C54D36328C5086E00BFEEE2 /* History+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C54D36128C5086E00BFEEE2 /* History+CoreDataClass.swift */; };
 		0C54D36428C5086E00BFEEE2 /* History+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C54D36228C5086E00BFEEE2 /* History+CoreDataProperties.swift */; };
-		0C5708E929B8E61C00BE07F9 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5708E829B8E61C00BE07F9 /* Logger.swift */; };
 		0C5708EB29B8F89300BE07F9 /* SettingsLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5708EA29B8F89300BE07F9 /* SettingsLogView.swift */; };
 		0C572D4C2993FC2A003EEC05 /* ViewDidAppearHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4B2993FC2A003EEC05 /* ViewDidAppearHandler.swift */; };
 		0C572D4E299403B7003EEC05 /* ViewDidAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C572D4D299403B7003EEC05 /* ViewDidAppear.swift */; };
@@ -188,7 +187,6 @@
 		0C50B7CF299DF63C00A9FA3C /* UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
 		0C54D36128C5086E00BFEEE2 /* History+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C54D36228C5086E00BFEEE2 /* History+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		0C5708E829B8E61C00BE07F9 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		0C5708EA29B8F89300BE07F9 /* SettingsLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLogView.swift; sourceTree = "<group>"; };
 		0C572D4B2993FC2A003EEC05 /* ViewDidAppearHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidAppearHandler.swift; sourceTree = "<group>"; };
 		0C572D4D299403B7003EEC05 /* ViewDidAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDidAppear.swift; sourceTree = "<group>"; };
@@ -420,7 +418,6 @@
 			isa = PBXGroup;
 			children = (
 				0C44E2A728D4DDDC007711AE /* Application.swift */,
-				0C5708E829B8E61C00BE07F9 /* Logger.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -788,7 +785,6 @@
 				0C5005522992B6750064606A /* PluginTagsView.swift in Sources */,
 				0CB0AB5F29BD2A200015422C /* KodiServerView.swift in Sources */,
 				0CE66B3A28E640D200F69346 /* Backport.swift in Sources */,
-				0C5708E929B8E61C00BE07F9 /* Logger.swift in Sources */,
 				0C42B5962932F2D5008057A0 /* DebridPickerView.swift in Sources */,
 				0C2886D72960C50900D6FC16 /* RealDebridCloudView.swift in Sources */,
 				0C3DD44229B6ACD9006429DB /* KodiServer+CoreDataClass.swift in Sources */,

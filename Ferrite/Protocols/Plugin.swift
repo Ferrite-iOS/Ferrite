@@ -28,8 +28,8 @@ extension Plugin {
 public protocol PluginJson: Hashable {
     var name: String { get }
     var version: Int16 { get }
-    var author: String? { get set }
-    var listId: UUID? { get set }
-    var tags: [PluginTagJson]? { get set }
+    var author: String? { get }
+    var listId: UUID? { get }
+    var tags: [PluginTagJson]? { get }
     func getTags() -> [PluginTagJson]
 }

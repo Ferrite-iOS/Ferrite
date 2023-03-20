@@ -24,9 +24,9 @@ public struct SourceJson: Codable, Hashable, Sendable, PluginJson {
     let jsonParser: SourceJsonParserJson?
     let rssParser: SourceRssParserJson?
     let htmlParser: SourceHtmlParserJson?
-    public var author: String?
-    public var listId: UUID?
-    public var tags: [PluginTagJson]?
+    public let author: String?
+    public let listId: UUID?
+    public let tags: [PluginTagJson]?
 }
 
 public extension SourceJson {

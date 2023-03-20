@@ -52,7 +52,7 @@ class LoggingManager: ObservableObject {
 
     @Published var showToast: Bool = false
     // Default the toast type to error since the majority of toasts are errors
-    @Published var toastType: Logger.LogLevel = .error
+    @Published var toastType: LogLevel = .error
     var showErrorToasts: Bool {
         UserDefaults.standard.bool(forKey: "Debug.ShowErrorToasts")
     }
