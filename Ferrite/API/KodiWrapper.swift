@@ -11,20 +11,19 @@ public class Kodi {
     let encoder = JSONEncoder()
 
     // Used to add server to CoreData. Not part of API
-    public func addServer(
-        urlString: String,
-        friendlyName: String?,
-        username: String?,
-        password: String?,
-        existingServer: KodiServer? = nil
-    ) throws {
+    public func addServer(urlString: String,
+                          friendlyName: String?,
+                          username: String?,
+                          password: String?,
+                          existingServer: KodiServer? = nil) throws
+    {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        if !urlString.starts(with: "http://") && !urlString.starts(with: "https://") {
+        if !urlString.starts(with: "http://"), !urlString.starts(with: "https://") {
             throw KodiError.ServerAddition(description: "Could not add Kodi server because the URL is invalid.")
         }
 
-        var name: String = ""
+        var name = ""
         if let friendlyName {
             name = friendlyName
         } else {

@@ -13,18 +13,18 @@ struct PluginsView: View {
     @EnvironmentObject var navModel: NavigationViewModel
 
     /*
-    @FetchRequest(
-        entity: Source.entity(),
-        sortDescriptors: []
-    ) var sources: FetchedResults<Source>
-     */
+     @FetchRequest(
+         entity: Source.entity(),
+         sortDescriptors: []
+     ) var sources: FetchedResults<Source>
+      */
 
     /*
-    @FetchRequest(
-        entity: Action.entity(),
-        sortDescriptors: []
-    ) var actions: FetchedResults<Action>
-     */
+     @FetchRequest(
+         entity: Action.entity(),
+         sortDescriptors: []
+     ) var actions: FetchedResults<Action>
+      */
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 

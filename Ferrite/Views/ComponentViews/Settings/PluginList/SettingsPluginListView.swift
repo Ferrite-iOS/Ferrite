@@ -28,10 +28,10 @@ struct SettingsPluginListView: View {
                     ForEach(pluginLists, id: \.self) { pluginList in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(pluginList.name)
-                            
+
                             Group {
                                 Text(pluginList.author)
-                                
+
                                 Text("ID: \(pluginList.id)")
                                     .font(.caption)
                             }
@@ -46,7 +46,7 @@ struct SettingsPluginListView: View {
                                 Text("Edit")
                                 Image(systemName: "pencil")
                             }
-                            
+
                             if #available(iOS 15.0, *) {
                                 Button(role: .destructive) {
                                     PersistenceController.shared.delete(pluginList, context: backgroundContext)

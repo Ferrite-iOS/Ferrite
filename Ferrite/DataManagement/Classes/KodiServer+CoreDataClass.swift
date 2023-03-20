@@ -6,10 +6,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(KodiServer)
-public class KodiServer: NSManagedObject {
-
-}
+public class KodiServer: NSManagedObject {}

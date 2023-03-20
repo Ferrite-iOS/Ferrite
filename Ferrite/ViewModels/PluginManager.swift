@@ -188,8 +188,8 @@ public class PluginManager: ObservableObject {
             .filter { availablePlugin in
                 let pluginExists = installedPlugins.contains(where: {
                     availablePlugin.name == $0.name &&
-                    availablePlugin.listId == $0.listId &&
-                    availablePlugin.author == $0.author
+                        availablePlugin.listId == $0.listId &&
+                        availablePlugin.author == $0.author
                 })
 
                 if searchText.isEmpty {
@@ -210,10 +210,10 @@ public class PluginManager: ObservableObject {
         for plugin in installedPlugins {
             if let availablePlugin = availablePlugins.first(where: {
                 plugin.listId == $0.listId &&
-                plugin.name == $0.name &&
-                plugin.author == $0.author
+                    plugin.name == $0.name &&
+                    plugin.author == $0.author
             }),
-               availablePlugin.version > plugin.version
+                availablePlugin.version > plugin.version
             {
                 updatedPlugins.append(availablePlugin)
             }
@@ -277,8 +277,8 @@ public class PluginManager: ObservableObject {
                 UserDefaults.standard.set(nil, forKey: "Action.DefaultDebridList")
 
                 actionErrorAlertMessage =
-                "The default action could not be run. The action choice sheet has been opened. \n\n" +
-                "Please check your default actions in Settings"
+                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                    "Please check your default actions in Settings"
                 showActionErrorAlert.toggle()
             }
         } else {
@@ -306,8 +306,8 @@ public class PluginManager: ObservableObject {
                 UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetList")
 
                 actionErrorAlertMessage =
-                "The default action could not be run. The action choice sheet has been opened. \n\n" +
-                "Please check your default actions in Settings"
+                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                    "Please check your default actions in Settings"
                 showActionErrorAlert.toggle()
             }
         } else {
@@ -321,9 +321,9 @@ public class PluginManager: ObservableObject {
         guard let deeplink = action.deeplink, let urlString else {
             actionErrorAlertMessage = "Could not run action: \(action.name) since there is no deeplink to execute. Contact the action dev!"
             showActionErrorAlert.toggle()
-            
+
             logManager?.error("Could not run action: \(action.name) since there is no deeplink to execute.")
-            
+
             return
         }
 
@@ -334,7 +334,7 @@ public class PluginManager: ObservableObject {
         } else {
             actionErrorAlertMessage = "Could not run action: \(action.name) because the created deeplink was invalid. Contact the action dev!"
             showActionErrorAlert.toggle()
-            
+
             logManager?.error("Could not run action: \(action.name) because the created deeplink (\(String(describing: playbackUrl))) was invalid")
         }
     }
@@ -360,7 +360,7 @@ public class PluginManager: ObservableObject {
         } catch {
             actionErrorAlertMessage = "Kodi Error: \(error)"
             showActionErrorAlert.toggle()
-            
+
             logManager?.error("Kodi action: \(error)")
         }
     }

@@ -17,16 +17,15 @@ public struct ActionJson: Codable, Hashable, PluginJson {
     public let listId: UUID?
     public let tags: [PluginTagJson]?
 
-    public init(
-        name: String,
-        version: Int16,
-        minVersion: String?,
-        requires: [ActionRequirement],
-        deeplink: [DeeplinkActionJson]?,
-        author: String?,
-        listId: UUID?,
-        tags: [PluginTagJson]?
-    ) {
+    public init(name: String,
+                version: Int16,
+                minVersion: String?,
+                requires: [ActionRequirement],
+                deeplink: [DeeplinkActionJson]?,
+                author: String?,
+                listId: UUID?,
+                tags: [PluginTagJson]?)
+    {
         self.name = name
         self.version = version
         self.minVersion = minVersion
@@ -39,20 +38,20 @@ public struct ActionJson: Codable, Hashable, PluginJson {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try container.decode(String.self, forKey: .name)
-        self.version = try container.decode(Int16.self, forKey: .version)
-        self.minVersion = try container.decodeIfPresent(String.self, forKey: .minVersion)
-        self.requires = try container.decode([ActionRequirement].self, forKey: .requires)
-        self.author = try container.decodeIfPresent(String.self, forKey: .author)
-        self.listId = try container.decodeIfPresent(UUID.self, forKey: .listId)
-        self.tags = try container.decodeIfPresent([PluginTagJson].self, forKey: .tags)
+        name = try container.decode(String.self, forKey: .name)
+        version = try container.decode(Int16.self, forKey: .version)
+        minVersion = try container.decodeIfPresent(String.self, forKey: .minVersion)
+        requires = try container.decode([ActionRequirement].self, forKey: .requires)
+        author = try container.decodeIfPresent(String.self, forKey: .author)
+        listId = try container.decodeIfPresent(UUID.self, forKey: .listId)
+        tags = try container.decodeIfPresent([PluginTagJson].self, forKey: .tags)
 
         if let deeplinkString = try? container.decode(String.self, forKey: .deeplink) {
-            self.deeplink = [DeeplinkActionJson(os: [], scheme: deeplinkString)]
+            deeplink = [DeeplinkActionJson(os: [], scheme: deeplinkString)]
         } else if let deeplinkAction = try? container.decode([DeeplinkActionJson].self, forKey: .deeplink) {
-            self.deeplink = deeplinkAction
+            deeplink = deeplinkAction
         } else {
-            self.deeplink = nil
+            deeplink = nil
         }
     }
 }
@@ -74,10 +73,10 @@ public struct DeeplinkActionJson: Codable, Hashable {
         } else if let os = try? container.decode([String].self, forKey: .os) {
             self.os = os
         } else {
-            self.os = []
+            os = []
         }
 
-        self.scheme = try container.decode(String.self, forKey: .scheme)
+        scheme = try container.decode(String.self, forKey: .scheme)
     }
 }
 

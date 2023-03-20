@@ -67,6 +67,7 @@ class LoggingManager: ObservableObject {
     }
 
     // MARK: - Logging functions
+
     // TODO: Maybe append to a constant logfile?
 
     public func info(_ message: String,
@@ -168,7 +169,7 @@ class LoggingManager: ObservableObject {
 
             try joinedMessages.write(to: logPath, atomically: true, encoding: .utf8)
 
-            self.info("Log \(logFileName) was written to path \(logPath.description)")
+            info("Log \(logFileName) was written to path \(logPath.description)")
             showLogExportedAlert.toggle()
         } catch {
             self.error(

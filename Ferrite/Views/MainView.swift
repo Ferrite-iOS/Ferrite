@@ -78,6 +78,7 @@ struct MainView: View {
                 Application.shared.osVersion.majorVersion >= Application.shared.minVersion.majorVersion
             {
                 // MARK: If scope bar duplication happens, this may be the problem
+
                 logManager.info("Ferrite started")
 
                 viewTask = Task {

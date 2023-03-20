@@ -6,23 +6,18 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-
-extension KodiServer {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<KodiServer> {
-        return NSFetchRequest<KodiServer>(entityName: "KodiServer")
+public extension KodiServer {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<KodiServer> {
+        NSFetchRequest<KodiServer>(entityName: "KodiServer")
     }
 
-    @NSManaged public var urlString: String
-    @NSManaged public var name: String
-    @NSManaged public var username: String?
-    @NSManaged public var password: String?
-
+    @NSManaged var urlString: String
+    @NSManaged var name: String
+    @NSManaged var username: String?
+    @NSManaged var password: String?
 }
 
-extension KodiServer : Identifiable {
-
-}
+extension KodiServer: Identifiable {}
