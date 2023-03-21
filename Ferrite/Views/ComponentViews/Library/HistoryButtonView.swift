@@ -24,7 +24,7 @@ struct HistoryButtonView: View {
                 if url.starts(with: "https://") {
                     Task {
                         debridManager.downloadUrl = url
-                        pluginManager.runDebridAction(
+                        pluginManager.runDefaultAction(
                             urlString: url,
                             navModel: navModel
                         )
@@ -34,7 +34,7 @@ struct HistoryButtonView: View {
                         }
                     }
                 } else {
-                    pluginManager.runMagnetAction(
+                    pluginManager.runDefaultAction(
                         urlString: url,
                         navModel: navModel
                     )

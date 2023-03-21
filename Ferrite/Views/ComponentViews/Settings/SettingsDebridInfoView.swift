@@ -44,6 +44,7 @@ struct SettingsDebridInfoView: View {
                 }
             }
         }
+        .listStyle(.insetGrouped)
         .navigationTitle(debridType.toString())
         .navigationBarTitleDisplayMode(.inline)
     }

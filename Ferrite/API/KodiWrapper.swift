@@ -94,27 +94,21 @@ public class Kodi {
         }
     }
 
-    public func sendVideoUrl(urlString: String) async throws {
-        guard let baseUrl = UserDefaults.standard.string(forKey: "ExternalServices.KodiUrl") else {
-            throw KodiError.InvalidBaseUrl
-        }
-
+    public func sendVideoUrl(urlString: String, server: KodiServer) async throws {
         if URL(string: urlString) == nil {
             throw KodiError.InvalidPlaybackUrl
         }
-        let username = UserDefaults.standard.string(forKey: "ExternalServices.KodiUsername")
-        let password = UserDefaults.standard.string(forKey: "ExternalServices.KodiPassword")
 
         let requestBody = RPCPayload(
             method: "Player.Open",
             params: Params(item: Item(file: urlString))
         )
 
-        var request = URLRequest(url: URL(string: "\(baseUrl)/jsonrpc")!)
+        var request = URLRequest(url: URL(string: "\(server.urlString)/jsonrpc")!)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        if let username, let password {
+        if let username = server.username, let password = server.password {
             request.setValue("Basic \(Data("\(username):\(password)".utf8).base64EncodedString())", forHTTPHeaderField: "Authorization")
         }
 

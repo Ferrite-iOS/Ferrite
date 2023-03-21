@@ -43,7 +43,7 @@ struct SearchResultButtonView: View {
                                     performSave: true
                                 )
 
-                                pluginManager.runDebridAction(
+                                pluginManager.runDefaultAction(
                                     urlString: debridManager.downloadUrl,
                                     navModel: navModel
                                 )
@@ -72,7 +72,7 @@ struct SearchResultButtonView: View {
                         performSave: true
                     )
 
-                    pluginManager.runMagnetAction(
+                    pluginManager.runDefaultAction(
                         urlString: result.magnet.link,
                         navModel: navModel
                     )

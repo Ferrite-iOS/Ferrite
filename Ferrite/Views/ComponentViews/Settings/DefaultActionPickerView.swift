@@ -11,8 +11,8 @@ struct DefaultActionPickerView: View {
     @EnvironmentObject var logManager: LoggingManager
 
     let actionRequirement: ActionRequirement
-    @Binding var defaultActionName: String?
-    @Binding var defaultActionList: String?
+
+    @Binding var defaultAction: DefaultAction
 
     @FetchRequest(
         entity: Action.entity(),
@@ -24,19 +24,25 @@ struct DefaultActionPickerView: View {
         sortDescriptors: []
     ) var pluginLists: FetchedResults<PluginList>
 
+    @FetchRequest(
+        entity: KodiServer.entity(),
+        sortDescriptors: []
+    ) var kodiServers: FetchedResults<KodiServer>
+
     var body: some View {
         List {
-            UserChoiceButton(
-                defaultActionName: $defaultActionName,
-                defaultActionList: $defaultActionList,
-                pluginLists: pluginLists
-            )
+            DefaultChoiceButton(defaultAction: $defaultAction, selectedOption: .none)
+            DefaultChoiceButton(defaultAction: $defaultAction, selectedOption: .share)
 
+            if actionRequirement == .debrid && !kodiServers.isEmpty {
+                DefaultChoiceButton(defaultAction: $defaultAction, selectedOption: .kodi)
+            }
+
+            // Handle custom here
             ForEach(actions.filter { $0.requires.contains(actionRequirement.rawValue) }, id: \.id) { action in
                 Button {
                     if let actionListId = action.listId?.uuidString {
-                        defaultActionName = action.name
-                        defaultActionList = actionListId
+                        defaultAction = .custom(name: action.name, listId: actionListId)
                     } else {
                         logManager.error(
                             "Default action: This action doesn't have a corresponding plugin list! Please uninstall the action"
@@ -63,9 +69,9 @@ struct DefaultActionPickerView: View {
                         Spacer()
 
                         if
-                            let defaultActionList,
-                            action.listId?.uuidString == defaultActionList,
-                            action.name == defaultActionName
+                            case let .custom(name, listId) = defaultAction,
+                            action.listId?.uuidString == listId,
+                            action.name == name
                         {
                             Image(systemName: "checkmark")
                                 .foregroundColor(.blue)
@@ -77,33 +83,43 @@ struct DefaultActionPickerView: View {
         }
         .listStyle(.insetGrouped)
         .inlinedList(inset: -20)
-        .navigationTitle("Default \(actionRequirement == .debrid ? "debrid" : "magnet") action")
+        .navigationTitle("Default \(actionRequirement == .debrid ? "Debrid" : "Magnet") Action")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-private struct UserChoiceButton: View {
-    @Binding var defaultActionName: String?
-    @Binding var defaultActionList: String?
-    var pluginLists: FetchedResults<PluginList>
+private struct DefaultChoiceButton: View {
+    @Binding var defaultAction: DefaultAction
+    let selectedOption: DefaultAction
 
     var body: some View {
         Button {
-            defaultActionName = nil
-            defaultActionList = nil
+            defaultAction = selectedOption
         } label: {
             HStack {
-                Text("Let me choose")
+                Text(fetchButtonName())
                 Spacer()
 
-                // Force "Let me choose" if the name OR list ID is nil
-                // Prevents any mismatches
-                if defaultActionName == nil || pluginLists.contains(where: { $0.id.uuidString == defaultActionList }) {
+                if defaultAction == selectedOption {
                     Image(systemName: "checkmark")
                         .foregroundColor(.blue)
                 }
             }
         }
         .backport.tint(.primary)
+    }
+
+    func fetchButtonName() -> String {
+        switch selectedOption {
+        case .none:
+            return "Let me choose"
+        case .share:
+            return "Share link"
+        case .kodi:
+            return "Open in Kodi"
+        case .custom(_, _):
+            // This should not be called
+            return "Custom button"
+        }
     }
 }

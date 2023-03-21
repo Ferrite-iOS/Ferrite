@@ -15,6 +15,7 @@ struct ContentView: View {
     @EnvironmentObject var pluginManager: PluginManager
     @EnvironmentObject var logManager: LoggingManager
 
+    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch: Bool = false
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
 
     @State private var isEditingSearch = false
@@ -109,6 +110,11 @@ struct ContentView: View {
                     searchText = ""
                     searchBarText = getSearchBarText()
                 }
+            }
+            .autocorrectionDisabled(!autocorrectSearch)
+            .backport.introspectSearchController { searchController in
+                // TODO: Replace with SwiftUI autocapitalization modifier
+                searchController.searchBar.autocapitalizationType = .none
             }
             .navigationSearchBarHiddenWhenScrolling(false)
             .customScopeBar {

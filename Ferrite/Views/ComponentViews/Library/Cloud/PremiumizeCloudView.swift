@@ -39,7 +39,7 @@ struct PremiumizeCloudView: View {
                                 performSave: true
                             )
 
-                            pluginManager.runDebridAction(
+                            pluginManager.runDefaultAction(
                                 urlString: debridManager.downloadUrl,
                                 navModel: navModel
                             )

@@ -258,57 +258,51 @@ public class PluginManager: ObservableObject {
     }
 
     @MainActor
-    public func runDebridAction(urlString: String?, navModel: NavigationViewModel) {
+    public func runDefaultAction(urlString: String?, navModel: NavigationViewModel) {
         let context = PersistenceController.shared.backgroundContext
 
-        if
-            let defaultDebridActionName = UserDefaults.standard.string(forKey: "Actions.DefaultDebridName"),
-            let defaultDebridActionList = UserDefaults.standard.string(forKey: "Actions.DefaultDebridList")
-        {
-            let actionFetchRequest = Action.fetchRequest()
-            actionFetchRequest.fetchLimit = 1
-            actionFetchRequest.predicate = NSPredicate(format: "name == %@ AND listId == %@", defaultDebridActionName, defaultDebridActionList)
-
-            if let fetchedAction = try? context.fetch(actionFetchRequest).first {
-                runDeeplinkAction(fetchedAction, urlString: urlString)
-            } else {
-                navModel.currentChoiceSheet = .action
-                UserDefaults.standard.set(nil, forKey: "Actions.DefaultDebridName")
-                UserDefaults.standard.set(nil, forKey: "Action.DefaultDebridList")
-
-                actionErrorAlertMessage =
-                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
-                    "Please check your default actions in Settings"
-                showActionErrorAlert.toggle()
-            }
-        } else {
-            navModel.currentChoiceSheet = .action
+        guard let urlString else {
+            logManager?.error("Default action: Could not run because the URL is invalid")
+            return
         }
-    }
 
-    @MainActor
-    public func runMagnetAction(urlString: String?, navModel: NavigationViewModel) {
-        let context = PersistenceController.shared.backgroundContext
+        let defaultsKey: String
+        // Assume this is a magnet link
+        if urlString.starts(with: "magnet") {
+            defaultsKey = "Actions.DefaultMagnet"
+        } else {
+            defaultsKey = "Actions.DefaultDebrid"
+        }
 
         if
-            let defaultMagnetActionName = UserDefaults.standard.string(forKey: "Actions.DefaultMagnetName"),
-            let defaultMagnetActionList = UserDefaults.standard.string(forKey: "Actions.DefaultMagnetList")
+            let rawValue = UserDefaults.standard.string(forKey: defaultsKey),
+            let defaultAction = CodableWrapper<DefaultAction>(rawValue: rawValue)?.value
         {
-            let actionFetchRequest = Action.fetchRequest()
-            actionFetchRequest.fetchLimit = 1
-            actionFetchRequest.predicate = NSPredicate(format: "name == %@ AND listId == %@", defaultMagnetActionName, defaultMagnetActionList)
-
-            if let fetchedAction = try? context.fetch(actionFetchRequest).first {
-                runDeeplinkAction(fetchedAction, urlString: urlString)
-            } else {
+            switch defaultAction {
+            case .none:
                 navModel.currentChoiceSheet = .action
-                UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetName")
-                UserDefaults.standard.set(nil, forKey: "Actions.DefaultMagnetList")
+            case .share:
+                navModel.activityItems = [urlString]
+                navModel.currentChoiceSheet = .activity
+            case .kodi:
+                navModel.kodiExpanded = true
+                navModel.currentChoiceSheet = .action
+            case .custom(let name, let listId):
+                let actionFetchRequest = Action.fetchRequest()
+                actionFetchRequest.fetchLimit = 1
+                actionFetchRequest.predicate = NSPredicate(format: "name == %@ AND listId == %@", name, listId)
 
-                actionErrorAlertMessage =
-                    "The default action could not be run. The action choice sheet has been opened. \n\n" +
-                    "Please check your default actions in Settings"
-                showActionErrorAlert.toggle()
+                if let fetchedAction = try? context.fetch(actionFetchRequest).first {
+                    runDeeplinkAction(fetchedAction, urlString: urlString)
+                } else {
+                    navModel.currentChoiceSheet = .action
+                    UserDefaults.standard.set(CodableWrapper<DefaultAction>(value: .none).rawValue, forKey: "Actions.DefaultDebrid")
+
+                    actionErrorAlertMessage =
+                        "The default action could not be run. The action choice sheet has been opened. \n\n" +
+                        "Please check your default actions in Settings"
+                    showActionErrorAlert.toggle()
+                }
             }
         } else {
             navModel.currentChoiceSheet = .action
@@ -340,7 +334,7 @@ public class PluginManager: ObservableObject {
     }
 
     @MainActor
-    public func sendToKodi(urlString: String?) async {
+    public func sendToKodi(urlString: String?, server: KodiServer) async {
         guard let urlString else {
             actionErrorAlertMessage = "Could not send URL to Kodi since there is no playback URL to send"
             showActionErrorAlert.toggle()
@@ -351,7 +345,7 @@ public class PluginManager: ObservableObject {
         }
 
         do {
-            try await kodi.sendVideoUrl(urlString: urlString)
+            try await kodi.sendVideoUrl(urlString: urlString, server: server)
 
             actionSuccessAlertMessage = "Your URL should be playing on Kodi"
             showActionSuccessAlert.toggle()

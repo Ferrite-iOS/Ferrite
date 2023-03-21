@@ -48,7 +48,7 @@ public class NavigationViewModel: ObservableObject {
     @Published var selectedTitle: String = ""
     @Published var selectedBatchTitle: String = ""
 
-    @Published var hideNavigationBar = false
+    @Published var kodiExpanded: Bool = false
 
     @Published var currentChoiceSheet: ChoiceSheetType?
     var activityItems: [Any] = []

@@ -39,7 +39,7 @@ struct AllDebridCloudView: View {
                                     if !debridManager.downloadUrl.isEmpty {
                                         historyInfo.url = debridManager.downloadUrl
                                         PersistenceController.shared.createHistory(historyInfo, performSave: true)
-                                        pluginManager.runDebridAction(
+                                        pluginManager.runDefaultAction(
                                             urlString: debridManager.downloadUrl,
                                             navModel: navModel
                                         )

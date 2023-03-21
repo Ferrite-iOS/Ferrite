@@ -80,6 +80,7 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
             .onChange(of: installedPlugins.count) { newCount in
                 pluginsEmpty = newCount == 0
             }
+            .id(UUID())
         }
     }
 }

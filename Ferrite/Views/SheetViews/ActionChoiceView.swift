@@ -57,11 +57,11 @@ struct ActionChoiceView: View {
                         }
 
                         if !kodiServers.isEmpty {
-                            DisclosureGroup("Open in Kodi") {
+                            DisclosureGroup("Open in Kodi", isExpanded: $navModel.kodiExpanded) {
                                 ForEach(kodiServers, id: \.self) { server in
                                     Button {
                                         Task {
-                                            await pluginManager.sendToKodi(urlString: debridManager.downloadUrl)
+                                            await pluginManager.sendToKodi(urlString: debridManager.downloadUrl, server: server)
                                         }
                                     } label: {
                                         KodiServerView(server: server)

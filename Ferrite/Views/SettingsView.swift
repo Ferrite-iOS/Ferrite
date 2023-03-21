@@ -27,14 +27,12 @@ struct SettingsView: View {
 
     @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
 
-    @AppStorage("Actions.DefaultDebridName") var defaultDebridActionName: String?
-    @AppStorage("Actions.DefaultDebridList") var defaultDebridActionList: String?
-
-    @AppStorage("Actions.DefaultMagnetName") var defaultMagnetActionName: String?
-    @AppStorage("Actions.DefaultMagnetList") var defaultMagnetActionList: String?
+    @AppStorage("Actions.DefaultMagnet") var defaultMagnetAction: CodableWrapper<DefaultAction> = .init(value: .none)
+    @AppStorage("Actions.DefaultDebrid") var defaultDebridAction: CodableWrapper<DefaultAction> = .init(value: .none)
 
     @AppStorage("Debug.ShowErrorToasts") var showErrorToasts = true
 
+    
     var body: some View {
         NavView {
             Form {
@@ -85,17 +83,26 @@ struct SettingsView: View {
                         NavigationLink(
                             destination: DefaultActionPickerView(
                                 actionRequirement: .debrid,
-                                defaultActionName: $defaultDebridActionName,
-                                defaultActionList: $defaultDebridActionList
+                                defaultAction: $defaultDebridAction.value
                             ),
                             label: {
                                 HStack {
                                     Text("Debrid action")
                                     Spacer()
 
-                                    // TODO: Maybe make this check for nil list as well?
-                                    Text(defaultDebridActionName.map { $0 } ?? "User choice")
-                                        .foregroundColor(.secondary)
+                                    Group {
+                                        switch defaultDebridAction.value {
+                                        case .none:
+                                            Text("User choice")
+                                        case .share:
+                                            Text("Share")
+                                        case .kodi:
+                                            Text("Kodi")
+                                        case .custom(let name, _):
+                                            Text(name)
+                                        }
+                                    }
+                                    .foregroundColor(.secondary)
                                 }
                             }
                         )
@@ -104,17 +111,26 @@ struct SettingsView: View {
                     NavigationLink(
                         destination: DefaultActionPickerView(
                             actionRequirement: .magnet,
-                            defaultActionName: $defaultMagnetActionName,
-                            defaultActionList: $defaultMagnetActionList
+                            defaultAction: $defaultMagnetAction.value
                         ),
                         label: {
                             HStack {
                                 Text("Magnet action")
                                 Spacer()
 
-                                // TODO: Maybe make this check for nil list as well?
-                                Text(defaultMagnetActionName.map { $0 } ?? "User choice")
-                                    .foregroundColor(.secondary)
+                                Group {
+                                    switch defaultMagnetAction.value {
+                                    case .none:
+                                        Text("User choice")
+                                    case .share:
+                                        Text("Share")
+                                    case .kodi:
+                                        Text("Kodi")
+                                    case .custom(let name, _):
+                                        Text(name)
+                                    }
+                                }
+                                .foregroundColor(.secondary)
                             }
                         }
                     )

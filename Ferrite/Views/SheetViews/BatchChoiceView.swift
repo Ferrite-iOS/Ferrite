@@ -84,7 +84,7 @@ struct BatchChoiceView: View {
                     PersistenceController.shared.createHistory(selectedHistoryInfo, performSave: true)
                 }
 
-                pluginManager.runDebridAction(
+                pluginManager.runDefaultAction(
                     urlString: debridManager.downloadUrl,
                     navModel: navModel
                 )

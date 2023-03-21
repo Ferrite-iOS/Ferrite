@@ -36,7 +36,7 @@ struct RealDebridCloudView: View {
                             performSave: true
                         )
 
-                        pluginManager.runDebridAction(
+                        pluginManager.runDefaultAction(
                             urlString: debridManager.downloadUrl,
                             navModel: navModel
                         )
@@ -76,7 +76,7 @@ struct RealDebridCloudView: View {
                                             historyInfo.url = debridManager.downloadUrl
                                             PersistenceController.shared.createHistory(historyInfo, performSave: true)
 
-                                            pluginManager.runDebridAction(
+                                            pluginManager.runDefaultAction(
                                                 urlString: debridManager.downloadUrl,
                                                 navModel: navModel
                                             )

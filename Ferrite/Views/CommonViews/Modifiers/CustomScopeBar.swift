@@ -12,18 +12,10 @@ struct CustomScopeBarModifier<V: View>: ViewModifier {
     let hostingContent: V
     @State private var hostingController: UIHostingController<V>?
 
-    // Don't use AppStorage since it causes a view update
-    var autocorrectSearch: Bool {
-        UserDefaults.standard.bool(forKey: "Behavior.AutocorrectSearch")
-    }
-
     func body(content: Content) -> some View {
         if #available(iOS 15, *) {
             content
                 .backport.introspectSearchController { searchController in
-                    searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
-                    searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
-
                     // MARK: One-time setup
 
                     guard hostingController == nil else { return }
@@ -63,10 +55,6 @@ struct CustomScopeBarModifier<V: View>: ViewModifier {
                 hostingContent
                 content
                 Spacer()
-            }
-            .backport.introspectSearchController { searchController in
-                searchController.searchBar.autocorrectionType = autocorrectSearch ? .default : .no
-                searchController.searchBar.autocapitalizationType = autocorrectSearch ? .sentences : .none
             }
         }
     }

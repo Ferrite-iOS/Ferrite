@@ -16,6 +16,8 @@
 		0C0D50E7288DFF850035ECC8 /* PluginAggregateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */; };
 		0C10848B28BD9A38008F0BA6 /* SettingsAppVersionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */; };
 		0C12D43D28CC332A000195BF /* HistoryButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C12D43C28CC332A000195BF /* HistoryButtonView.swift */; };
+		0C1A3E5229C8A7F500DA9730 /* SettingsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1A3E5129C8A7F500DA9730 /* SettingsModels.swift */; };
+		0C1A3E5629C9488C00DA9730 /* CodableWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1A3E5529C9488C00DA9730 /* CodableWrapper.swift */; };
 		0C2886D22960AC2800D6FC16 /* DebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */; };
 		0C2886D72960C50900D6FC16 /* RealDebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */; };
 		0C2D9653299316CC00A504B6 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2D9652299316CC00A504B6 /* Tag.swift */; };
@@ -153,6 +155,8 @@
 		0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginAggregateView.swift; sourceTree = "<group>"; };
 		0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppVersionView.swift; sourceTree = "<group>"; };
 		0C12D43C28CC332A000195BF /* HistoryButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryButtonView.swift; sourceTree = "<group>"; };
+		0C1A3E5129C8A7F500DA9730 /* SettingsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModels.swift; sourceTree = "<group>"; };
+		0C1A3E5529C9488C00DA9730 /* CodableWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableWrapper.swift; sourceTree = "<group>"; };
 		0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridCloudView.swift; sourceTree = "<group>"; };
 		0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealDebridCloudView.swift; sourceTree = "<group>"; };
 		0C2D9652299316CC00A504B6 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
@@ -369,6 +373,7 @@
 				0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */,
 				0C3E00D7296F5B9A00ECECB2 /* PluginModels.swift */,
 				0C6771F929B3D1AE005D38D2 /* KodiModels.swift */,
+				0C1A3E5129C8A7F500DA9730 /* SettingsModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -414,12 +419,13 @@
 			path = Plugin;
 			sourceTree = "<group>";
 		};
-		0C44E2A628D4DDC6007711AE /* Classes */ = {
+		0C44E2A628D4DDC6007711AE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				0C44E2A728D4DDDC007711AE /* Application.swift */,
+				0C1A3E5529C9488C00DA9730 /* CodableWrapper.swift */,
 			);
-			path = Classes;
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		0C44E2A928D4DFC4007711AE /* Modifiers */ = {
@@ -494,7 +500,7 @@
 				0C0D50E3288DFE6E0035ECC8 /* Models */,
 				0CA148EF2889061600DE2211 /* ViewModels */,
 				0CA148EE2889061200DE2211 /* Views */,
-				0C44E2A628D4DDC6007711AE /* Classes */,
+				0C44E2A628D4DDC6007711AE /* Utils */,
 				0C5005552992B9C20064606A /* Protocols */,
 				0CA148C8288903F000DE2211 /* Extensions */,
 				0CA148C5288903F000DE2211 /* Preview Content */,
@@ -775,6 +781,7 @@
 				0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */,
 				0CA3FB2028B91D9500FA10A8 /* IndeterminateProgressView.swift in Sources */,
 				0C50055A2992BA6A0064606A /* PluginTag+CoreDataClass.swift in Sources */,
+				0C1A3E5229C8A7F500DA9730 /* SettingsModels.swift in Sources */,
 				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
 				0C0755C8293425B500ECA142 /* DebridManagerModels.swift in Sources */,
 				0C31133D28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift in Sources */,
@@ -828,6 +835,7 @@
 				0C68135028BC1A2D00FAD890 /* GithubWrapper.swift in Sources */,
 				0CA148E3288903F000DE2211 /* Task.swift in Sources */,
 				0CA148E7288903F000DE2211 /* LoggingManager.swift in Sources */,
+				0C1A3E5629C9488C00DA9730 /* CodableWrapper.swift in Sources */,
 				0C6771FC29B3E0DB005D38D2 /* HybridSecureField.swift in Sources */,
 				0C6C7C9D29315292002DF910 /* AllDebridModels.swift in Sources */,
 				0C6C7C9B2931521B002DF910 /* AllDebridWrapper.swift in Sources */,
