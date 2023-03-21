@@ -16,6 +16,7 @@ struct CustomScopeBarModifier<V: View>: ViewModifier {
         if #available(iOS 15, *) {
             content
                 .backport.introspectSearchController { searchController in
+
                     // MARK: One-time setup
 
                     guard hostingController == nil else { return }

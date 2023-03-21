@@ -34,7 +34,7 @@ struct DefaultActionPickerView: View {
             DefaultChoiceButton(defaultAction: $defaultAction, selectedOption: .none)
             DefaultChoiceButton(defaultAction: $defaultAction, selectedOption: .share)
 
-            if actionRequirement == .debrid && !kodiServers.isEmpty {
+            if actionRequirement == .debrid, !kodiServers.isEmpty {
                 DefaultChoiceButton(defaultAction: $defaultAction, selectedOption: .kodi)
             }
 
@@ -117,7 +117,7 @@ private struct DefaultChoiceButton: View {
             return "Share link"
         case .kodi:
             return "Open in Kodi"
-        case .custom(_, _):
+        case .custom:
             // This should not be called
             return "Custom button"
         }

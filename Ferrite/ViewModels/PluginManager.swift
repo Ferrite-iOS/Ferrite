@@ -287,7 +287,7 @@ public class PluginManager: ObservableObject {
             case .kodi:
                 navModel.kodiExpanded = true
                 navModel.currentChoiceSheet = .action
-            case .custom(let name, let listId):
+            case let .custom(name, listId):
                 let actionFetchRequest = Action.fetchRequest()
                 actionFetchRequest.fetchLimit = 1
                 actionFetchRequest.predicate = NSPredicate(format: "name == %@ AND listId == %@", name, listId)

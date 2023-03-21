@@ -11,7 +11,7 @@ enum DefaultAction: Codable, CaseIterable, Hashable {
     static var allCases: [DefaultAction] {
         [.none, .share, .kodi, .custom(name: "", listId: "")]
     }
-    
+
     case none
     case share
     case kodi

@@ -32,7 +32,6 @@ struct SettingsView: View {
 
     @AppStorage("Debug.ShowErrorToasts") var showErrorToasts = true
 
-    
     var body: some View {
         NavView {
             Form {
@@ -98,7 +97,7 @@ struct SettingsView: View {
                                             Text("Share")
                                         case .kodi:
                                             Text("Kodi")
-                                        case .custom(let name, _):
+                                        case let .custom(name, _):
                                             Text(name)
                                         }
                                     }
@@ -126,7 +125,7 @@ struct SettingsView: View {
                                         Text("Share")
                                     case .kodi:
                                         Text("Kodi")
-                                    case .custom(let name, _):
+                                    case let .custom(name, _):
                                         Text(name)
                                     }
                                 }
