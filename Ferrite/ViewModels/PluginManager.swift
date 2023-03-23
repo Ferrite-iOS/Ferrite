@@ -122,6 +122,7 @@ public class PluginManager: ObservableObject {
                         htmlParser: inputJson.htmlParser,
                         author: pluginList.author,
                         listId: pluginList.id,
+                        listName: pluginList.name,
                         tags: inputJson.tags
                     )
                 } else {
@@ -145,6 +146,7 @@ public class PluginManager: ObservableObject {
                         deeplink: filteredDeeplinks,
                         author: pluginList.author,
                         listId: pluginList.id,
+                        listName: pluginList.name,
                         tags: inputJson.tags
                     )
                 } else {

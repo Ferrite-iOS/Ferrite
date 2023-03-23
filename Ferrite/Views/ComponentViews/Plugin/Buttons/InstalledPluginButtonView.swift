@@ -24,7 +24,7 @@ struct InstalledPluginButtonView<P: Plugin>: View {
         )) {
             VStack(alignment: .leading) {
                 VStack(alignment: .leading, spacing: 5) {
-                    HStack {
+                    HStack(spacing: 5) {
                         Text(installedPlugin.name)
                         Text("v\(installedPlugin.version)")
                             .foregroundColor(.secondary)
@@ -32,6 +32,7 @@ struct InstalledPluginButtonView<P: Plugin>: View {
 
                     Text("by \(installedPlugin.author)")
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
                 }
 
                 if let tags = installedPlugin.getTags(), !tags.isEmpty {

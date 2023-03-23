@@ -15,6 +15,7 @@ public struct ActionJson: Codable, Hashable, PluginJson {
     let deeplink: [DeeplinkActionJson]?
     public let author: String?
     public let listId: UUID?
+    public let listName: String?
     public let tags: [PluginTagJson]?
 
     public init(name: String,
@@ -24,6 +25,7 @@ public struct ActionJson: Codable, Hashable, PluginJson {
                 deeplink: [DeeplinkActionJson]?,
                 author: String?,
                 listId: UUID?,
+                listName: String?,
                 tags: [PluginTagJson]?)
     {
         self.name = name
@@ -33,6 +35,7 @@ public struct ActionJson: Codable, Hashable, PluginJson {
         self.deeplink = deeplink
         self.author = author
         self.listId = listId
+        self.listName = listName
         self.tags = tags
     }
 
@@ -43,7 +46,8 @@ public struct ActionJson: Codable, Hashable, PluginJson {
         minVersion = try container.decodeIfPresent(String.self, forKey: .minVersion)
         requires = try container.decode([ActionRequirement].self, forKey: .requires)
         author = try container.decodeIfPresent(String.self, forKey: .author)
-        listId = try container.decodeIfPresent(UUID.self, forKey: .listId)
+        listId = nil
+        listName = nil
         tags = try container.decodeIfPresent([PluginTagJson].self, forKey: .tags)
 
         if let deeplinkString = try? container.decode(String.self, forKey: .deeplink) {

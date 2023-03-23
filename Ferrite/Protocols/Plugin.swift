@@ -30,6 +30,7 @@ public protocol PluginJson: Hashable {
     var version: Int16 { get }
     var author: String? { get }
     var listId: UUID? { get }
+    var listName: String? { get }
     var tags: [PluginTagJson]? { get }
     func getTags() -> [PluginTagJson]
 }

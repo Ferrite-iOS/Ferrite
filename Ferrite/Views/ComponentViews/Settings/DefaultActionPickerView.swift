@@ -65,6 +65,7 @@ struct DefaultActionPickerView: View {
                                 }
                             }
                             .foregroundColor(.secondary)
+                            .lineLimit(1)
                         }
                         Spacer()
 

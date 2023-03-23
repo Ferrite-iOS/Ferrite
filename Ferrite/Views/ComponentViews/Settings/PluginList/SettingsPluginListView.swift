@@ -36,6 +36,7 @@ struct SettingsPluginListView: View {
                                     .font(.caption)
                             }
                             .foregroundColor(.secondary)
+                            .lineLimit(1)
                         }
                         .padding(.vertical, 2)
                         .contextMenu {
