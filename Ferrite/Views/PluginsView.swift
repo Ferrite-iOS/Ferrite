@@ -12,20 +12,6 @@ struct PluginsView: View {
     @EnvironmentObject var pluginManager: PluginManager
     @EnvironmentObject var navModel: NavigationViewModel
 
-    /*
-     @FetchRequest(
-         entity: Source.entity(),
-         sortDescriptors: []
-     ) var sources: FetchedResults<Source>
-      */
-
-    /*
-     @FetchRequest(
-         entity: Action.entity(),
-         sortDescriptors: []
-     ) var actions: FetchedResults<Action>
-      */
-
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
     @State private var installedSourcesEmpty = false

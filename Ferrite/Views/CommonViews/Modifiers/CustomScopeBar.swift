@@ -9,7 +9,7 @@ import Introspect
 import SwiftUI
 
 struct CustomScopeBarModifier<V: View>: ViewModifier {
-    let hostingContent: V
+    let scopeBarContent: V
     @State private var hostingController: UIHostingController<V>?
 
     func body(content: Content) -> some View {
@@ -26,7 +26,7 @@ struct CustomScopeBarModifier<V: View>: ViewModifier {
                     searchController.searchBar.scopeButtonTitles = [""]
                     (searchController.searchBar.value(forKey: "_scopeBar") as? UIView)?.isHidden = true
 
-                    let hostingController = UIHostingController(rootView: hostingContent)
+                    let hostingController = UIHostingController(rootView: scopeBarContent)
                     hostingController.view.translatesAutoresizingMaskIntoConstraints = false
                     hostingController.view.backgroundColor = .clear
 
@@ -53,7 +53,7 @@ struct CustomScopeBarModifier<V: View>: ViewModifier {
                 }
         } else {
             VStack {
-                hostingContent
+                scopeBarContent
                 content
                 Spacer()
             }

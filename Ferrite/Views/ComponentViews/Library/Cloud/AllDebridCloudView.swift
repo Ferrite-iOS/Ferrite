@@ -84,13 +84,5 @@ struct AllDebridCloudView: View {
                 }
             }
         }
-        .backport.onAppear {
-            viewTask = Task {
-                await debridManager.fetchAdCloud()
-            }
-        }
-        .onDisappear {
-            viewTask?.cancel()
-        }
     }
 }

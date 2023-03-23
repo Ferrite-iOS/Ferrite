@@ -526,6 +526,19 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    public func fetchDebridCloud() async {
+        switch selectedDebridType {
+        case .realDebrid:
+            await fetchRdCloud()
+        case .allDebrid:
+            await fetchAdCloud()
+        case .premiumize:
+            await fetchPmCloud()
+        case .none:
+            return
+        }
+    }
+
     func fetchRdDownload(magnet: Magnet?, existingLink: String?) async {
         // If an existing link is passed in args, set it to that. Otherwise, find one from RD cloud.
         let torrentLink: String?

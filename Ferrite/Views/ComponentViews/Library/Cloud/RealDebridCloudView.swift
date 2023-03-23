@@ -124,13 +124,5 @@ struct RealDebridCloudView: View {
                 }
             }
         }
-        .backport.onAppear {
-            viewTask = Task {
-                await debridManager.fetchRdCloud()
-            }
-        }
-        .onDisappear {
-            viewTask?.cancel()
-        }
     }
 }

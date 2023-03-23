@@ -12,6 +12,8 @@ struct DebridCloudView: View {
 
     @Binding var searchText: String
 
+    @State private var viewTask: Task<Void, Never>?
+
     var body: some View {
         List {
             switch debridManager.selectedDebridType {
@@ -26,5 +28,22 @@ struct DebridCloudView: View {
             }
         }
         .listStyle(.plain)
+        .backport.onAppear {
+            viewTask = Task {
+                await debridManager.fetchDebridCloud()
+            }
+        }
+        .onDisappear {
+            viewTask?.cancel()
+        }
+        .onChange(of: debridManager.selectedDebridType) { newType in
+            viewTask?.cancel()
+
+            if newType != nil {
+                viewTask = Task {
+                    await debridManager.fetchDebridCloud()
+                }
+            }
+        }
     }
 }
