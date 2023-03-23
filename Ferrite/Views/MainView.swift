@@ -75,7 +75,7 @@ struct MainView: View {
         .backport.onAppear {
             if
                 autoUpdateNotifs,
-                Application.shared.osVersion.majorVersion >= Application.shared.minVersion.majorVersion
+                Application.shared.osVersion.toString() >= Application.shared.minVersion
             {
                 // MARK: If scope bar duplication happens, this may be the problem
 
@@ -98,6 +98,8 @@ struct MainView: View {
                         if releaseVersion > Application.shared.appVersion {
                             releaseVersionString = latestRelease.tagName
                             releaseUrlString = latestRelease.htmlUrl
+
+                            logManager.info("Update available to \(releaseVersionString)")
                             showUpdateAlert.toggle()
                         }
                     } catch {

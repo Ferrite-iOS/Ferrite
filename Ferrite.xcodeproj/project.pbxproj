@@ -12,6 +12,7 @@
 		0C03EB72296F619900162E9A /* PluginList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C03EB70296F619900162E9A /* PluginList+CoreDataProperties.swift */; };
 		0C0755C6293424A200ECA142 /* DebridLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0755C5293424A200ECA142 /* DebridLabelView.swift */; };
 		0C0755C8293425B500ECA142 /* DebridManagerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0755C7293425B500ECA142 /* DebridManagerModels.swift */; };
+		0C0974B029CCAAAF006DE7A3 /* OperatingSystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0974AF29CCAAAF006DE7A3 /* OperatingSystemVersion.swift */; };
 		0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */; };
 		0C0D50E7288DFF850035ECC8 /* PluginAggregateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */; };
 		0C10848B28BD9A38008F0BA6 /* SettingsAppVersionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */; };
@@ -151,6 +152,7 @@
 		0C03EB70296F619900162E9A /* PluginList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PluginList+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C0755C5293424A200ECA142 /* DebridLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridLabelView.swift; sourceTree = "<group>"; };
 		0C0755C7293425B500ECA142 /* DebridManagerModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridManagerModels.swift; sourceTree = "<group>"; };
+		0C0974AF29CCAAAF006DE7A3 /* OperatingSystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatingSystemVersion.swift; sourceTree = "<group>"; };
 		0C0D50E4288DFE7F0035ECC8 /* SourceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModels.swift; sourceTree = "<group>"; };
 		0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginAggregateView.swift; sourceTree = "<group>"; };
 		0C10848A28BD9A38008F0BA6 /* SettingsAppVersionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppVersionView.swift; sourceTree = "<group>"; };
@@ -551,6 +553,7 @@
 				0CA148CB288903F000DE2211 /* Task.swift */,
 				0C7D11FD28AA03FE00ED92DB /* View.swift */,
 				0C7ED14228D65518009E29AD /* FileManager.swift */,
+				0C0974AF29CCAAAF006DE7A3 /* OperatingSystemVersion.swift */,
 				0C42B5972932F6DD008057A0 /* Set.swift */,
 				0C7C128528DAA3CD00381CD1 /* URL.swift */,
 				0C50B7CF299DF63C00A9FA3C /* UIDevice.swift */,
@@ -868,6 +871,7 @@
 				0C44E2AD28D51C63007711AE /* BackupManager.swift in Sources */,
 				0C422E80293542F300486D65 /* PremiumizeModels.swift in Sources */,
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,
+				0C0974B029CCAAAF006DE7A3 /* OperatingSystemVersion.swift in Sources */,
 				0CA148E8288903F000DE2211 /* RealDebridWrapper.swift in Sources */,
 				0CA148D6288903F000DE2211 /* SettingsView.swift in Sources */,
 				0C572D4E299403B7003EEC05 /* ViewDidAppear.swift in Sources */,

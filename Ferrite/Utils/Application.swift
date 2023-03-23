@@ -16,7 +16,9 @@ public class Application {
     let os = "ios"
 
     // Minimum OS version that Ferrite runs on
-    let minVersion = OperatingSystemVersion(majorVersion: 14, minorVersion: 0, patchVersion: 0)
+    var minVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "MinimumOSVersion") as? String ?? "0.0"
+    }
 
     // Grabs the current user's OS version
     let osVersion: OperatingSystemVersion = ProcessInfo().operatingSystemVersion
