@@ -53,7 +53,7 @@ struct PluginCatalogButtonView<PJ: PluginJson>: View {
             }
             .font(
                 .footnote
-                .weight(.bold)
+                    .weight(.bold)
             )
             .padding(.horizontal, 7)
             .padding(.vertical, 5)

@@ -9,6 +9,6 @@ import Foundation
 
 extension OperatingSystemVersion {
     func toString() -> String {
-        return "\(self.majorVersion).\(self.minorVersion).\(self.patchVersion)"
+        "\(majorVersion).\(minorVersion).\(patchVersion)"
     }
 }

@@ -45,7 +45,7 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
                             }
                         }
                     }
-                    
+
                     if !installedPlugins.isEmpty {
                         Section(header: InlineHeader("Installed")) {
                             ForEach(installedPlugins, id: \.self) { installedPlugin in
