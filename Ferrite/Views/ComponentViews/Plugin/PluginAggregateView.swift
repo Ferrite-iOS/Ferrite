@@ -27,6 +27,9 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
 
     @State private var sourcePredicate: NSPredicate?
 
+    @State private var showPluginOptions = false
+    @State private var selectedPlugin: P?
+
     var body: some View {
         ZStack {
             DynamicFetchRequest(predicate: sourcePredicate) { (installedPlugins: FetchedResults<P>) in
@@ -49,7 +52,11 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
                     if !installedPlugins.isEmpty {
                         Section(header: InlineHeader("Installed")) {
                             ForEach(installedPlugins, id: \.self) { installedPlugin in
-                                InstalledPluginButtonView(installedPlugin: installedPlugin)
+                                InstalledPluginButtonView(
+                                    installedPlugin: installedPlugin,
+                                    showPluginOptions: $showPluginOptions,
+                                    selectedPlugin: $selectedPlugin
+                                )
                             }
                         }
                     }
@@ -82,11 +89,8 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
                 }
             }
         }
-        .sheet(isPresented: $navModel.showSourceSettings) {
-            if String(describing: P.self) == "Source" {
-                SourceSettingsView()
-                    .environmentObject(navModel)
-            }
+        .sheet(isPresented: $showPluginOptions) {
+            PluginInfoView(selectedPlugin: $selectedPlugin)
         }
     }
 }

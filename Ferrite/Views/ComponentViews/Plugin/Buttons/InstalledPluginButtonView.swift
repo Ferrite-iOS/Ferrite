@@ -10,9 +10,10 @@ import SwiftUI
 struct InstalledPluginButtonView<P: Plugin>: View {
     let backgroundContext = PersistenceController.shared.backgroundContext
 
-    @EnvironmentObject var navModel: NavigationViewModel
-
     @ObservedObject var installedPlugin: P
+
+    @Binding var showPluginOptions: Bool
+    @Binding var selectedPlugin: P?
 
     var body: some View {
         Toggle(isOn: Binding<Bool>(
@@ -42,14 +43,12 @@ struct InstalledPluginButtonView<P: Plugin>: View {
             .padding(.vertical, 2)
         }
         .contextMenu {
-            if let installedSource = installedPlugin as? Source {
-                Button {
-                    navModel.selectedSource = installedSource
-                    navModel.showSourceSettings.toggle()
-                } label: {
-                    Text("Settings")
-                    Image(systemName: "gear")
-                }
+            Button {
+                selectedPlugin = installedPlugin
+                showPluginOptions.toggle()
+            } label: {
+                Text("Options")
+                Image(systemName: "gear")
             }
 
             if #available(iOS 15.0, *) {

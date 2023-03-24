@@ -93,6 +93,10 @@
 		0C84F4842895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47C2895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift */; };
 		0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */; };
 		0C871BDF29994D9D005279AC /* FilterLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C871BDE29994D9D005279AC /* FilterLabelView.swift */; };
+		0C8DC35229CE287E008A83AD /* PluginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8DC35129CE287E008A83AD /* PluginInfoView.swift */; };
+		0C8DC35429CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8DC35329CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift */; };
+		0C8DC35629CE2ABF008A83AD /* SourceSettingsApiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8DC35529CE2ABF008A83AD /* SourceSettingsApiView.swift */; };
+		0C8DC35829CE2ACA008A83AD /* SourceSettingsMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8DC35729CE2ACA008A83AD /* SourceSettingsMethodView.swift */; };
 		0C95D8D828A55B03005E22B3 /* DefaultActionPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C95D8D728A55B03005E22B3 /* DefaultActionPickerView.swift */; };
 		0CA05457288EE58200850554 /* SettingsPluginListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05456288EE58200850554 /* SettingsPluginListView.swift */; };
 		0CA05459288EE9E600850554 /* PluginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA05458288EE9E600850554 /* PluginManager.swift */; };
@@ -228,6 +232,10 @@
 		0C84F47C2895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C871BDE29994D9D005279AC /* FilterLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterLabelView.swift; sourceTree = "<group>"; };
+		0C8DC35129CE287E008A83AD /* PluginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginInfoView.swift; sourceTree = "<group>"; };
+		0C8DC35329CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceSettingsBaseUrlView.swift; sourceTree = "<group>"; };
+		0C8DC35529CE2ABF008A83AD /* SourceSettingsApiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceSettingsApiView.swift; sourceTree = "<group>"; };
+		0C8DC35729CE2ACA008A83AD /* SourceSettingsMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceSettingsMethodView.swift; sourceTree = "<group>"; };
 		0C95D8D728A55B03005E22B3 /* DefaultActionPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultActionPickerView.swift; sourceTree = "<group>"; };
 		0CA05456288EE58200850554 /* SettingsPluginListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPluginListView.swift; sourceTree = "<group>"; };
 		0CA05458288EE9E600850554 /* PluginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginManager.swift; sourceTree = "<group>"; };
@@ -417,6 +425,7 @@
 				0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */,
 				0C5005512992B6750064606A /* PluginTagsView.swift */,
 				0CD5F1FC299C083B00476DDB /* PluginPickerView.swift */,
+				0C8DC35129CE287E008A83AD /* PluginInfoView.swift */,
 			);
 			path = Plugin;
 			sourceTree = "<group>";
@@ -475,6 +484,9 @@
 			isa = PBXGroup;
 			children = (
 				0C733286289C4C820058D1FE /* SourceSettingsView.swift */,
+				0C8DC35329CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift */,
+				0C8DC35529CE2ABF008A83AD /* SourceSettingsApiView.swift */,
+				0C8DC35729CE2ACA008A83AD /* SourceSettingsMethodView.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -773,6 +785,7 @@
 				0C6771FA29B3D1AE005D38D2 /* KodiModels.swift in Sources */,
 				0C0D50E5288DFE7F0035ECC8 /* SourceModels.swift in Sources */,
 				0CB6516528C5A5D700DCA721 /* InlinedList.swift in Sources */,
+				0C8DC35429CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift in Sources */,
 				0C32FB532890D19D002BD219 /* AboutView.swift in Sources */,
 				0CB6516328C5A57300DCA721 /* ConditionalId.swift in Sources */,
 				0C70E40628C40C4E00A5C72D /* NotificationCenter.swift in Sources */,
@@ -824,6 +837,7 @@
 				0CA148E1288903F000DE2211 /* Collection.swift in Sources */,
 				0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */,
 				0C794B69289DACC800DD1CC8 /* InstalledPluginButtonView.swift in Sources */,
+				0C8DC35829CE2ACA008A83AD /* SourceSettingsMethodView.swift in Sources */,
 				0C5708EB29B8F89300BE07F9 /* SettingsLogView.swift in Sources */,
 				0C79DC082899AF3C003F1C5A /* SourceSeedLeech+CoreDataProperties.swift in Sources */,
 				0C6771FE29B521F1005D38D2 /* SettingsDebridInfoView.swift in Sources */,
@@ -869,7 +883,9 @@
 				0C6771F429B3B4FD005D38D2 /* KodiWrapper.swift in Sources */,
 				0C3E00D0296F4DB200ECECB2 /* ActionModels.swift in Sources */,
 				0C44E2AD28D51C63007711AE /* BackupManager.swift in Sources */,
+				0C8DC35229CE287E008A83AD /* PluginInfoView.swift in Sources */,
 				0C422E80293542F300486D65 /* PremiumizeModels.swift in Sources */,
+				0C8DC35629CE2ABF008A83AD /* SourceSettingsApiView.swift in Sources */,
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,
 				0C0974B029CCAAAF006DE7A3 /* OperatingSystemVersion.swift in Sources */,
 				0CA148E8288903F000DE2211 /* RealDebridWrapper.swift in Sources */,
