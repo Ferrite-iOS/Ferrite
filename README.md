@@ -26,15 +26,13 @@ I also wanted to support the use of debrid services since there aren't any (free
 
 More of these can be found in [issues](https://github.com/bdashore3/Ferrite/issues), but here is a small snippet:
 
-- A decentralized actions API: Allows for playback on other devices
-
 - More involved search filtering
 
 - Companion apps for playback on other devices
 
 ## Downloads
 
-Ferrite will only exist as an ipa. There are and will never be any plans to release on TestFlight or the App Store. Ipa builds are automatically built and are provided in Github actions artifacts.
+Ferrite will only exist as an ipa. There will never be any plans to release on TestFlight or the App Store. Ipa builds are automatically built and are provided in Github actions artifacts.
 
 ## Plugins/Sources
 
