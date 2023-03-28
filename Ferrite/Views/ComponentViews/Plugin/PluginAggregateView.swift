@@ -78,6 +78,7 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
                 }
                 .inlinedList(inset: 0)
                 .listStyle(.insetGrouped)
+                .id(UUID())
                 .backport.onAppear {
                     pluginsEmpty = installedPlugins.isEmpty
                 }
