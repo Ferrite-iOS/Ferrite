@@ -14,7 +14,7 @@ struct PluginTagsView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(tags, id: \.self) { tag in
-                    Tag(name: tag.name, color: tag.colorHex.map { Color(hexadecimal: $0) })
+                    Tag(name: tag.name, color: tag.colorHex.map { Color(hex: $0) })
                 }
             }
         }

@@ -20,7 +20,7 @@ struct EmptyInstructionView: View {
                 .padding(.horizontal, 50)
         }
         .multilineTextAlignment(.center)
-        .foregroundColor(.secondaryLabel)
+        .foregroundColor(.init(uiColor: .secondaryLabel))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
     }

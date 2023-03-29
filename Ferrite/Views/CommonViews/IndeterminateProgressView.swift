@@ -25,7 +25,7 @@ struct IndeterminateProgressView: View {
                         .offset(x: -reader.size.width * 0.6, y: 0)
                         .offset(x: reader.size.width * 1.2 * self.offset, y: 0)
                         .animation(.default.repeatForever().speed(0.5), value: self.offset)
-                        .backport.onAppear {
+                        .onAppear {
                             withAnimation {
                                 self.offset = 1
                             }

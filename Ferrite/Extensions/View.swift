@@ -33,11 +33,11 @@ extension View {
         modifier(InlinedListModifier(inset: inset))
     }
 
-    func viewDidAppear(_ callback: @escaping () -> Void) -> some View {
-        modifier(ViewDidAppearModifier(callback: callback))
-    }
-
     func customScopeBar(_ content: @escaping () -> some View) -> some View {
         modifier(CustomScopeBarModifier(scopeBarContent: content()))
+    }
+
+    func searchListener(isSearching: Binding<Bool>) -> some View {
+        modifier(SearchListenerModifier(isSearching: isSearching))
     }
 }

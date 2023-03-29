@@ -90,7 +90,7 @@ struct SearchResultButtonView: View {
             .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
         }
         .disableInteraction(navModel.currentChoiceSheet != nil)
-        .backport.tint(.primary)
+        .tint(.primary)
         .conditionalContextMenu(id: existingBookmark) {
             ZStack {
                 if let bookmark = existingBookmark {
@@ -123,19 +123,19 @@ struct SearchResultButtonView: View {
                 }
             }
         }
-        .backport.alert(
-            isPresented: $debridManager.showDeleteAlert,
-            title: "Caching file",
-            message: "RealDebrid is currently caching this file. Would you like to delete it? \n\nProgress can be checked on the RealDebrid website.",
-            buttons: [
-                AlertButton("Yes", role: .destructive) {
-                    Task {
-                        await debridManager.deleteRdTorrent()
-                    }
-                },
-                AlertButton(role: .cancel)
-            ]
-        )
+        .alert("Caching file", isPresented: $debridManager.showDeleteAlert) {
+            Button("Yes", role: .destructive) {
+                Task {
+                    await debridManager.deleteRdTorrent()
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "RealDebrid is currently caching this file. Would you like to delete it? \n\n" +
+                "Progress can be checked on the RealDebrid website."
+            )
+        }
         .onReceive(NotificationCenter.default.publisher(for: .didDeleteBookmark)) { notification in
             // If the instance contains the deleted bookmark, remove it.
             if let deletedBookmark = notification.object as? Bookmark,
@@ -145,7 +145,7 @@ struct SearchResultButtonView: View {
                 existingBookmark = nil
             }
         }
-        .backport.onAppear {
+        .onAppear {
             // Only run a exists request if a bookmark isn't passed to the view
             if existingBookmark == nil, !runOnce {
                 let bookmarkRequest = Bookmark.fetchRequest()

@@ -57,7 +57,7 @@ struct PluginCatalogButtonView<PJ: PluginJson>: View {
             )
             .padding(.horizontal, 7)
             .padding(.vertical, 5)
-            .background(.tertiarySystemBackground)
+            .background(Color.init(uiColor: .tertiarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .buttonStyle(.borderless)

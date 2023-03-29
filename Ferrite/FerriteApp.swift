@@ -21,7 +21,7 @@ struct FerriteApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
-                .backport.onAppear {
+                .onAppear {
                     scrapingModel.logManager = logManager
                     debridManager.logManager = logManager
                     pluginManager.logManager = logManager

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct KodiEditorView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var pluginManager: PluginManager
@@ -56,7 +56,7 @@ struct KodiEditorView: View {
                 .autocapitalization(.none)
                 .id(loadedSelectedServer)
             }
-            .backport.onAppear {
+            .onAppear {
                 if let selectedKodiServer = navModel.selectedKodiServer {
                     serverUrl = selectedKodiServer.urlString
                     friendlyName = selectedKodiServer.name
@@ -66,17 +66,17 @@ struct KodiEditorView: View {
                     loadedSelectedServer.toggle()
                 }
             }
-            .backport.alert(
-                isPresented: $showErrorAlert,
-                title: "Error",
-                message: errorAlertText
-            )
+            .alert("Error", isPresented: $showErrorAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorAlertText)
+            }
             .navigationTitle("Editing Kodi Server")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
 
@@ -91,7 +91,7 @@ struct KodiEditorView: View {
                                 existingServer: navModel.selectedKodiServer
                             )
 
-                            presentationMode.wrappedValue.dismiss()
+                            dismiss()
                         } catch {
                             logManager.error("Editing Kodi server: \(error)", showToast: false)
                             errorAlertText = error.localizedDescription

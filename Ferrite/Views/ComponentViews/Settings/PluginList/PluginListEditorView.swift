@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PluginListEditorView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var pluginManager: PluginManager
@@ -33,23 +33,23 @@ struct PluginListEditorView: View {
                     .autocapitalization(.none)
                     .id(loadedSelectedList)
             }
-            .backport.onAppear {
+            .onAppear {
                 if let selectedList = navModel.selectedPluginList {
                     pluginListUrl = selectedList.urlString
                     loadedSelectedList.toggle()
                 }
             }
-            .backport.alert(
-                isPresented: $showUrlErrorAlert,
-                title: "Error",
-                message: urlErrorAlertText
-            )
+            .alert("Error", isPresented: $showUrlErrorAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(urlErrorAlertText)
+            }
             .navigationTitle("Editing Plugin List")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
 
@@ -62,7 +62,7 @@ struct PluginListEditorView: View {
                                     existingPluginList: navModel.selectedPluginList
                                 )
 
-                                presentationMode.wrappedValue.dismiss()
+                                dismiss()
                             } catch {
                                 logManager.error("Editing plugin list: \(error)", showToast: false)
                                 urlErrorAlertText = error.localizedDescription

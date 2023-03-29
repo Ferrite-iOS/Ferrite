@@ -12,11 +12,7 @@ struct SettingsKodiView: View {
 
     @EnvironmentObject var navModel: NavigationViewModel
 
-    // TODO: Change to var in v0.7
-    @FetchRequest(
-        entity: KodiServer.entity(),
-        sortDescriptors: []
-    ) var kodiServers: FetchedResults<KodiServer>
+    var kodiServers: FetchedResults<KodiServer>
 
     @State private var presentEditSheet = false
 
@@ -48,20 +44,11 @@ struct SettingsKodiView: View {
                                     Image(systemName: "pencil")
                                 }
 
-                                if #available(iOS 15.0, *) {
-                                    Button(role: .destructive) {
-                                        PersistenceController.shared.delete(server, context: backgroundContext)
-                                    } label: {
-                                        Text("Remove")
-                                        Image(systemName: "trash")
-                                    }
-                                } else {
-                                    Button {
-                                        PersistenceController.shared.delete(server, context: backgroundContext)
-                                    } label: {
-                                        Text("Remove")
-                                        Image(systemName: "trash")
-                                    }
+                                Button(role: .destructive) {
+                                    PersistenceController.shared.delete(server, context: backgroundContext)
+                                } label: {
+                                    Text("Remove")
+                                    Image(systemName: "trash")
                                 }
                             }
                     }
@@ -78,7 +65,6 @@ struct SettingsKodiView: View {
         .listStyle(.insetGrouped)
         .sheet(isPresented: $presentEditSheet) {
             KodiEditorView()
-                .environmentObject(navModel)
         }
         .navigationTitle("Kodi")
         .navigationBarTitleDisplayMode(.inline)

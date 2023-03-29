@@ -31,7 +31,7 @@ struct SourceSettingsApiView: View {
                 })
                 .autocorrectionDisabled(true)
                 .autocapitalization(.none)
-                .backport.onAppear {
+                .onAppear {
                     tempClientId = clientId.value ?? ""
                 }
             }
@@ -45,7 +45,7 @@ struct SourceSettingsApiView: View {
                 })
                 .autocorrectionDisabled(true)
                 .autocapitalization(.none)
-                .backport.onAppear {
+                .onAppear {
                     tempClientSecret = clientSecret.value ?? ""
                 }
             }

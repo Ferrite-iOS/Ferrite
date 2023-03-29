@@ -42,8 +42,7 @@ struct SearchFilterHeaderView: View {
                 }
                 .id(debridManager.selectedDebridType)
             }
-            .padding(.horizontal, verticalSizeClass == .compact ? (Application.shared.osVersion.majorVersion > 14 ? 65 : 18) : 18)
-            .padding(.top, Application.shared.osVersion.majorVersion > 14 ? 0 : 10)
+            .padding(.horizontal, verticalSizeClass == .compact ? 65 : 18)
         }
     }
 }

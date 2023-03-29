@@ -19,11 +19,9 @@ struct InlineHeader: View {
     var body: some View {
         if #available(iOS 16, *) {
             Text(title)
-        } else if #available(iOS 15, *) {
-            Text(title)
-                .listRowInsets(EdgeInsets(top: 10, leading: 15, bottom: 0, trailing: 0))
         } else {
             Text(title)
+                .listRowInsets(EdgeInsets(top: 10, leading: 15, bottom: 0, trailing: 0))
         }
     }
 }

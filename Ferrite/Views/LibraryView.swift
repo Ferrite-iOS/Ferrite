@@ -6,55 +6,64 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct LibraryView: View {
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var navModel: NavigationViewModel
 
-    @State private var bookmarksEmpty = false
-    @State private var historyEmpty = false
+    @FetchRequest(
+        entity: Bookmark.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Bookmark.orderNum, ascending: true)]
+    ) var bookmarks: FetchedResults<Bookmark>
+
+    @FetchRequest(
+        entity: HistoryEntry.entity(),
+        sortDescriptors: []
+    ) var allHistoryEntries: FetchedResults<HistoryEntry>
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
     @State private var editMode: EditMode = .inactive
 
-    @State private var searchText: String = ""
-    @State private var isEditingSearch = false
+    // Bound to the isSearching environment var
     @State private var isSearching = false
+    @State private var searchText: String = ""
 
     var body: some View {
         NavView {
             ZStack {
                 switch navModel.libraryPickerSelection {
                 case .bookmarks:
-                    BookmarksView(searchText: $searchText, bookmarksEmpty: $bookmarksEmpty)
+                    BookmarksView(searchText: $searchText, bookmarks: bookmarks)
                 case .history:
-                    HistoryView(searchText: $searchText, historyEmpty: $historyEmpty)
+                    HistoryView(allHistoryEntries: allHistoryEntries, searchText: $searchText)
                 case .debridCloud:
                     DebridCloudView(searchText: $searchText)
                 }
             }
+            .searchListener(isSearching: $isSearching)
             .overlay {
-                switch navModel.libraryPickerSelection {
-                case .bookmarks:
-                    if bookmarksEmpty {
-                        EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
-                    }
-                case .history:
-                    if historyEmpty {
-                        EmptyInstructionView(title: "No History", message: "Start watching to build history")
-                    }
-                case .debridCloud:
-                    if debridManager.selectedDebridType == nil {
-                        EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
+                if !isSearching {
+                    switch navModel.libraryPickerSelection {
+                    case .bookmarks:
+                        if bookmarks.isEmpty {
+                            EmptyInstructionView(title: "No Bookmarks", message: "Add a bookmark from search results")
+                        }
+                    case .history:
+                        if allHistoryEntries.isEmpty {
+                            EmptyInstructionView(title: "No History", message: "Start watching to build history")
+                        }
+                    case .debridCloud:
+                        if debridManager.selectedDebridType == nil {
+                            EmptyInstructionView(title: "Cloud Unavailable", message: "Listing is not available for this service")
+                        }
                     }
                 }
             }
             .navigationTitle("Library")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: Application.shared.osVersion.majorVersion > 14 ? 10 : 18) {
+                    HStack {
                         Spacer()
                         EditButton()
 
@@ -72,21 +81,9 @@ struct LibraryView: View {
                     }
                 }
             }
-            .navigationSearchBar {
-                SearchBar("Search", text: $searchText, isEditing: $isEditingSearch, onCommit: {
-                    isSearching = true
-                })
-                .showsCancelButton(isEditingSearch || isSearching)
-                .onCancel {
-                    searchText = ""
-                    isSearching = false
-                }
-            }
-            .navigationSearchBarHiddenWhenScrolling(false)
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .customScopeBar {
                 LibraryPickerView()
-                    .environmentObject(debridManager)
-                    .environmentObject(navModel)
             }
             .environment(\.editMode, $editMode)
         }

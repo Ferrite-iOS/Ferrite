@@ -31,7 +31,7 @@ struct AboutView: View {
 
                     Text("Ferrite is a free and open source application developed by kingbri under the GNU-GPLv3 license.")
                         .textCase(.none)
-                        .foregroundColor(.label)
+                        .foregroundColor(.init(uiColor: .label))
                         .font(.body)
                         .padding(.top, 8)
                         .padding(.bottom, 20)

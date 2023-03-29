@@ -16,26 +16,27 @@ struct HistoryActionsView: View {
         Button("Clear") {
             showActionSheet.toggle()
         }
-        .backport.tint(.red)
-        .backport.confirmationDialog(
+        .tint(.red)
+        .confirmationDialog(
+            "Clear watch history",
             isPresented: $showActionSheet,
-            title: "Clear watch history",
-            message: "This is an irreversible action!",
-            buttons: [
-                AlertButton("Past day", role: .destructive) {
-                    deleteHistory(.day)
-                },
-                AlertButton("Past week", role: .destructive) {
-                    deleteHistory(.week)
-                },
-                AlertButton("Past month", role: .destructive) {
-                    deleteHistory(.month)
-                },
-                AlertButton("All time", role: .destructive) {
-                    deleteHistory(.allTime)
-                }
-            ]
-        )
+            titleVisibility: .visible
+        ) {
+            Button("Past day", role: .destructive) {
+                deleteHistory(.day)
+            }
+            Button("Past week", role: .destructive) {
+                deleteHistory(.week)
+            }
+            Button("Past month", role: .destructive) {
+                deleteHistory(.month)
+            }
+            Button("All time", role: .destructive) {
+                deleteHistory(.allTime)
+            }
+        } message: {
+            Text("This is an irreversible action!")
+        }
     }
 
     func deleteHistory(_ deleteRange: HistoryDeleteRange) {

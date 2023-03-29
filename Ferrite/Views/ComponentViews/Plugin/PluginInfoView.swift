@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PluginInfoView<P: Plugin>: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     @Binding var selectedPlugin: P?
 
@@ -69,7 +69,7 @@ struct PluginInfoView<P: Plugin>: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }

@@ -57,6 +57,6 @@ struct SourceSettingsMethodView: View {
                 }
             }
         }
-        .backport.tint(.primary)
+        .tint(.primary)
     }
 }

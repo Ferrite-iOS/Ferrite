@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct PremiumizeCloudView: View {
     @EnvironmentObject var debridManager: DebridManager
@@ -14,8 +13,6 @@ struct PremiumizeCloudView: View {
     @EnvironmentObject var pluginManager: PluginManager
 
     @Binding var searchText: String
-
-    @State private var viewTask: Task<Void, Never>?
 
     var body: some View {
         DisclosureGroup("Items") {
@@ -47,7 +44,7 @@ struct PremiumizeCloudView: View {
                     }
                 }
                 .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
-                .backport.tint(.black)
+                .tint(.black)
             }
             .onDelete { offsets in
                 for index in offsets {

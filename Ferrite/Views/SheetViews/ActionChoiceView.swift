@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct ActionChoiceView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
@@ -32,7 +31,7 @@ struct ActionChoiceView: View {
     var body: some View {
         NavView {
             Form {
-                Section(header: "Now Playing") {
+                Section(header: InlineHeader("Now Playing")) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text(navModel.selectedTitle)
                             .font(.callout)
@@ -47,7 +46,7 @@ struct ActionChoiceView: View {
                 }
 
                 if !debridManager.downloadUrl.isEmpty {
-                    Section(header: "Debrid options") {
+                    Section(header: InlineHeader("Debrid options")) {
                         ForEach(actions, id: \.id) { action in
                             if action.requires.contains(ActionRequirement.debrid.rawValue) {
                                 ListRowButtonView(action.name, systemImage: "arrow.up.forward.app.fill") {
@@ -66,22 +65,21 @@ struct ActionChoiceView: View {
                                     } label: {
                                         KodiServerView(server: server)
                                     }
-                                    .backport.tint(.primary)
+                                    .tint(.primary)
                                 }
                             }
-                            .backport.tint(.secondary)
+                            .tint(.secondary)
                         }
 
                         ListRowButtonView("Copy download URL", systemImage: "doc.on.doc.fill") {
                             UIPasteboard.general.string = debridManager.downloadUrl
                             showLinkCopyAlert.toggle()
                         }
-                        .backport.alert(
-                            isPresented: $showLinkCopyAlert,
-                            title: "Copied",
-                            message: "Download link copied successfully",
-                            buttons: [AlertButton("OK")]
-                        )
+                        .alert("Copied", isPresented: $showLinkCopyAlert) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text("Download link copied successfully")
+                        }
 
                         ListRowButtonView("Share download URL", systemImage: "square.and.arrow.up.fill") {
                             if let url = URL(string: debridManager.downloadUrl) {
@@ -93,7 +91,7 @@ struct ActionChoiceView: View {
                 }
 
                 if !navModel.resultFromCloud {
-                    Section(header: "Magnet options") {
+                    Section(header: InlineHeader("Magnet options")) {
                         ForEach(actions, id: \.id) { action in
                             if action.requires.contains(ActionRequirement.magnet.rawValue) {
                                 ListRowButtonView(action.name, systemImage: "arrow.up.forward.app.fill") {
@@ -106,12 +104,11 @@ struct ActionChoiceView: View {
                             UIPasteboard.general.string = navModel.selectedMagnet?.link
                             showMagnetCopyAlert.toggle()
                         }
-                        .backport.alert(
-                            isPresented: $showMagnetCopyAlert,
-                            title: "Copied",
-                            message: "Magnet link copied successfully",
-                            buttons: [AlertButton("OK")]
-                        )
+                        .alert("Copied", isPresented: $showMagnetCopyAlert) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text("Magnet link copied successfully")
+                        }
 
                         ListRowButtonView("Share magnet", systemImage: "square.and.arrow.up.fill") {
                             if let magnetLink = navModel.selectedMagnet?.link,
@@ -124,25 +121,26 @@ struct ActionChoiceView: View {
                     }
                 }
             }
-            .backport.tint(.primary)
+            .tint(.primary)
             .sheet(isPresented: $navModel.showLocalActivitySheet) {
+                // TODO: Fix share sheet
                 if #available(iOS 16, *) {
-                    AppActivityView(activityItems: navModel.activityItems)
+                    ShareSheet(activityItems: navModel.activityItems)
                         .presentationDetents([.medium, .large])
                 } else {
-                    AppActivityView(activityItems: navModel.activityItems)
+                    ShareSheet(activityItems: navModel.activityItems)
                 }
             }
-            .backport.alert(
-                isPresented: $pluginManager.showActionSuccessAlert,
-                title: "Action successful",
-                message: pluginManager.actionSuccessAlertMessage
-            )
-            .backport.alert(
-                isPresented: $pluginManager.showActionErrorAlert,
-                title: "Action error",
-                message: pluginManager.actionErrorAlertMessage
-            )
+            .alert("Action successful", isPresented: $pluginManager.showActionSuccessAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(pluginManager.actionSuccessAlertMessage)
+            }
+            .alert("Action error", isPresented: $pluginManager.showActionErrorAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(pluginManager.actionErrorAlertMessage)
+            }
             .onDisappear {
                 debridManager.downloadUrl = ""
                 navModel.selectedTitle = ""
@@ -158,7 +156,7 @@ struct ActionChoiceView: View {
                         navModel.selectedTitle = ""
                         navModel.selectedBatchTitle = ""
 
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }

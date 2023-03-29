@@ -21,7 +21,7 @@ struct Tag: View {
             .padding(.vertical, verticalPadding)
             .background(
                 RoundedRectangle(cornerRadius: 5)
-                    .foregroundColor(color.map { $0 } ?? .tertiaryLabel)
+                    .foregroundColor(color.map { $0 } ?? .init(uiColor: .tertiaryLabel))
                     .opacity(0.3)
             )
     }

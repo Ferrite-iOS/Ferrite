@@ -23,11 +23,11 @@ struct SettingsLogView: View {
             }
         }
         .listStyle(.plain)
-        .backport.alert(
-            isPresented: $logManager.showLogExportedAlert,
-            title: "Success",
-            message: "Log successfully exported in Ferrite's logs folder"
-        )
+        .alert("Success", isPresented: $logManager.showLogExportedAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Log successfully exported in Ferrite's logs folder")
+        }
         .navigationTitle("Logs")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -39,18 +39,10 @@ struct SettingsLogView: View {
                         Label("Export", systemImage: "square.and.arrow.up")
                     }
 
-                    if #available(iOS 15, *) {
-                        Button(role: .destructive) {
-                            logManager.messageArray = []
-                        } label: {
-                            Label("Clear session logs", systemImage: "trash")
-                        }
-                    } else {
-                        Button {
-                            logManager.messageArray = []
-                        } label: {
-                            Label("Clear session logs", systemImage: "trash")
-                        }
+                    Button(role: .destructive) {
+                        logManager.messageArray = []
+                    } label: {
+                        Label("Clear session logs", systemImage: "trash")
                     }
                 } label: {
                     Image(systemName: "ellipsis")

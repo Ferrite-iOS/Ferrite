@@ -34,7 +34,7 @@ struct BackupsView: View {
                                 Label("Export", systemImage: "square.and.arrow.up")
                             }
                         }
-                        .backport.tint(.primary)
+                        .tint(.primary)
                     }
                     .onDelete { offsets in
                         for index in offsets {
@@ -48,7 +48,7 @@ struct BackupsView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .backport.onAppear {
+        .onAppear {
             backupManager.backupUrls = FileManager.default.appDirectory
                 .appendingPathComponent("Backups", isDirectory: true).contentsByDateAdded
         }

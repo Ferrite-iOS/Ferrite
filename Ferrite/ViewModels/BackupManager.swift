@@ -186,14 +186,7 @@ public class BackupManager: ObservableObject {
 
             PersistenceController.shared.save(backgroundContext)
 
-            // if iOS 14 is available, sleep to prevent any issues with alerts
-            if #available(iOS 15, *) {
-                await toggleRestoreCompletedAlert()
-            } else {
-                try? await Task.sleep(seconds: 0.1)
-
-                await toggleRestoreCompletedAlert()
-            }
+            await toggleRestoreCompletedAlert()
         } catch {
             await logManager?.error(
                 "Backup restore: \(error)",

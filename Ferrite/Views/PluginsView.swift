@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct PluginsView: View {
     @EnvironmentObject var pluginManager: PluginManager
@@ -14,15 +13,21 @@ struct PluginsView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
 
-    @State private var installedSourcesEmpty = false
-    @State private var installedActionsEmpty = false
+    @FetchRequest(
+        entity: Source.entity(),
+        sortDescriptors: []
+    ) var installedSources: FetchedResults<Source>
+
+    @FetchRequest(
+        entity: Action.entity(),
+        sortDescriptors: []
+    ) var installedActions: FetchedResults<Action>
+
     @State private var checkedForPlugins = false
 
-    @State private var isEditingSearch = false
+    // Bound to the isSearching environment var
     @State private var isSearching = false
     @State private var searchText: String = ""
-
-    @State private var viewTask: Task<Void, Never>?
 
     var body: some View {
         NavView {
@@ -31,58 +36,47 @@ struct PluginsView: View {
                     switch navModel.pluginPickerSelection {
                     case .sources:
                         PluginAggregateView<Source, SourceJson>(
-                            searchText: $searchText,
-                            pluginsEmpty: $installedSourcesEmpty
+                            installedPlugins: installedSources,
+                            searchText: $searchText
                         )
                     case .actions:
                         PluginAggregateView<Action, ActionJson>(
-                            searchText: $searchText,
-                            pluginsEmpty: $installedActionsEmpty
+                            installedPlugins: installedActions,
+                            searchText: $searchText
                         )
                     }
                 }
             }
+            .searchListener(isSearching: $isSearching)
             .overlay {
-                if checkedForPlugins {
-                    switch navModel.pluginPickerSelection {
-                    case .sources:
-                        if installedSourcesEmpty, pluginManager.availableSources.isEmpty {
-                            EmptyInstructionView(title: "No Sources", message: "Add a plugin list in Settings")
+                if !isSearching {
+                    if checkedForPlugins {
+                        switch navModel.pluginPickerSelection {
+                        case .sources:
+                            if installedSources.isEmpty, pluginManager.availableSources.isEmpty {
+                                EmptyInstructionView(title: "No Sources", message: "Add a plugin list in Settings")
+                            }
+                        case .actions:
+                            if installedActions.isEmpty, pluginManager.availableActions.isEmpty {
+                                EmptyInstructionView(title: "No Actions", message: "Add a plugin list in Settings")
+                            }
                         }
-                    case .actions:
-                        if installedActionsEmpty, pluginManager.availableActions.isEmpty {
-                            EmptyInstructionView(title: "No Actions", message: "Add a plugin list in Settings")
-                        }
+                    } else {
+                        ProgressView()
                     }
-                } else {
-                    ProgressView()
                 }
             }
-            .backport.onAppear {
-                viewTask = Task {
-                    await pluginManager.fetchPluginsFromUrl()
-                    checkedForPlugins = true
-                }
+            .task {
+                await pluginManager.fetchPluginsFromUrl()
+                checkedForPlugins = true
             }
             .onDisappear {
-                viewTask?.cancel()
                 checkedForPlugins = false
             }
             .navigationTitle("Plugins")
-            .navigationSearchBar {
-                SearchBar("Search", text: $searchText, isEditing: $isEditingSearch, onCommit: {
-                    isSearching = true
-                })
-                .showsCancelButton(isEditingSearch || isSearching)
-                .onCancel {
-                    searchText = ""
-                    isSearching = false
-                }
-            }
-            .navigationSearchBarHiddenWhenScrolling(false)
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .customScopeBar {
                 PluginPickerView()
-                    .environmentObject(navModel)
             }
         }
     }

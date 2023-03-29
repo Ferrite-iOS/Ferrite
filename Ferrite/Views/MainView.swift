@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct MainView: View {
     @EnvironmentObject var navModel: NavigationViewModel
@@ -21,7 +20,6 @@ struct MainView: View {
     @State private var showUpdateAlert = false
     @State private var releaseVersionString: String = ""
     @State private var releaseUrlString: String = ""
-    @State private var viewTask: Task<Void, Never>?
 
     var body: some View {
         TabView(selection: $navModel.selectedTab) {
@@ -53,77 +51,66 @@ struct MainView: View {
             switch item {
             case .action:
                 ActionChoiceView()
-                    .environmentObject(debridManager)
-                    .environmentObject(scrapingModel)
-                    .environmentObject(navModel)
-                    .environmentObject(pluginManager)
-                    .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
             case .batch:
                 BatchChoiceView()
-                    .environmentObject(debridManager)
-                    .environmentObject(scrapingModel)
-                    .environmentObject(navModel)
             case .activity:
+                EmptyView()
+                // TODO: Fix share sheet
                 if #available(iOS 16, *) {
-                    AppActivityView(activityItems: navModel.activityItems)
+                    ShareSheet(activityItems: navModel.activityItems)
                         .presentationDetents([.medium, .large])
                 } else {
-                    AppActivityView(activityItems: navModel.activityItems)
+                    ShareSheet(activityItems: navModel.activityItems)
                 }
             }
         }
-        .backport.onAppear {
+        .onAppear {
+            logManager.info("Ferrite started")
+        }
+        .task {
             if
                 autoUpdateNotifs,
                 Application.shared.osVersion.toString() >= Application.shared.minVersion
             {
                 // MARK: If scope bar duplication happens, this may be the problem
+                // Sleep for 2 seconds to allow for view layout and app init
+                try? await Task.sleep(seconds: 2)
 
-                logManager.info("Ferrite started")
-
-                viewTask = Task {
-                    // Sleep for 2 seconds to allow for view layout and app init
-                    try? await Task.sleep(seconds: 2)
-
-                    do {
-                        guard let latestRelease = try await Github().fetchLatestRelease() else {
-                            logManager.error(
-                                "Github: No releases found",
-                                description: "Github error: No releases found"
-                            )
-                            return
-                        }
-
-                        let releaseVersion = String(latestRelease.tagName.dropFirst())
-                        if releaseVersion > Application.shared.appVersion {
-                            releaseVersionString = latestRelease.tagName
-                            releaseUrlString = latestRelease.htmlUrl
-
-                            logManager.info("Update available to \(releaseVersionString)")
-                            showUpdateAlert.toggle()
-                        }
-                    } catch {
-                        let error = error as NSError
-
-                        if error.code == -1009 {
-                            logManager.info(
-                                "Github: The connection is offline",
-                                description: "The connection is offline"
-                            )
-                        } else {
-                            logManager.error(
-                                "Github: \(error)",
-                                description: "A Github error was logged"
-                            )
-                        }
+                do {
+                    guard let latestRelease = try await Github().fetchLatestRelease() else {
+                        logManager.error(
+                            "Github: No releases found",
+                            description: "Github error: No releases found"
+                        )
+                        return
                     }
 
-                    logManager.info("Github release updates checked")
+                    let releaseVersion = String(latestRelease.tagName.dropFirst())
+                    if releaseVersion > Application.shared.appVersion {
+                        releaseVersionString = latestRelease.tagName
+                        releaseUrlString = latestRelease.htmlUrl
+
+                        logManager.info("Update available to \(releaseVersionString)")
+                        showUpdateAlert.toggle()
+                    }
+                } catch {
+                    let error = error as NSError
+
+                    if error.code == -1009 {
+                        logManager.info(
+                            "Github: The connection is offline",
+                            description: "The connection is offline"
+                        )
+                    } else {
+                        logManager.error(
+                            "Github: \(error)",
+                            description: "A Github error was logged"
+                        )
+                    }
                 }
+
+                logManager.info("Github release updates checked")
             }
-        }
-        .onDisappear {
-            viewTask?.cancel()
         }
         .onOpenURL { url in
             if url.scheme == "file" {
@@ -134,54 +121,51 @@ struct MainView: View {
             }
         }
         // Global alerts and dialogs for backups
-        .backport.confirmationDialog(
+        .confirmationDialog(
+            "Restore backup?",
             isPresented: $backupManager.showRestoreAlert,
-            title: "Restore backup?",
-            message:
-            "Merge (preferred): Will merge your current data with the backup \n\n" +
-                "Overwrite: Will delete and replace all your data \n\n" +
-                "If Merge causes app instability, uninstall Ferrite and use the Overwrite option.",
-            buttons: [
-                .init("Merge", role: .destructive) {
-                    Task {
-                        await backupManager.restoreBackup(pluginManager: pluginManager, doOverwrite: false)
-                    }
-                },
-                .init("Overwrite", role: .destructive) {
-                    Task {
-                        await backupManager.restoreBackup(pluginManager: pluginManager, doOverwrite: true)
-                    }
+            titleVisibility: .visible
+        ) {
+            Button("Merge", role: .destructive) {
+                Task {
+                    await backupManager.restoreBackup(pluginManager: pluginManager, doOverwrite: false)
                 }
-            ]
-        )
-        .backport.alert(
-            isPresented: $backupManager.showRestoreCompletedAlert,
-            title: "Backup restored",
-            message: backupManager.restoreCompletedMessage.joined(separator: " \n\n"),
-            buttons: [
-                .init("OK") {
-                    backupManager.restoreCompletedMessage = []
+            }
+            Button("Overwrite", role: .destructive) {
+                Task {
+                    await backupManager.restoreBackup(pluginManager: pluginManager, doOverwrite: true)
                 }
-            ]
-        )
+            }
+        } message: {
+            Text(
+                "Merge (preferred): Will merge your current data with the backup \n\n" +
+                    "Overwrite: Will delete and replace all your data \n\n" +
+                    "If Merge causes app instability, uninstall Ferrite and use the Overwrite option."
+            )
+        }
+        .alert("Backup restored", isPresented: $backupManager.showRestoreCompletedAlert) {
+            Button("OK", role: .cancel) {
+                backupManager.restoreCompletedMessage = []
+            }
+        } message: {
+            Text(backupManager.restoreCompletedMessage.joined(separator: " \n\n"))
+        }
         // Updater alert
-        .backport.alert(
-            isPresented: $showUpdateAlert,
-            title: "Update available",
-            message:
-            "Ferrite \(releaseVersionString) can be downloaded. \n\n" +
-                "This alert can be disabled in Settings.",
-            buttons: [
-                .init("Download") {
-                    guard let releaseUrl = URL(string: releaseUrlString) else {
-                        return
-                    }
+        .alert("Update available", isPresented: $showUpdateAlert) {
+            Button("Download") {
+                guard let releaseUrl = URL(string: releaseUrlString) else {
+                    return
+                }
 
-                    UIApplication.shared.open(releaseUrl)
-                },
-                .init(role: .cancel)
-            ]
-        )
+                UIApplication.shared.open(releaseUrl)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Ferrite \(releaseVersionString) can be downloaded. \n\n" +
+                    "This alert can be disabled in Settings."
+            )
+        }
         .overlay {
             VStack {
                 Spacer()
@@ -198,9 +182,7 @@ struct MainView: View {
                     }
                     .padding(12)
                     .font(.caption)
-                    .background {
-                        VisualEffectBlurView(blurStyle: .systemThinMaterial)
-                    }
+                    .background(.thinMaterial)
                     .cornerRadius(10)
                 }
 
@@ -222,9 +204,7 @@ struct MainView: View {
                     }
                     .padding(12)
                     .font(.caption)
-                    .background {
-                        VisualEffectBlurView(blurStyle: .systemThinMaterial)
-                    }
+                    .background(.thinMaterial)
                     .cornerRadius(10)
                     .frame(width: 200)
                 }

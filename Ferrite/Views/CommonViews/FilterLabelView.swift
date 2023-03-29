@@ -17,11 +17,14 @@ struct FilterLabelView: View {
                 .foregroundColor(.primary)
 
             Image(systemName: "chevron.down")
-                .foregroundColor(.tertiaryLabel)
+                .foregroundColor(.init(uiColor: .tertiaryLabel))
         }
         .padding(.horizontal, 9)
         .padding(.vertical, 7)
-        .font(.caption, weight: .medium)
-        .background(Capsule().foregroundColor(.secondarySystemFill))
+        .font(
+            .caption
+                .weight(.medium)
+        )
+        .background(Capsule().foregroundColor(.init(uiColor: .secondarySystemFill)))
     }
 }

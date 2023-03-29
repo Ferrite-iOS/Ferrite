@@ -17,28 +17,23 @@ struct HistoryView: View {
         ]
     ) var history: FetchedResults<History>
 
+    var allHistoryEntries: FetchedResults<HistoryEntry>
+
     @Binding var searchText: String
-    @Binding var historyEmpty: Bool
 
     @State private var historyPredicate: NSPredicate?
 
     var body: some View {
-        DynamicFetchRequest(predicate: historyPredicate) { (allEntries: FetchedResults<HistoryEntry>) in
-            List {
-                if !history.isEmpty {
-                    ForEach(groupedHistory(history), id: \.self) { historyGroup in
-                        HistorySectionView(allEntries: allEntries, historyGroup: historyGroup)
-                    }
+        List {
+            if !history.isEmpty {
+                ForEach(groupedHistory(history), id: \.self) { historyGroup in
+                    HistorySectionView(allEntries: allHistoryEntries, historyGroup: historyGroup)
                 }
             }
-            .listStyle(.insetGrouped)
         }
-        .backport.onAppear {
-            historyEmpty = history.isEmpty
+        .listStyle(.insetGrouped)
+        .onAppear {
             applyPredicate()
-        }
-        .onChange(of: history.count) { newCount in
-            historyEmpty = newCount == 0
         }
         .onChange(of: searchText) { _ in
             applyPredicate()
@@ -47,11 +42,11 @@ struct HistoryView: View {
 
     func applyPredicate() {
         if searchText.isEmpty {
-            historyPredicate = nil
+            allHistoryEntries.nsPredicate = nil
         } else {
             let namePredicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText.lowercased())
             let subNamePredicate = NSPredicate(format: "subName CONTAINS[cd] %@", searchText.lowercased())
-            historyPredicate = NSCompoundPredicate(type: .or, subpredicates: [namePredicate, subNamePredicate])
+            allHistoryEntries.nsPredicate = NSCompoundPredicate(type: .or, subpredicates: [namePredicate, subNamePredicate])
         }
     }
 

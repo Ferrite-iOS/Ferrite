@@ -48,7 +48,7 @@ struct BatchChoiceView: View {
                     EmptyView()
                 }
             }
-            .backport.tint(.primary)
+            .tint(.primary)
             .listStyle(.insetGrouped)
             .inlinedList(inset: -20)
             .navigationTitle("Select a file")

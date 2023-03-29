@@ -40,52 +40,70 @@ struct DefaultActionPickerView: View {
 
             // Handle custom here
             ForEach(actions.filter { $0.requires.contains(actionRequirement.rawValue) }, id: \.id) { action in
-                Button {
-                    if let actionListId = action.listId?.uuidString {
-                        defaultAction = .custom(name: action.name, listId: actionListId)
-                    } else {
-                        logManager.error(
-                            "Default action: This action doesn't have a corresponding plugin list! Please uninstall the action"
-                        )
-                    }
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(action.name)
-
-                            Group {
-                                if let pluginList = pluginLists.first(where: { $0.id == action.listId }) {
-                                    Text("List: \(pluginList.name)")
-
-                                    Text(pluginList.id.uuidString)
-                                        .font(.caption)
-                                } else {
-                                    Text("No plugin list found")
-                                        .font(.caption)
-                                }
-                            }
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                        }
-                        Spacer()
-
-                        if
-                            case let .custom(name, listId) = defaultAction,
-                            action.listId?.uuidString == listId,
-                            action.name == name
-                        {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                        }
-                    }
-                }
-                .backport.tint(.primary)
+                CustomChoiceButton(
+                    action: action,
+                    defaultAction: $defaultAction,
+                    associatedPluginList: pluginLists.first(where: { $0.id == action.listId })
+                )
             }
         }
         .listStyle(.insetGrouped)
         .inlinedList(inset: -20)
         .navigationTitle("Default \(actionRequirement == .debrid ? "Debrid" : "Magnet") Action")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct CustomChoiceButton: View {
+    @EnvironmentObject var logManager: LoggingManager
+
+    @ObservedObject var action: Action
+
+    @Binding var defaultAction: DefaultAction
+
+    var associatedPluginList: PluginList?
+
+    var body: some View {
+        Button {
+            if let actionListId = action.listId?.uuidString {
+                defaultAction = .custom(name: action.name, listId: actionListId)
+            } else {
+                logManager.error(
+                    "Default action: This action doesn't have a corresponding plugin list! Please uninstall the action"
+                )
+            }
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(action.name)
+
+                    Group {
+                        if let associatedPluginList {
+                            Text("List: \(associatedPluginList.name)")
+
+                            Text(associatedPluginList.id.uuidString)
+                                .font(.caption)
+                        } else {
+                            Text("No plugin list found")
+                                .font(.caption)
+                        }
+                    }
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                }
+                Spacer()
+
+                if
+                    case let .custom(name, listId) = defaultAction,
+                    action.listId?.uuidString == listId,
+                    action.name == name
+                {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.blue)
+                }
+            }
+        }
+        .tint(.primary)
     }
 }
 
@@ -107,7 +125,7 @@ private struct DefaultChoiceButton: View {
                 }
             }
         }
-        .backport.tint(.primary)
+        .tint(.primary)
     }
 
     func fetchButtonName() -> String {

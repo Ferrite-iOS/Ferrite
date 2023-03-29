@@ -48,20 +48,11 @@ struct SettingsPluginListView: View {
                                 Image(systemName: "pencil")
                             }
 
-                            if #available(iOS 15.0, *) {
-                                Button(role: .destructive) {
-                                    PersistenceController.shared.delete(pluginList, context: backgroundContext)
-                                } label: {
-                                    Text("Remove")
-                                    Image(systemName: "trash")
-                                }
-                            } else {
-                                Button {
-                                    PersistenceController.shared.delete(pluginList, context: backgroundContext)
-                                } label: {
-                                    Text("Remove")
-                                    Image(systemName: "trash")
-                                }
+                            Button(role: .destructive) {
+                                PersistenceController.shared.delete(pluginList, context: backgroundContext)
+                            } label: {
+                                Text("Remove")
+                                Image(systemName: "trash")
                             }
                         }
                     }
@@ -83,7 +74,6 @@ struct SettingsPluginListView: View {
                     .presentationDetents([.medium])
             } else {
                 PluginListEditorView()
-                    .environmentObject(navModel)
             }
         }
         .navigationTitle("Plugin Lists")

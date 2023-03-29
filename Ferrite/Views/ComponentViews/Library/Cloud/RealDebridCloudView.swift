@@ -14,8 +14,6 @@ struct RealDebridCloudView: View {
 
     @Binding var searchText: String
 
-    @State private var viewTask: Task<Void, Never>?
-
     var body: some View {
         Group {
             DisclosureGroup("Downloads") {
@@ -41,7 +39,7 @@ struct RealDebridCloudView: View {
                             navModel: navModel
                         )
                     }
-                    .backport.tint(.primary)
+                    .tint(.primary)
                 }
                 .onDelete { offsets in
                     for index in offsets {
@@ -111,7 +109,7 @@ struct RealDebridCloudView: View {
                         }
                     }
                     .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
-                    .backport.tint(.primary)
+                    .tint(.primary)
                 }
                 .onDelete { offsets in
                     for index in offsets {

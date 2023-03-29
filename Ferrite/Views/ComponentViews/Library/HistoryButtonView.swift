@@ -84,7 +84,7 @@ struct HistoryButtonView: View {
             }
             .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
         }
-        .backport.tint(.primary)
+        .tint(.primary)
         .disableInteraction(navModel.currentChoiceSheet != nil)
     }
 

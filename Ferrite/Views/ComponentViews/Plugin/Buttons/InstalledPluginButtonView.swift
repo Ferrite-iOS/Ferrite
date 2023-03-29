@@ -51,20 +51,11 @@ struct InstalledPluginButtonView<P: Plugin>: View {
                 Image(systemName: "gear")
             }
 
-            if #available(iOS 15.0, *) {
-                Button(role: .destructive) {
-                    PersistenceController.shared.delete(installedPlugin, context: backgroundContext)
-                } label: {
-                    Text("Remove")
-                    Image(systemName: "trash")
-                }
-            } else {
-                Button {
-                    PersistenceController.shared.delete(installedPlugin, context: backgroundContext)
-                } label: {
-                    Text("Remove")
-                    Image(systemName: "trash")
-                }
+            Button(role: .destructive) {
+                PersistenceController.shared.delete(installedPlugin, context: backgroundContext)
+            } label: {
+                Text("Remove")
+                Image(systemName: "trash")
             }
         }
     }

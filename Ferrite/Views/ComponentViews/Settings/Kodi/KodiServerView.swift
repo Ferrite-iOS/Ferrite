@@ -15,7 +15,6 @@ struct KodiServerView: View {
 
     @State private var isActive = false
     @State private var pingInProgress = false
-    @State private var viewTask: Task<Void, Never>?
 
     var body: some View {
         HStack {
@@ -30,23 +29,18 @@ struct KodiServerView: View {
                     .frame(width: 10, height: 10)
             }
         }
-        .backport.onAppear {
-            viewTask = Task {
-                pingInProgress = true
+        .task {
+            pingInProgress = true
 
-                do {
-                    try await pluginManager.kodi.ping(server: server)
-                    isActive = true
-                } catch {
-                    logManager.error("Kodi server \(server.name): \(error)", showToast: false)
-                    isActive = false
-                }
-
-                pingInProgress = false
+            do {
+                try await pluginManager.kodi.ping(server: server)
+                isActive = true
+            } catch {
+                logManager.error("Kodi server \(server.name): \(error)", showToast: false)
+                isActive = false
             }
-        }
-        .onDisappear {
-            viewTask?.cancel()
+
+            pingInProgress = false
         }
     }
 }

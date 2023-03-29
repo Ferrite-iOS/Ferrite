@@ -28,7 +28,7 @@ struct SourceSettingsBaseUrlView: View {
             .keyboardType(.URL)
             .autocorrectionDisabled(true)
             .autocapitalization(.none)
-            .backport.onAppear {
+            .onAppear {
                 tempBaseUrl = selectedSource.baseUrl ?? ""
             }
         }

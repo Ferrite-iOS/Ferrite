@@ -10,7 +10,6 @@ import SwiftUI
 struct SettingsAppVersionView: View {
     @EnvironmentObject var logManager: LoggingManager
 
-    @State private var viewTask: Task<Void, Never>?
     @State private var releases: [Github.Release] = []
 
     @State private var loadedReleases = false
@@ -30,25 +29,20 @@ struct SettingsAppVersionView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .backport.onAppear {
-            viewTask = Task {
-                do {
-                    if let fetchedReleases = try await Github().fetchReleases() {
-                        releases = fetchedReleases
-                    } else {
-                        logManager.error("Github: No releases found")
-                    }
-                } catch {
-                    logManager.error("Github: \(error)")
+        .task {
+            do {
+                if let fetchedReleases = try await Github().fetchReleases() {
+                    releases = fetchedReleases
+                } else {
+                    logManager.error("Github: No releases found")
                 }
-
-                withAnimation {
-                    loadedReleases = true
-                }
+            } catch {
+                logManager.error("Github: \(error)")
             }
-        }
-        .onDisappear {
-            viewTask?.cancel()
+
+            withAnimation {
+                loadedReleases = true
+            }
         }
         .navigationTitle("Version History")
         .navigationBarTitleDisplayMode(.inline)
