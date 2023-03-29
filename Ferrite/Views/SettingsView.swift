@@ -37,30 +37,30 @@ struct SettingsView: View {
             Form {
                 Section(header: InlineHeader("Debrid services")) {
                     ForEach(DebridType.allCases, id: \.self) { debridType in
-                        NavigationLink(
-                            destination: SettingsDebridInfoView(
-                                debridType: debridType
-                            ), label: {
-                                HStack {
-                                    Text(debridType.toString())
-                                    Spacer()
-                                    Text(debridManager.enabledDebrids.contains(debridType) ? "Enabled" : "Disabled")
-                                        .foregroundColor(.secondary)
-                                }
+                        NavigationLink {
+                            SettingsDebridInfoView(debridType: debridType)
+                        } label: {
+                            HStack {
+                                Text(debridType.toString())
+                                Spacer()
+                                Text(debridManager.enabledDebrids.contains(debridType) ? "Enabled" : "Disabled")
+                                    .foregroundColor(.secondary)
                             }
-                        )
+                        }
                     }
                 }
 
                 Section(header: InlineHeader("Playback services")) {
-                    NavigationLink(destination: SettingsKodiView(kodiServers: kodiServers), label: {
+                    NavigationLink{
+                        SettingsKodiView(kodiServers: kodiServers)
+                    } label: {
                         HStack {
                             Text("Kodi")
                             Spacer()
                             Text(kodiServers.isEmpty ? "Disabled" : "Enabled")
                                 .foregroundColor(.secondary)
                         }
-                    })
+                    }
                 }
 
                 Section(header: InlineHeader("Behavior")) {
@@ -74,51 +74,25 @@ struct SettingsView: View {
                 }
 
                 Section(header: InlineHeader("Plugin management")) {
-                    NavigationLink("Plugin lists", destination: SettingsPluginListView())
+                    NavigationLink("Plugin lists") {
+                        SettingsPluginListView()
+                    }
                 }
 
                 Section(header: InlineHeader("Default actions")) {
                     if debridManager.enabledDebrids.count > 0 {
-                        NavigationLink(
-                            destination: DefaultActionPickerView(
+                        NavigationLink {
+                            DefaultActionPickerView(
                                 actionRequirement: .debrid,
                                 defaultAction: $defaultDebridAction.value
-                            ),
-                            label: {
-                                HStack {
-                                    Text("Debrid action")
-                                    Spacer()
-
-                                    Group {
-                                        switch defaultDebridAction.value {
-                                        case .none:
-                                            Text("User choice")
-                                        case .share:
-                                            Text("Share")
-                                        case .kodi:
-                                            Text("Kodi")
-                                        case let .custom(name, _):
-                                            Text(name)
-                                        }
-                                    }
-                                    .foregroundColor(.secondary)
-                                }
-                            }
-                        )
-                    }
-
-                    NavigationLink(
-                        destination: DefaultActionPickerView(
-                            actionRequirement: .magnet,
-                            defaultAction: $defaultMagnetAction.value
-                        ),
-                        label: {
+                            )
+                        } label: {
                             HStack {
-                                Text("Magnet action")
+                                Text("Debrid action")
                                 Spacer()
 
                                 Group {
-                                    switch defaultMagnetAction.value {
+                                    switch defaultDebridAction.value {
                                     case .none:
                                         Text("User choice")
                                     case .share:
@@ -132,12 +106,38 @@ struct SettingsView: View {
                                 .foregroundColor(.secondary)
                             }
                         }
-                    )
+                    }
+
+                    NavigationLink {
+                        DefaultActionPickerView(
+                            actionRequirement: .magnet,
+                            defaultAction: $defaultMagnetAction.value
+                        )
+                    } label: {
+                        HStack {
+                            Text("Magnet action")
+                            Spacer()
+
+                            Group {
+                                switch defaultMagnetAction.value {
+                                case .none:
+                                    Text("User choice")
+                                case .share:
+                                    Text("Share")
+                                case .kodi:
+                                    Text("Kodi")
+                                case let .custom(name, _):
+                                    Text(name)
+                                }
+                            }
+                            .foregroundColor(.secondary)
+                        }
+                    }
                 }
 
                 Section(header: InlineHeader("Backups")) {
-                    NavigationLink(destination: BackupsView()) {
-                        Text("Backups")
+                    NavigationLink("Backups") {
+                        BackupsView()
                     }
                 }
 
@@ -145,17 +145,26 @@ struct SettingsView: View {
                     Toggle(isOn: $autoUpdateNotifs) {
                         Text("Show update alerts")
                     }
-                    NavigationLink("Version history", destination: SettingsAppVersionView())
+
+                    NavigationLink("Version history") {
+                        SettingsAppVersionView()
+                    }
                 }
 
                 Section(header: InlineHeader("Information")) {
                     ListRowLinkView(text: "Donate", link: "https://ko-fi.com/kingbri")
                     ListRowLinkView(text: "Report issues", link: "https://github.com/bdashore3/Ferrite/issues")
-                    NavigationLink("About", destination: AboutView())
+
+                    NavigationLink("About") {
+                        AboutView()
+                    }
                 }
 
                 Section(header: InlineHeader("Debug")) {
-                    NavigationLink("Logs", destination: SettingsLogView())
+                    NavigationLink("Logs") {
+                        SettingsLogView()
+                    }
+
                     Toggle("Show error alerts", isOn: $showErrorToasts)
                 }
             }
