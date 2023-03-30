@@ -12,50 +12,21 @@ struct SourceSettingsMethodView: View {
 
     var body: some View {
         Section(header: InlineHeader("Fetch method")) {
-            if selectedSource.jsonParser != nil {
-                Button {
-                    selectedSource.preferredParser = SourcePreferredParser.siteApi.rawValue
-                } label: {
-                    HStack {
-                        Text("Website API")
-                        Spacer()
-                        if SourcePreferredParser.siteApi.rawValue == selectedSource.preferredParser {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                        }
-                    }
+            Picker("", selection: $selectedSource.preferredParser) {
+                if selectedSource.jsonParser != nil {
+                    Text("Website API").tag(SourcePreferredParser.siteApi.rawValue)
                 }
-            }
 
-            if selectedSource.rssParser != nil {
-                Button {
-                    selectedSource.preferredParser = SourcePreferredParser.rss.rawValue
-                } label: {
-                    HStack {
-                        Text("RSS")
-                        Spacer()
-                        if SourcePreferredParser.rss.rawValue == selectedSource.preferredParser {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                        }
-                    }
+                if selectedSource.rssParser != nil {
+                    Text("RSS").tag(SourcePreferredParser.rss.rawValue)
                 }
-            }
 
-            if selectedSource.htmlParser != nil {
-                Button {
-                    selectedSource.preferredParser = SourcePreferredParser.scraping.rawValue
-                } label: {
-                    HStack {
-                        Text("Web scraping")
-                        Spacer()
-                        if SourcePreferredParser.scraping.rawValue == selectedSource.preferredParser {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
-                        }
-                    }
+                if selectedSource.htmlParser != nil {
+                    Text("Web scraping").tag(SourcePreferredParser.scraping.rawValue)
                 }
             }
+            .pickerStyle(.inline)
+            .labelsHidden()
         }
         .tint(.primary)
     }

@@ -80,11 +80,13 @@ struct SettingsView: View {
                 }
 
                 Section(header: InlineHeader("Default actions")) {
-                    if debridManager.enabledDebrids.count > 0 {
+                    // TODO: Uncomment
+                    //if debridManager.enabledDebrids.count > 0 {
                         NavigationLink {
                             DefaultActionPickerView(
                                 actionRequirement: .debrid,
-                                defaultAction: $defaultDebridAction.value
+                                defaultAction: $defaultDebridAction.value,
+                                kodiServers: kodiServers
                             )
                         } label: {
                             HStack {
@@ -106,12 +108,13 @@ struct SettingsView: View {
                                 .foregroundColor(.secondary)
                             }
                         }
-                    }
+                    //}
 
                     NavigationLink {
                         DefaultActionPickerView(
                             actionRequirement: .magnet,
-                            defaultAction: $defaultMagnetAction.value
+                            defaultAction: $defaultMagnetAction.value,
+                            kodiServers: kodiServers
                         )
                     } label: {
                         HStack {
