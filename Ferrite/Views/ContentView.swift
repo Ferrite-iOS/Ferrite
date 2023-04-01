@@ -16,18 +16,18 @@ struct ContentView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch: Bool = false
 
-    @State private var searchText: String = ""
+    // TODO: Fix searchPrompt updating
     @State private var searchPrompt: String = "Search"
 
     var body: some View {
         NavView {
             List {
-                SearchResultsView(searchText: $searchText, searchPrompt: $searchPrompt)
+                SearchResultsView(searchPrompt: $searchPrompt)
             }
             .listStyle(.insetGrouped)
             .inlinedList(inset: 20)
             .navigationTitle("Search")
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text(searchPrompt))
+            .searchable(text: $scrapingModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text(searchPrompt))
             .onSubmit(of: .search) {
                 if let runningSearchTask = scrapingModel.runningSearchTask, runningSearchTask.isCancelled {
                     scrapingModel.runningSearchTask = nil
@@ -38,7 +38,6 @@ struct ContentView: View {
                     let sources = pluginManager.fetchInstalledSources()
                     await scrapingModel.scanSources(
                         sources: sources,
-                        searchText: searchText,
                         debridManager: debridManager
                     )
 

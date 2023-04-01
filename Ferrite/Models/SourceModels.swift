@@ -63,10 +63,10 @@ public struct SourceJsonParserJson: Codable, Hashable, Sendable {
     let searchUrl: String
     let results: String?
     let subResults: String?
+    let title: SourceComplexQueryJson
     let magnetHash: SourceComplexQueryJson?
     let magnetLink: SourceComplexQueryJson?
     let subName: SourceComplexQueryJson?
-    let title: SourceComplexQueryJson?
     let size: SourceComplexQueryJson?
     let sl: SourceSLJson?
 }
@@ -75,10 +75,10 @@ public struct SourceRssParserJson: Codable, Hashable, Sendable {
     let rssUrl: String?
     let searchUrl: String
     let items: String
+    let title: SourceComplexQueryJson
     let magnetHash: SourceComplexQueryJson?
     let magnetLink: SourceComplexQueryJson?
     let subName: SourceComplexQueryJson?
-    let title: SourceComplexQueryJson?
     let size: SourceComplexQueryJson?
     let sl: SourceSLJson?
 }
@@ -86,9 +86,9 @@ public struct SourceRssParserJson: Codable, Hashable, Sendable {
 public struct SourceHtmlParserJson: Codable, Hashable, Sendable {
     let searchUrl: String
     let rows: String
+    let title: SourceComplexQueryJson
     let magnet: SourceMagnetJson
     let subName: SourceComplexQueryJson?
-    let title: SourceComplexQueryJson?
     let size: SourceComplexQueryJson?
     let sl: SourceSLJson?
 }

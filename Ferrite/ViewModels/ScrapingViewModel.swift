@@ -22,6 +22,7 @@ class ScrapingViewModel: ObservableObject {
         runningSearchTask = nil
     }
 
+    @Published var searchText: String = ""
     @Published var searchResults: [SearchResult] = []
 
     // Only add results with valid magnet hashes to the search results array
@@ -67,7 +68,7 @@ class ScrapingViewModel: ObservableObject {
         await logManager?.error(description, showToast: false)
     }
 
-    public func scanSources(sources: [Source], searchText: String, debridManager: DebridManager) async {
+    public func scanSources(sources: [Source], debridManager: DebridManager) async {
         await logManager?.info("Started scanning sources for query \"\(searchText)\"")
 
         if sources.isEmpty {
@@ -101,7 +102,7 @@ class ScrapingViewModel: ObservableObject {
                 if source.enabled {
                     group.addTask {
                         await self.updateCurrentSourceNames(source.name)
-                        let requestResult = await self.executeParser(source: source, searchText: searchText)
+                        let requestResult = await self.executeParser(source: source)
 
                         return (requestResult, source.name)
                     }
@@ -142,7 +143,7 @@ class ScrapingViewModel: ObservableObject {
         }
     }
 
-    func executeParser(source: Source, searchText: String) async -> SearchRequestResult? {
+    func executeParser(source: Source) async -> SearchRequestResult? {
         guard let baseUrl = source.baseUrl else {
             await logManager?.error("Scraping: The base URL could not be found for source \(source.name)")
 
@@ -364,7 +365,7 @@ class ScrapingViewModel: ObservableObject {
 
     // Fetches the data for a URL
     public func fetchWebsiteData(urlString: String, sourceName: String) async -> Data? {
-        guard let url = URL(string: urlString) else {
+        guard let url = URL(string: urlString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             await sendSourceError("\(sourceName): Source doesn't contain a valid URL, contact the source dev!")
 
             return nil
@@ -467,11 +468,36 @@ class ScrapingViewModel: ObservableObject {
         return SearchRequestResult(results: tempResults, magnets: magnets)
     }
 
+    // TODO: Add regex parsing for API
     public func parseJsonResult(_ result: JSON,
                                 jsonParser: SourceJsonParser,
                                 source: Source,
                                 existingSearchResult: SearchResult? = nil) -> SearchResult?
     {
+        // Enforce these parsers
+        guard let titleParser = jsonParser.title else {
+            return nil
+        }
+
+        var title: String? = existingSearchResult?.title
+        if let existingTitle = title,
+           let discriminatorQuery = titleParser.discriminator
+        {
+            let rawDiscriminator = result[discriminatorQuery.components(separatedBy: ".")].rawValue
+
+            if !(rawDiscriminator is NSNull) {
+                title = String(describing: rawDiscriminator) + existingTitle
+            }
+        } else if title == nil {
+            let rawTitle = result[titleParser.query].rawValue
+            title = rawTitle is NSNull ? nil : String(describing: rawTitle)
+        }
+
+        // Return if a title doesn't exist
+        if title == nil {
+            return nil
+        }
+
         var magnetHash: String? = existingSearchResult?.magnet.hash
         if let magnetHashParser = jsonParser.magnetHash {
             let rawHash = result[magnetHashParser.query.components(separatedBy: ".")].rawValue
@@ -487,23 +513,7 @@ class ScrapingViewModel: ObservableObject {
             link = rawLink is NSNull ? nil : String(describing: rawLink)
         }
 
-        var title: String? = existingSearchResult?.title
-        if let titleParser = jsonParser.title {
-            if let existingTitle = existingSearchResult?.title,
-               let discriminatorQuery = titleParser.discriminator
-            {
-                let rawDiscriminator = result[discriminatorQuery.components(separatedBy: ".")].rawValue
-
-                if !(rawDiscriminator is NSNull) {
-                    title = String(describing: rawDiscriminator) + existingTitle
-                }
-            } else if existingSearchResult?.title == nil {
-                let rawTitle = result[titleParser.query].rawValue
-                title = rawTitle is NSNull ? nil : String(describing: rawTitle)
-            }
-        }
-
-        // Return if no magnet hash exists
+        // Return if a magnet hash doesn't exist
         let magnet = Magnet(hash: magnetHash, link: link, title: title, trackers: source.trackers)
         if magnet.hash == nil {
             return nil
@@ -573,6 +583,21 @@ class ScrapingViewModel: ObservableObject {
         var magnets: [Magnet] = []
 
         for item in items {
+            // Enforce these parsers
+            guard let titleParser = rssParser.title else {
+                continue
+            }
+
+            guard let title = try? runRssComplexQuery(
+                item: item,
+                query: titleParser.query,
+                attribute: titleParser.attribute,
+                discriminator: titleParser.discriminator,
+                regexString: titleParser.regex
+            ) else {
+                continue
+            }
+
             // Parse magnet link or translate hash
             var magnetHash: String?
             if let magnetHashParser = rssParser.magnetHash {
@@ -593,17 +618,6 @@ class ScrapingViewModel: ObservableObject {
                     attribute: magnetLinkParser.attribute,
                     discriminator: magnetLinkParser.discriminator,
                     regexString: magnetLinkParser.regex
-                )
-            }
-
-            var title: String?
-            if let titleParser = rssParser.title {
-                title = try? runRssComplexQuery(
-                    item: item,
-                    query: titleParser.query,
-                    attribute: titleParser.attribute,
-                    discriminator: titleParser.discriminator,
-                    regexString: titleParser.regex
                 )
             }
 
@@ -666,7 +680,7 @@ class ScrapingViewModel: ObservableObject {
             }
 
             let result = SearchResult(
-                title: title ?? "No title",
+                title: title,
                 source: subName.map { "\(source.name) - \($0)" } ?? source.name,
                 size: size ?? "",
                 magnet: magnet,
@@ -708,10 +722,8 @@ class ScrapingViewModel: ObservableObject {
 
         // A capture group must be used in the provided regex
         if let regexString,
-           let parsedValue,
-           let regexValue = try? Regex(regexString).firstMatch(in: parsedValue)?.groups[safe: 0]?.value
-        {
-            return regexValue
+           let parsedValue {
+            return runRegex(parsedValue: parsedValue, regexString: regexString)
         } else {
             return parsedValue
         }
@@ -740,18 +752,37 @@ class ScrapingViewModel: ObservableObject {
         // If there's an error, continue instead of returning with nothing
         for row in rows {
             do {
-                // Fetches the magnet link
-                // If the magnet is located on an external page, fetch the external page and grab the magnet link
-                // External page fetching affects source performance
-                guard let magnetParser = htmlParser.magnetLink else {
+                // Enforce these parsers
+                guard
+                    let magnetParser = htmlParser.magnetLink,
+                    let titleParser = htmlParser.title
+                else {
                     continue
                 }
 
+                // Fetches the episode/movie title
+                // Place here for filtering purposes
+                guard let title = try? runHtmlComplexQuery(
+                    row: row,
+                    query: titleParser.query,
+                    attribute: titleParser.attribute,
+                    regexString: titleParser.regex
+                ) else {
+                    continue
+                }
+
+                // Fetches the magnet link
+                // If the magnet is located on an external page, fetch the external page and grab the magnet link
+                // External page fetching affects source performance
                 var href: String
                 if let externalMagnetQuery = magnetParser.externalLinkQuery, !externalMagnetQuery.isEmpty {
+                    guard let externalMagnetUrl = try row.select(externalMagnetQuery).first()?.attr("href") else {
+                        continue
+                    }
+
+                    let replacedMagnetUrl = externalMagnetUrl.starts(with: "/") ? baseUrl + externalMagnetUrl : externalMagnetUrl
                     guard
-                        let externalMagnetLink = try row.select(externalMagnetQuery).first()?.attr("href"),
-                        let data = await fetchWebsiteData(urlString: baseUrl + externalMagnetLink, sourceName: source.name),
+                        let data = await fetchWebsiteData(urlString: replacedMagnetUrl, sourceName: source.name),
                         let magnetHtml = String(data: data, encoding: .utf8)
                     else {
                         continue
@@ -784,17 +815,6 @@ class ScrapingViewModel: ObservableObject {
                 let magnet = Magnet(hash: nil, link: href)
                 if magnet.hash == nil {
                     continue
-                }
-
-                // Fetches the episode/movie title
-                var title: String?
-                if let titleParser = htmlParser.title {
-                    title = try? runHtmlComplexQuery(
-                        row: row,
-                        query: titleParser.query,
-                        attribute: titleParser.attribute,
-                        regexString: titleParser.regex
-                    )
                 }
 
                 var subName: String?
@@ -859,7 +879,7 @@ class ScrapingViewModel: ObservableObject {
                 }
 
                 let result = SearchResult(
-                    title: title ?? "No title",
+                    title: title,
                     source: subName.map { "\(source.name) - \($0)" } ?? source.name,
                     size: size ?? "",
                     magnet: magnet,
@@ -898,12 +918,25 @@ class ScrapingViewModel: ObservableObject {
             parsedValue = try result?.attr(attribute)
         }
 
-        // A capture group must be used in the provided regex
-        if let regexString,
-           let parsedValue,
-           let regexValue = try? Regex(regexString).firstMatch(in: parsedValue)?.groups[safe: 0]?.value
-        {
-            return regexValue
+        if let parsedValue,
+           let regexString {
+            return runRegex(parsedValue: parsedValue, regexString: regexString)
+        } else {
+            return parsedValue
+        }
+    }
+
+    func runRegex(parsedValue: String, regexString: String) -> String? {
+        let replacedRegexString = regexString
+            .replacingOccurrences(of: "{query}", with: searchText)
+
+        guard let matchedRegex = try? Regex(replacedRegexString).firstMatch(in: parsedValue) else {
+            return nil
+        }
+
+        // Is there a capture group present? Otherwise return the original matched string
+        if let group = matchedRegex.groups[safe: 0] {
+            return group.value
         } else {
             return parsedValue
         }

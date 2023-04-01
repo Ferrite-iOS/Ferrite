@@ -584,14 +584,12 @@ public class PluginManager: ObservableObject {
             newSourceJsonParser.subName = newSourceSubName
         }
 
-        if let titleJson = jsonParserJson.title {
-            let newSourceTitle = SourceTitle(context: backgroundContext)
-            newSourceTitle.query = titleJson.query
-            newSourceTitle.attribute = titleJson.attribute ?? "text"
-            newSourceTitle.discriminator = titleJson.discriminator
+        let newSourceTitle = SourceTitle(context: backgroundContext)
+        newSourceTitle.query = jsonParserJson.title.query
+        newSourceTitle.attribute = jsonParserJson.title.attribute ?? "text"
+        newSourceTitle.discriminator = jsonParserJson.title.discriminator
 
-            newSourceJsonParser.title = newSourceTitle
-        }
+        newSourceJsonParser.title = newSourceTitle
 
         if let sizeJson = jsonParserJson.size {
             let newSourceSize = SourceSize(context: backgroundContext)
@@ -656,15 +654,13 @@ public class PluginManager: ObservableObject {
             newSourceRssParser.subName = newSourceSubName
         }
 
-        if let titleJson = rssParserJson.title {
-            let newSourceTitle = SourceTitle(context: backgroundContext)
-            newSourceTitle.query = titleJson.query
-            newSourceTitle.attribute = titleJson.attribute ?? "text"
-            newSourceTitle.discriminator = titleJson.discriminator
-            newSourceTitle.regex = titleJson.regex
+        let newSourceTitle = SourceTitle(context: backgroundContext)
+        newSourceTitle.query = rssParserJson.title.query
+        newSourceTitle.attribute = rssParserJson.title.attribute ?? "text"
+        newSourceTitle.discriminator = rssParserJson.title.discriminator
+        newSourceTitle.regex = rssParserJson.title.regex
 
-            newSourceRssParser.title = newSourceTitle
-        }
+        newSourceRssParser.title = newSourceTitle
 
         if let sizeJson = rssParserJson.size {
             let newSourceSize = SourceSize(context: backgroundContext)
@@ -708,15 +704,13 @@ public class PluginManager: ObservableObject {
             newSourceHtmlParser.subName = newSourceSubName
         }
 
-        // Adds a title complex query if present
-        if let titleJson = htmlParserJson.title {
-            let newSourceTitle = SourceTitle(context: backgroundContext)
-            newSourceTitle.query = titleJson.query
-            newSourceTitle.attribute = titleJson.attribute ?? "text"
-            newSourceTitle.regex = titleJson.regex
+        // Adds a title complex query
+        let newSourceTitle = SourceTitle(context: backgroundContext)
+        newSourceTitle.query = htmlParserJson.title.query
+        newSourceTitle.attribute = htmlParserJson.title.attribute ?? "text"
+        newSourceTitle.regex = htmlParserJson.title.regex
 
-            newSourceHtmlParser.title = newSourceTitle
-        }
+        newSourceHtmlParser.title = newSourceTitle
 
         // Adds a size complex query if present
         if let sizeJson = htmlParserJson.size {

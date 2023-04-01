@@ -16,8 +16,6 @@ struct SearchResultsView: View {
 
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
 
-    @Binding var searchText: String
-
     @Binding var searchPrompt: String
     @State private var lastSearchPromptIndex: Int = -1
     let searchBarTextArray: [String] = [
@@ -38,7 +36,7 @@ struct SearchResultsView: View {
         .onAppear {
             searchPrompt = getSearchPrompt()
         }
-        .onChange(of: searchText) { newText in
+        .onChange(of: scrapingModel.searchText) { newText in
             if newText.isEmpty, isSearching {
                 searchPrompt = getSearchPrompt()
             }
