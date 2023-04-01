@@ -15,33 +15,43 @@ struct BatchChoiceView: View {
 
     let backgroundContext = PersistenceController.shared.backgroundContext
 
-    // TODO: Make this generic for IA(?) and add searchbar
+    @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
+
+    @State private var searchText: String = ""
+
+    // TODO: Make this generic for an IA protocol
     var body: some View {
         NavView {
             List {
                 switch debridManager.selectedDebridType {
                 case .realDebrid:
                     ForEach(debridManager.selectedRealDebridItem?.files ?? [], id: \.self) { file in
-                        Button(file.name) {
-                            debridManager.selectedRealDebridFile = file
+                        if file.name.lowercased().contains(searchText.lowercased()) || searchText.isEmpty {
+                            Button(file.name) {
+                                debridManager.selectedRealDebridFile = file
 
-                            queueCommonDownload(fileName: file.name)
+                                queueCommonDownload(fileName: file.name)
+                            }
                         }
                     }
                 case .allDebrid:
                     ForEach(debridManager.selectedAllDebridItem?.files ?? [], id: \.self) { file in
-                        Button(file.fileName) {
-                            debridManager.selectedAllDebridFile = file
-
-                            queueCommonDownload(fileName: file.fileName)
+                        if file.fileName.lowercased().contains(searchText.lowercased()) || searchText.isEmpty {
+                            Button(file.fileName) {
+                                debridManager.selectedAllDebridFile = file
+                                
+                                queueCommonDownload(fileName: file.fileName)
+                            }
                         }
                     }
                 case .premiumize:
                     ForEach(debridManager.selectedPremiumizeItem?.files ?? [], id: \.self) { file in
-                        Button(file.name) {
-                            debridManager.selectedPremiumizeFile = file
-
-                            queueCommonDownload(fileName: file.name)
+                        if file.name.lowercased().contains(searchText.lowercased()) || searchText.isEmpty {
+                            Button(file.name) {
+                                debridManager.selectedPremiumizeFile = file
+                                
+                                queueCommonDownload(fileName: file.name)
+                            }
                         }
                     }
                 case .none:
@@ -51,6 +61,9 @@ struct BatchChoiceView: View {
             .tint(.primary)
             .listStyle(.insetGrouped)
             .inlinedList(inset: -20)
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+            .autocorrectionDisabled(!autocorrectSearch)
+            .textInputAutocapitalization(autocorrectSearch ? .sentences : .never)
             .navigationTitle("Select a file")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

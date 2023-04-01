@@ -16,29 +16,15 @@ struct SearchResultsView: View {
 
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
 
-    @Binding var searchPrompt: String
-    @State private var lastSearchPromptIndex: Int = -1
-    let searchBarTextArray: [String] = [
-        "What's on your mind?",
-        "Discover something interesting",
-        "Find an engaging show",
-        "Feeling adventurous?",
-        "Look for something new",
-        "The classics are a good idea"
-    ]
-
     var body: some View {
         ForEach(scrapingModel.searchResults, id: \.self) { result in
             if result.source == scrapingModel.filteredSource?.name || scrapingModel.filteredSource == nil {
                 SearchResultButtonView(result: result)
             }
         }
-        .onAppear {
-            searchPrompt = getSearchPrompt()
-        }
         .onChange(of: scrapingModel.searchText) { newText in
             if newText.isEmpty, isSearching {
-                searchPrompt = getSearchPrompt()
+                navModel.getSearchPrompt()
             }
         }
         .onChange(of: navModel.selectedTab) { tab in
@@ -71,23 +57,6 @@ struct SearchResultsView: View {
             {
                 Text("No results found")
             }
-        }
-    }
-
-    // Fetches random searchbar text if enabled, otherwise deinit the last case value
-    func getSearchPrompt() -> String {
-        if usesRandomSearchText {
-            let num = Int.random(in: 0 ..< searchBarTextArray.count - 1)
-            if num == lastSearchPromptIndex {
-                lastSearchPromptIndex = num + 1
-                return searchBarTextArray[safe: num + 1] ?? "Search"
-            } else {
-                lastSearchPromptIndex = num
-                return searchBarTextArray[safe: num] ?? "Search"
-            }
-        } else {
-            lastSearchPromptIndex = -1
-            return "Search"
         }
     }
 }

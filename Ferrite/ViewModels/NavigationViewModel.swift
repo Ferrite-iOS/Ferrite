@@ -64,4 +64,31 @@ public class NavigationViewModel: ObservableObject {
 
     @Published var libraryPickerSelection: LibraryPickerSegment = .bookmarks
     @Published var pluginPickerSelection: PluginPickerSegment = .sources
+
+    @Published var searchPrompt: String = "Search"
+    @Published var lastSearchPromptIndex: Int = -1
+    let searchBarTextArray: [String] = [
+        "What's on your mind?",
+        "Discover something interesting",
+        "Find an engaging show",
+        "Feeling adventurous?",
+        "Look for something new",
+        "The classics are a good idea"
+    ]
+
+    func getSearchPrompt() {
+        if UserDefaults.standard.bool(forKey: "Behavior.UsesRandomSearchText") {
+            let num = Int.random(in: 0 ..< searchBarTextArray.count - 1)
+            if num == lastSearchPromptIndex {
+                lastSearchPromptIndex = num + 1
+                searchPrompt = searchBarTextArray[safe: num + 1] ?? "Search"
+            } else {
+                lastSearchPromptIndex = num
+                searchPrompt = searchBarTextArray[safe: num] ?? "Search"
+            }
+        } else {
+            lastSearchPromptIndex = -1
+            searchPrompt = "Search"
+        }
+    }
 }

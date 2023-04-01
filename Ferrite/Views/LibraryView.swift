@@ -82,6 +82,8 @@ struct LibraryView: View {
                 }
             }
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+            .autocorrectionDisabled(!autocorrectSearch)
+            .textInputAutocapitalization(autocorrectSearch ? .sentences : .never)
             .customScopeBar {
                 LibraryPickerView()
             }

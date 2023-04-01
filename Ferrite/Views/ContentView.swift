@@ -16,18 +16,21 @@ struct ContentView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch: Bool = false
 
-    // TODO: Fix searchPrompt updating
-    @State private var searchPrompt: String = "Search"
-
     var body: some View {
         NavView {
             List {
-                SearchResultsView(searchPrompt: $searchPrompt)
+                SearchResultsView()
             }
             .listStyle(.insetGrouped)
             .inlinedList(inset: 20)
             .navigationTitle("Search")
-            .searchable(text: $scrapingModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text(searchPrompt))
+            .searchable(
+                text: $scrapingModel.searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: Text(navModel.searchPrompt)
+            )
+            .autocorrectionDisabled(!autocorrectSearch)
+            .textInputAutocapitalization(autocorrectSearch ? .sentences : .never)
             .onSubmit(of: .search) {
                 if let runningSearchTask = scrapingModel.runningSearchTask, runningSearchTask.isCancelled {
                     scrapingModel.runningSearchTask = nil
@@ -47,6 +50,9 @@ struct ContentView: View {
             }
             .customScopeBar {
                 SearchFilterHeaderView()
+            }
+            .onAppear {
+                navModel.getSearchPrompt()
             }
         }
     }
