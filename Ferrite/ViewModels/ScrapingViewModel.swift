@@ -153,7 +153,7 @@ class ScrapingViewModel: ObservableObject {
         // Default to HTML scraping
         let preferredParser = SourcePreferredParser(rawValue: source.preferredParser) ?? .none
 
-        guard let encodedQuery = searchText.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+        guard let encodedQuery = searchText.lowercased().addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
             await sendSourceError("\(source.name): Could not process search query, invalid characters present.")
 
             return nil
@@ -162,8 +162,9 @@ class ScrapingViewModel: ObservableObject {
         switch preferredParser {
         case .scraping:
             if let htmlParser = source.htmlParser {
-                let replacedSearchUrl = htmlParser.searchUrl
-                    .replacingOccurrences(of: "{query}", with: encodedQuery)
+                let replacedSearchUrl = htmlParser.searchUrl.map {
+                    $0.replacingOccurrences(of: "{query}", with: encodedQuery)
+                }
 
                 let data = await handleUrls(
                     baseUrl: baseUrl,
@@ -260,14 +261,16 @@ class ScrapingViewModel: ObservableObject {
     }
 
     // Checks the base URL for any website data then iterates through the fallback URLs
-    func handleUrls(baseUrl: String, replacedSearchUrl: String, fallbackUrls: [String]?, sourceName: String) async -> Data? {
-        if let data = await fetchWebsiteData(urlString: baseUrl + replacedSearchUrl, sourceName: sourceName) {
+    func handleUrls(baseUrl: String, replacedSearchUrl: String?, fallbackUrls: [String]?, sourceName: String) async -> Data? {
+        let fetchUrl = baseUrl + (replacedSearchUrl.map { $0 } ?? "")
+        if let data = await fetchWebsiteData(urlString: fetchUrl, sourceName: sourceName) {
             return data
         }
 
         if let fallbackUrls {
             for fallbackUrl in fallbackUrls {
-                if let data = await fetchWebsiteData(urlString: fallbackUrl + replacedSearchUrl, sourceName: sourceName) {
+                let fetchUrl = fallbackUrl + (replacedSearchUrl.map { $0 } ?? "")
+                if let data = await fetchWebsiteData(urlString: fetchUrl, sourceName: sourceName) {
                     return data
                 }
             }
@@ -927,10 +930,17 @@ class ScrapingViewModel: ObservableObject {
     }
 
     func runRegex(parsedValue: String, regexString: String) -> String? {
+        // TODO: Maybe dynamically parse flags
         let replacedRegexString = regexString
-            .replacingOccurrences(of: "{query}", with: searchText)
+            .replacingOccurrences(of: "{query}", with: searchText.lowercased())
 
-        guard let matchedRegex = try? Regex(replacedRegexString).firstMatch(in: parsedValue) else {
+        guard
+            let matchedRegex = try? Regex(
+                replacedRegexString,
+                options: [.caseInsensitive, .anchorsMatchLines]
+            )
+            .firstMatch(in: parsedValue)
+        else {
             return nil
         }
 

@@ -84,7 +84,7 @@ public struct SourceRssParserJson: Codable, Hashable, Sendable {
 }
 
 public struct SourceHtmlParserJson: Codable, Hashable, Sendable {
-    let searchUrl: String
+    let searchUrl: String?
     let rows: String
     let title: SourceComplexQueryJson
     let magnet: SourceMagnetJson

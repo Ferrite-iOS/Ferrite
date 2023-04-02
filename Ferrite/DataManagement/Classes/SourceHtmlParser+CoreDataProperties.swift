@@ -15,7 +15,7 @@ public extension SourceHtmlParser {
     }
 
     @NSManaged var rows: String
-    @NSManaged var searchUrl: String
+    @NSManaged var searchUrl: String?
     @NSManaged var magnetHash: SourceMagnetHash?
     @NSManaged var magnetLink: SourceMagnetLink?
     @NSManaged var parentSource: Source?

@@ -99,7 +99,7 @@
     </entity>
     <entity name="SourceHtmlParser" representedClassName="SourceHtmlParser" syncable="YES">
         <attribute name="rows" attributeType="String" defaultValueString=""/>
-        <attribute name="searchUrl" attributeType="String" defaultValueString=""/>
+        <attribute name="searchUrl" optional="YES" attributeType="String"/>
         <relationship name="magnetHash" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetHash" inverseName="parentHtmlParser" inverseEntity="SourceMagnetHash"/>
         <relationship name="magnetLink" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceMagnetLink" inverseName="parentHtmlParser" inverseEntity="SourceMagnetLink"/>
         <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="htmlParser" inverseEntity="Source"/>
