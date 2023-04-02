@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D49" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Action" representedClassName="Action" syncable="YES">
+        <attribute name="about" optional="YES" attributeType="String"/>
         <attribute name="author" attributeType="String" defaultValueString=""/>
         <attribute name="deeplink" optional="YES" attributeType="String"/>
         <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -9,6 +10,7 @@
         <attribute name="name" attributeType="String" defaultValueString=""/>
         <attribute name="requires" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <attribute name="version" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="website" optional="YES" attributeType="String"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="PluginTag" inverseName="parentAction" inverseEntity="PluginTag"/>
     </entity>
     <entity name="Bookmark" representedClassName="Bookmark" syncable="YES">
@@ -53,9 +55,9 @@
         <relationship name="parentSource" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Source" inverseName="tags" inverseEntity="Source"/>
     </entity>
     <entity name="Source" representedClassName="Source" syncable="YES">
+        <attribute name="about" optional="YES" attributeType="String"/>
         <attribute name="author" attributeType="String" defaultValueString=""/>
-        <attribute name="baseUrl" optional="YES" attributeType="String"/>
-        <attribute name="dynamicBaseUrl" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="dynamicWebsite" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="fallbackUrls" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
@@ -64,6 +66,7 @@
         <attribute name="preferredParser" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="trackers" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <attribute name="version" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="website" optional="YES" attributeType="String"/>
         <relationship name="api" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceApi" inverseName="parentSource" inverseEntity="SourceApi"/>
         <relationship name="htmlParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceHtmlParser" inverseName="parentSource" inverseEntity="SourceHtmlParser"/>
         <relationship name="jsonParser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SourceJsonParser" inverseName="parentSource" inverseEntity="SourceJsonParser"/>

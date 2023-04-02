@@ -11,7 +11,7 @@ struct SourceSettingsView: View {
     @ObservedObject var selectedSource: Source
 
     var body: some View {
-        if selectedSource.dynamicBaseUrl {
+        if selectedSource.dynamicWebsite {
             SourceSettingsBaseUrlView(selectedSource: selectedSource)
         }
 

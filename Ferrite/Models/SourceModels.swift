@@ -16,9 +16,10 @@ public struct SourceJson: Codable, Hashable, Sendable, PluginJson {
     public let name: String
     public let version: Int16
     let minVersion: String?
-    let baseUrl: String?
+    let about: String?
+    let website: String?
+    let dynamicWebsite: Bool?
     let fallbackUrls: [String]?
-    let dynamicBaseUrl: Bool?
     let trackers: [String]?
     let api: SourceApiJson?
     let jsonParser: SourceJsonParserJson?

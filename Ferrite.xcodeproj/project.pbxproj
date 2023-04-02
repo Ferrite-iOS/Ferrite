@@ -137,6 +137,8 @@
 		0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC7704288DE7F40054BE44 /* PersistenceController.swift */; };
 		0CC389532970AD900066D06F /* Action+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC389512970AD900066D06F /* Action+CoreDataClass.swift */; };
 		0CC389542970AD900066D06F /* Action+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC389522970AD900066D06F /* Action+CoreDataProperties.swift */; };
+		0CD4030A29DA01B6008D9F03 /* PluginInfoMetaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD4030929DA01B6008D9F03 /* PluginInfoMetaView.swift */; };
+		0CD4030C29DA0222008D9F03 /* PluginInfoAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD4030B29DA0222008D9F03 /* PluginInfoAboutView.swift */; };
 		0CD4CAC628C980EB0046E1DC /* HistoryActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD4CAC528C980EB0046E1DC /* HistoryActionsView.swift */; };
 		0CD5E78928CD932B001BF684 /* DisabledAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD5E78828CD932B001BF684 /* DisabledAppearance.swift */; };
 		0CD5F1FB299BEFBE00476DDB /* CustomScopeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD5F1FA299BEFBE00476DDB /* CustomScopeBar.swift */; };
@@ -277,6 +279,8 @@
 		0CC389512970AD900066D06F /* Action+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Action+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0CC389522970AD900066D06F /* Action+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Action+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CC6E4D428A45BA000AF2BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0CD4030929DA01B6008D9F03 /* PluginInfoMetaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginInfoMetaView.swift; sourceTree = "<group>"; };
+		0CD4030B29DA0222008D9F03 /* PluginInfoAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginInfoAboutView.swift; sourceTree = "<group>"; };
 		0CD4CAC528C980EB0046E1DC /* HistoryActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryActionsView.swift; sourceTree = "<group>"; };
 		0CD5E78828CD932B001BF684 /* DisabledAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledAppearance.swift; sourceTree = "<group>"; };
 		0CD5F1FA299BEFBE00476DDB /* CustomScopeBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScopeBar.swift; sourceTree = "<group>"; };
@@ -420,6 +424,7 @@
 		0C3E00D4296F560800ECECB2 /* Plugin */ = {
 			isa = PBXGroup;
 			children = (
+				0CD4030829DA01A3008D9F03 /* Info */,
 				0C44E2AA28D4E09B007711AE /* Buttons */,
 				0C794B65289DAC9F00DD1CC8 /* Source */,
 				0C0D50E6288DFF850035ECC8 /* PluginAggregateView.swift */,
@@ -665,6 +670,15 @@
 			path = DataManagement;
 			sourceTree = "<group>";
 		};
+		0CD4030829DA01A3008D9F03 /* Info */ = {
+			isa = PBXGroup;
+			children = (
+				0CD4030929DA01B6008D9F03 /* PluginInfoMetaView.swift */,
+				0CD4030B29DA0222008D9F03 /* PluginInfoAboutView.swift */,
+			);
+			path = Info;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -794,8 +808,10 @@
 				0CD5E78928CD932B001BF684 /* DisabledAppearance.swift in Sources */,
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
 				0CA3B23C28C2AA5600616D3A /* Bookmark+CoreDataClass.swift in Sources */,
+				0CD4030A29DA01B6008D9F03 /* PluginInfoMetaView.swift in Sources */,
 				0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */,
 				0CA3FB2028B91D9500FA10A8 /* IndeterminateProgressView.swift in Sources */,
+				0CD4030C29DA0222008D9F03 /* PluginInfoAboutView.swift in Sources */,
 				0C50055A2992BA6A0064606A /* PluginTag+CoreDataClass.swift in Sources */,
 				0C1A3E5229C8A7F500DA9730 /* SettingsModels.swift in Sources */,
 				0CBC7705288DE7F40054BE44 /* PersistenceController.swift in Sources */,
@@ -1129,7 +1145,7 @@
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect/";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.2;
+				minimumVersion = 0.2.3;
 			};
 		};
 		0C4CFC442897030D00AD9FAD /* XCRemoteSwiftPackageReference "Regex" */ = {

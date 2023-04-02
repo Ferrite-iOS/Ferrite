@@ -15,9 +15,10 @@ public extension Source {
     }
 
     @NSManaged var id: UUID
-    @NSManaged var baseUrl: String?
+    @NSManaged var about: String?
+    @NSManaged var website: String?
+    @NSManaged var dynamicWebsite: Bool
     @NSManaged var fallbackUrls: [String]?
-    @NSManaged var dynamicBaseUrl: Bool
     @NSManaged var enabled: Bool
     @NSManaged var name: String
     @NSManaged var author: String

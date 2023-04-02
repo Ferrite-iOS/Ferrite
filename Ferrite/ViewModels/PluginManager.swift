@@ -124,9 +124,10 @@ public class PluginManager: ObservableObject {
                         name: inputJson.name,
                         version: inputJson.version,
                         minVersion: inputJson.minVersion,
-                        baseUrl: inputJson.baseUrl,
+                        about: inputJson.about,
+                        website: inputJson.website,
+                        dynamicWebsite: inputJson.dynamicWebsite,
                         fallbackUrls: inputJson.fallbackUrls,
-                        dynamicBaseUrl: inputJson.dynamicBaseUrl,
                         trackers: inputJson.trackers,
                         api: inputJson.api,
                         jsonParser: inputJson.jsonParser,
@@ -154,6 +155,8 @@ public class PluginManager: ObservableObject {
                         name: inputJson.name,
                         version: inputJson.version,
                         minVersion: inputJson.minVersion,
+                        about: inputJson.about,
+                        website: inputJson.website,
                         requires: inputJson.requires,
                         deeplink: filteredDeeplinks,
                         author: pluginList.author,
@@ -409,6 +412,8 @@ public class PluginManager: ObservableObject {
         newAction.id = UUID()
         newAction.name = actionJson.name
         newAction.version = actionJson.version
+        newAction.website = actionJson.website
+        newAction.about = actionJson.about
         newAction.author = actionJson.author ?? "Unknown"
         newAction.listId = actionJson.listId
         newAction.requires = actionJson.requires.map(\.rawValue)
@@ -448,9 +453,9 @@ public class PluginManager: ObservableObject {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         // If there's no base URL and it isn't dynamic, return before any transactions occur
-        let dynamicBaseUrl = sourceJson.dynamicBaseUrl ?? false
-        if !dynamicBaseUrl, sourceJson.baseUrl == nil {
-            await logManager?.error("Not adding this source because base URL parameters are malformed. Please contact the source dev.")
+        let dynamicWebsite = sourceJson.dynamicWebsite ?? false
+        if !dynamicWebsite, sourceJson.website == nil {
+            await logManager?.error("Not adding this source because website parameters are malformed. Please contact the source dev.")
             return
         }
 
@@ -472,9 +477,10 @@ public class PluginManager: ObservableObject {
         newSource.id = UUID()
         newSource.name = sourceJson.name
         newSource.version = sourceJson.version
-        newSource.dynamicBaseUrl = dynamicBaseUrl
-        newSource.baseUrl = sourceJson.baseUrl
-        newSource.fallbackUrls = dynamicBaseUrl ? nil : sourceJson.fallbackUrls
+        newSource.about = sourceJson.about
+        newSource.website = sourceJson.website
+        newSource.dynamicWebsite = dynamicWebsite
+        newSource.fallbackUrls = dynamicWebsite ? nil : sourceJson.fallbackUrls
         newSource.author = sourceJson.author ?? "Unknown"
         newSource.listId = sourceJson.listId
         newSource.trackers = sourceJson.trackers

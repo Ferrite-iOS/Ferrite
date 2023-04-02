@@ -14,6 +14,8 @@ public protocol Plugin: ObservableObject, NSManagedObject {
     var name: String { get set }
     var version: Int16 { get set }
     var author: String { get set }
+    var about: String? { get set }
+    var website: String? { get set }
     var enabled: Bool { get set }
     var tags: NSOrderedSet? { get set }
     func getTags() -> [PluginTagJson]

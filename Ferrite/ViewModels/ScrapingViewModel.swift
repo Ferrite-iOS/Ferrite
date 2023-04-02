@@ -144,7 +144,7 @@ class ScrapingViewModel: ObservableObject {
     }
 
     func executeParser(source: Source) async -> SearchRequestResult? {
-        guard let baseUrl = source.baseUrl else {
+        guard let website = source.website else {
             await logManager?.error("Scraping: The base URL could not be found for source \(source.name)")
 
             return nil
@@ -167,7 +167,7 @@ class ScrapingViewModel: ObservableObject {
                 }
 
                 let data = await handleUrls(
-                    baseUrl: baseUrl,
+                    website: website,
                     replacedSearchUrl: replacedSearchUrl,
                     fallbackUrls: source.fallbackUrls,
                     sourceName: source.name
@@ -176,7 +176,7 @@ class ScrapingViewModel: ObservableObject {
                 if let data,
                    let html = String(data: data, encoding: .utf8)
                 {
-                    return await scrapeHtml(source: source, baseUrl: baseUrl, html: html)
+                    return await scrapeHtml(source: source, website: website, html: html)
                 }
             }
         case .rss:
@@ -194,7 +194,7 @@ class ScrapingViewModel: ObservableObject {
                     )
                 } else {
                     data = await handleUrls(
-                        baseUrl: baseUrl,
+                        website: website,
                         replacedSearchUrl: replacedSearchUrl,
                         fallbackUrls: source.fallbackUrls,
                         sourceName: source.name
@@ -220,7 +220,7 @@ class ScrapingViewModel: ObservableObject {
                                                                         replacement: "{clientId}",
                                                                         searchUrl: replacedSearchUrl,
                                                                         apiUrl: sourceApi.apiUrl,
-                                                                        baseUrl: baseUrl,
+                                                                        website: website,
                                                                         sourceName: source.name)
                         {
                             replacedSearchUrl = newSearchUrl
@@ -233,7 +233,7 @@ class ScrapingViewModel: ObservableObject {
                                                                         replacement: "{secret}",
                                                                         searchUrl: replacedSearchUrl,
                                                                         apiUrl: sourceApi.apiUrl,
-                                                                        baseUrl: baseUrl,
+                                                                        website: website,
                                                                         sourceName: source.name)
                         {
                             replacedSearchUrl = newSearchUrl
@@ -241,9 +241,9 @@ class ScrapingViewModel: ObservableObject {
                     }
                 }
 
-                let passedUrl = source.api?.apiUrl ?? baseUrl
+                let passedUrl = source.api?.apiUrl ?? website
                 let data = await handleUrls(
-                    baseUrl: passedUrl,
+                    website: passedUrl,
                     replacedSearchUrl: replacedSearchUrl,
                     fallbackUrls: source.fallbackUrls,
                     sourceName: source.name
@@ -261,8 +261,8 @@ class ScrapingViewModel: ObservableObject {
     }
 
     // Checks the base URL for any website data then iterates through the fallback URLs
-    func handleUrls(baseUrl: String, replacedSearchUrl: String?, fallbackUrls: [String]?, sourceName: String) async -> Data? {
-        let fetchUrl = baseUrl + (replacedSearchUrl.map { $0 } ?? "")
+    func handleUrls(website: String, replacedSearchUrl: String?, fallbackUrls: [String]?, sourceName: String) async -> Data? {
+        let fetchUrl = website + (replacedSearchUrl.map { $0 } ?? "")
         if let data = await fetchWebsiteData(urlString: fetchUrl, sourceName: sourceName) {
             return data
         }
@@ -283,7 +283,7 @@ class ScrapingViewModel: ObservableObject {
                                     replacement: String,
                                     searchUrl: String,
                                     apiUrl: String?,
-                                    baseUrl: String,
+                                    website: String,
                                     sourceName: String) async -> String?
     {
         // Is the credential expired
@@ -302,7 +302,7 @@ class ScrapingViewModel: ObservableObject {
             credential.value == nil || isExpired,
             let credentialUrl = credential.urlString,
             let newValue = await fetchApiCredential(
-                urlString: (apiUrl ?? baseUrl) + credentialUrl,
+                urlString: (apiUrl ?? website) + credentialUrl,
                 credential: credential,
                 sourceName: sourceName
             )
@@ -733,7 +733,7 @@ class ScrapingViewModel: ObservableObject {
     }
 
     // HTML scraper
-    public func scrapeHtml(source: Source, baseUrl: String, html: String) async -> SearchRequestResult? {
+    public func scrapeHtml(source: Source, website: String, html: String) async -> SearchRequestResult? {
         guard let htmlParser = source.htmlParser else {
             return nil
         }
@@ -783,7 +783,7 @@ class ScrapingViewModel: ObservableObject {
                         continue
                     }
 
-                    let replacedMagnetUrl = externalMagnetUrl.starts(with: "/") ? baseUrl + externalMagnetUrl : externalMagnetUrl
+                    let replacedMagnetUrl = externalMagnetUrl.starts(with: "/") ? website + externalMagnetUrl : externalMagnetUrl
                     guard
                         let data = await fetchWebsiteData(urlString: replacedMagnetUrl, sourceName: source.name),
                         let magnetHtml = String(data: data, encoding: .utf8)

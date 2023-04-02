@@ -11,6 +11,8 @@ public struct ActionJson: Codable, Hashable, PluginJson {
     public let name: String
     public let version: Int16
     let minVersion: String?
+    let about: String?
+    let website: String?
     let requires: [ActionRequirement]
     let deeplink: [DeeplinkActionJson]?
     public let author: String?
@@ -21,6 +23,8 @@ public struct ActionJson: Codable, Hashable, PluginJson {
     public init(name: String,
                 version: Int16,
                 minVersion: String?,
+                about: String?,
+                website: String?,
                 requires: [ActionRequirement],
                 deeplink: [DeeplinkActionJson]?,
                 author: String?,
@@ -31,6 +35,8 @@ public struct ActionJson: Codable, Hashable, PluginJson {
         self.name = name
         self.version = version
         self.minVersion = minVersion
+        self.about = about
+        self.website = website
         self.requires = requires
         self.deeplink = deeplink
         self.author = author
@@ -44,6 +50,8 @@ public struct ActionJson: Codable, Hashable, PluginJson {
         name = try container.decode(String.self, forKey: .name)
         version = try container.decode(Int16.self, forKey: .version)
         minVersion = try container.decodeIfPresent(String.self, forKey: .minVersion)
+        about = try container.decodeIfPresent(String.self, forKey: .about)
+        website = try container.decodeIfPresent(String.self, forKey: .website)
         requires = try container.decode([ActionRequirement].self, forKey: .requires)
         author = try container.decodeIfPresent(String.self, forKey: .author)
         listId = nil

@@ -10,18 +10,18 @@ import SwiftUI
 struct SourceSettingsBaseUrlView: View {
     @ObservedObject var selectedSource: Source
 
-    @State private var tempBaseUrl: String = ""
+    @State private var tempSite: String = ""
     var body: some View {
         Section(
             header: InlineHeader("Base URL"),
             footer: Text("Enter the base URL of your server.")
         ) {
-            TextField("https://...", text: $tempBaseUrl, onEditingChanged: { isFocused in
+            TextField("https://...", text: $tempSite, onEditingChanged: { isFocused in
                 if !isFocused {
-                    if tempBaseUrl.last == "/" {
-                        selectedSource.baseUrl = String(tempBaseUrl.dropLast())
+                    if tempSite.last == "/" {
+                        selectedSource.website = String(tempSite.dropLast())
                     } else {
-                        selectedSource.baseUrl = tempBaseUrl
+                        selectedSource.website = tempSite
                     }
                 }
             })
@@ -29,7 +29,7 @@ struct SourceSettingsBaseUrlView: View {
             .autocorrectionDisabled(true)
             .autocapitalization(.none)
             .onAppear {
-                tempBaseUrl = selectedSource.baseUrl ?? ""
+                tempSite = selectedSource.website ?? ""
             }
         }
     }

@@ -19,6 +19,8 @@ public extension Action {
     @NSManaged var name: String
     @NSManaged var deeplink: String?
     @NSManaged var version: Int16
+    @NSManaged var about: String?
+    @NSManaged var website: String?
     @NSManaged var requires: [String]
     @NSManaged var author: String
     @NSManaged var enabled: Bool

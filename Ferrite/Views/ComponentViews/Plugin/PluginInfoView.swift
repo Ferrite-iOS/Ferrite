@@ -12,48 +12,14 @@ struct PluginInfoView<P: Plugin>: View {
 
     @Binding var selectedPlugin: P?
 
-    @FetchRequest(
-        entity: PluginList.entity(),
-        sortDescriptors: []
-    ) var pluginLists: FetchedResults<PluginList>
-
     var body: some View {
         NavView {
             List {
                 if let selectedPlugin {
-                    Section(header: InlineHeader("Info")) {
-                        VStack(alignment: .leading) {
-                            VStack(alignment: .leading, spacing: 5) {
-                                HStack(spacing: 5) {
-                                    Text(selectedPlugin.name)
+                    PluginInfoMetaView(selectedPlugin: selectedPlugin)
 
-                                    Text("v\(selectedPlugin.version)")
-                                        .foregroundColor(.secondary)
-                                }
-
-                                Text("by \(selectedPlugin.author)")
-                                    .foregroundColor(.secondary)
-
-                                Group {
-                                    Text("ID: \(selectedPlugin.id)")
-
-                                    if let pluginList = pluginLists.first(where: { $0.id == selectedPlugin.listId })
-                                    {
-                                        Text("List: \(pluginList.name)")
-                                        Text("List ID: \(pluginList.id.uuidString)")
-                                    } else {
-                                        Text("No plugin list found. This source should be removed.")
-                                    }
-                                }
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                            }
-
-                            if let tags = selectedPlugin.getTags(), !tags.isEmpty {
-                                PluginTagsView(tags: tags)
-                            }
-                        }
-                        .padding(.vertical, 2)
+                    if selectedPlugin.about != nil || selectedPlugin.website != nil {
+                        PluginInfoAboutView(selectedPlugin: selectedPlugin)
                     }
 
                     if let selectedSource = selectedPlugin as? Source {
