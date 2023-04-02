@@ -73,6 +73,9 @@ struct PluginsView: View {
             .onDisappear {
                 checkedForPlugins = false
             }
+            .refreshable {
+                await pluginManager.fetchPluginsFromUrl()
+            }
             .navigationTitle("Plugins")
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .autocorrectionDisabled(!autocorrectSearch)

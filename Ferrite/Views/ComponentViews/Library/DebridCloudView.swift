@@ -29,6 +29,9 @@ struct DebridCloudView: View {
         .task {
             await debridManager.fetchDebridCloud()
         }
+        .refreshable {
+            await debridManager.fetchDebridCloud()
+        }
         .onChange(of: debridManager.selectedDebridType) { newType in
             if newType != nil {
                 Task {
