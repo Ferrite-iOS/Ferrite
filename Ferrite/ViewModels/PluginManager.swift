@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Yams
 
 public class PluginManager: ObservableObject {
     var logManager: LoggingManager?
@@ -102,7 +103,18 @@ public class PluginManager: ObservableObject {
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
 
         let (data, _) = try await URLSession.shared.data(for: request)
-        let pluginResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
+        let pluginResponse: PluginListJson?
+
+        // If the URL is a yaml file, decode as such. Otherwise assume legacy JSON
+        if url.pathExtension == "yaml" || url.pathExtension == "yml" {
+            pluginResponse = try YAMLDecoder().decode(PluginListJson.self, from: data)
+        } else {
+            pluginResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
+        }
+
+        guard let pluginResponse else {
+            throw PluginManagerError.PluginFetch(description: "Could not decode plugin list data")
+        }
 
         if let sources = pluginResponse.sources {
             // Faster and more performant to map instead of a for loop
@@ -748,25 +760,41 @@ public class PluginManager: ObservableObject {
 
     // Adds a plugin list
     // Can move this to PersistenceController if needed
-    public func addPluginList(_ url: String, isSheet: Bool = false, existingPluginList: PluginList? = nil) async throws {
+    public func addPluginList(_ urlString: String, isSheet: Bool = false, existingPluginList: PluginList? = nil) async throws {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        if url.isEmpty || !url.starts(with: "https://") && !url.starts(with: "http://") {
+        if urlString.isEmpty || !urlString.starts(with: "https://") && !urlString.starts(with: "http://") {
             throw PluginManagerError.ListAddition(description: "The provided source list is invalid. Please check if the URL is formatted properly.")
         }
 
-        let (data, _) = try await URLSession.shared.data(for: URLRequest(url: URL(string: url)!))
-        let rawResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
+        guard let url = URL(string: urlString) else {
+            throw PluginManagerError.ListAddition(description: "The provided source list is invalid. Please check if the URL is formatted properly.")
+        }
+
+        let (data, _) = try await URLSession.shared.data(for: URLRequest(url: url))
+
+        let rawResponse: PluginListJson?
+
+        // If the URL is a yaml file, decode as such. Otherwise assume legacy JSON
+        if url.pathExtension == "yaml" || url.pathExtension == "yml" {
+            rawResponse = try YAMLDecoder().decode(PluginListJson.self, from: data)
+        } else {
+            rawResponse = try JSONDecoder().decode(PluginListJson.self, from: data)
+        }
+
+        guard let rawResponse else {
+            throw PluginManagerError.ListAddition(description: "Could not decode the plugin list from URL \(urlString)")
+        }
 
         if let existingPluginList {
-            existingPluginList.urlString = url
+            existingPluginList.urlString = urlString
             existingPluginList.name = rawResponse.name
             existingPluginList.author = rawResponse.author
 
             try PersistenceController.shared.container.viewContext.save()
         } else {
             let pluginListRequest = PluginList.fetchRequest()
-            let urlPredicate = NSPredicate(format: "urlString == %@", url)
+            let urlPredicate = NSPredicate(format: "urlString == %@", urlString)
             let infoPredicate = NSPredicate(format: "author == %@ AND name == %@", rawResponse.author, rawResponse.name)
             pluginListRequest.predicate = NSCompoundPredicate(type: .or, subpredicates: [urlPredicate, infoPredicate])
             pluginListRequest.fetchLimit = 1
@@ -779,7 +807,7 @@ public class PluginManager: ObservableObject {
 
             let newPluginList = PluginList(context: backgroundContext)
             newPluginList.id = UUID()
-            newPluginList.urlString = url
+            newPluginList.urlString = urlString
             newPluginList.name = rawResponse.name
             newPluginList.author = rawResponse.author
 

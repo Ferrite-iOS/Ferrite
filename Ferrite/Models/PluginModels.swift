@@ -29,6 +29,7 @@ extension PluginManager {
     enum PluginManagerError: Error {
         case ListAddition(description: String)
         case ActionAddition(description: String)
+        case PluginFetch(description: String)
     }
 
     struct AvailablePlugins {

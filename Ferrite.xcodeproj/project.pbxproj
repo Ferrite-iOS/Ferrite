@@ -72,6 +72,7 @@
 		0C70E40228C3CE9C00A5C72D /* ConditionalContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70E40128C3CE9C00A5C72D /* ConditionalContextMenu.swift */; };
 		0C70E40628C40C4E00A5C72D /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70E40528C40C4E00A5C72D /* NotificationCenter.swift */; };
 		0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C733286289C4C820058D1FE /* SourceSettingsView.swift */; };
+		0C748EDA29D9256D0049B8BE /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 0C748ED929D9256D0049B8BE /* Yams */; };
 		0C7506D728B1AC9A008BEE38 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 0C7506D628B1AC9A008BEE38 /* SwiftyJSON */; };
 		0C750744289B003E004B3906 /* SourceRssParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750742289B003E004B3906 /* SourceRssParser+CoreDataClass.swift */; };
 		0C750745289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C750743289B003E004B3906 /* SourceRssParser+CoreDataProperties.swift */; };
@@ -299,6 +300,7 @@
 				0C4CFC462897030D00AD9FAD /* Regex in Frameworks */,
 				0C64A4B7288903880079976D /* KeychainSwift in Frameworks */,
 				0CAF1C7B286F5C8600296F86 /* SwiftSoup in Frameworks */,
+				0C748EDA29D9256D0049B8BE /* Yams in Frameworks */,
 				0CDDDE052935235E006810B1 /* BetterSafariView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -688,6 +690,7 @@
 				0C7506D628B1AC9A008BEE38 /* SwiftyJSON */,
 				0CDDDE042935235E006810B1 /* BetterSafariView */,
 				0C448BE829A135F100F4E266 /* Introspect-Static */,
+				0C748ED929D9256D0049B8BE /* Yams */,
 			);
 			productName = Torrenter;
 			productReference = 0CAF1C68286F5C0E00296F86 /* Ferrite.app */;
@@ -725,6 +728,7 @@
 				0C7506D528B1AC9A008BEE38 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				0CDDDE032935235E006810B1 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				0C448BE729A135F100F4E266 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				0C748ED829D9256D0049B8BE /* XCRemoteSwiftPackageReference "Yams" */,
 			);
 			productRefGroup = 0CAF1C69286F5C0E00296F86 /* Products */;
 			projectDirPath = "";
@@ -1152,6 +1156,14 @@
 				kind = branch;
 			};
 		};
+		0C748ED829D9256D0049B8BE /* XCRemoteSwiftPackageReference "Yams" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jpsim/Yams";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 5.0.5;
+			};
+		};
 		0C7506D528B1AC9A008BEE38 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON";
@@ -1198,6 +1210,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0C64A4B5288903880079976D /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
+		};
+		0C748ED929D9256D0049B8BE /* Yams */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0C748ED829D9256D0049B8BE /* XCRemoteSwiftPackageReference "Yams" */;
+			productName = Yams;
 		};
 		0C7506D628B1AC9A008BEE38 /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
