@@ -83,6 +83,10 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
         .onChange(of: searchText) { _ in
             fetchPredicate()
         }
+        // Alternatively, place the sheet in the parent view
+        .refreshable {
+            await pluginManager.fetchPluginsFromUrl()
+        }
         .sheet(isPresented: $showPluginOptions) {
             PluginInfoView(selectedPlugin: $selectedPlugin)
         }
