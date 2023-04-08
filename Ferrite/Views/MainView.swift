@@ -54,8 +54,6 @@ struct MainView: View {
             case .batch:
                 BatchChoiceView()
             case .activity:
-                EmptyView()
-                // TODO: Fix share sheet
                 if #available(iOS 16, *) {
                     ShareSheet(activityItems: navModel.activityItems)
                         .presentationDetents([.medium, .large])

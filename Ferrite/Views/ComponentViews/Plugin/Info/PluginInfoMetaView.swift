@@ -44,7 +44,8 @@ struct PluginInfoMetaView<P: Plugin>: View {
                     .font(.caption)
                 }
 
-                if let tags = selectedPlugin.getTags(), !tags.isEmpty {
+                let tags = selectedPlugin.getTags()
+                if !tags.isEmpty {
                     PluginTagsView(tags: tags)
                 }
             }

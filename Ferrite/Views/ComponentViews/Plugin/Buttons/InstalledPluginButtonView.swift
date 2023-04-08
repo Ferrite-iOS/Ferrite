@@ -36,7 +36,8 @@ struct InstalledPluginButtonView<P: Plugin>: View {
                         .lineLimit(1)
                 }
 
-                if let tags = installedPlugin.getTags(), !tags.isEmpty {
+                let tags = installedPlugin.getTags()
+                if !tags.isEmpty {
                     PluginTagsView(tags: tags)
                 }
             }

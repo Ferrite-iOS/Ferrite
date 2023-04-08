@@ -26,8 +26,8 @@ struct SearchFilterHeaderView: View {
                         Text("None").tag(nil as Source?)
 
                         ForEach(sources, id: \.self) { source in
-                            if let name = source.name, source.enabled {
-                                Text(name)
+                            if source.enabled {
+                                Text(source.name)
                                     .tag(Source?.some(source))
                             }
                         }

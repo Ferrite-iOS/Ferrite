@@ -33,7 +33,8 @@ struct PluginCatalogButtonView<PJ: PluginJson>: View {
                     .lineLimit(1)
                 }
 
-                if let tags = availablePlugin.getTags(), !tags.isEmpty {
+                let tags = availablePlugin.getTags()
+                if !tags.isEmpty {
                     PluginTagsView(tags: tags)
                 }
             }

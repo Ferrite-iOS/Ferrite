@@ -80,8 +80,7 @@ struct SettingsView: View {
                 }
 
                 Section(header: InlineHeader("Default actions")) {
-                    // TODO: Uncomment
-                    //if debridManager.enabledDebrids.count > 0 {
+                    if debridManager.enabledDebrids.count > 0 {
                         NavigationLink {
                             DefaultActionPickerView(
                                 actionRequirement: .debrid,
@@ -108,7 +107,7 @@ struct SettingsView: View {
                                 .foregroundColor(.secondary)
                             }
                         }
-                    //}
+                    }
 
                     NavigationLink {
                         DefaultActionPickerView(

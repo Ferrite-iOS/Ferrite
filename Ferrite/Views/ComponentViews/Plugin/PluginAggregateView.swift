@@ -33,13 +33,12 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
 
     var body: some View {
         List {
-            if
-                let filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(
-                    forType: PJ.self,
-                    installedPlugins: installedPlugins,
-                    searchText: searchText
-                ),
-                !filteredUpdatedPlugins.isEmpty
+            let filteredUpdatedPlugins = pluginManager.fetchUpdatedPlugins(
+                forType: PJ.self,
+                installedPlugins: installedPlugins,
+                searchText: searchText
+            )
+            if !filteredUpdatedPlugins.isEmpty
             {
                 Section(header: InlineHeader("Updates")) {
                     ForEach(filteredUpdatedPlugins, id: \.self) { (updatedPlugin: PJ) in
@@ -60,13 +59,13 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
                 }
             }
 
-            if
-                let filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(
-                    forType: PJ.self,
-                    installedPlugins: installedPlugins,
-                    searchText: searchText
-                ),
-                !filteredAvailablePlugins.isEmpty
+            
+            let filteredAvailablePlugins = pluginManager.fetchFilteredPlugins(
+                forType: PJ.self,
+                installedPlugins: installedPlugins,
+                searchText: searchText
+            )
+            if !filteredAvailablePlugins.isEmpty
             {
                 Section(header: InlineHeader("Catalog")) {
                     ForEach(filteredAvailablePlugins, id: \.self) { availablePlugin in
