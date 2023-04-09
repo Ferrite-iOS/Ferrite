@@ -51,7 +51,7 @@ struct SettingsView: View {
                 }
 
                 Section(header: InlineHeader("Playback services")) {
-                    NavigationLink{
+                    NavigationLink {
                         SettingsKodiView(kodiServers: kodiServers)
                     } label: {
                         HStack {

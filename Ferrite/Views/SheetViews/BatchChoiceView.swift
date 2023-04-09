@@ -39,7 +39,7 @@ struct BatchChoiceView: View {
                         if file.fileName.lowercased().contains(searchText.lowercased()) || searchText.isEmpty {
                             Button(file.fileName) {
                                 debridManager.selectedAllDebridFile = file
-                                
+
                                 queueCommonDownload(fileName: file.fileName)
                             }
                         }
@@ -49,7 +49,7 @@ struct BatchChoiceView: View {
                         if file.name.lowercased().contains(searchText.lowercased()) || searchText.isEmpty {
                             Button(file.name) {
                                 debridManager.selectedPremiumizeFile = file
-                                
+
                                 queueCommonDownload(fileName: file.name)
                             }
                         }

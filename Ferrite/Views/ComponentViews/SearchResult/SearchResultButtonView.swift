@@ -133,7 +133,7 @@ struct SearchResultButtonView: View {
         } message: {
             Text(
                 "RealDebrid is currently caching this file. Would you like to delete it? \n\n" +
-                "Progress can be checked on the RealDebrid website."
+                    "Progress can be checked on the RealDebrid website."
             )
         }
         .onReceive(NotificationCenter.default.publisher(for: .didDeleteBookmark)) { notification in

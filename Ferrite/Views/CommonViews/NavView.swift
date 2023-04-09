@@ -16,16 +16,16 @@ struct NavView<Content: View>: View {
     var body: some View {
         // Uncomment once NavigationStack issues are fixed
         /*
-        if #available(iOS 16, *) {
-            NavigationStack {
-                content
-            }
-        } else {
-         */
-            NavigationView {
-                content
-            }
-            .navigationViewStyle(.stack)
-        //}
+         if #available(iOS 16, *) {
+             NavigationStack {
+                 content
+             }
+         } else {
+          */
+        NavigationView {
+            content
+        }
+        .navigationViewStyle(.stack)
+        // }
     }
 }

@@ -71,6 +71,7 @@ struct MainView: View {
                 Application.shared.osVersion.toString() >= Application.shared.minVersion
             {
                 // MARK: If scope bar duplication happens, this may be the problem
+
                 // Sleep for 2 seconds to allow for view layout and app init
                 try? await Task.sleep(seconds: 2)
 

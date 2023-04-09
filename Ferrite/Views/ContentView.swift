@@ -17,7 +17,7 @@ struct ContentView: View {
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch: Bool = false
 
     @State private var isSearching = false
-    @State private var dismissAction: () -> () = {}
+    @State private var dismissAction: () -> Void = {}
 
     var body: some View {
         NavView {
@@ -47,7 +47,7 @@ struct ContentView: View {
                             sources: sources,
                             debridManager: debridManager
                         )
-                        
+
                         logManager.hideIndeterminateToast()
                         scrapingModel.runningSearchTask = nil
                     }

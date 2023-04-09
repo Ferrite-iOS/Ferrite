@@ -725,7 +725,8 @@ class ScrapingViewModel: ObservableObject {
 
         // A capture group must be used in the provided regex
         if let regexString,
-           let parsedValue {
+           let parsedValue
+        {
             return runRegex(parsedValue: parsedValue, regexString: regexString)
         } else {
             return parsedValue
@@ -922,7 +923,8 @@ class ScrapingViewModel: ObservableObject {
         }
 
         if let parsedValue,
-           let regexString {
+           let regexString
+        {
             return runRegex(parsedValue: parsedValue, regexString: regexString)
         } else {
             return parsedValue

@@ -9,32 +9,30 @@ import SwiftUI
 
 public extension View {
     // A dismissAction must be added in the parent view struct due to lifecycle issues
-    func expandedSearchable<Content: View>(
-        text: Binding<String>,
-        isSearching: Binding<Bool>? = nil,
-        prompt: String? = nil,
-        dismiss: Binding<(() -> ())>? = nil,
-        scopeBarContent: @escaping () -> Content = {
-            EmptyView()
-        },
-        onSubmit: (() -> ())? = nil,
-        onCancel: (() -> ())? = nil
-    ) -> some View {
-        self
-            .overlay(
-                SearchBar(
-                    searchText: text,
-                    isSearching: isSearching ?? Binding(get: { true }, set: { _, _ in }),
-                    prompt: prompt ?? "Search",
-                    dismiss: dismiss ?? Binding(get: { {} }, set: { _, _ in }),
-                    scopeBarContent: scopeBarContent,
-                    onSubmit: onSubmit,
-                    onCancel: onCancel
-                )
-                .frame(width: 0, height: 0)
+    func expandedSearchable(text: Binding<String>,
+                            isSearching: Binding<Bool>? = nil,
+                            prompt: String? = nil,
+                            dismiss: Binding<() -> Void>? = nil,
+                            scopeBarContent: @escaping () -> some View = {
+                                EmptyView()
+                            },
+                            onSubmit: (() -> Void)? = nil,
+                            onCancel: (() -> Void)? = nil) -> some View
+    {
+        overlay(
+            SearchBar(
+                searchText: text,
+                isSearching: isSearching ?? Binding(get: { true }, set: { _, _ in }),
+                prompt: prompt ?? "Search",
+                dismiss: dismiss ?? Binding(get: { {} }, set: { _, _ in }),
+                scopeBarContent: scopeBarContent,
+                onSubmit: onSubmit,
+                onCancel: onCancel
             )
-            .environment(\.esIsSearching, isSearching?.wrappedValue ?? false)
-            .environment(\.esDismissSearch, ESDismissSearchAction(action: dismiss?.wrappedValue ?? { }))
+            .frame(width: 0, height: 0)
+        )
+        .environment(\.esIsSearching, isSearching?.wrappedValue ?? false)
+        .environment(\.esDismissSearch, ESDismissSearchAction(action: dismiss?.wrappedValue ?? {}))
     }
 
     func esAutocapitalization(_ autocapitalizationType: UITextAutocapitalizationType) -> some View {
@@ -47,9 +45,9 @@ struct ESIsSearching: EnvironmentKey {
 }
 
 struct ESDismissSearchAction: EnvironmentKey {
-    static var defaultValue: ESDismissSearchAction = ESDismissSearchAction(action: {})
+    static var defaultValue: ESDismissSearchAction = .init(action: {})
 
-    let action: () -> ()
+    let action: () -> Void
 
     func callAsFunction() {
         action()
@@ -78,7 +76,7 @@ extension EnvironmentValues {
 }
 
 struct SearchBar<ScopeContent: View>: UIViewControllerRepresentable {
-    var searchController: UISearchController = UISearchController(searchResultsController: nil)
+    var searchController: UISearchController = .init(searchResultsController: nil)
 
     @Environment(\.autocorrectionDisabled) var autocorrectionDisabled
     @Environment(\.esAutocapitalizationType) var autocapitalization
@@ -87,10 +85,10 @@ struct SearchBar<ScopeContent: View>: UIViewControllerRepresentable {
     @Binding var searchText: String
     @Binding var isSearching: Bool
     var prompt: String
-    @Binding var dismiss: (() -> ())
+    @Binding var dismiss: () -> Void
     let scopeBarContent: () -> ScopeContent
-    let onSubmit: (() -> ())?
-    let onCancel: (() -> ())?
+    let onSubmit: (() -> Void)?
+    let onCancel: (() -> Void)?
 
     class Coordinator: NSObject, UISearchBarDelegate, UISearchResultsUpdating {
         let parent: SearchBar
@@ -123,7 +121,7 @@ struct SearchBar<ScopeContent: View>: UIViewControllerRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(self)
+        Coordinator(self)
     }
 
     func makeUIViewController(context: Context) -> NavSearchBarWrapper {
@@ -186,7 +184,7 @@ struct SearchBar<ScopeContent: View>: UIViewControllerRepresentable {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         override func viewWillAppear(_ animated: Bool) {
             setup()
         }
