@@ -16,6 +16,8 @@ public class PluginManager: ObservableObject {
     @Published var availableSources: [SourceJson] = []
     @Published var availableActions: [ActionJson] = []
 
+    @Published var filteredInstalledSources: [Source] = []
+
     @Published var showActionErrorAlert = false
     @Published var actionErrorAlertMessage: String = ""
 
@@ -261,17 +263,6 @@ public class PluginManager: ObservableObject {
         }
 
         return Application.shared.appVersion >= minVersion
-    }
-
-    // Fetches sources using the background context
-    public func fetchInstalledSources() -> [Source] {
-        let backgroundContext = PersistenceController.shared.backgroundContext
-
-        if let sources = try? backgroundContext.fetch(Source.fetchRequest()) {
-            return sources.compactMap { $0 }
-        } else {
-            return []
-        }
     }
 
     @MainActor

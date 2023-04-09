@@ -10,32 +10,36 @@ import SwiftUI
 struct SearchFilterHeaderView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass
 
-    @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var debridManager: DebridManager
+    @EnvironmentObject var pluginManager: PluginManager
 
-    @FetchRequest(
-        entity: Source.entity(),
-        sortDescriptors: []
-    ) var sources: FetchedResults<Source>
+    var sources: FetchedResults<Source>
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
+                // MARK: - Source filter picker
+
+                // TODO: Make this use multiple selections
                 Menu {
-                    Picker("", selection: $scrapingModel.filteredSource) {
-                        Text("None").tag(nil as Source?)
+                    Picker("", selection: $pluginManager.filteredInstalledSources) {
+                        Text("All").tag([] as [Source])
 
                         ForEach(sources, id: \.self) { source in
                             if source.enabled {
                                 Text(source.name)
-                                    .tag(Source?.some(source))
+                                    .tag([source])
                             }
                         }
                     }
                 } label: {
-                    FilterLabelView(name: scrapingModel.filteredSource?.name ?? "Source")
+                    FilterLabelView(
+                        name: pluginManager.filteredInstalledSources.first?.name ?? "Source"
+                    )
                 }
-                .id(scrapingModel.filteredSource)
+                .id(pluginManager.filteredInstalledSources)
+
+                // MARK: - Selected debrid picker
 
                 DebridPickerView {
                     FilterLabelView(name: debridManager.selectedDebridType?.toString() ?? "Debrid")

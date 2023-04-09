@@ -16,7 +16,13 @@ struct ContentView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch: Bool = false
 
+    @FetchRequest(
+        entity: Source.entity(),
+        sortDescriptors: []
+    ) var sources: FetchedResults<Source>
+
     @State private var isSearching = false
+    @State private var isEditingSearch = false
     @State private var dismissAction: () -> Void = {}
 
     var body: some View {
@@ -27,30 +33,40 @@ struct ContentView: View {
             .listStyle(.insetGrouped)
             .inlinedList(inset: 20)
             .navigationTitle("Search")
+            .overlay {
+                if
+                    scrapingModel.searchResults.isEmpty,
+                    isSearching,
+                    scrapingModel.runningSearchTask == nil,
+                    !isEditingSearch
+                {
+                    Text(
+                        pluginManager.filteredInstalledSources.isEmpty ?
+                            "No results found" :
+                            "No results found. Check your source filter and redo your search."
+                    )
+                    .padding(.horizontal)
+                }
+            }
             .expandedSearchable(
                 text: $scrapingModel.searchText,
                 isSearching: $isSearching,
+                isEditingSearch: $isEditingSearch,
                 prompt: navModel.searchPrompt,
                 dismiss: $dismissAction,
                 scopeBarContent: {
-                    SearchFilterHeaderView()
+                    SearchFilterHeaderView(sources: sources)
                 },
                 onSubmit: {
-                    if let runningSearchTask = scrapingModel.runningSearchTask, runningSearchTask.isCancelled {
+                    if
+                        let runningSearchTask = scrapingModel.runningSearchTask,
+                        runningSearchTask.isCancelled
+                    {
                         scrapingModel.runningSearchTask = nil
                         return
                     }
 
-                    scrapingModel.runningSearchTask = Task {
-                        let sources = pluginManager.fetchInstalledSources()
-                        await scrapingModel.scanSources(
-                            sources: sources,
-                            debridManager: debridManager
-                        )
-
-                        logManager.hideIndeterminateToast()
-                        scrapingModel.runningSearchTask = nil
-                    }
+                    executeSearch()
                 }
             )
             .autocorrectionDisabled(!autocorrectSearch)
@@ -58,6 +74,26 @@ struct ContentView: View {
             .onAppear {
                 navModel.getSearchPrompt()
             }
+            .onChange(of: isEditingSearch) { newVal in
+                print(newVal)
+            }
+        }
+    }
+
+    func executeSearch() {
+        scrapingModel.runningSearchTask = Task {
+            await scrapingModel.scanSources(
+                sources:
+                    scrapingModel.searchResults.isEmpty ?
+                        sources.compactMap { $0 } :
+                        (pluginManager.filteredInstalledSources.isEmpty ?
+                            sources.compactMap { $0 } :
+                            pluginManager.filteredInstalledSources),
+                debridManager: debridManager
+            )
+
+            logManager.hideIndeterminateToast()
+            scrapingModel.runningSearchTask = nil
         }
     }
 }

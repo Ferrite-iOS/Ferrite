@@ -11,6 +11,7 @@ public extension View {
     // A dismissAction must be added in the parent view struct due to lifecycle issues
     func expandedSearchable(text: Binding<String>,
                             isSearching: Binding<Bool>? = nil,
+                            isEditingSearch: Binding<Bool>? = nil,
                             prompt: String? = nil,
                             dismiss: Binding<() -> Void>? = nil,
                             scopeBarContent: @escaping () -> some View = {
@@ -23,6 +24,7 @@ public extension View {
             SearchBar(
                 searchText: text,
                 isSearching: isSearching ?? Binding(get: { true }, set: { _, _ in }),
+                isEditingSearch: isEditingSearch ?? Binding(get: { true }, set: { _, _ in }),
                 prompt: prompt ?? "Search",
                 dismiss: dismiss ?? Binding(get: { {} }, set: { _, _ in }),
                 scopeBarContent: scopeBarContent,
@@ -84,6 +86,7 @@ struct SearchBar<ScopeContent: View>: UIViewControllerRepresentable {
     // Passed in vars
     @Binding var searchText: String
     @Binding var isSearching: Bool
+    @Binding var isEditingSearch: Bool
     var prompt: String
     @Binding var dismiss: () -> Void
     let scopeBarContent: () -> ScopeContent
@@ -99,6 +102,14 @@ struct SearchBar<ScopeContent: View>: UIViewControllerRepresentable {
 
         func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
             parent.searchText = searchText
+        }
+
+        func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+            parent.isEditingSearch = true
+        }
+
+        func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+            parent.isEditingSearch = false
         }
 
         func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

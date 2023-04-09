@@ -61,8 +61,6 @@ class ScrapingViewModel: ObservableObject {
         logManager?.updateIndeterminateToast("Loading sources", cancelAction: nil)
     }
 
-    @Published var filteredSource: Source?
-
     // Utility function to print source specific errors
     func sendSourceError(_ description: String) async {
         await logManager?.error(description, showToast: false)
@@ -84,6 +82,7 @@ class ScrapingViewModel: ObservableObject {
             await debridManager.clearIAValues()
         }
 
+        await clearCurrentSourceNames()
         await clearSearchResults()
 
         await logManager?.updateIndeterminateToast("Loading sources", cancelAction: {

@@ -13,12 +13,13 @@ struct SearchResultsView: View {
 
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var navModel: NavigationViewModel
+    @EnvironmentObject var pluginManager: PluginManager
 
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
 
     var body: some View {
         ForEach(scrapingModel.searchResults, id: \.self) { result in
-            if result.source == scrapingModel.filteredSource?.name || scrapingModel.filteredSource == nil {
+            if pluginManager.filteredInstalledSources.isEmpty || pluginManager.filteredInstalledSources.contains(where: { result.source == $0.name }) {
                 SearchResultButtonView(result: result)
             }
         }
@@ -47,15 +48,6 @@ struct SearchResultsView: View {
                 scrapingModel.searchResults = []
                 scrapingModel.runningSearchTask?.cancel()
                 scrapingModel.runningSearchTask = nil
-            }
-        }
-        .overlay {
-            if
-                scrapingModel.searchResults.isEmpty,
-                isSearching,
-                scrapingModel.runningSearchTask == nil
-            {
-                Text("No results found")
             }
         }
     }
