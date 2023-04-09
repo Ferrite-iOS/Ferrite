@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SearchResultsView: View {
-    @Environment(\.isSearching) var isSearching
-    @Environment(\.dismissSearch) var dismissSearch
+    @Environment(\.esIsSearching) var isSearching
+    @Environment(\.esDismissSearch) var dismissSearch
 
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var navModel: NavigationViewModel

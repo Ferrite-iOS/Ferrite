@@ -41,7 +41,6 @@ struct LibraryView: View {
                     DebridCloudView(searchText: $searchText)
                 }
             }
-            .searchListener(isSearching: $isSearching)
             .overlay {
                 if !isSearching {
                     switch navModel.libraryPickerSelection {
@@ -81,12 +80,14 @@ struct LibraryView: View {
                     }
                 }
             }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+            .expandedSearchable(
+                text: $searchText,
+                scopeBarContent: {
+                    LibraryPickerView()
+                }
+            )
             .autocorrectionDisabled(!autocorrectSearch)
-            .textInputAutocapitalization(autocorrectSearch ? .sentences : .never)
-            .customScopeBar {
-                LibraryPickerView()
-            }
+            .esAutocapitalization(autocorrectSearch ? .sentences : .none)
             .environment(\.editMode, $editMode)
         }
         .onChange(of: navModel.libraryPickerSelection) { _ in

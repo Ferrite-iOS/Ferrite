@@ -32,12 +32,4 @@ extension View {
     func inlinedList(inset: CGFloat) -> some View {
         modifier(InlinedListModifier(inset: inset))
     }
-
-    func customScopeBar(_ content: @escaping () -> some View) -> some View {
-        modifier(CustomScopeBarModifier(scopeBarContent: content()))
-    }
-
-    func searchListener(isSearching: Binding<Bool>) -> some View {
-        modifier(SearchListenerModifier(isSearching: isSearching))
-    }
 }

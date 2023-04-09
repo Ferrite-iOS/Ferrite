@@ -16,6 +16,9 @@ struct ContentView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch: Bool = false
 
+    @State private var isSearching = false
+    @State private var dismissAction: () -> () = {}
+
     var body: some View {
         NavView {
             List {
@@ -24,33 +27,34 @@ struct ContentView: View {
             .listStyle(.insetGrouped)
             .inlinedList(inset: 20)
             .navigationTitle("Search")
-            .searchable(
+            .expandedSearchable(
                 text: $scrapingModel.searchText,
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: Text(navModel.searchPrompt)
+                isSearching: $isSearching,
+                prompt: navModel.searchPrompt,
+                dismiss: $dismissAction,
+                scopeBarContent: {
+                    SearchFilterHeaderView()
+                },
+                onSubmit: {
+                    if let runningSearchTask = scrapingModel.runningSearchTask, runningSearchTask.isCancelled {
+                        scrapingModel.runningSearchTask = nil
+                        return
+                    }
+
+                    scrapingModel.runningSearchTask = Task {
+                        let sources = pluginManager.fetchInstalledSources()
+                        await scrapingModel.scanSources(
+                            sources: sources,
+                            debridManager: debridManager
+                        )
+                        
+                        logManager.hideIndeterminateToast()
+                        scrapingModel.runningSearchTask = nil
+                    }
+                }
             )
             .autocorrectionDisabled(!autocorrectSearch)
-            .textInputAutocapitalization(autocorrectSearch ? .sentences : .never)
-            .onSubmit(of: .search) {
-                if let runningSearchTask = scrapingModel.runningSearchTask, runningSearchTask.isCancelled {
-                    scrapingModel.runningSearchTask = nil
-                    return
-                }
-
-                scrapingModel.runningSearchTask = Task {
-                    let sources = pluginManager.fetchInstalledSources()
-                    await scrapingModel.scanSources(
-                        sources: sources,
-                        debridManager: debridManager
-                    )
-
-                    logManager.hideIndeterminateToast()
-                    scrapingModel.runningSearchTask = nil
-                }
-            }
-            .customScopeBar {
-                SearchFilterHeaderView()
-            }
+            .esAutocapitalization(autocorrectSearch ? .sentences : .none)
             .onAppear {
                 navModel.getSearchPrompt()
             }

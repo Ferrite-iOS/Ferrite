@@ -47,7 +47,6 @@ struct PluginsView: View {
                     }
                 }
             }
-            .searchListener(isSearching: $isSearching)
             .overlay {
                 if !isSearching {
                     if checkedForPlugins {
@@ -74,12 +73,14 @@ struct PluginsView: View {
                 checkedForPlugins = false
             }
             .navigationTitle("Plugins")
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
+            .expandedSearchable(
+                text: $searchText,
+                scopeBarContent: {
+                    PluginPickerView()
+                }
+            )
             .autocorrectionDisabled(!autocorrectSearch)
-            .textInputAutocapitalization(autocorrectSearch ? .sentences : .never)
-            .customScopeBar {
-                PluginPickerView()
-            }
+            .esAutocapitalization(autocorrectSearch ? .sentences : .none)
         }
     }
 }
