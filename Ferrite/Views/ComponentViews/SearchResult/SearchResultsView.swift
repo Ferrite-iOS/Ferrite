@@ -17,13 +17,15 @@ struct SearchResultsView: View {
 
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
 
+    @Binding var searchText: String
+
     var body: some View {
         ForEach(scrapingModel.searchResults, id: \.self) { result in
             if pluginManager.filteredInstalledSources.isEmpty || pluginManager.filteredInstalledSources.contains(where: { result.source == $0.name }) {
                 SearchResultButtonView(result: result)
             }
         }
-        .onChange(of: scrapingModel.searchText) { newText in
+        .onChange(of: searchText) { newText in
             if newText.isEmpty, isSearching {
                 navModel.getSearchPrompt()
             }

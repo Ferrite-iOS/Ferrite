@@ -21,6 +21,7 @@ struct ContentView: View {
         sortDescriptors: []
     ) var sources: FetchedResults<Source>
 
+    @State private var searchText = ""
     @State private var isSearching = false
     @State private var isEditingSearch = false
     @State private var dismissAction: () -> Void = {}
@@ -28,7 +29,7 @@ struct ContentView: View {
     var body: some View {
         NavView {
             List {
-                SearchResultsView()
+                SearchResultsView(searchText: $searchText)
             }
             .listStyle(.insetGrouped)
             .inlinedList(inset: 20)
@@ -49,7 +50,7 @@ struct ContentView: View {
                 }
             }
             .expandedSearchable(
-                text: $scrapingModel.searchText,
+                text: $searchText,
                 isSearching: $isSearching,
                 isEditingSearch: $isEditingSearch,
                 prompt: navModel.searchPrompt,
@@ -89,6 +90,7 @@ struct ContentView: View {
                         (pluginManager.filteredInstalledSources.isEmpty ?
                             sources.compactMap { $0 } :
                             pluginManager.filteredInstalledSources),
+                searchText: searchText,
                 debridManager: debridManager
             )
 

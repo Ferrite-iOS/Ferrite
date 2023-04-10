@@ -22,7 +22,7 @@ class ScrapingViewModel: ObservableObject {
         runningSearchTask = nil
     }
 
-    @Published var searchText: String = ""
+    var cleanedSearchText: String = ""
     @Published var searchResults: [SearchResult] = []
 
     // Only add results with valid magnet hashes to the search results array
@@ -66,7 +66,7 @@ class ScrapingViewModel: ObservableObject {
         await logManager?.error(description, showToast: false)
     }
 
-    public func scanSources(sources: [Source], debridManager: DebridManager) async {
+    public func scanSources(sources: [Source], searchText: String, debridManager: DebridManager) async {
         await logManager?.info("Started scanning sources for query \"\(searchText)\"")
 
         if sources.isEmpty {
@@ -77,6 +77,8 @@ class ScrapingViewModel: ObservableObject {
 
             return
         }
+
+        cleanedSearchText = searchText.lowercased()
 
         if await !debridManager.enabledDebrids.isEmpty {
             await debridManager.clearIAValues()
@@ -152,7 +154,7 @@ class ScrapingViewModel: ObservableObject {
         // Default to HTML scraping
         let preferredParser = SourcePreferredParser(rawValue: source.preferredParser) ?? .none
 
-        guard let encodedQuery = searchText.lowercased().addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+        guard let encodedQuery = cleanedSearchText.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
             await sendSourceError("\(source.name): Could not process search query, invalid characters present.")
 
             return nil
@@ -933,7 +935,7 @@ class ScrapingViewModel: ObservableObject {
     func runRegex(parsedValue: String, regexString: String) -> String? {
         // TODO: Maybe dynamically parse flags
         let replacedRegexString = regexString
-            .replacingOccurrences(of: "{query}", with: searchText.lowercased())
+            .replacingOccurrences(of: "{query}", with: cleanedSearchText)
 
         guard
             let matchedRegex = try? Regex(
