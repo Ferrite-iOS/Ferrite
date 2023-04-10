@@ -33,6 +33,8 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    @Published var filteredIAStatus: [IAStatus] = []
+
     var currentDebridTask: Task<Void, Never>?
     var downloadUrl: String = ""
     var authUrl: URL?

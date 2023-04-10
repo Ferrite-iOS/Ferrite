@@ -15,6 +15,7 @@ struct SearchResultButtonView: View {
     @EnvironmentObject var pluginManager: PluginManager
 
     var result: SearchResult
+    var debridIAStatus: IAStatus?
 
     @State private var runOnce = false
     @State var existingBookmark: Bookmark? = nil
@@ -27,7 +28,7 @@ struct SearchResultButtonView: View {
                 navModel.selectedTitle = result.title ?? ""
                 navModel.resultFromCloud = false
 
-                switch debridManager.matchMagnetHash(result.magnet) {
+                switch debridIAStatus ?? debridManager.matchMagnetHash(result.magnet) {
                 case .full:
                     if debridManager.selectDebridResult(magnet: result.magnet) {
                         debridManager.currentDebridTask = Task {

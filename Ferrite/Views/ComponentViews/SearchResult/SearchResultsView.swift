@@ -14,6 +14,7 @@ struct SearchResultsView: View {
     @EnvironmentObject var scrapingModel: ScrapingViewModel
     @EnvironmentObject var navModel: NavigationViewModel
     @EnvironmentObject var pluginManager: PluginManager
+    @EnvironmentObject var debridManager: DebridManager
 
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText: Bool = false
 
@@ -21,7 +22,13 @@ struct SearchResultsView: View {
 
     var body: some View {
         ForEach(scrapingModel.searchResults, id: \.self) { result in
-            if pluginManager.filteredInstalledSources.isEmpty || pluginManager.filteredInstalledSources.contains(where: { result.source == $0.name }) {
+            let debridIAStatus = debridManager.matchMagnetHash(result.magnet)
+            if
+                (pluginManager.filteredInstalledSources.isEmpty ||
+                 pluginManager.filteredInstalledSources.contains(where: { result.source == $0.name })) &&
+                (debridManager.filteredIAStatus.isEmpty ||
+                debridManager.filteredIAStatus.contains(debridIAStatus))
+            {
                 SearchResultButtonView(result: result)
             }
         }

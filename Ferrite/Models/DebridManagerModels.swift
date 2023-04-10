@@ -10,10 +10,10 @@ import Foundation
 
 // MARK: - Universal IA enum (IA = InstantAvailability)
 
-public enum IAStatus: Codable, Hashable, Sendable {
-    case full
-    case partial
-    case none
+public enum IAStatus: String, Codable, Hashable, Sendable, CaseIterable {
+    case full = "Cached"
+    case partial = "Batch"
+    case none = "Uncached"
 }
 
 // MARK: - Enum for debrid differentiation. 0 is nil
