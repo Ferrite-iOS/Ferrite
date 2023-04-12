@@ -68,7 +68,7 @@ struct LibraryView: View {
 
                         switch navModel.libraryPickerSelection {
                         case .bookmarks, .debridCloud:
-                            DebridPickerView {
+                            SelectedDebridFilterView {
                                 Text(debridManager.selectedDebridType?.toString(abbreviated: true) ?? "Debrid")
                             }
                             .transaction {

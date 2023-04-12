@@ -12,61 +12,57 @@ struct SearchFilterHeaderView: View {
 
     @EnvironmentObject var debridManager: DebridManager
     @EnvironmentObject var pluginManager: PluginManager
-
-    var sources: FetchedResults<Source>
+    @EnvironmentObject var navModel: NavigationViewModel
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
+                // MARK: - Current filters
+
+                if !navModel.enabledFilters.isEmpty {
+                    Menu {
+                        Button("Clear filters", role: .destructive) {
+                            navModel.enabledFilters = []
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "line.3.horizontal.decrease")
+                                .opacity(0.6)
+                                .foregroundColor(.primary)
+
+                            FilterAmountLabelView(amount: navModel.enabledFilters.count)
+                        }
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 2)
+                        .font(
+                            .caption
+                                .weight(.medium)
+                        )
+                        .background(Capsule().foregroundColor(.init(uiColor: .secondarySystemFill)))
+                    }
+
+                    Divider()
+                        .frame(width:2, height: 20)
+                }
+
                 // MARK: - Source filter picker
 
-                // TODO: Make this use multiple selections
-                Menu {
-                    Picker("", selection: $pluginManager.filteredInstalledSources) {
-                        Text("All").tag([] as [Source])
-
-                        ForEach(sources, id: \.self) { source in
-                            if source.enabled {
-                                Text(source.name)
-                                    .tag([source])
-                            }
-                        }
-                    }
-                } label: {
-                    FilterLabelView(
-                        name: pluginManager.filteredInstalledSources.first?.name ?? "Source"
-                    )
-                }
-                .id(pluginManager.filteredInstalledSources)
+                SourceFilterView()
 
                 // MARK: - Selected debrid picker
 
-                DebridPickerView {
+                SelectedDebridFilterView {
                     FilterLabelView(name: debridManager.selectedDebridType?.toString() ?? "Debrid")
                 }
-                .id(debridManager.selectedDebridType)
 
                 // MARK: - Cache status picker
 
-                // TODO: Make this use multiple selections
                 if !debridManager.enabledDebrids.isEmpty {
-                    Menu {
-                        Picker("", selection: $debridManager.filteredIAStatus) {
-                            Text("All").tag([] as [IAStatus])
-
-                            ForEach(IAStatus.allCases, id: \.self) { status in
-                                Text(status.rawValue).tag([status])
-                            }
-                        }
-                    } label: {
-                        FilterLabelView(
-                            name: debridManager.filteredIAStatus.first?.rawValue ?? "Cache Status"
-                        )
-                    }
-                    .id(debridManager.filteredIAStatus)
+                    IAFilterView()
                 }
             }
             .padding(.horizontal, verticalSizeClass == .compact ? 65 : 18)
+            .animation(.easeInOut, value: navModel.enabledFilters)
         }
     }
 }

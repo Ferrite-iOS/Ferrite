@@ -36,7 +36,6 @@
 		0C41BC6528C2AEB900B47DD6 /* SearchModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C41BC6428C2AEB900B47DD6 /* SearchModels.swift */; };
 		0C422E7E293542EA00486D65 /* PremiumizeWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C422E7D293542EA00486D65 /* PremiumizeWrapper.swift */; };
 		0C422E80293542F300486D65 /* PremiumizeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C422E7F293542F300486D65 /* PremiumizeModels.swift */; };
-		0C42B5962932F2D5008057A0 /* DebridPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C42B5952932F2D5008057A0 /* DebridPickerView.swift */; };
 		0C42B5982932F6DD008057A0 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C42B5972932F6DD008057A0 /* Set.swift */; };
 		0C445C62293F9A0B0060744D /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C445C61293F9A0B0060744D /* Bundle.swift */; };
 		0C448BE929A135F100F4E266 /* Introspect-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 0C448BE829A135F100F4E266 /* Introspect-Static */; };
@@ -90,6 +89,11 @@
 		0C84F4832895BFED0074B7C9 /* Source+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47B2895BFED0074B7C9 /* Source+CoreDataProperties.swift */; };
 		0C84F4842895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47C2895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift */; };
 		0C84F4852895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */; };
+		0C84FCE129E4B41D00B0DFE4 /* SourceFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84FCE029E4B41D00B0DFE4 /* SourceFilterView.swift */; };
+		0C84FCE329E4B42600B0DFE4 /* IAFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84FCE229E4B42600B0DFE4 /* IAFilterView.swift */; };
+		0C84FCE529E4B43200B0DFE4 /* SelectedDebridFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84FCE429E4B43200B0DFE4 /* SelectedDebridFilterView.swift */; };
+		0C84FCE729E4B61A00B0DFE4 /* FilterModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84FCE629E4B61A00B0DFE4 /* FilterModels.swift */; };
+		0C84FCE929E5ADEF00B0DFE4 /* FilterAmountLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C84FCE829E5ADEF00B0DFE4 /* FilterAmountLabelView.swift */; };
 		0C871BDF29994D9D005279AC /* FilterLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C871BDE29994D9D005279AC /* FilterLabelView.swift */; };
 		0C8DC35229CE287E008A83AD /* PluginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8DC35129CE287E008A83AD /* PluginInfoView.swift */; };
 		0C8DC35429CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8DC35329CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift */; };
@@ -182,7 +186,6 @@
 		0C41BC6428C2AEB900B47DD6 /* SearchModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchModels.swift; sourceTree = "<group>"; };
 		0C422E7D293542EA00486D65 /* PremiumizeWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumizeWrapper.swift; sourceTree = "<group>"; };
 		0C422E7F293542F300486D65 /* PremiumizeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumizeModels.swift; sourceTree = "<group>"; };
-		0C42B5952932F2D5008057A0 /* DebridPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridPickerView.swift; sourceTree = "<group>"; };
 		0C42B5972932F6DD008057A0 /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
 		0C445C61293F9A0B0060744D /* Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		0C44E2A728D4DDDC007711AE /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
@@ -230,6 +233,11 @@
 		0C84F47B2895BFED0074B7C9 /* Source+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Source+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0C84F47C2895BFED0074B7C9 /* SourceHtmlParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C84F47D2895BFED0074B7C9 /* SourceHtmlParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceHtmlParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0C84FCE029E4B41D00B0DFE4 /* SourceFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFilterView.swift; sourceTree = "<group>"; };
+		0C84FCE229E4B42600B0DFE4 /* IAFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAFilterView.swift; sourceTree = "<group>"; };
+		0C84FCE429E4B43200B0DFE4 /* SelectedDebridFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedDebridFilterView.swift; sourceTree = "<group>"; };
+		0C84FCE629E4B61A00B0DFE4 /* FilterModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterModels.swift; sourceTree = "<group>"; };
+		0C84FCE829E5ADEF00B0DFE4 /* FilterAmountLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterAmountLabelView.swift; sourceTree = "<group>"; };
 		0C871BDE29994D9D005279AC /* FilterLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterLabelView.swift; sourceTree = "<group>"; };
 		0C8DC35129CE287E008A83AD /* PluginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginInfoView.swift; sourceTree = "<group>"; };
 		0C8DC35329CE2AB5008A83AD /* SourceSettingsBaseUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceSettingsBaseUrlView.swift; sourceTree = "<group>"; };
@@ -322,6 +330,7 @@
 		0C0755C32934244500ECA142 /* ComponentViews */ = {
 			isa = PBXGroup;
 			children = (
+				0C84FCDB29E4B3F400B0DFE4 /* Filters */,
 				0C3E00D4296F560800ECECB2 /* Plugin */,
 				0C0755C42934245800ECA142 /* Debrid */,
 				0CA3B23528C265FD00616D3A /* Library */,
@@ -334,7 +343,6 @@
 		0C0755C42934245800ECA142 /* Debrid */ = {
 			isa = PBXGroup;
 			children = (
-				0C42B5952932F2D5008057A0 /* DebridPickerView.swift */,
 				0C0755C5293424A200ECA142 /* DebridLabelView.swift */,
 			);
 			path = Debrid;
@@ -378,6 +386,7 @@
 				0C6C7C9C29315292002DF910 /* AllDebridModels.swift */,
 				0C7ED14028D61BBA009E29AD /* BackupModels.swift */,
 				0C0755C7293425B500ECA142 /* DebridManagerModels.swift */,
+				0C84FCE629E4B61A00B0DFE4 /* FilterModels.swift */,
 				0C68135128BC1A7C00FAD890 /* GithubModels.swift */,
 				0C422E7F293542F300486D65 /* PremiumizeModels.swift */,
 				0C0167DB29293FA900B65783 /* RealDebridModels.swift */,
@@ -493,6 +502,18 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		0C84FCDB29E4B3F400B0DFE4 /* Filters */ = {
+			isa = PBXGroup;
+			children = (
+				0C84FCE029E4B41D00B0DFE4 /* SourceFilterView.swift */,
+				0C84FCE229E4B42600B0DFE4 /* IAFilterView.swift */,
+				0C84FCE429E4B43200B0DFE4 /* SelectedDebridFilterView.swift */,
+				0C871BDE29994D9D005279AC /* FilterLabelView.swift */,
+				0C84FCE829E5ADEF00B0DFE4 /* FilterAmountLabelView.swift */,
+			);
+			path = Filters;
+			sourceTree = "<group>";
+		};
 		0CA0545C288F7CB200850554 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -532,7 +553,6 @@
 			children = (
 				0C44E2A928D4DFC4007711AE /* Modifiers */,
 				0CDCB91728C662640098B513 /* EmptyInstructionView.swift */,
-				0C871BDE29994D9D005279AC /* FilterLabelView.swift */,
 				0CA148C1288903F000DE2211 /* NavView.swift */,
 				0CA3FB1F28B91D9500FA10A8 /* IndeterminateProgressView.swift */,
 				0CB6516928C5B4A600DCA721 /* InlineHeader.swift */,
@@ -802,6 +822,7 @@
 				0C70E40628C40C4E00A5C72D /* NotificationCenter.swift in Sources */,
 				0C84F4832895BFED0074B7C9 /* Source+CoreDataProperties.swift in Sources */,
 				0C2D9653299316CC00A504B6 /* Tag.swift in Sources */,
+				0C84FCE129E4B41D00B0DFE4 /* SourceFilterView.swift in Sources */,
 				0CD5E78928CD932B001BF684 /* DisabledAppearance.swift in Sources */,
 				0CA148DB288903F000DE2211 /* NavView.swift in Sources */,
 				0CA3B23C28C2AA5600616D3A /* Bookmark+CoreDataClass.swift in Sources */,
@@ -820,7 +841,6 @@
 				0C5005522992B6750064606A /* PluginTagsView.swift in Sources */,
 				0CB0AB5F29BD2A200015422C /* KodiServerView.swift in Sources */,
 				0CF2C0A529D1EBD400E716DD /* UIApplication.swift in Sources */,
-				0C42B5962932F2D5008057A0 /* DebridPickerView.swift in Sources */,
 				0C2886D72960C50900D6FC16 /* RealDebridCloudView.swift in Sources */,
 				0C3DD44229B6ACD9006429DB /* KodiServer+CoreDataClass.swift in Sources */,
 				0C794B6B289DACF100DD1CC8 /* PluginCatalogButtonView.swift in Sources */,
@@ -839,6 +859,7 @@
 				0CC389542970AD900066D06F /* Action+CoreDataProperties.swift in Sources */,
 				0C7ED14128D61BBA009E29AD /* BackupModels.swift in Sources */,
 				0CAF9319296399190050812A /* PremiumizeCloudView.swift in Sources */,
+				0C84FCE529E4B43200B0DFE4 /* SelectedDebridFilterView.swift in Sources */,
 				0CA148EC288903F000DE2211 /* ContentView.swift in Sources */,
 				0CC389532970AD900066D06F /* Action+CoreDataClass.swift in Sources */,
 				0C03EB72296F619900162E9A /* PluginList+CoreDataProperties.swift in Sources */,
@@ -881,8 +902,10 @@
 				0C41BC6328C2AD0F00B47DD6 /* SearchResultButtonView.swift in Sources */,
 				0CA05459288EE9E600850554 /* PluginManager.swift in Sources */,
 				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,
+				0C84FCE729E4B61A00B0DFE4 /* FilterModels.swift in Sources */,
 				0C12D43D28CC332A000195BF /* HistoryButtonView.swift in Sources */,
 				0C733287289C4C820058D1FE /* SourceSettingsView.swift in Sources */,
+				0C84FCE929E5ADEF00B0DFE4 /* FilterAmountLabelView.swift in Sources */,
 				0C10848B28BD9A38008F0BA6 /* SettingsAppVersionView.swift in Sources */,
 				0CA05457288EE58200850554 /* SettingsPluginListView.swift in Sources */,
 				0C78041D28BFB3EA001E8CA3 /* String.swift in Sources */,
@@ -898,6 +921,7 @@
 				0C7075E429D374C50093DB2D /* Color.swift in Sources */,
 				0C8DC35229CE287E008A83AD /* PluginInfoView.swift in Sources */,
 				0C422E80293542F300486D65 /* PremiumizeModels.swift in Sources */,
+				0C84FCE329E4B42600B0DFE4 /* IAFilterView.swift in Sources */,
 				0C8DC35629CE2ABF008A83AD /* SourceSettingsApiView.swift in Sources */,
 				0C4CFC4D28970C8B00AD9FAD /* SourceComplexQuery+CoreDataClass.swift in Sources */,
 				0C0974B029CCAAAF006DE7A3 /* OperatingSystemVersion.swift in Sources */,

@@ -48,6 +48,9 @@ public class NavigationViewModel: ObservableObject {
     @Published var selectedTitle: String = ""
     @Published var selectedBatchTitle: String = ""
 
+    // For filters
+    @Published var enabledFilters: Set<FilterType> = []
+
     @Published var kodiExpanded: Bool = false
 
     @Published var currentChoiceSheet: ChoiceSheetType?

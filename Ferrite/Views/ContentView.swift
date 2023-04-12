@@ -56,7 +56,7 @@ struct ContentView: View {
                 prompt: navModel.searchPrompt,
                 dismiss: $dismissAction,
                 scopeBarContent: {
-                    SearchFilterHeaderView(sources: sources)
+                    SearchFilterHeaderView()
                 },
                 onSubmit: {
                     if
@@ -75,21 +75,15 @@ struct ContentView: View {
             .onAppear {
                 navModel.getSearchPrompt()
             }
-            .onChange(of: isEditingSearch) { newVal in
-                print(newVal)
-            }
         }
     }
 
     func executeSearch() {
         scrapingModel.runningSearchTask = Task {
             await scrapingModel.scanSources(
-                sources:
-                    scrapingModel.searchResults.isEmpty ?
-                        sources.compactMap { $0 } :
-                        (pluginManager.filteredInstalledSources.isEmpty ?
-                            sources.compactMap { $0 } :
-                            pluginManager.filteredInstalledSources),
+                sources: pluginManager.fetchInstalledSources(
+                    searchResultsEmpty: scrapingModel.searchResults.isEmpty
+                ),
                 searchText: searchText,
                 debridManager: debridManager
             )

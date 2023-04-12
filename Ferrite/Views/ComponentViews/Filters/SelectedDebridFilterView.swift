@@ -1,13 +1,13 @@
 //
-//  DebridChoiceView.swift
+//  SelectedDebridFilterView.swift
 //  Ferrite
 //
-//  Created by Brian Dashore on 11/26/22.
+//  Created by Brian Dashore on 4/10/23.
 //
 
 import SwiftUI
 
-struct DebridPickerView<Content: View>: View {
+struct SelectedDebridFilterView<Content: View>: View {
     @EnvironmentObject var debridManager: DebridManager
 
     @ViewBuilder var label: Content
@@ -28,5 +28,6 @@ struct DebridPickerView<Content: View>: View {
         } label: {
             label
         }
+        .id(debridManager.selectedDebridType)
     }
 }

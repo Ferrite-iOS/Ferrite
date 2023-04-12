@@ -265,6 +265,19 @@ public class PluginManager: ObservableObject {
         return Application.shared.appVersion >= minVersion
     }
 
+    // Fetches sources using the background context
+    public func fetchInstalledSources(searchResultsEmpty: Bool) -> [Source] {
+        let backgroundContext = PersistenceController.shared.backgroundContext
+
+        if !filteredInstalledSources.isEmpty && !searchResultsEmpty {
+            return filteredInstalledSources
+        } else if let sources = try? backgroundContext.fetch(Source.fetchRequest()) {
+            return sources.compactMap { $0 }
+        } else {
+            return []
+        }
+    }
+
     @MainActor
     public func runDefaultAction(urlString: String?, navModel: NavigationViewModel) {
         let context = PersistenceController.shared.backgroundContext
