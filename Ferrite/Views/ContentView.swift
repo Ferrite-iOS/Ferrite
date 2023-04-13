@@ -32,7 +32,10 @@ struct ContentView: View {
                 SearchResultsView(searchText: $searchText)
             }
             .listStyle(.insetGrouped)
-            .inlinedList(inset: 20)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                Spacer()
+                    .frame(height: 20)
+            }
             .navigationTitle("Search")
             .overlay {
                 if

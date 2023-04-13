@@ -71,7 +71,6 @@ struct PluginAggregateView<P: Plugin, PJ: PluginJson>: View {
                 }
             }
         }
-        .inlinedList(inset: 0)
         .listStyle(.insetGrouped)
         .onAppear {
             fetchPredicate()

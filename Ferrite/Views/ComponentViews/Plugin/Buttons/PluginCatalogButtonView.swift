@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PluginCatalogButtonView<PJ: PluginJson>: View {
+    @Environment(\.colorScheme) var colorScheme
+
     @EnvironmentObject var pluginManager: PluginManager
 
     let availablePlugin: PJ
@@ -58,7 +60,7 @@ struct PluginCatalogButtonView<PJ: PluginJson>: View {
             )
             .padding(.horizontal, 7)
             .padding(.vertical, 5)
-            .background(Color(uiColor: .tertiarySystemBackground))
+            .background(colorScheme == .light ? Color(uiColor: .secondarySystemBackground) : Color(uiColor: .tertiarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .buttonStyle(.borderless)

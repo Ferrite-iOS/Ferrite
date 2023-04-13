@@ -167,13 +167,17 @@ struct SearchBar<ScopeContent: View>: UIViewControllerRepresentable {
         searchController.searchBar.scopeButtonTitles = [""]
         (searchController.searchBar.value(forKey: "_scopeBar") as? UIView)?.isHidden = true
 
+        guard
+            let containerView = searchController.searchBar.value(forKey: "_scopeBarContainerView") as? UIView,
+            !containerView.subviews.contains(where: { String(describing: $0.classForCoder).contains("UIHostingView") })
+        else {
+            return
+        }
+
         let hostingController = UIHostingController(rootView: content)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         hostingController.view.backgroundColor = .clear
 
-        guard let containerView = searchController.searchBar.value(forKey: "_scopeBarContainerView") as? UIView else {
-            return
-        }
         containerView.addSubview(hostingController.view)
 
         NSLayoutConstraint.activate([

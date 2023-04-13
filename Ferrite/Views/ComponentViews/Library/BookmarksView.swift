@@ -51,7 +51,10 @@ struct BookmarksView: View {
             fetchPredicate()
         }
         .listStyle(.insetGrouped)
-        .inlinedList(inset: 15)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            Spacer()
+                .frame(height: 15)
+        }
         .task {
             if debridManager.enabledDebrids.count > 0 {
                 let magnets = bookmarks.compactMap {
