@@ -21,6 +21,7 @@
 		0C1A3E5629C9488C00DA9730 /* CodableWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C1A3E5529C9488C00DA9730 /* CodableWrapper.swift */; };
 		0C2886D22960AC2800D6FC16 /* DebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */; };
 		0C2886D72960C50900D6FC16 /* RealDebridCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */; };
+		0C2B028F29E9E61E00DCF127 /* SortFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2B028E29E9E61E00DCF127 /* SortFilterView.swift */; };
 		0C2D9653299316CC00A504B6 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C2D9652299316CC00A504B6 /* Tag.swift */; };
 		0C31133C28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C31133A28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift */; };
 		0C31133D28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C31133B28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift */; };
@@ -170,6 +171,7 @@
 		0C1A3E5529C9488C00DA9730 /* CodableWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableWrapper.swift; sourceTree = "<group>"; };
 		0C2886D12960AC2800D6FC16 /* DebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebridCloudView.swift; sourceTree = "<group>"; };
 		0C2886D62960C50900D6FC16 /* RealDebridCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealDebridCloudView.swift; sourceTree = "<group>"; };
+		0C2B028E29E9E61E00DCF127 /* SortFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortFilterView.swift; sourceTree = "<group>"; };
 		0C2D9652299316CC00A504B6 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		0C31133A28B1ABFA004DCB0D /* SourceJsonParser+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceJsonParser+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0C31133B28B1ABFA004DCB0D /* SourceJsonParser+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SourceJsonParser+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -510,6 +512,7 @@
 				0C84FCE429E4B43200B0DFE4 /* SelectedDebridFilterView.swift */,
 				0C871BDE29994D9D005279AC /* FilterLabelView.swift */,
 				0C84FCE829E5ADEF00B0DFE4 /* FilterAmountLabelView.swift */,
+				0C2B028E29E9E61E00DCF127 /* SortFilterView.swift */,
 			);
 			path = Filters;
 			sourceTree = "<group>";
@@ -899,6 +902,7 @@
 				0C0167DC29293FA900B65783 /* RealDebridModels.swift in Sources */,
 				0C57D4CC289032ED008534E8 /* SearchResultInfoView.swift in Sources */,
 				0C42B5982932F6DD008057A0 /* Set.swift in Sources */,
+				0C2B028F29E9E61E00DCF127 /* SortFilterView.swift in Sources */,
 				0C41BC6328C2AD0F00B47DD6 /* SearchResultButtonView.swift in Sources */,
 				0CA05459288EE9E600850554 /* PluginManager.swift in Sources */,
 				0C84F4772895BE680074B7C9 /* FerriteDB.xcdatamodeld in Sources */,

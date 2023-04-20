@@ -60,6 +60,10 @@ struct SearchFilterHeaderView: View {
                 if !debridManager.enabledDebrids.isEmpty {
                     IAFilterView()
                 }
+
+                // MARK: - Sort filter picker
+
+                SortFilterView()
             }
             .padding(.horizontal, verticalSizeClass == .compact ? 65 : 18)
             .animation(.easeInOut, value: navModel.enabledFilters)

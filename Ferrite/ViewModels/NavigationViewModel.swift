@@ -50,6 +50,33 @@ public class NavigationViewModel: ObservableObject {
 
     // For filters
     @Published var enabledFilters: Set<FilterType> = []
+    @Published var currentSortFilter: SortFilter?
+    @Published var currentSortOrder: SortOrder = .forward
+
+    public func compareSearchResult(lhs: SearchResult, rhs: SearchResult) -> Bool {
+        switch currentSortFilter {
+        case .leechers:
+            guard let lhsLeechers = lhs.leechers, let rhsLeechers = rhs.leechers else {
+                return false
+            }
+
+            return currentSortOrder == .forward ? lhsLeechers > rhsLeechers : lhsLeechers < rhsLeechers
+        case .seeders:
+            guard let lhsSeeders = lhs.seeders, let rhsSeeders = rhs.seeders else {
+                return false
+            }
+
+            return currentSortOrder == .forward ? lhsSeeders > rhsSeeders : lhsSeeders < rhsSeeders
+        case .size:
+            guard let lhsSize = lhs.rawSize(), let rhsSize = rhs.rawSize() else {
+                return false
+            }
+
+            return currentSortOrder == .forward ? lhsSize > rhsSize : lhsSize < rhsSize
+        case .none:
+            return false
+        }
+    }
 
     @Published var kodiExpanded: Bool = false
 

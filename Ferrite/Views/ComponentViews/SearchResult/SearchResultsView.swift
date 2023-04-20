@@ -21,7 +21,12 @@ struct SearchResultsView: View {
     @Binding var searchText: String
 
     var body: some View {
-        ForEach(scrapingModel.searchResults, id: \.self) { result in
+        ForEach(
+            scrapingModel.searchResults.sorted {
+                navModel.compareSearchResult(lhs: $0, rhs: $1)
+            }
+            , id: \.self
+        ) { result in
             let debridIAStatus = debridManager.matchMagnetHash(result.magnet)
             if
                 (pluginManager.filteredInstalledSources.isEmpty ||

@@ -12,3 +12,9 @@ enum FilterType {
     case IA
     case sort
 }
+
+enum SortFilter: String, Hashable, CaseIterable {
+    case seeders = "Seeders"
+    case leechers = "Leechers"
+    case size = "Size"
+}
