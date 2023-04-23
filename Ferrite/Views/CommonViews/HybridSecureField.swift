@@ -8,16 +8,24 @@
 import SwiftUI
 
 struct HybridSecureField: View {
+    enum Field: Hashable {
+        case plain
+        case secure
+    }
+
     @Binding var text: String
     @State private var showPassword = false
+    @FocusState var focusedField: Field?
 
     var body: some View {
         HStack {
             Group {
                 if showPassword {
                     TextField("Password", text: $text)
+                        .focused($focusedField, equals: .plain)
                 } else {
                     SecureField("Password", text: $text)
+                        .focused($focusedField, equals: .secure)
                 }
             }
             .autocorrectionDisabled(true)
@@ -25,10 +33,12 @@ struct HybridSecureField: View {
 
             Button {
                 showPassword.toggle()
+                focusedField = showPassword ? .plain : .secure
             } label: {
-                Image(systemName: self.showPassword ? "eye.slash.fill" : "eye.fill")
+                Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
                     .foregroundColor(.secondary)
             }
+            .buttonStyle(.borderless)
         }
     }
 }
