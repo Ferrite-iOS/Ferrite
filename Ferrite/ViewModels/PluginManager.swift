@@ -269,7 +269,7 @@ public class PluginManager: ObservableObject {
     public func fetchInstalledSources(searchResultsEmpty: Bool) -> [Source] {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
-        if !filteredInstalledSources.isEmpty && !searchResultsEmpty {
+        if !filteredInstalledSources.isEmpty, !searchResultsEmpty {
             return Array(filteredInstalledSources)
         } else if let sources = try? backgroundContext.fetch(Source.fetchRequest()) {
             return sources.compactMap { $0 }

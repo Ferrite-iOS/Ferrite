@@ -510,7 +510,7 @@ class ScrapingViewModel: ObservableObject {
         }
 
         // Return if a title doesn't exist
-        if title == nil && (jsonParser.subResults == nil && existingSearchResult == nil) {
+        if title == nil, jsonParser.subResults == nil, existingSearchResult == nil {
             return nil
         }
 
@@ -531,7 +531,7 @@ class ScrapingViewModel: ObservableObject {
 
         // Return if a magnet hash doesn't exist
         let magnet = Magnet(hash: magnetHash, link: link, title: title, trackers: source.trackers)
-        if magnet.hash == nil && (jsonParser.subResults == nil && existingSearchResult == nil) {
+        if magnet.hash == nil, jsonParser.subResults == nil, existingSearchResult == nil {
             return nil
         }
 

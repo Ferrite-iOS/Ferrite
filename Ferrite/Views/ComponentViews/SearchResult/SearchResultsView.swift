@@ -24,15 +24,15 @@ struct SearchResultsView: View {
         ForEach(
             scrapingModel.searchResults.sorted {
                 navModel.compareSearchResult(lhs: $0, rhs: $1)
-            }
-            , id: \.self
+            },
+            id: \.self
         ) { result in
             let debridIAStatus = debridManager.matchMagnetHash(result.magnet)
             if
-                (pluginManager.filteredInstalledSources.isEmpty ||
-                 pluginManager.filteredInstalledSources.contains(where: { result.source == $0.name })) &&
-                (debridManager.filteredIAStatus.isEmpty ||
-                debridManager.filteredIAStatus.contains(debridIAStatus))
+                pluginManager.filteredInstalledSources.isEmpty ||
+                pluginManager.filteredInstalledSources.contains(where: { result.source == $0.name }),
+                debridManager.filteredIAStatus.isEmpty ||
+                debridManager.filteredIAStatus.contains(debridIAStatus)
             {
                 SearchResultButtonView(result: result)
             }

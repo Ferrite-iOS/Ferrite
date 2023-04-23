@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FilterAmountLabelView: View {
-    @Environment (\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) var colorScheme
 
     var amount: Int
 

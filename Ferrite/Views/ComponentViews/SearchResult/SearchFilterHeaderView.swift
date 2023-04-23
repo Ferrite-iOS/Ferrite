@@ -42,7 +42,7 @@ struct SearchFilterHeaderView: View {
                     }
 
                     Divider()
-                        .frame(width:2, height: 20)
+                        .frame(width: 2, height: 20)
                 }
 
                 // MARK: - Source filter picker
