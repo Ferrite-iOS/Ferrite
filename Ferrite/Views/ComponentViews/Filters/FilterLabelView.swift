@@ -20,7 +20,7 @@ struct FilterLabelView: View {
                 FilterAmountLabelView(amount: count)
             }
 
-            Text(count == 1 ? name ?? fallbackName : fallbackName)
+            Text(count ?? 1 == 1 ? name ?? fallbackName : fallbackName)
                 .opacity(count ?? 0 > 0 ? 1 : 0.6)
                 .foregroundColor(count ?? 0 > 0 && colorScheme == .light ? .accentColor : .primary)
 
