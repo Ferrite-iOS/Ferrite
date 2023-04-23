@@ -15,7 +15,7 @@ struct HybridSecureField: View {
 
     @Binding var text: String
     @State private var showPassword = false
-    @FocusState var focusedField: Field?
+    @FocusState private var focusedField: Field?
 
     var body: some View {
         HStack {

@@ -34,6 +34,12 @@ struct SettingsView: View {
 
     @AppStorage("Debug.ShowErrorToasts") var showErrorToasts = true
 
+    private enum Field {
+        case requestTimeout
+    }
+
+    @FocusState private var focusedField: Field?
+
     var body: some View {
         NavView {
             Form {
@@ -90,6 +96,7 @@ struct SettingsView: View {
                             TextField("", value: $requestTimeoutSecs, formatter: NumberFormatter())
                                 .fixedSize()
                                 .keyboardType(.numberPad)
+                                .focused($focusedField, equals: Field.requestTimeout)
                         }
                     }
                 }
@@ -206,6 +213,15 @@ struct SettingsView: View {
                 .prefersEphemeralWebBrowserSession(true)
             }
             .navigationTitle("Settings")
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+
+                    Button("Done") {
+                        focusedField = nil
+                    }
+                }
+            }
         }
     }
 }
