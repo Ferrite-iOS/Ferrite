@@ -375,7 +375,19 @@ class ScrapingViewModel: ObservableObject {
             return nil
         }
 
-        let request = URLRequest(url: url, timeoutInterval: 15)
+        var timeout: Double = 15
+
+        let disableRequestTimeout = UserDefaults.standard.bool(forKey: "Behavior.DisableRequestTimeout")
+        if disableRequestTimeout {
+            timeout = Double.infinity
+        } else {
+            let requestTimeoutSecs = UserDefaults.standard.double(forKey: "Behavior.RequestTimeoutSecs")
+            if requestTimeoutSecs != 0 {
+                timeout = requestTimeoutSecs
+            }
+        }
+
+        let request = URLRequest(url: url, timeoutInterval: timeout)
 
         do {
             let (data, _) = try await URLSession.shared.data(for: request)

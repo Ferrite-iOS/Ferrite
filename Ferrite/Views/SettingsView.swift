@@ -24,6 +24,8 @@ struct SettingsView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText = false
+    @AppStorage("Behavior.DisableRequestTimeout") var disableRequestTimeout = false
+    @AppStorage("Behavior.RequestTimeoutSecs") var requestTimeoutSecs: Double = 15
 
     @AppStorage("Updates.AutomaticNotifs") var autoUpdateNotifs = true
 
@@ -63,13 +65,32 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: InlineHeader("Behavior")) {
+                Section(
+                    header: InlineHeader("Behavior"),
+                    footer: Text("Only disable search timeout if results are slow to fetch")
+                ) {
                     Toggle(isOn: $autocorrectSearch) {
                         Text("Autocorrect search")
                     }
 
                     Toggle(isOn: $usesRandomSearchText) {
                         Text("Random searchbar text")
+                    }
+
+                    Toggle(isOn: $disableRequestTimeout) {
+                        Text("Disable search timeout")
+                    }
+
+                    if !disableRequestTimeout {
+                        HStack {
+                            Text("Search timeout seconds")
+
+                            Spacer()
+
+                            TextField("", value: $requestTimeoutSecs, formatter: NumberFormatter())
+                                .fixedSize()
+                                .keyboardType(.numberPad)
+                        }
                     }
                 }
 
