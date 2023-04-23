@@ -42,6 +42,7 @@ struct SortFilterView: View {
         } label: {
             FilterLabelView(
                 name: "Sort\(navModel.currentSortFilter.map { ": \($0.rawValue)" } ?? "")",
+                fallbackName: "Sort",
                 count: navModel.currentSortFilter == nil ? 0 : 1
             )
         }

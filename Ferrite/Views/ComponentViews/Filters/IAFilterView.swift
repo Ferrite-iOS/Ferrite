@@ -14,16 +14,36 @@ struct IAFilterView: View {
 
     var body: some View {
         Menu {
-            Picker("", selection: $debridManager.filteredIAStatus) {
-                Text("All").tag([] as [IAStatus])
+            Button {
+                debridManager.filteredIAStatus = []
+            } label: {
+                Text("Any")
 
-                ForEach(IAStatus.allCases, id: \.self) { status in
-                    Text(status.rawValue).tag([status])
+                if debridManager.filteredIAStatus.isEmpty {
+                    Image(systemName: "checkmark")
+                }
+            }
+
+            ForEach(IAStatus.allCases, id: \.self) { status in
+                let containsIAStatus = debridManager.filteredIAStatus.contains(status)
+                Button {
+                    if containsIAStatus {
+                        debridManager.filteredIAStatus.remove(status)
+                    } else {
+                        debridManager.filteredIAStatus.insert(status)
+                    }
+                } label: {
+                    Text(status.rawValue)
+
+                    if containsIAStatus {
+                        Image(systemName: "checkmark")
+                    }
                 }
             }
         } label: {
             FilterLabelView(
-                name: debridManager.filteredIAStatus.first?.rawValue ?? "Cache Status",
+                name: debridManager.filteredIAStatus.first?.rawValue,
+                fallbackName: "Cache Status",
                 count: debridManager.filteredIAStatus.count
             )
         }

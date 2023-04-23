@@ -10,7 +10,8 @@ import SwiftUI
 struct FilterLabelView: View {
     @Environment(\.colorScheme) var colorScheme
 
-    var name: String
+    var name: String?
+    var fallbackName: String
     var count: Int?
 
     var body: some View {
@@ -19,7 +20,7 @@ struct FilterLabelView: View {
                 FilterAmountLabelView(amount: count)
             }
 
-            Text(name)
+            Text(count == 1 ? name ?? fallbackName : fallbackName)
                 .opacity(count ?? 0 > 0 ? 1 : 0.6)
                 .foregroundColor(count ?? 0 > 0 && colorScheme == .light ? .accentColor : .primary)
 

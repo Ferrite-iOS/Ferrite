@@ -19,19 +19,38 @@ struct SourceFilterView: View {
 
     var body: some View {
         Menu {
-            Picker("", selection: $pluginManager.filteredInstalledSources) {
-                Text("All").tag([] as [Source])
+            Button {
+                pluginManager.filteredInstalledSources = []
+            } label: {
+                Text("All")
 
-                ForEach(sources, id: \.self) { source in
-                    if source.enabled {
+                if pluginManager.filteredInstalledSources.isEmpty {
+                    Image(systemName: "checkmark")
+                }
+            }
+
+            ForEach(sources, id: \.self) { source in
+                let containsSource = pluginManager.filteredInstalledSources.contains(source)
+                if source.enabled {
+                    Button {
+                        if containsSource {
+                            pluginManager.filteredInstalledSources.remove(source)
+                        } else {
+                            pluginManager.filteredInstalledSources.insert(source)
+                        }
+                    } label: {
                         Text(source.name)
-                            .tag([source])
+
+                        if containsSource {
+                            Image(systemName: "checkmark")
+                        }
                     }
                 }
             }
         } label: {
             FilterLabelView(
-                name: pluginManager.filteredInstalledSources.first?.name ?? "Source",
+                name: pluginManager.filteredInstalledSources.first?.name,
+                fallbackName: "Source",
                 count: pluginManager.filteredInstalledSources.count
             )
         }

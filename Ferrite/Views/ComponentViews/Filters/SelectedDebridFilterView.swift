@@ -14,14 +14,26 @@ struct SelectedDebridFilterView<Content: View>: View {
 
     var body: some View {
         Menu {
-            Picker("", selection: $debridManager.selectedDebridType) {
+            Button {
+                debridManager.selectedDebridType = nil
+            } label: {
                 Text("None")
-                    .tag(nil as DebridType?)
 
-                ForEach(DebridType.allCases, id: \.self) { (debridType: DebridType) in
-                    if debridManager.enabledDebrids.contains(debridType) {
+                if debridManager.selectedDebridType == nil {
+                    Image(systemName: "checkmark")
+                }
+            }
+
+            ForEach(DebridType.allCases, id: \.self) { (debridType: DebridType) in
+                if debridManager.enabledDebrids.contains(debridType) {
+                    Button {
+                        debridManager.selectedDebridType = debridType
+                    } label: {
                         Text(debridType.toString())
-                            .tag(DebridType?.some(debridType))
+
+                        if debridManager.selectedDebridType == debridType {
+                            Image(systemName: "checkmark")
+                        }
                     }
                 }
             }

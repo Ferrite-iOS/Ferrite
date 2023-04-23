@@ -16,7 +16,7 @@ public class PluginManager: ObservableObject {
     @Published var availableSources: [SourceJson] = []
     @Published var availableActions: [ActionJson] = []
 
-    @Published var filteredInstalledSources: [Source] = []
+    @Published var filteredInstalledSources: Set<Source> = []
 
     @Published var showActionErrorAlert = false
     @Published var actionErrorAlertMessage: String = ""
@@ -270,7 +270,7 @@ public class PluginManager: ObservableObject {
         let backgroundContext = PersistenceController.shared.backgroundContext
 
         if !filteredInstalledSources.isEmpty && !searchResultsEmpty {
-            return filteredInstalledSources
+            return Array(filteredInstalledSources)
         } else if let sources = try? backgroundContext.fetch(Source.fetchRequest()) {
             return sources.compactMap { $0 }
         } else {

@@ -52,7 +52,10 @@ struct SearchFilterHeaderView: View {
                 // MARK: - Selected debrid picker
 
                 SelectedDebridFilterView {
-                    FilterLabelView(name: debridManager.selectedDebridType?.toString() ?? "Debrid")
+                    FilterLabelView(
+                        name: debridManager.selectedDebridType?.toString(),
+                        fallbackName: "Debrid"
+                    )
                 }
 
                 // MARK: - Cache status picker
