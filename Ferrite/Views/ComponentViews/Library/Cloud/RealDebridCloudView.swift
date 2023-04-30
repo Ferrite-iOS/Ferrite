@@ -39,6 +39,7 @@ struct RealDebridCloudView: View {
                             navModel: navModel
                         )
                     }
+                    .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
                     .tint(.primary)
                 }
                 .onDelete { offsets in

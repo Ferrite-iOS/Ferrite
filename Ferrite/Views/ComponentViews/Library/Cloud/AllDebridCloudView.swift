@@ -15,6 +15,43 @@ struct AllDebridCloudView: View {
     @Binding var searchText: String
 
     var body: some View {
+        DisclosureGroup("Links") {
+            ForEach(debridManager.allDebridCloudLinks.filter {
+                searchText.isEmpty ? true : $0.filename.lowercased().contains(searchText.lowercased())
+            }, id: \.self) { downloadResponse in
+                Button(downloadResponse.filename) {
+                    navModel.resultFromCloud = true
+                    navModel.selectedTitle = downloadResponse.filename
+                    debridManager.downloadUrl = downloadResponse.link
+
+                    PersistenceController.shared.createHistory(
+                        HistoryEntryJson(
+                            name: downloadResponse.filename,
+                            url: downloadResponse.link,
+                            source: DebridType.allDebrid.toString()
+                        ),
+                        performSave: true
+                    )
+
+                    pluginManager.runDefaultAction(
+                        urlString: debridManager.downloadUrl,
+                        navModel: navModel
+                    )
+                }
+                .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
+                .tint(.primary)
+            }
+            .onDelete { offsets in
+                for index in offsets {
+                    if let savedLink = debridManager.allDebridCloudLinks[safe: index] {
+                        Task {
+                            await debridManager.deleteAdLink(link: savedLink.link)
+                        }
+                    }
+                }
+            }
+        }
+
         DisclosureGroup("Magnets") {
             ForEach(debridManager.allDebridCloudMagnets.filter {
                 searchText.isEmpty ? true : $0.filename.lowercased().contains(searchText.lowercased())
@@ -69,8 +106,8 @@ struct AllDebridCloudView: View {
                         .font(.caption)
                     }
                 }
-                .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.7, animation: .easeOut(duration: 0.2))
-                .tint(.black)
+                .disabledAppearance(navModel.currentChoiceSheet != nil, dimmedOpacity: 0.9, animation: .easeOut(duration: 0.2))
+                .tint(.primary)
             }
             .onDelete { offsets in
                 for index in offsets {

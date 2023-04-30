@@ -8,6 +8,7 @@
 import BetterSafariView
 import Introspect
 import SwiftUI
+import WebKit
 
 struct SettingsView: View {
     @EnvironmentObject var debridManager: DebridManager
@@ -24,6 +25,7 @@ struct SettingsView: View {
 
     @AppStorage("Behavior.AutocorrectSearch") var autocorrectSearch = true
     @AppStorage("Behavior.UsesRandomSearchText") var usesRandomSearchText = false
+    @AppStorage("Behavior.UseEphemeralAuth") var useEphemeralAuth = true
     @AppStorage("Behavior.DisableRequestTimeout") var disableRequestTimeout = false
     @AppStorage("Behavior.RequestTimeoutSecs") var requestTimeoutSecs: Double = 15
 
@@ -73,7 +75,10 @@ struct SettingsView: View {
 
                 Section(
                     header: InlineHeader("Behavior"),
-                    footer: Text("Only disable search timeout if results are slow to fetch")
+                    footer: VStack(alignment: .leading, spacing: 8) {
+                        Text("Temporarily disable ephemeral auth if you cannot log into a service")
+                        Text("Only disable search timeout if results are slow to fetch")
+                    }
                 ) {
                     Toggle(isOn: $autocorrectSearch) {
                         Text("Autocorrect search")
@@ -83,6 +88,21 @@ struct SettingsView: View {
                         Text("Random searchbar text")
                     }
 
+                    Toggle(isOn: $useEphemeralAuth) {
+                        Text("Ephemeral authentication")
+                    }
+                    .onChange(of: useEphemeralAuth) { changed in
+                        // Does not work with ASWebAuthenticationSession
+                        if changed {
+                            Task {
+                                let dataRecords = await WKWebsiteDataStore.default().dataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes())
+                                        
+                                await WKWebsiteDataStore.default().removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: dataRecords)
+                            }
+                        }
+                    }
+
+                    // TODO: Change this to enable search timeout instead
                     Toggle(isOn: $disableRequestTimeout) {
                         Text("Disable search timeout")
                     }
@@ -210,7 +230,7 @@ struct SettingsView: View {
                         await debridManager.handleCallback(url: callbackURL, error: error)
                     }
                 }
-                .prefersEphemeralWebBrowserSession(true)
+                .prefersEphemeralWebBrowserSession(useEphemeralAuth)
             }
             .navigationTitle("Settings")
             .toolbar {

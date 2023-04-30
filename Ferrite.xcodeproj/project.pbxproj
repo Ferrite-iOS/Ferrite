@@ -142,6 +142,7 @@
 		0CC2CA7429E24F63000A8585 /* ExpandedSearchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC2CA7329E24F63000A8585 /* ExpandedSearchable.swift */; };
 		0CC389532970AD900066D06F /* Action+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC389512970AD900066D06F /* Action+CoreDataClass.swift */; };
 		0CC389542970AD900066D06F /* Action+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC389522970AD900066D06F /* Action+CoreDataProperties.swift */; };
+		0CD0265729FEFBF900A83D25 /* FerriteKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD0265629FEFBF900A83D25 /* FerriteKeychain.swift */; };
 		0CD4030A29DA01B6008D9F03 /* PluginInfoMetaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD4030929DA01B6008D9F03 /* PluginInfoMetaView.swift */; };
 		0CD4030C29DA0222008D9F03 /* PluginInfoAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD4030B29DA0222008D9F03 /* PluginInfoAboutView.swift */; };
 		0CD4CAC628C980EB0046E1DC /* HistoryActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD4CAC528C980EB0046E1DC /* HistoryActionsView.swift */; };
@@ -288,6 +289,7 @@
 		0CC389512970AD900066D06F /* Action+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Action+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0CC389522970AD900066D06F /* Action+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Action+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CC6E4D428A45BA000AF2BCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0CD0265629FEFBF900A83D25 /* FerriteKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FerriteKeychain.swift; sourceTree = "<group>"; };
 		0CD4030929DA01B6008D9F03 /* PluginInfoMetaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginInfoMetaView.swift; sourceTree = "<group>"; };
 		0CD4030B29DA0222008D9F03 /* PluginInfoAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginInfoAboutView.swift; sourceTree = "<group>"; };
 		0CD4CAC528C980EB0046E1DC /* HistoryActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryActionsView.swift; sourceTree = "<group>"; };
@@ -449,6 +451,7 @@
 			children = (
 				0C44E2A728D4DDDC007711AE /* Application.swift */,
 				0C1A3E5529C9488C00DA9730 /* CodableWrapper.swift */,
+				0CD0265629FEFBF900A83D25 /* FerriteKeychain.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -852,6 +855,7 @@
 				0C3E00D2296F4FD200ECECB2 /* PluginsView.swift in Sources */,
 				0CBC76FD288D914F0054BE44 /* BatchChoiceView.swift in Sources */,
 				0C7D11FE28AA03FE00ED92DB /* View.swift in Sources */,
+				0CD0265729FEFBF900A83D25 /* FerriteKeychain.swift in Sources */,
 				0CA3B23728C2660700616D3A /* HistoryView.swift in Sources */,
 				0C70E40228C3CE9C00A5C72D /* ConditionalContextMenu.swift in Sources */,
 				0C50B7D0299DF63C00A9FA3C /* UIDevice.swift in Sources */,

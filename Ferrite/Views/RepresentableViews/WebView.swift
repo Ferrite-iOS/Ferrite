@@ -9,19 +9,23 @@ import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
+    @AppStorage("Behavior.UseEphemeralAuth") var useEphemeralAuth: Bool = true
     var url: URL
 
     func makeUIView(context: Context) -> WKWebView {
-        // Make the WebView ephemeral
+        // Make the WebView ephemeral depending on the ephemeral auth setting
         let config = WKWebViewConfiguration()
-        config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+
+        config.websiteDataStore = useEphemeralAuth ? .nonPersistent() : .default()
 
         let webView = WKWebView(frame: .zero, configuration: config)
         let _ = webView.load(URLRequest(url: url))
         return webView
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        webView.configuration.websiteDataStore = useEphemeralAuth ? .nonPersistent() : .default()
+    }
 }
 
 struct WebView_Previews: PreviewProvider {

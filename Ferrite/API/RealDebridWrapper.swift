@@ -6,11 +6,9 @@
 //
 
 import Foundation
-import KeychainSwift
 
 public class RealDebrid {
     let jsonDecoder = JSONDecoder()
-    let keychain = KeychainSwift()
 
     let baseAuthUrl = "https://api.real-debrid.com/oauth/v2"
     let baseApiUrl = "https://api.real-debrid.com/rest/1.0"
@@ -83,7 +81,7 @@ public class RealDebrid {
                 // If there's a client ID from the response, end the task successfully
                 if let clientId = rawResponse?.clientID, let clientSecret = rawResponse?.clientSecret {
                     await setUserDefaultsValue(clientId, forKey: "RealDebrid.ClientId")
-                    keychain.set(clientSecret, forKey: "RealDebrid.ClientSecret")
+                    FerriteKeychain.shared.set(clientSecret, forKey: "RealDebrid.ClientSecret")
 
                     try await getTokens(deviceCode: deviceCode)
 
@@ -102,13 +100,13 @@ public class RealDebrid {
         }
     }
 
-    // Fetch all tokens for the user and store in keychain
+    // Fetch all tokens for the user and store in FerriteKeychain.shared
     public func getTokens(deviceCode: String) async throws {
         guard let clientId = UserDefaults.standard.string(forKey: "RealDebrid.ClientId") else {
             throw RDError.EmptyData
         }
 
-        guard let clientSecret = keychain.get("RealDebrid.ClientSecret") else {
+        guard let clientSecret = FerriteKeychain.shared.get("RealDebrid.ClientSecret") else {
             throw RDError.EmptyData
         }
 
@@ -130,8 +128,8 @@ public class RealDebrid {
 
         let rawResponse = try jsonDecoder.decode(TokenResponse.self, from: data)
 
-        keychain.set(rawResponse.accessToken, forKey: "RealDebrid.AccessToken")
-        keychain.set(rawResponse.refreshToken, forKey: "RealDebrid.RefreshToken")
+        FerriteKeychain.shared.set(rawResponse.accessToken, forKey: "RealDebrid.AccessToken")
+        FerriteKeychain.shared.set(rawResponse.refreshToken, forKey: "RealDebrid.RefreshToken")
 
         let accessTimestamp = Date().timeIntervalSince1970 + Double(rawResponse.expiresIn)
         await setUserDefaultsValue(accessTimestamp, forKey: "RealDebrid.AccessTokenStamp")
@@ -142,7 +140,7 @@ public class RealDebrid {
 
         if Date().timeIntervalSince1970 > accessTokenStamp {
             do {
-                if let refreshToken = keychain.get("RealDebrid.RefreshToken") {
+                if let refreshToken = FerriteKeychain.shared.get("RealDebrid.RefreshToken") {
                     try await getTokens(deviceCode: refreshToken)
                 }
             } catch {
@@ -151,22 +149,35 @@ public class RealDebrid {
             }
         }
 
-        return keychain.get("RealDebrid.AccessToken")
+        return FerriteKeychain.shared.get("RealDebrid.AccessToken")
+    }
+
+    // Adds a manual API key instead of web auth
+    // Clear out existing refresh tokens and timestamps
+    public func setApiKey(_ key: String) -> Bool {
+        FerriteKeychain.shared.set(key, forKey: "RealDebrid.AccessToken")
+        FerriteKeychain.shared.delete("RealDebrid.RefreshToken")
+        FerriteKeychain.shared.delete("RealDebrid.AccessTokenStamp")
+
+        UserDefaults.standard.set(true, forKey: "RealDebrid.UseManualKey")
+
+        return FerriteKeychain.shared.get("RealDebrid.AccessToken") == key
     }
 
     public func deleteTokens() async throws {
-        keychain.delete("RealDebrid.RefreshToken")
-        keychain.delete("RealDebrid.ClientSecret")
+        FerriteKeychain.shared.delete("RealDebrid.RefreshToken")
+        FerriteKeychain.shared.delete("RealDebrid.ClientSecret")
         await removeUserDefaultsValue(forKey: "RealDebrid.ClientId")
         await removeUserDefaultsValue(forKey: "RealDebrid.AccessTokenStamp")
 
         // Run the request, doesn't matter if it fails
-        if let token = keychain.get("RealDebrid.AccessToken") {
+        if let token = FerriteKeychain.shared.get("RealDebrid.AccessToken") {
             var request = URLRequest(url: URL(string: "\(baseApiUrl)/disable_access_token")!)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             _ = try? await URLSession.shared.data(for: request)
 
-            keychain.delete("RealDebrid.AccessToken")
+            FerriteKeychain.shared.delete("RealDebrid.AccessToken")
+            await removeUserDefaultsValue(forKey: "RealDebrid.UseManualKey")
         }
     }
 

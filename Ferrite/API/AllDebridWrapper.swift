@@ -6,12 +6,10 @@
 //
 
 import Foundation
-import KeychainSwift
 
 // TODO: Fix errors
 public class AllDebrid {
     let jsonDecoder = JSONDecoder()
-    let keychain = KeychainSwift()
 
     let baseApiUrl = "https://api.alldebrid.com/v4"
     let appName = "Ferrite"
@@ -60,7 +58,7 @@ public class AllDebrid {
 
                 // If there's an API key from the response, end the task successfully
                 if let apiKeyResponse = rawResponse {
-                    keychain.set(apiKeyResponse.apikey, forKey: "AllDebrid.ApiKey")
+                    FerriteKeychain.shared.set(apiKeyResponse.apikey, forKey: "AllDebrid.ApiKey")
 
                     return
                 } else {
@@ -77,14 +75,27 @@ public class AllDebrid {
         }
     }
 
+    // Adds a manual API key instead of web auth
+    public func setApiKey(_ key: String) -> Bool {
+        FerriteKeychain.shared.set(key, forKey: "AllDebrid.ApiKey")
+        UserDefaults.standard.set(true, forKey: "AllDebrid.UseManualKey")
+
+        return FerriteKeychain.shared.get("AllDebrid.ApiKey") == key
+    }
+
+    public func getToken() -> String? {
+        return FerriteKeychain.shared.get("AllDebrid.ApiKey")
+    }
+
     // Clears tokens. No endpoint to deregister a device
     public func deleteTokens() {
-        keychain.delete("AllDebrid.ApiKey")
+        FerriteKeychain.shared.delete("AllDebrid.ApiKey")
+        UserDefaults.standard.removeObject(forKey: "AllDebrid.UseManualKey")
     }
 
     // Wrapper request function which matches the responses and returns data
     @discardableResult private func performRequest(request: inout URLRequest, requestName: String) async throws -> Data {
-        guard let token = keychain.get("AllDebrid.ApiKey") else {
+        guard let token = getToken() else {
             throw ADError.InvalidToken
         }
 
@@ -199,6 +210,37 @@ public class AllDebrid {
         let rawResponse = try jsonDecoder.decode(ADResponse<UnlockLinkResponse>.self, from: data).data
 
         return rawResponse.link
+    }
+
+    public func saveLink(link: String) async throws {
+        let queryItems = [
+            URLQueryItem(name: "links[]", value: link)
+        ]
+        var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/user/links/save", queryItems: queryItems))
+
+        try await performRequest(request: &request, requestName: #function)
+    }
+
+    public func savedLinks() async throws -> [SavedLink] {
+        var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/user/links"))
+
+        let data = try await performRequest(request: &request, requestName: #function)
+        let rawResponse = try jsonDecoder.decode(ADResponse<SavedLinksResponse>.self, from: data).data
+
+        if rawResponse.links.isEmpty {
+            throw ADError.EmptyData
+        } else {
+            return rawResponse.links
+        }
+    }
+
+    public func deleteLink(link: String) async throws {
+        let queryItems = [
+            URLQueryItem(name: "link", value: link)
+        ]
+        var request = URLRequest(url: try buildRequestURL(urlString: "\(baseApiUrl)/user/links/delete", queryItems: queryItems))
+
+        try await performRequest(request: &request, requestName: #function)
     }
 
     public func instantAvailability(magnets: [Magnet]) async throws -> [IA] {

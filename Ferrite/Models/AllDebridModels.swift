@@ -130,6 +130,19 @@ public extension AllDebrid {
         let link: String
     }
 
+    // MARK: - SavedLinksResponse
+
+    struct SavedLinksResponse: Codable {
+        let links: [SavedLink]
+    }
+
+    struct SavedLink: Codable, Hashable {
+        let link: String
+        let date: Int
+        let filename: String
+        let size: Int
+    }
+
     // MARK: - InstantAvailabilityResponse
 
     struct InstantAvailabilityResponse: Codable {

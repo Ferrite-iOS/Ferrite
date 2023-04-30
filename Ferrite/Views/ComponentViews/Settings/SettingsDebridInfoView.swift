@@ -12,6 +12,8 @@ struct SettingsDebridInfoView: View {
 
     let debridType: DebridType
 
+    @State private var apiKeyTempText: String = ""
+
     var body: some View {
         List {
             Section(header: InlineHeader("Description")) {
@@ -30,17 +32,42 @@ struct SettingsDebridInfoView: View {
                     Task {
                         if debridManager.enabledDebrids.contains(debridType) {
                             await debridManager.logoutDebrid(debridType: debridType)
-                        } else if !debridManager.getAuthProcessingBool(debridType: debridType) {
-                            await debridManager.authenticateDebrid(debridType: debridType)
+                        } else if !debridManager.authProcessing(debridType) {
+                            await debridManager.authenticateDebrid(debridType: debridType, apiKey: nil)
                         }
+
+                        apiKeyTempText = await debridManager.getManualAuthKey(debridType) ?? ""
                     }
                 } label: {
                     Text(
                         debridManager.enabledDebrids.contains(debridType)
                             ? "Logout"
-                            : (debridManager.getAuthProcessingBool(debridType: debridType) ? "Processing" : "Login")
+                            : (debridManager.authProcessing(debridType) ? "Processing" : "Login")
                     )
                     .foregroundColor(debridManager.enabledDebrids.contains(debridType) ? .red : .blue)
+                }
+            }
+
+            Section(
+                header: InlineHeader("API key"),
+                footer: Text("Add a permanent API key here. Only use this if web authentication does not work!")
+            ) {
+                HybridSecureField(
+                    text: $apiKeyTempText,
+                    onCommit: {
+                        Task {
+                            if !apiKeyTempText.isEmpty {
+                                await debridManager.authenticateDebrid(debridType: debridType, apiKey: apiKeyTempText)
+                                apiKeyTempText = await debridManager.getManualAuthKey(debridType) ?? ""
+                            }
+                        }
+                    }
+                )
+                .fieldDisabled(debridManager.enabledDebrids.contains(debridType))
+            }
+            .onAppear {
+                Task {
+                    apiKeyTempText = await debridManager.getManualAuthKey(debridType) ?? ""
                 }
             }
         }

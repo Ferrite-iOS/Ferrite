@@ -6,11 +6,9 @@
 //
 
 import Foundation
-import KeychainSwift
 
 public class Premiumize {
     let jsonDecoder = JSONDecoder()
-    let keychain = KeychainSwift()
 
     let baseAuthUrl = "https://www.premiumize.me/authorize"
     let baseApiUrl = "https://www.premiumize.me/api"
@@ -45,17 +43,30 @@ public class Premiumize {
             throw PMError.InvalidToken
         }
 
-        keychain.set(accessToken, forKey: "Premiumize.AccessToken")
+        FerriteKeychain.shared.set(accessToken, forKey: "Premiumize.AccessToken")
+    }
+
+    // Adds a manual API key instead of web auth
+    public func setApiKey(_ key: String) -> Bool {
+        FerriteKeychain.shared.set(key, forKey: "Premiumize.AccessToken")
+        UserDefaults.standard.set(true, forKey: "Premiumize.UseManualKey")
+
+        return FerriteKeychain.shared.get("Premiumize.AccessToken") == key
+    }
+
+    public func getToken() -> String? {
+        return FerriteKeychain.shared.get("Premiumize.AccessToken")
     }
 
     // Clears tokens. No endpoint to deregister a device
     public func deleteTokens() {
-        keychain.delete("Premiumize.AccessToken")
+        FerriteKeychain.shared.delete("Premiumize.AccessToken")
+        UserDefaults.standard.removeObject(forKey: "Premiumize.UseManualKey")
     }
 
     // Wrapper request function which matches the responses and returns data
     @discardableResult private func performRequest(request: inout URLRequest, requestName: String) async throws -> Data {
-        guard let token = keychain.get("Premiumize.AccessToken") else {
+        guard let token = getToken() else {
             throw PMError.InvalidToken
         }
 

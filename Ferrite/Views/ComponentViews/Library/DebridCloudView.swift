@@ -30,7 +30,7 @@ struct DebridCloudView: View {
             await debridManager.fetchDebridCloud()
         }
         .refreshable {
-            await debridManager.fetchDebridCloud()
+            await debridManager.fetchDebridCloud(bypassTTL: true)
         }
         .onChange(of: debridManager.selectedDebridType) { newType in
             if newType != nil {

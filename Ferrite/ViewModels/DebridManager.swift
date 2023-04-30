@@ -39,8 +39,24 @@ public class DebridManager: ObservableObject {
     var downloadUrl: String = ""
     var authUrl: URL?
 
+    // Is the current debrid type processing an auth request
+    func authProcessing(_ passedDebridType: DebridType?) -> Bool {
+        guard let debridType = passedDebridType ?? selectedDebridType else {
+            return false
+        }
+
+        switch debridType {
+        case .realDebrid:
+            return realDebridAuthProcessing
+        case .allDebrid:
+            return allDebridAuthProcessing
+        case .premiumize:
+            return premiumizeAuthProcessing
+        }
+    }
+
     // RealDebrid auth variables
-    @Published var realDebridAuthProcessing: Bool = false
+    var realDebridAuthProcessing: Bool = false
 
     // RealDebrid fetch variables
     @Published var realDebridIAValues: [RealDebrid.IA] = []
@@ -58,7 +74,7 @@ public class DebridManager: ObservableObject {
     var realDebridCloudTTL: Double = 0.0
 
     // AllDebrid auth variables
-    @Published var allDebridAuthProcessing: Bool = false
+    var allDebridAuthProcessing: Bool = false
 
     // AllDebrid fetch variables
     @Published var allDebridIAValues: [AllDebrid.IA] = []
@@ -68,10 +84,11 @@ public class DebridManager: ObservableObject {
 
     // AllDebrid cloud variables
     @Published var allDebridCloudMagnets: [AllDebrid.MagnetStatusData] = []
+    @Published var allDebridCloudLinks: [AllDebrid.SavedLink] = []
     var allDebridCloudTTL: Double = 0.0
 
     // Premiumize auth variables
-    @Published var premiumizeAuthProcessing: Bool = false
+    var premiumizeAuthProcessing: Bool = false
 
     // Premiumize fetch variables
     @Published var premiumizeIAValues: [Premiumize.IA] = []
@@ -325,34 +342,32 @@ public class DebridManager: ObservableObject {
     // MARK: - Authentication UI linked functions
 
     // Common function to delegate what debrid service to authenticate with
-    public func authenticateDebrid(debridType: DebridType) async {
+    public func authenticateDebrid(debridType: DebridType, apiKey: String?) async {
         switch debridType {
         case .realDebrid:
-            let success = await authenticateRd()
+            let success = apiKey == nil ? await authenticateRd() : realDebrid.setApiKey(apiKey!)
             completeDebridAuth(debridType, success: success)
         case .allDebrid:
-            let success = await authenticateAd()
+            // Async can't work with nil mapping method
+            let success = apiKey == nil ? await authenticateAd() : allDebrid.setApiKey(apiKey!)
             completeDebridAuth(debridType, success: success)
         case .premiumize:
-            await authenticatePm()
-        }
-    }
-
-    public func getAuthProcessingBool(debridType: DebridType) -> Bool {
-        switch debridType {
-        case .realDebrid:
-            return realDebridAuthProcessing
-        case .allDebrid:
-            return allDebridAuthProcessing
-        case .premiumize:
-            return premiumizeAuthProcessing
+            if let apiKey {
+                let success = premiumize.setApiKey(apiKey)
+                completeDebridAuth(debridType, success: success)
+            } else {
+                await authenticatePm()
+            }
         }
     }
 
     // Callback to finish debrid auth since functions can be split
-    func completeDebridAuth(_ debridType: DebridType, success: Bool = true) {
-        if enabledDebrids.count == 1, success {
-            selectedDebridType = enabledDebrids.first
+    func completeDebridAuth(_ debridType: DebridType, success: Bool) {
+        if success {
+            enabledDebrids.insert(debridType)
+            if enabledDebrids.count == 1 {
+                selectedDebridType = enabledDebrids.first
+            }
         }
 
         switch debridType {
@@ -362,6 +377,47 @@ public class DebridManager: ObservableObject {
             allDebridAuthProcessing = false
         case .premiumize:
             premiumizeAuthProcessing = false
+        }
+    }
+
+    // Get a truncated manual API key if it's being used
+    func getManualAuthKey(_ passedDebridType: DebridType?) async -> String? {
+        guard let debridType = passedDebridType ?? selectedDebridType else {
+            return nil
+        }
+
+        let debridToken: String?
+        switch debridType {
+        case .realDebrid:
+            if UserDefaults.standard.bool(forKey: "RealDebrid.UseManualKey") {
+                debridToken = FerriteKeychain.shared.get("RealDebrid.AccessToken")
+            } else {
+                debridToken = nil
+            }
+        case .allDebrid:
+            if UserDefaults.standard.bool(forKey: "AllDebrid.UseManualKey") {
+                debridToken = FerriteKeychain.shared.get("AllDebrid.ApiKey")
+            } else {
+                debridToken = nil
+            }
+        case .premiumize:
+            if UserDefaults.standard.bool(forKey: "Premiumize.UseManualKey") {
+                debridToken = FerriteKeychain.shared.get("Premiumize.AccessToken")
+            } else {
+                debridToken = nil
+            }
+        }
+
+        if let debridToken {
+            let splitString = debridToken.suffix(4)
+
+            if debridToken.count > 4 {
+                return String(repeating: "*", count: debridToken.count - 4) + splitString
+            } else {
+                return String(splitString)
+            }
+        } else {
+            return nil
         }
     }
 
@@ -389,12 +445,10 @@ public class DebridManager: ObservableObject {
 
             if validateAuthUrl(URL(string: verificationResponse.directVerificationURL)) {
                 try await realDebrid.getDeviceCredentials(deviceCode: verificationResponse.deviceCode)
-                enabledDebrids.insert(.realDebrid)
+                return true
             } else {
                 throw RealDebrid.RDError.AuthQuery(description: "The verification URL was invalid")
             }
-
-            return true
         } catch {
             await sendDebridError(error, prefix: "RealDebrid authentication error")
 
@@ -410,12 +464,10 @@ public class DebridManager: ObservableObject {
 
             if validateAuthUrl(URL(string: pinResponse.userURL)) {
                 try await allDebrid.getApiKey(checkID: pinResponse.check, pin: pinResponse.pin)
-                enabledDebrids.insert(.allDebrid)
+                return true
             } else {
                 throw AllDebrid.ADError.AuthQuery(description: "The PIN URL was invalid")
             }
-
-            return true
         } catch {
             await sendDebridError(error, prefix: "AllDebrid authentication error")
 
@@ -446,8 +498,7 @@ public class DebridManager: ObservableObject {
 
             if let callbackUrl = url {
                 try premiumize.handleAuthCallback(url: callbackUrl)
-                enabledDebrids.insert(.premiumize)
-                completeDebridAuth(.premiumize)
+                completeDebridAuth(.premiumize, success: true)
             } else {
                 throw Premiumize.PMError.AuthQuery(description: "The callback URL was invalid")
             }
@@ -528,19 +579,6 @@ public class DebridManager: ObservableObject {
         }
     }
 
-    public func fetchDebridCloud() async {
-        switch selectedDebridType {
-        case .realDebrid:
-            await fetchRdCloud()
-        case .allDebrid:
-            await fetchAdCloud()
-        case .premiumize:
-            await fetchPmCloud()
-        case .none:
-            return
-        }
-    }
-
     func fetchRdDownload(magnet: Magnet?, existingLink: String?) async {
         // If an existing link is passed in args, set it to that. Otherwise, find one from RD cloud.
         let torrentLink: String?
@@ -609,6 +647,19 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    public func fetchDebridCloud(bypassTTL: Bool = false) async {
+        switch selectedDebridType {
+        case .realDebrid:
+            await fetchRdCloud(bypassTTL: bypassTTL)
+        case .allDebrid:
+            await fetchAdCloud(bypassTTL: bypassTTL)
+        case .premiumize:
+            await fetchPmCloud(bypassTTL: bypassTTL)
+        case .none:
+            return
+        }
+    }
+
     // Refreshes torrents and downloads from a RD user's account
     public func fetchRdCloud(bypassTTL: Bool = false) async {
         if bypassTTL || Date().timeIntervalSince1970 > realDebridCloudTTL {
@@ -664,6 +715,7 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    // TODO: Integrate with AD saved links
     func fetchAdDownload(magnet: Magnet?, existingLockedLink: String?) async {
         // If an existing link is passed in args, set it to that. Otherwise, find one from AD cloud.
         let lockedLink: String?
@@ -678,8 +730,10 @@ public class DebridManager: ObservableObject {
         }
 
         do {
-            if let lockedLink {
-                downloadUrl = try await allDebrid.unlockLink(lockedLink: lockedLink)
+            if let lockedLink,
+               let unlockedLink = await checkAdUserLinks(lockedLink: lockedLink)
+            {
+                downloadUrl = unlockedLink
             } else if let magnet {
                 let magnetID = try await allDebrid.addMagnet(magnet: magnet)
                 let lockedLink = try await allDebrid.fetchMagnetStatus(
@@ -687,6 +741,7 @@ public class DebridManager: ObservableObject {
                     selectedIndex: selectedAllDebridFile?.id ?? 0
                 )
 
+                try await allDebrid.saveLink(link: lockedLink)
                 downloadUrl = try await allDebrid.unlockLink(lockedLink: lockedLink)
             } else {
                 throw AllDebrid.ADError.FailedRequest(description: "Could not fetch your file from AllDebrid's cache or API")
@@ -699,11 +754,28 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    func checkAdUserLinks(lockedLink: String) async -> String? {
+        do {
+            let existingLinks = allDebridCloudLinks.first { $0.link == lockedLink }
+            if let existingLink = existingLinks?.link {
+                return existingLink
+            } else {
+                try await allDebrid.saveLink(link: lockedLink)
+                return try await allDebrid.unlockLink(lockedLink: lockedLink)
+            }
+        } catch {
+            await sendDebridError(error, prefix: "AllDebrid download check error")
+
+            return nil
+        }
+    }
+
     // Refreshes torrents and downloads from a RD user's account
     public func fetchAdCloud(bypassTTL: Bool = false) async {
         if bypassTTL || Date().timeIntervalSince1970 > allDebridCloudTTL {
             do {
                 allDebridCloudMagnets = try await allDebrid.userMagnets()
+                allDebridCloudLinks = try await allDebrid.savedLinks()
 
                 // 5 minutes
                 allDebridCloudTTL = Date().timeIntervalSince1970 + 300
@@ -713,13 +785,23 @@ public class DebridManager: ObservableObject {
         }
     }
 
+    func deleteAdLink(link: String) async {
+        do {
+            try await allDebrid.deleteLink(link: link)
+
+            await fetchAdCloud(bypassTTL: true)
+        } catch {
+            await sendDebridError(error, prefix: "AllDebrid link delete error")
+        }
+    }
+
     func deleteAdMagnet(magnetId: Int) async {
         do {
             try await allDebrid.deleteMagnet(magnetId: magnetId)
 
             await fetchAdCloud(bypassTTL: true)
         } catch {
-            await sendDebridError(error, prefix: "AllDebrid delete error")
+            await sendDebridError(error, prefix: "AllDebrid magnet delete error")
         }
     }
 
