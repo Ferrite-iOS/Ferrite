@@ -70,7 +70,27 @@ public class Premiumize {
             throw PMError.InvalidToken
         }
 
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        // Use the API query parameter if a manual API key is present
+        if UserDefaults.standard.bool(forKey: "Premiumize.UseManualKey") {
+            guard
+                let requestUrl = request.url,
+                var components = URLComponents(url: requestUrl, resolvingAgainstBaseURL: false)
+            else {
+                throw PMError.InvalidUrl
+            }
+
+            let apiTokenItem = URLQueryItem(name: "apikey", value: token)
+
+            if components.queryItems == nil {
+                components.queryItems = [apiTokenItem]
+            } else {
+                components.queryItems?.append(apiTokenItem)
+            }
+
+            request.url = components.url
+        } else {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
 
         let (data, response) = try await URLSession.shared.data(for: request)
 
