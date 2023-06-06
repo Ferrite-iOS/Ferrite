@@ -164,7 +164,8 @@ class ScrapingViewModel: ObservableObject {
         case .scraping:
             if let htmlParser = source.htmlParser {
                 let replacedSearchUrl = htmlParser.searchUrl.map {
-                    $0.replacingOccurrences(of: "{query}", with: encodedQuery)
+                    $0
+                        .replacingOccurrences(of: "{query}", with: encodedQuery)
                 }
 
                 let data = await handleUrls(

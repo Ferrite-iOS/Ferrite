@@ -55,12 +55,12 @@ public struct Magnet: Codable, Hashable, Sendable {
         if let hash, link == nil {
             self.hash = parseHash(hash)
             self.link = generateLink(hash: hash, title: title, trackers: trackers)
-        } else if let link, hash == nil {
-            self.link = link
-            self.hash = parseHash(extractHash(link: link))
+        } else if let parsedLink = parseLink(link), hash == nil {
+            self.link = parsedLink
+            self.hash = parseHash(extractHash(link: parsedLink))
         } else {
             self.hash = parseHash(hash)
-            self.link = link
+            self.link = parseLink(link)
         }
     }
 
@@ -105,6 +105,22 @@ public struct Magnet: Codable, Hashable, Sendable {
             return decryptedMagnetHash?.hexEncodedString()
         } else {
             return String(magnetHash).lowercased()
+        }
+    }
+
+    func parseLink(_ link: String?) -> String? {
+        if let decodedLink = link?.removingPercentEncoding {
+            let separator = "magnet:?xt=urn:btih:"
+            if decodedLink.starts(with: separator) {
+                return decodedLink
+            } else if decodedLink.contains(separator) {
+                let splitLink = decodedLink.components(separatedBy: separator)
+                return splitLink.last.map { separator + $0 } ?? nil
+            } else {
+                return nil
+            }
+        } else {
+            return nil
         }
     }
 }
