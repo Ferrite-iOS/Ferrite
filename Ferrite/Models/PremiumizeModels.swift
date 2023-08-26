@@ -45,11 +45,9 @@ public extension Premiumize {
         let path: String
         let size: Int
         let link: String
-        let streamLink: String
 
         enum CodingKeys: String, CodingKey {
             case path, size, link
-            case streamLink = "stream_link"
         }
     }
 

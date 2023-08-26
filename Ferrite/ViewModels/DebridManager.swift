@@ -193,50 +193,59 @@ public class DebridManager: ObservableObject {
 
     // Common function to populate hashes for debrid services
     public func populateDebridIA(_ resultMagnets: [Magnet]) async {
-        do {
-            let now = Date()
+        let now = Date()
 
-            // If a hash isn't found in the IA, update it
-            // If the hash is expired, remove it and update it
-            let sendMagnets = resultMagnets.filter { magnet in
-                if let IAIndex = realDebridIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.realDebrid) {
-                    if now.timeIntervalSince1970 > realDebridIAValues[IAIndex].expiryTimeStamp {
-                        realDebridIAValues.remove(at: IAIndex)
-                        return true
-                    } else {
-                        return false
-                    }
-                } else if let IAIndex = allDebridIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.allDebrid) {
-                    if now.timeIntervalSince1970 > allDebridIAValues[IAIndex].expiryTimeStamp {
-                        allDebridIAValues.remove(at: IAIndex)
-                        return true
-                    } else {
-                        return false
-                    }
-                } else if let IAIndex = premiumizeIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.premiumize) {
-                    if now.timeIntervalSince1970 > premiumizeIAValues[IAIndex].expiryTimeStamp {
-                        premiumizeIAValues.remove(at: IAIndex)
-                        return true
-                    } else {
-                        return false
-                    }
-                } else {
+        // If a hash isn't found in the IA, update it
+        // If the hash is expired, remove it and update it
+        let sendMagnets = resultMagnets.filter { magnet in
+            if let IAIndex = realDebridIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.realDebrid) {
+                if now.timeIntervalSince1970 > realDebridIAValues[IAIndex].expiryTimeStamp {
+                    realDebridIAValues.remove(at: IAIndex)
                     return true
+                } else {
+                    return false
+                }
+            } else if let IAIndex = allDebridIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.allDebrid) {
+                if now.timeIntervalSince1970 > allDebridIAValues[IAIndex].expiryTimeStamp {
+                    allDebridIAValues.remove(at: IAIndex)
+                    return true
+                } else {
+                    return false
+                }
+            } else if let IAIndex = premiumizeIAValues.firstIndex(where: { $0.magnet.hash == magnet.hash }), enabledDebrids.contains(.premiumize) {
+                if now.timeIntervalSince1970 > premiumizeIAValues[IAIndex].expiryTimeStamp {
+                    premiumizeIAValues.remove(at: IAIndex)
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return true
+            }
+        }
+
+        // Don't exit the function if the API fetch errors
+        if !sendMagnets.isEmpty {
+            if enabledDebrids.contains(.realDebrid) {
+                do {
+                    let fetchedRealDebridIA = try await realDebrid.instantAvailability(magnets: sendMagnets)
+                    realDebridIAValues += fetchedRealDebridIA
+                } catch {
+                    await sendDebridError(error, prefix: "RealDebrid IA fetch error")
                 }
             }
 
-            if !sendMagnets.isEmpty {
-                if enabledDebrids.contains(.realDebrid) {
-                    let fetchedRealDebridIA = try await realDebrid.instantAvailability(magnets: sendMagnets)
-                    realDebridIAValues += fetchedRealDebridIA
-                }
-
-                if enabledDebrids.contains(.allDebrid) {
+            if enabledDebrids.contains(.allDebrid) {
+                do {
                     let fetchedAllDebridIA = try await allDebrid.instantAvailability(magnets: sendMagnets)
                     allDebridIAValues += fetchedAllDebridIA
+                } catch {
+                    await sendDebridError(error, prefix: "AllDebrid IA fetch error")
                 }
+            }
 
-                if enabledDebrids.contains(.premiumize) {
+            if enabledDebrids.contains(.premiumize) {
+                do {
                     // Only strip magnets that don't have an associated link for PM
                     let strippedResultMagnets: [Magnet] = resultMagnets.compactMap {
                         if let magnetLink = $0.link {
@@ -254,10 +263,10 @@ public class DebridManager: ObservableObject {
 
                         premiumizeIAValues += tempIA
                     }
+                } catch {
+                    await sendDebridError(error, prefix: "Premiumize IA fetch error")
                 }
             }
-        } catch {
-            await sendDebridError(error, prefix: "Hash population error")
         }
     }
 
